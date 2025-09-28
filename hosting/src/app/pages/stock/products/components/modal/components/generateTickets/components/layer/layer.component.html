@@ -1,0 +1,10 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div *ngIf="settings.activeComponent == 'products'">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+  </ng-container>
+</layer>

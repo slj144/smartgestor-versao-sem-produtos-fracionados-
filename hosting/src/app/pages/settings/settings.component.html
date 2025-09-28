@@ -1,0 +1,224 @@
+
+<div id="container-main">
+
+  <main>
+
+    <div class="row">
+
+      <!-- <section class="col-12 col-md-6 general" *ngIf="isAdmin">
+        <div class="wrapper">
+          <div class="table-responsive">
+            <table class="table table-borderless table-level-1">
+              <tbody>  
+                <tr>
+                  <td colspan="2"><span class="title">{{ translate.section.general.title }}</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <table class="table table-borderless nested-table">
+                      <tr (click)="onOpenModal('General', 'Language')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.general.option.language.label }}</span>
+                            <span class="description">{{ translate.section.general.option.language.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+
+                      <tr (click)="onOpenModal('General', 'Currency')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.general.option.currency.label }}</span>
+                            <span class="description">{{ translate.section.general.option.currency.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+                    </table>              
+                  </td>            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section> -->
+
+      <section class="col-12 col-md-6 cashier" *ngIf="(isAdmin && companyProfile?.cashier?.active)">
+        <div class="wrapper">
+          <div class="table-responsive">
+            <table class="table table-borderless table-level-1">
+              <tbody>  
+                <tr>
+                  <td colspan="2"><span class="title">{{ translate.section.cashier.title }}</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <table class="table table-borderless nested-table">
+                      <tr (click)="onOpenModal('Cashier', 'OperationalMode')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.cashier.option.operationalMode.label }}</span>
+                            <span class="description">{{ translate.section.cashier.option.operationalMode.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+
+                      <tr (click)="onOpenModal('Cashier', 'WarrantyTerm')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.cashier.option.warrantyTerm.label }}</span>
+                            <span class="description">{{ translate.section.cashier.option.warrantyTerm.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+                    </table>              
+                  </td>            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="col-12 col-md-6 service-orders" *ngIf="(isAdmin && companyProfile?.serviceOrders?.active)">
+        <div class="wrapper">
+          <div class="table-responsive">
+            <table class="table table-borderless nested-table">
+              <tbody>  
+                <tr>
+                  <td colspan="2"><span class="title">{{ translate.section.serviceOrders.title }}</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <table class="table table-borderless nested table">
+                      <tr (click)="onOpenModal('ServiceOrders', 'Checklist')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.serviceOrders.option.checklist.label }}</span>
+                            <span class="description">{{ translate.section.serviceOrders.option.checklist.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+
+                      <tr (click)="onOpenModal('ServiceOrders', 'WarrantyTerm')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.serviceOrders.option.warrantyTerm.label }}</span>
+                            <span class="description">{{ translate.section.serviceOrders.option.warrantyTerm.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+<!-- 
+                      <tr (click)="onOpenModal('ServiceOrders', 'DeliveryTerm')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.serviceOrders.option.deliveryTerm.label }}</span>
+                            <span class="description">{{ translate.section.serviceOrders.option.deliveryTerm.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr> -->
+                    </table>              
+                  </td>            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="col-12 col-md-6 stock" *ngIf="isAdmin">
+        <div class="wrapper">
+          <div class="table-responsive">
+            <table class="table table-borderless table-level-1">
+              <tbody>  
+                <tr>
+                  <td colspan="2"><span class="title">{{ translate.section.stock.title }}</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <table class="table table-borderless nested-table">
+                      <tr (click)="onOpenModal('Stock', 'AveragePurchaseCost')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.stock.option.averagePurchaseCost.label }}</span>
+                            <span class="description">{{ translate.section.stock.option.averagePurchaseCost.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+
+                      <tr (click)="onOpenModal('Stock', 'AverageTransfersCost')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.stock.option.averageTransfersCost.label }}</span>
+                            <span class="description">{{ translate.section.stock.option.averageTransfersCost.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+
+                      <tr (click)="onOpenModal('Stock', 'AllowNegativeSale')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.stock.option.allowNegativeSale.label }}</span>
+                            <span class="description">{{ translate.section.stock.option.allowNegativeSale.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+                    </table>              
+                  </td>            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+      
+      <section class="col-12 col-md-6 registers" *ngIf="isAdmin">
+        <div class="wrapper">
+          <div class="table-responsive">
+            <table class="table table-borderless table-level-1">
+              <tbody>  
+                <tr>
+                  <td colspan="2"><span class="title">{{ translate.section.registers.title }}</span></td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <table class="table table-borderless nested-table">
+                      <tr (click)="onOpenModal('Registers', 'RestrictCustomerRegistration')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.registers.option.restrictCustomerRegistration.label }}</span>
+                            <span class="description">{{ translate.section.registers.option.restrictCustomerRegistration.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
+                    </table>              
+                  </td>            
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+  
+</div>
+
+<settings-modal (callback)="onModalResponse($event)"></settings-modal>

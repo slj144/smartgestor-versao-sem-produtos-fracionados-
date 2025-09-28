@@ -1,0 +1,89 @@
+<div id="container-main">
+  <div>
+    <div class="content" *ngIf="store">
+      <header>
+        <button type="button" class="btn requestPassword" (click)="requestNewPassword($event)">{{ translate.mainModal.requestNewPassword }}</button>
+        <img src="{{ store.image ? store.image : '/assets/images/storeImageLorenIpsun.jpg' }}" />
+        <span class="name">{{ store.billingName }}</span>
+        <span>CNPJ: {{ store.cnpj }}</span>
+        <button *ngIf="isEdit" class="btnAction btnEdit" (click)="onShowModal($event, 'edit')"><icon name="edit-outline" pack="eva"></icon></button>
+      </header>    
+
+      <section class="address">
+        <h5>{{ translate.mainModal.address.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><icon name="pin-outline" pack="eva"></icon></td>
+                <td>
+                  <span>{{ store.address.addressLine + ', ' + store.address.city + ' - ' + store.address.state }}</span>
+                  <span>{{ store.address.postalCode }}</span>
+                </td>
+              </tr>            
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="contacts">
+        <h5>{{ translate.mainModal.contacts.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><icon name="phone-outline" pack="eva"></icon></td>
+                <td><span>{{ store.contacts.phone }}</span></td>
+              </tr>
+              <tr *ngIf="store.contacts.email">
+                <td><icon name="email-outline" pack="eva"></icon></td>
+                <td><span>{{ store.contacts.email }}</span></td>
+              </tr>
+              <tr *ngIf="store.contacts.whatsapp">
+                <td><i class="fab fa-whatsapp"></i></td>
+                <td><span>{{ store.contacts.whatsapp }}</span></td>
+              </tr>            
+            </tbody>
+          </table>
+        </div>
+      </section>  
+      
+      <section class="admin">
+        <h5>{{ translate.mainModal.admin }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>            
+              <tr>
+                <td>
+                  <img src="{{ store.rootUser.image ? store.rootUser.image : '/assets/images/profile.png' }}" />
+                </td>
+                <td>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <td><span class="label">{{ translate.mainModal.name + ':' }}</span></td>
+                        <td><span class="value">{{ store.rootUser.name }}</span></td>
+                      </tr>
+                      <tr>
+                        <td><span class="label">{{ translate.mainModal.username + ':' }}</span></td>
+                        <td><span class="value">{{ store.rootUser.username }}</span></td>
+                      </tr>
+                      <tr>
+                        <td><span class="label">{{ translate.mainModal.contacts.email + ':' }}</span></td>
+                        <td><span class="value">{{ store.rootUser.email }}</span></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <placeholder [loading]="loading" [hasData]="store" [verticalAlign]="true"></placeholder>        
+  </div>
+</div>
+
+<my-store-modal (callback)="onModalResponse($event)"></my-store-modal>

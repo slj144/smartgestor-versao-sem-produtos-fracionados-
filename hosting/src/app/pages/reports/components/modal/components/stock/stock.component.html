@@ -1,0 +1,124 @@
+<main id="stock">
+
+  <div *ngIf="!loading && this.formControls">
+    <div class="container-main">
+      <div class="wrapper">
+        <div class="container-settings">
+          <div class="container-form">
+            <h6>{{ settings.model.name }}</h6>
+
+            <form [formGroup]="formFilters" (submit)="onGenerateReport()" class="form">
+
+              <div class="row" *ngIf="isMatrix && (settings.stores.length > 0)">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.store.title }}</label>
+
+                  <select class="form-control" formControlName="store">
+                    <option *ngFor="let item of settings.stores" value="{{ item._id }}">{{ item.name }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="settings.model.id != 'products'">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.period.title }}</label>
+
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <select class="form-control" formControlName="period" #selectPeriod>
+                        <option value="today">{{ translate._general.form.period.label.option.today }}</option>
+                        <option value="currentWeek" *ngIf="settings.model.filter.weekly">{{
+                          translate._general.form.period.label.option.currentWeek }}</option>
+                        <option value="currentMonth" *ngIf="settings.model.filter.monthly">{{
+                          translate._general.form.period.label.option.currentMonth }}</option>
+                        <option value="lastMonth" *ngIf="settings.model.filter.lastMonth">{{
+                          translate._general.form.period.label.option.lastMonth }}</option>
+                        <option value="custom" *ngIf="settings.model.filter.custom">{{
+                          translate._general.form.period.label.option.custom }}</option>
+                      </select>
+
+                      <div class="row container-period" *ngIf="formControls.period.value == 'custom'">
+                        <div class="col-12 col-sm-6 form-group">
+                          <small>{{ translate._general.form.period.label.start }}</small>
+                          <input type="date" class="form-control" placeholder="dd/mm/aaaa"
+                            formControlName="startDate" />
+                        </div>
+
+                        <div class="col-12 col-sm-6 form-group">
+                          <small>{{ translate._general.form.period.label.end }}</small>
+                          <input type="date" class="form-control" placeholder="dd/mm/aaaa" formControlName="endDate" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="this.settings.types && (this.settings.types).length > 0">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportType.title }}</label>
+
+                  <div class="row container-types">
+                    <label class="option col-12" *ngFor="let item of this.settings.types">
+                      <input type="radio" [value]="item.id" formControlName="types" (change)="onTypesChange(item.id)" />
+                      <span>{{ item.label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row"
+                *ngIf="(this.settings.fields[typeActived] && (this.settings.fields[typeActived]).length > 0) && typeActived">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportFields.title }}</label>
+
+                  <div class="row container-options">
+                    <label class="option col-12 col-sm-6 col-md-4"
+                      *ngFor="let control of formControls.fields.controls; let i = index">
+                      <input type="checkbox" [formControl]="control" />
+                      <span>{{ this.settings.fields[this.typeActived][i].label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="row" *ngIf="isAdmin && settings.model.id == 'products'">
+
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.status.title }}</label>
+
+                  <select class="form-control" formControlName="status">
+                    <option value="##all##">{{ translate._general.form.status.list.all }}</option>
+                    <option value="in_stock">{{ translate._general.form.status.list.inStock }}</option>
+                    <option value="out_stock">{{ translate._general.form.status.list.outStock }}</option>
+                    <option value="negative_stock">{{ translate._general.form.status.list.negativeStock }}</option>
+                    <option value="zero_or_negative">{{ translate._general.form.status.list.zeroOrNegative }}</option>
+                  </select>
+                </div>
+
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.categories.title }}</label>
+
+                  <select class="form-control" formControlName="category">
+                    <option value="##all##">{{ translate._general.form.categories.list.all }}</option>
+                    <option *ngFor="let item of categories" value="{{ item.code }}">{{ item.name }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary" [disabled]="formFilters.invalid">{{
+                translate._general.form.button.generate }}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+
+</main>
+
+<stock-modal (callback)="onModalResponse($event)"></stock-modal>
+<stock-layer (callback)="onLayerResponse($event)"></stock-layer>

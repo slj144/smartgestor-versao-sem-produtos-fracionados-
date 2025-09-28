@@ -1,0 +1,109 @@
+
+layer {
+  .container {  
+    #containerCRU{
+
+      margin-top: 0;
+      
+      .required {
+        border-color: indianred !important;
+        &:focus {
+          border-color: rgba(205, 92, 92, 0.75) !important;
+        }
+      }
+
+      .requiredMessage{
+        display: block;
+        margin: 15px 0;
+      }
+
+      
+      button {
+        margin: 10px auto;
+        display: block;
+        padding: 8px 40px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #fff;
+
+        &:disabled {
+          background-color: rgba(163, 163, 248, 0.809);
+        }
+        &:enabled {
+          background-color: rgb(102, 102, 255);
+        }
+        &.btnBlue {
+          background-color: rgb(102, 102, 255);
+        }
+        &.btnRed {
+          background-color: indianred;
+        }
+      }      
+
+      label {
+        color: #444;
+        text-align: left;
+        display: block;
+        margin: 0 0 5px;
+        text-transform: none;
+        font-size: 14px;
+      }
+
+      .form-group {
+        margin: 10px 0;
+      }
+
+      .title {
+        font-size: 14px;
+        font-weight: 500;
+        span {
+          font-size: 13px;
+          padding-right: 10px;          
+        }
+      }
+    }
+
+    #containerDelete {
+      .container-confirmation {
+        background-color: rgba(205, 92, 92, 0.15);
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 0;
+        p {
+          text-align: center;
+          color: indianred;
+        }
+        .container-buttons {
+          display: block;
+          text-align: center;
+          margin-top: 15px;
+          button {            
+            display: inline-table;
+            padding: 5px 20px;
+            &:first-child {
+              margin-right: 5px;
+            }
+          }
+        }
+        button {
+          margin: 10px auto 0 auto;
+          display: block;
+          padding: 5px 40px;
+          border-radius: 8px;
+          font-size: 14px;
+          background-color: rgb(102, 102, 255);
+          color: #fff;
+          &.btnGreen {
+            background-color: green;
+          }
+          &.btnBlue {
+            background-color: rgb(102, 102, 255);
+          }
+          &.btnRed {
+            background-color: indianred;
+          }
+        }
+      }     
+    }
+  }
+} 

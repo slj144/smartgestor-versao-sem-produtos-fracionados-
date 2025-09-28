@@ -1,0 +1,1 @@
+export type TLanguage = "pt_BR" | "en_US";

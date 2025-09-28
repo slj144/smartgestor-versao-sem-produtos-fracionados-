@@ -1,0 +1,258 @@
+<!-- Arquivo: pipeline.component.html -->
+<!-- Localização: src/app/pages/crm/pipeline/pipeline.component.html -->
+
+<div class="pipeline-container">
+    <!-- Header com estatísticas de cancelamento -->
+    <div class="pipeline-header">
+        <div class="header-content">
+            <h2>Pipeline de Vendas</h2>
+            <div class="pipeline-stats">
+                <div class="stat-item">
+                    <span class="stat-value">{{ totals.leads }}</span>
+                    <span class="stat-label">Total de Leads</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ formatCurrency(totals.value) }}</span>
+                    <span class="stat-label">Valor Total</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">{{ totals.conversion }}%</span>
+                    <span class="stat-label">Taxa de Conversão</span>
+                </div>
+                <!-- 🆕 Estatística de Cancelados -->
+                <div class="stat-item cancelled">
+                    <span class="stat-value">{{ totals.cancelled }}</span>
+                    <span class="stat-label">Cancelados</span>
+                    <small>{{ formatCurrency(totals.cancelledValue) }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pipeline Board -->
+    <div class="pipeline-board" *ngIf="!loading">
+        <div class="pipeline-column" *ngFor="let column of pipelineColumns"
+            [class.cancelled-column]="column.id === 'cancelled'">
+            <!-- Column Header -->
+            <div class="column-header" [style.border-color]="column.color">
+                <h3>{{ column.title }}</h3>
+                <div class="column-info">
+                    <span class="lead-count">{{ column.leads.length }} leads</span>
+                    <span class="lead-value">{{ formatCurrency(column.value) }}</span>
+                </div>
+            </div>
+
+            <!-- Column Content -->
+            <div class="column-content" cdkDropList [id]="'list-' + column.id" [cdkDropListData]="column.leads"
+                [cdkDropListConnectedTo]="getConnectedList()" (cdkDropListDropped)="drop($event, column.id)">
+
+                <!-- Lead Cards -->
+                <div class="lead-card" *ngFor="let lead of column.leads" cdkDrag [cdkDragData]="lead"
+                    [class.cancelled-lead]="lead.status === 'cancelled'" (click)="openLeadDetails(lead)">
+
+                    <div class="drag-handle" cdkDragHandle>
+                        <icon name="menu-outline" pack="eva"></icon>
+                    </div>
+
+                    <div class="lead-header">
+                        <div class="lead-avatar" [style.background-color]="column.color">
+                            {{ getInitials(lead.name) }}
+                        </div>
+                        <div class="lead-info">
+                            <h4>{{ lead.name }}</h4>
+                            <p>{{ lead.email }}</p>
+                        </div>
+                    </div>
+
+                    <div class="lead-details">
+                        <div class="detail-item">
+                            <icon name="phone-outline" pack="eva"></icon>
+                            <span>{{ lead.phone || 'Sem telefone' }}</span>
+                        </div>
+                        <div class="detail-item">
+                            <icon name="pin-outline" pack="eva"></icon>
+                            <span>{{ lead.source }}</span>
+                        </div>
+
+                        <!-- 🆕 Mostrar motivo se cancelado -->
+                        <div class="detail-item cancelled-info"
+                            *ngIf="lead.status === 'cancelled' && lead.cancelReason">
+                            <icon name="alert-circle-outline" pack="eva"></icon>
+                            <span>{{ getCancelReasonLabel(lead.cancelReason.type) }}</span>
+                        </div>
+                    </div>
+
+                    <div class="lead-footer">
+                        <span class="lead-value">{{ formatCurrency(lead.value) }}</span>
+                        <span class="lead-date">{{ lead.createdAt | date:'dd/MM' }}</span>
+                    </div>
+
+                    <!-- Drag Preview -->
+                    <div class="lead-drag-preview" *cdkDragPreview>
+                        <div class="preview-card">
+                            <h4>{{ lead.name }}</h4>
+                            <p>{{ formatCurrency(lead.value) }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-column" *ngIf="column.leads.length === 0">
+                    <icon name="inbox-outline" pack="eva"></icon>
+                    <p>Arraste leads para cá</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="pipeline-loading" *ngIf="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Carregando...</span>
+        </div>
+    </div>
+
+    <!-- Modal de Detalhes (atualizado) -->
+    <div class="modal" [class.show]="showDetailsModal" [style.display]="showDetailsModal ? 'block' : 'none'">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" *ngIf="selectedLead">
+                <div class="modal-header">
+                    <h5 class="modal-title">Detalhes do Lead</h5>
+                    <button type="button" class="btn-close" (click)="showDetailsModal = false"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="lead-detail-header">
+                        <div class="lead-avatar large">
+                            {{ getInitials(selectedLead.name) }}
+                        </div>
+                        <div class="lead-info">
+                            <h3>{{ selectedLead.name }}</h3>
+                            <p>{{ selectedLead.email }} • {{ selectedLead.phone }}</p>
+                        </div>
+                    </div>
+
+                    <div class="lead-detail-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Informações</h5>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td>Status:</td>
+                                        <td><strong>{{ getStatusName(selectedLead.status) }}</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Origem:</td>
+                                        <td>{{ selectedLead.source }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Valor:</td>
+                                        <td>{{ formatCurrency(selectedLead.value) }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Criado em:</td>
+                                        <td>{{ selectedLead.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Observações</h5>
+                                <p>{{ selectedLead.notes || 'Sem observações' }}</p>
+
+                                <!-- 🆕 Informações de cancelamento -->
+                                <div class="cancel-info"
+                                    *ngIf="selectedLead.status === 'cancelled' && selectedLead.cancelReason">
+                                    <h5 class="text-danger">Informações de Cancelamento</h5>
+                                    <p><strong>Motivo:</strong> {{ getCancelReasonLabel(selectedLead.cancelReason.type)
+                                        }}</p>
+                                    <p><strong>Detalhes:</strong> {{ selectedLead.cancelReason.description || 'Sem
+                                        detalhes' }}</p>
+                                    <p><strong>Data:</strong> {{ selectedLead.cancelDate | date:'dd/MM/yyyy HH:mm' }}
+                                    </p>
+                                    <p><strong>Recuperável:</strong> {{ selectedLead.cancelReason.canRecover ? 'Sim' :
+                                        'Não' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="showDetailsModal = false">
+                        Fechar
+                    </button>
+                    <button type="button" class="btn btn-primary"
+                        *ngIf="selectedLead.status !== 'closed' && selectedLead.status !== 'cancelled'">
+                        Editar Lead
+                    </button>
+                    <!-- 🆕 Botão de recuperar lead cancelado -->
+                    <button type="button" class="btn btn-success"
+                        *ngIf="selectedLead.status === 'cancelled' && selectedLead.cancelReason?.canRecover">
+                        Tentar Recuperar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🆕 Modal de Cancelamento -->
+    <div class="modal" [class.show]="showCancelModal" [style.display]="showCancelModal ? 'block' : 'none'">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">
+                        <icon name="alert-triangle-outline" pack="eva"></icon>
+                        Cancelar Lead
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="showCancelModal = false"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Atenção!</strong> Você está prestes a cancelar o lead
+                        <strong>{{ leadToCancel?.name }}</strong>.
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Motivo do Cancelamento *</label>
+                        <select class="form-select" [(ngModel)]="cancelReason.type" required>
+                            <option value="">Selecione um motivo...</option>
+                            <option *ngFor="let reason of cancelReasons" [value]="reason.value">
+                                {{ reason.label }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Detalhes Adicionais</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="cancelReason.description"
+                            placeholder="Explique com mais detalhes o motivo do cancelamento..."></textarea>
+                    </div>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" [(ngModel)]="cancelReason.canRecover"
+                            id="canRecover">
+                        <label class="form-check-label" for="canRecover">
+                            Este lead pode ser recuperado no futuro
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="showCancelModal = false">
+                        Voltar
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="confirmCancel()"
+                        [disabled]="!cancelReason.type">
+                        <icon name="close-circle-outline" pack="eva"></icon>
+                        Confirmar Cancelamento
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Backdrop dos modais -->
+    <div class="modal-backdrop fade" [class.show]="showDetailsModal || showCancelModal"
+        *ngIf="showDetailsModal || showCancelModal"></div>
+</div>

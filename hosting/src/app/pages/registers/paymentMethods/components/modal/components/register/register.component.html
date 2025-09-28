@@ -1,0 +1,116 @@
+<div id="containerFormUpdate" *ngIf="checkBootstrap">
+
+  <form [formGroup]="formPayment" class="form" (submit)="onSubmit()">
+
+    <div class="row">
+
+      <div class="container-header" *ngIf="settings.methodName">
+        <h6>{{ settings.methodName }}</h6>
+      </div>
+
+      <div class="col-12 form-group">
+        <label>{{ translate.form.name.label }}</label>
+        <fieldset
+          [disabled]="settings.action == 'Update' && !settings.methodCode && (settings.data?.code >= 1000 && settings.data?.code <= 6000)">
+          <input type="text" formControlName="name" class="form-control" autocomplete="off" />
+        </fieldset>
+      </div>
+
+      <div class="col-12 form-group" *ngIf="settings.methodCode != 4000 && settings.data?.code != '9000'">
+        <label>{{ translate.form.fee.label }}</label>
+        <input type="text" formControlName="fee" class="form-control" placeholder="0,00" autocomplete="off"
+          (input)="onApplyPercentageMask($event, null, 'fee')" />
+      </div>
+
+      <div class="col-12 form-group" *ngIf="settings.methodCode == 4000 || settings.data?.code == '9000'">
+        <label>{{ translate.form.rateTable.label }}</label>
+
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th>{{ translate.form.rateTable.table.parcel }}</th>
+                <th>{{ translate.form.rateTable.table.fee }}</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of formControls.fees.value; let i = index">
+                <td><input type="text" class="form-control view" value="{{ item.parcel }}" autocomplete="off"
+                    (input)="onApplyNumberMask($event, item, 'parcel')" /></td>
+                <td><input type="text" class="form-control view" value="{{ item.fee }}" autocomplete="off"
+                    (input)="onApplyPercentageMask($event, item, 'fee')" /></td>
+                <td><button type="button" (click)="onDeleteFee(i)">
+                    <icon name="close-outline" pack="eva"></icon>
+                  </button></td>
+              </tr>
+              <tr class="create">
+                <td><input type="text" class="form-control" autocomplete="off" (input)="onApplyNumberMask($event)"
+                    #parcelInput /></td>
+                <td><input type="text" class="form-control" value="0,00" autocomplete="off"
+                    (input)="onApplyPercentageMask($event)" #feeInput /></td>
+                <td><button type="button" (click)="onCreateFee(parcelInput, feeInput)">
+                    <icon name="plus-outline" pack="eva"></icon>
+                  </button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <small class="warning"><b>{{ translate.form.rateTable.warning[0] }}</b> {{ translate.form.rateTable.warning[1]
+          }}</small>
+      </div>
+
+      <div class="col-12 form-group">
+        <label>{{ translate.form.bankAccount.label }}</label>
+
+        <fieldset [disabled]="settings.data?.code == 1000">
+          <select formControlName="bankAccount"
+            class="form-control {{ formControls.bankAccount.errors ? 'required' : '' }}">
+            <option *ngFor="let item of bankAccountsData" value="{{ item.code }}">{{ item.name }}</option>
+          </select>
+        </fieldset>
+
+        <ng-container *ngIf="settings.data?.code != 1000">
+          <small class="warning"><b>{{ translate.form.bankAccount.warning[0] }}</b> {{
+            translate.form.bankAccount.warning[1] }}</small>
+        </ng-container>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="container-settings">
+        <label>{{ translate.form.settings.label }}</label>
+
+        <div class="container-options">
+          <label>
+            <table class="table">
+              <tr>
+                <td><input type="checkbox" formControlName="uninvoiced" /></td>
+                <td><b>{{ translate.form.settings.option.uninvoiced[0] }}</b> {{
+                  translate.form.settings.option.uninvoiced[1] }}</td>
+              </tr>
+            </table>
+          </label>
+
+          <label>
+            <table class="table">
+              <tr *ngIf="settings.activeComponent == 'PaymentMethods/Update'">
+                <td><input type="checkbox" formControlName="disabled" /></td>
+                <td><b>{{ translate.form.settings.option.disabled[0] }}</b> {{
+                  translate.form.settings.option.disabled[1] }}</td>
+              </tr>
+            </table>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btnBlue"
+      [disabled]="((settings.methodCode == 4000 || settings.data?.code == '9000') ? (formPayment.valid && (formControls.fees && (formControls.fees.value).length == 0)) : formPayment.invalid)">{{
+      translate.form.button.confirm }}</button>
+
+  </form>
+
+</div>

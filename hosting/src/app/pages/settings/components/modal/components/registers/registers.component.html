@@ -1,0 +1,66 @@
+
+<div id="generalSettings">
+
+  <div class="container-view">
+    <div class="container-external">
+      <div class="container-info">
+        <div class="wrapper">
+          
+          <div class="container-restrict" *ngIf="settings.activeComponent == 'Registers/RestrictCustomerRegistration'">
+            <header>
+              <h6>{{ settings.translate.section.registers.option.restrictCustomerRegistration.label }}</h6>
+              <small>{{ settings.translate.section.registers.option.restrictCustomerRegistration.description }}</small>
+            </header>
+            
+            <form class="form" [formGroup]="form" (submit)="onSubmit()">
+                
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-document" type="checkbox" formControlName="document" /></td>
+                      <td>
+                        <label for="checkbox-document">
+                          <span class="description">{{ settings.translate.modal.section.registers.restrictCustomerRegistration.fields.document }}</span>
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input id="checkbox-birthDate" type="checkbox" formControlName="birthDate" /></td>
+                      <td>
+                        <label for="checkbox-birthDate">
+                          <span class="description">{{ settings.translate.modal.section.registers.restrictCustomerRegistration.fields.birthDate }}</span>
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input id="checkbox-phone" type="checkbox" formControlName="phone" /></td>
+                      <td>
+                        <label for="checkbox-phone">
+                          <span class="description">{{ settings.translate.modal.section.registers.restrictCustomerRegistration.fields.phone }}</span>
+                        </label>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><input id="checkbox-email" type="checkbox" formControlName="email" /></td>
+                      <td>
+                        <label for="checkbox-email">
+                          <span class="description">{{ settings.translate.modal.section.registers.restrictCustomerRegistration.fields.email }}</span>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.registers.button.submit }}</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  

@@ -1,0 +1,302 @@
+
+#sideLayer {
+  width: 100%;
+  height: 100%;
+  position: absolute !important;
+  top: 0;        
+  right: -100%;
+  box-shadow: -2px 0 5px #ddd;        
+  background-color: #fff;
+  border-radius: 0 0 5px 5px;
+  transition: all 0.5s ease-in-out;  
+  form {
+    label {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }
+    .manager-type,
+    .manager-category {
+      select {
+        width: calc(100% - 40px);
+        margin-right: 5px;
+        float: left;
+      }
+      button {
+        width: 35px !important;
+        height: 35px !important;
+        padding: 0;
+        margin: 0;
+        float: left;
+        position: relative;
+        top: 0;
+        background-color: lightcoral;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        icon {
+          font-size: 12px;
+        }
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }       
+    input, select {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;          
+    }
+    input[type=file] {
+      display: none;
+    }
+    input[disabled] {
+      opacity: 0.65;
+      background-color: #eee;
+    }   
+  }
+  header {
+    position: relative;          
+    margin: 5px 0 10px;
+    padding: 5px;
+    .btnClose {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      margin: 0 15px 0 5px;
+      border: none;
+      outline: none;
+      border-radius: 100%;
+      background-color: #fff;
+      color: rgb(102, 102, 255);
+      box-shadow: 0 2px 4px #ccc;
+      transition: all 0.5s ease-in-out;
+      display: inline-table;
+      icon {
+        font-size: 18px;
+      }                      
+    }
+    .title {            
+      display: inline-table;
+      font-weight: 600;
+      color: #555;
+    }
+  }
+  main {
+    overflow-y: auto !important;
+    max-height: 100%;      
+    max-height: calc(100% - 60px);
+    padding-bottom: 60px;  
+    .layer-manager {
+      table {
+        thead {
+          border-bottom: 1px solid cyan;
+        }
+        tfoot {
+          border-top: 1px solid cyan;
+          th {
+            color: #bbb !important;
+          }
+        }
+        thead, tfoot {
+          tr {      
+            font-size: 13px;
+            th {
+              color: #777;
+              font-weight: 500;
+            }
+          }   
+        }
+        tbody {
+          tr {
+            cursor: pointer;
+            td {
+              vertical-align: middle;
+              font-size: 14px;
+              .btnAction {
+                width: 35px;
+                height: 35px;
+                padding: 0;
+                border: none;
+                outline: none;          
+                margin: 2px;
+                background-color: #fff;
+                border-radius: 5px;
+                border: 1px solid #fff;
+                transition: all 0.5s ease-in-out;                      
+                display: inline-table;
+                cursor: pointer;
+                icon {
+                  font-size: 14px;
+                }        
+                &.btnEdit {
+                  color: goldenrod;
+                }
+                &.btnDelete {
+                  color: red;
+                }
+                &:hover {                 
+                  box-shadow: -1px 1px 4px #ddd !important;
+                  border: 1px solid rgb(224, 224, 224) !important;
+                }
+              }        
+            }
+            &:hover {
+              background-color: cyan !important;
+            }
+            &:nth-child(odd) {
+              background-color: lightcyan;
+            }
+          }
+        }
+        thead, tfoot, tbody {
+          th, td {
+            &:nth-child(1) {
+              width: 100px;
+            }                  
+            &:nth-child(3) {
+              text-align: center;
+              width: 110px;
+            }
+          }   
+        }
+      }
+    }   
+  }
+  .others {
+    .btnAdd {
+      width: 40px;
+      height: 40px;
+      position: absolute;
+      right: 25px;
+      bottom: 25px;
+      border-radius: 100%;
+      color: #fff;
+      background-color: green;      
+      border: none;
+      outline: none;
+      box-shadow: 0 2px 4px #bbb;
+      transition: all 0.5s ease-in-out;
+      icon {
+        font-size: 14px;
+      }
+      &:hover {
+        background-color: rgb(3, 146, 3);       
+      }
+    }
+    .container-toast {
+      min-height: 50px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px #ccc;
+      background-color: #fff;
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      overflow: hidden;
+      .container-update {
+        padding-top: 8px;
+        padding-right: 14px;
+        .container-fields {
+          width: calc(100% - 75px);
+          margin: 0;
+          float: left;
+        }
+        .container-buttons {
+          height: 100%;
+          float: left;
+          button {
+            width: 35px !important;
+            height: 35px !important;
+            padding: 0;
+            margin: 23px 2px 16px;
+            float: left;
+            position: relative;
+            top: 0;
+            background-color: #fff;
+            color: lightcoral;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px #ccc;
+            border: 1px solid #eee;
+            outline: none;
+            transition: all 0.3s ease;
+            icon {
+              font-size: 22px;
+              font-weight: 500;
+            }           
+            &:first-child {
+              color: goldenrod !important;
+              margin-left: 0;
+            }
+            &:last-child {
+              margin-right: 0;
+            }
+            &:disabled {
+              background-color: #e0e0e0;
+              opacity: 0.9;
+            }
+            &:hover {
+              background-color: #e0e0e0;
+            }          
+          }
+        }
+      }
+      .container-delete {
+        background-color: indianred;
+        .container-question {
+          width: calc(100% - 90px);
+          margin: 0;
+          display: inline-block;
+          padding: 10px 14px;
+          p {
+            margin-bottom: 0;
+            color: #dfdfdf;
+            font-size: 13px;
+          }
+          li {
+            margin-left: 10px;
+            list-style-type: disc;
+            font-size: 14px;
+            color: lightcyan;
+          }                    
+        }
+        .container-buttons {
+          height: 100%;
+          display: inline-block;
+          margin-right: 14px;
+          button {
+            width: 35px !important;
+            height: 35px !important;
+            padding: 0;
+            margin: 2px 2px 0;
+            float: left;            
+            background-color: #fff;
+            color: lightcoral;
+            border-radius: 5px;
+            border: 1px solid #eee;
+            outline: none;
+            transition: all 0.3s ease;
+            icon {
+              font-size: 22px;
+            }
+            &:first-child {
+              color: goldenrod !important;
+              margin-left: 0;
+            }
+            &:last-child {
+              margin-right: 0;
+            }
+            &:hover {
+              background-color: #e0e0e0;
+            }          
+          }
+        }
+      }
+    }    
+  }    
+  &.active {
+    right: 0 !important;
+  }
+}

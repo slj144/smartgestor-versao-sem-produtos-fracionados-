@@ -1,0 +1,16 @@
+
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+
+    <cashier-report (callback)="onComponentResponse($event)" [settings]="settings.settings" *ngIf="settings.activeComponent == 'Reports/Cashier'"></cashier-report>
+
+    <stock-report (callback)="onComponentResponse($event)" [settings]="settings.settings" *ngIf="settings.activeComponent == 'Reports/Stock'"></stock-report>
+
+    <service-orders-report (callback)="onComponentResponse($event)" [settings]="settings.settings" *ngIf="settings.activeComponent == 'Reports/ServiceOrders'"></service-orders-report>
+
+    <financial-report (callback)="onComponentResponse($event)" [settings]="settings.settings" *ngIf="settings.activeComponent == 'Reports/Financial'"></financial-report>
+
+    <several-report (callback)="onComponentResponse($event)" [settings]="settings.settings" *ngIf="settings.activeComponent == 'Reports/Several'"></several-report>
+
+  </div>
+</modal>

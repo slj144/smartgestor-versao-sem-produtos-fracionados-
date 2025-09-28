@@ -1,0 +1,593 @@
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.clearfix::before,
+.clearfix::after {
+  content: ' ';
+  display: block;
+  clear: both !important;
+  float: none !important;
+}
+
+.main-container {
+  padding: 0;
+  margin: 0;
+}
+
+.main-container .checkmark-container {
+  display: inline-block;
+  position: relative;
+  padding: 0 !important;
+}
+
+.main-container .checkmark-container input {
+  position: absolute;
+  z-index: -1;
+  opacity: 0;
+  margin: 0 !important;
+}
+
+.main-container .checkmark-container input+label {
+  position: relative;
+  cursor: pointer;
+  padding-left: 30px;
+  margin: 0 !important;
+}
+
+.main-container .checkmark-container input[type=checkbox]+label::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  left: 0;
+  border: solid 2px;
+  vertical-align: bottom;
+  margin: 0 !important;
+}
+
+.main-container .checkmark-container input[type=checkbox]:checked+label::after {
+  content: '';
+  top: 7px;
+  position: absolute;
+  left: 4px;
+  width: 4px;
+  height: 7px;
+  border-right: solid 3px #888888;
+  border-bottom: solid 3px #888888;
+  transform: rotate(45deg);
+  margin: 0 !important;
+}
+
+.main-container .checkmark-container label {
+  color: #888888;
+  margin: 0 !important;
+}
+
+.main-container .checkmark-container .label {
+  padding-left: 19px !important;
+  color: #888888 !important;
+  font-family: Arial, Helvetica, sans-serif !important;
+  font-size: 11px !important;
+  margin: 0 !important;
+  padding-top: 7px !important;
+}
+
+.main-container .checkmark-container.subcheckmark-container {
+  padding: 0 !important;
+}
+
+.main-container .container-checklist {
+  box-shadow: none;
+  border-radius: 8px;
+  padding: 10px 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.main-container .container-checklist .container {
+  padding: 0 !important;
+}
+
+.main-container .container-checklist label {
+  display: block;
+  color: #4c4c4c;
+  font-size: 14px !important;
+  font-weight: 500;
+}
+
+.main-container .container-checklist .column {
+  width: 20%;
+  float: left;
+  display: block;
+}
+
+.main-container .container-checklist .column ul {
+  padding: 0;
+  list-style: none !important;
+  overflow: hidden;
+}
+
+section.photos .photos-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+section.photos .photos-list img {
+  width: 100px;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+section.photos .label {
+  font: 600 12px "Arial";
+  margin-bottom: 4px;
+  display: block;
+}
+
+.main-container .container-checklist .column ul li {
+  color: gray !important;
+  display: block;
+  list-style-type: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 5 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  padding-bottom: 2px !important;
+}
+
+.main-container .container-checklist .column ul li:last-child {
+  margin-bottom: 0 !important;
+}
+
+.main-container .container-checklist .column ul .subcheckmark-ul {
+  padding-left: 10px !important;
+}
+
+.main-container .container-checklist .column ul .subcheckmark-ul li {
+  padding: 0;
+  min-height: auto !important;
+  height: auto !important;
+}
+
+.main-container .container-checklist .column ul .subcheckmark-ul li .checkmark-label {
+  font: 400 12px "Arial" !important;
+  position: relative !important;
+  padding: 0 !important;
+  height: auto !important;
+  min-height: 20px;
+  top: -4px;
+}
+
+.main-container .container-checklist .column ul .subcheckmark-ul li .checkmark-label .checkmark-label-wrapper {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 12px;
+}
+
+.main-container .container-customer,
+.main-container .container-products {
+  margin: 5px 0;
+  border-radius: 7px;
+  padding: 10px 15px;
+  box-shadow: none !important;
+}
+
+.main-container .container-customer h6,
+.main-container .container-products h6 {
+  color: #6666ff;
+  font-size: 15px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 12px;
+  position: relative;
+}
+
+.main-container .container-customer h6 icon,
+.main-container .container-products h6 icon {
+  font-size: 15px;
+  margin-right: 7px;
+}
+
+.main-container .container-customer h6 button,
+.main-container .container-products h6 button {
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  border-radius: 100%;
+  background-color: indianred;
+  box-shadow: 0 2px 5px #bbb;
+  border: none;
+  outline: none;
+  position: absolute;
+  right: 0;
+  transition: all 0.5s ease-in-out;
+}
+
+.main-container .container-customer h6 button icon,
+.main-container .container-products h6 button icon {
+  font-size: 16px;
+  margin: 1px 0 0;
+}
+
+.main-container .container-customer h6 button:hover,
+.main-container .container-products h6 button:hover {
+  opacity: 0.85;
+}
+
+.main-container .container-customer {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.main-container .container-customer table {
+  margin: 0;
+}
+
+.main-container .container-customer table tr {
+  text-align: left;
+}
+
+.main-container .container-customer table tr th,
+.main-container .container-customer table tr td {
+  vertical-align: middle;
+  padding: 0px 10px;
+  font-size: 13px;
+}
+
+.main-container .container-customer table tr th {
+  color: #333;
+  width: 120px !important;
+  max-width: 150px !important;
+  font-weight: 500;
+}
+
+.main-container .container-customer table tr td {
+  color: #666;
+}
+
+.main-container .container-customer tr {
+  padding: 0;
+  margin: 0;
+}
+
+.main-container .container-customer tr .bottom-place {
+  display: block;
+  width: 100% !important;
+  height: 25px !important;
+  margin-bottom: 3px;
+  border-top: 1px red;
+  border-left: 1px red;
+  border-right: 1px red;
+  border-bottom: 1px solid lightgray;
+}
+
+.main-container .container-customer tr td {
+  position: relative;
+}
+
+.main-container .container-customer .tr td,
+.main-container .container-customer .tr th {
+  height: 35px;
+  padding: 0 10px;
+}
+
+.main-container .container-customer .tr th {
+  width: 100px !important;
+}
+
+.main-container .container-customer .tr td {
+  width: 33.333333333333% !important;
+  margin-right: 5px;
+  position: relative;
+}
+
+.main-container .container-customer .note-header {
+  padding: 0 0 0 0 !important;
+  margin-top: 0 !important;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+.main-container .container-customer .note-header .logo-container .logo {
+  margin: 0 !important;
+  text-align: center;
+  font: 600 2.3em "Arial";
+  color: #515151;
+  padding: 0 !important;
+}
+
+.main-container .container-customer .note-header .logo-container .logo img {
+  height: 60px;
+  max-width: 250px;
+  margin: 0 auto;
+  display: block;
+}
+
+.main-container .container-customer .note-header .logo-container .info {
+  margin-top: 4px;
+}
+
+.main-container .container-customer .note-header .logo-container .info span {
+  font: 400 0.9em "Arial";
+  color: #555555;
+  display: block;
+  width: 100%;
+}
+
+.main-container .container-customer .note-header .emission {
+  position: absolute;
+  left: 10px;
+  top: 60px;
+  color: #555555;
+  font: 300 11px "Arial";
+}
+
+.main-container .container-customer .note-header .emission small {
+  color: #2e2e2e;
+  font-size: 13px;
+  display: inline;
+}
+
+.main-container .container-customer .note-header .phone {
+  position: absolute;
+  top: 5px;
+  color: #250e0e;
+  right: 0;
+}
+
+.main-container .container-customer .note-header .whatsapp {
+  position: absolute;
+  color: #555555;
+  top: 25px;
+  right: 0;
+}
+
+.main-container .container-customer .note-header .address {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.main-container .container-customer .note-header .address span {
+  display: block;
+}
+
+.main-container .container-customer .note-header table {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.main-container .container-customer .note-header table td {
+  text-align: center;
+  padding: 0 5px !important;
+}
+
+.main-container .container-customer .note-header table td.emission-date {
+  font-size: 12px;
+}
+
+.main-container .container-customer .note-header table tbody td:first-child {
+  width: 35%;
+}
+
+.main-container .container-customer .note-header table.table-addr td {
+  text-align: right;
+  padding: 0 5px !important;
+}
+
+.main-container .container-fields label {
+  font-size: 12px;
+  margin: 0 0 5px 0;
+  font: 400 1.1em "Arial";
+  color: #575757;
+  display: block;
+}
+
+.main-container .container-fields label.mt {
+  margin-top: 15px !important;
+}
+
+.main-container .container-fields input,
+.main-container .container-fields textarea,
+.main-container .container-fields .textarea,
+.main-container .container-fields .input {
+  font-size: 14px;
+  border-left: 4px solid #6666ff;
+  border-top: 1px solid lightgray;
+  border-bottom: 1px solid lightgray;
+  border-right: 1px solid lightgray;
+  padding: 5px;
+  box-shadow: none;
+  color: #868686;
+}
+
+.main-container .container-fields input:disabled,
+.main-container .container-fields textarea:disabled,
+.main-container .container-fields .textarea:disabled,
+.main-container .container-fields .input:disabled {
+  background: white;
+  opacity: 1;
+}
+
+.main-container .container-fields textarea,
+.main-container .container-fields .textarea {
+  display: block;
+  resize: none;
+  height: auto;
+  border: 1px solid transparent !important;
+  padding: 0 !important;
+}
+
+.main-container .container-fields button {
+  margin: 10px auto;
+  display: block;
+  padding: 5px 40px;
+  border-radius: 8px;
+  font-size: 14px;
+  background-color: #6666ff;
+  color: #fff;
+}
+
+.main-container .container-fields button.btnBlue {
+  background-color: #6666ff;
+}
+
+.main-container .container-fields button.btnRed {
+  background-color: indianred;
+}
+
+.main-container .container-fields .wrapper-fields {
+  margin: 0;
+  border-radius: 7px;
+  padding: 0 10px;
+}
+
+.main-container .container-fields .wrapper-fields .description-title {
+  margin-top: 0 !important;
+}
+
+.main-container .container-fields .container-balance {
+  margin: 0;
+  border-radius: 7px;
+  padding: 10px !important;
+  font-size: 15px;
+  position: relative;
+  width: auto;
+  overflow: hidden;
+}
+
+.main-container .container-fields .container-balance table {
+  width: 100%;
+  margin: 0;
+  display: table !important;
+}
+
+.main-container .container-fields .container-balance table tr th {
+  font-weight: 600;
+  margin: 0;
+  text-align: left;
+  color: #4b4b4b;
+}
+
+.main-container .container-fields .container-balance table tr td {
+  position: relative;
+  margin: 0;
+}
+
+.main-container .container-fields .container-balance table tr td span {
+  font-size: 14px;
+}
+
+.main-container .container-fields .container-balance table tr td span.info,
+.main-container .container-fields .container-balance table tr td span.total {
+  display: block;
+  width: 100%;
+}
+
+.main-container .container-fields .container-balance table tr td span.info {
+  padding-bottom: 2px;
+}
+
+.main-container .container-fields .container-balance table tr td span.info::brefore,
+.main-container .container-fields .container-balance table tr td span.info::after {
+  content: " ";
+  clear: both;
+}
+
+.main-container .container-fields .container-balance table tr td span.info .label {
+  font-weight: 500;
+  color: #333;
+  text-align: left;
+}
+
+.main-container .container-fields .container-balance table tr td span.info .value {
+  color: coral;
+  float: right;
+}
+
+.main-container .container-fields .container-balance table tr td span.total {
+  color: goldenrod;
+  text-align: right;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.main-container .container-fields .container-balance table tr:first-child {
+  border-bottom: 1px solid #ddd;
+}
+
+.main-container .container-fields .balance-total {
+  margin: 20px 0 !important;
+  display: block;
+}
+
+.main-container .container-fields .balance-total p .box {
+  float: right;
+  display: block;
+  color: #454343;
+}
+
+.main-container .container-fields .balance-total p .box.ajustPrice {
+  margin-top: -50px !important;
+}
+
+.main-container .container-fields .balance-total p .box .nprice {
+  width: 150px;
+  text-align: center;
+  display: inline-block;
+  color: #454343;
+  border-bottom: 1px solid lightgray;
+}
+
+.main-container .container-fields .container-readme {
+  margin: 65px 0 0 0;
+  font: 0.95em "Arial";
+  color: #464646;
+  display: block !important;
+}
+
+.main-container .container-fields .signature {
+  border-top: 1px solid lightgray;
+  margin: 50px auto 10px auto;
+  font-size: 14px;
+  width: 60%;
+}
+
+.main-container .container-fields .signature.ajustName {
+  margin-top: 70px !important;
+}
+
+.main-container .container-fields .signature.hasTerm {
+  margin-top: 40px !important;
+}
+
+.main-container .container-fields .signature span {
+  display: block;
+  margin-top: 10px;
+  color: #454343;
+  width: 100%;
+  text-align: center;
+}
+
+section.terms.page-break {
+  page-break-before: always;
+}
+
+section.terms .content {
+  white-space: pre-line;
+}
+
+@media print {
+
+  .main-container .no-print,
+  .main-container .no-print-mq {
+    display: none !important;
+  }
+}
+
+/*# sourceMappingURL=service-warranty-receipt.css.map */

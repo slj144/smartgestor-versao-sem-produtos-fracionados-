@@ -1,0 +1,559 @@
+
+<div id="sideLayer">
+  <div class="header">
+    <button class="btnClose" (click)="onClose()"><icon name="arrow-back-outline" pack="eva"></icon></button>
+
+    <div class="container-titles">
+      <span class='title'>{{ settings.title }}</span>
+      <span class="subtitle">{{ translate._general.layer.titleBar.generated[0] + ' ' + (settings.date | date:'dd/MM/yyyy') + ' ' + translate._general.layer.titleBar.generated[1] + ' ' + (settings.date | date:'HH:mm') }}</span>
+    </div>
+
+   
+    <div class="container-buttons" *ngIf="!!settings.download">
+      <div class="dropdown">
+        <button class="btnOthers" title="Outras Opções" data-bs-toggle="dropdown">
+          <icon name="more-vertical-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li  (click)="onExportXLS()"><span class="dropdown-item"><icon name="code-outline" pack="eva"></icon>  {{ translate._general.layer.titleBar.button.exportXLS }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="container-resume" *ngIf="settings.id == 'resume'">
+      <div *ngIf="settings.type == 'default'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.external.fields['servicesExternalReportSynthetic'].date.internal }}</th>
+                      <th>{{ translate.external.fields['servicesExternalReportSynthetic'].quantity.internal }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].servicesCosts.internal }}</th>
+                      <th *ngIf="onCheckField('productsCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].productsCosts.internal }}</th>
+                      <th *ngIf="onCheckField('totalCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].totalCosts.internal }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')">{{ translate.external.fields['servicesExternalReportSynthetic'].partialRevenue.internal }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')">{{ translate.external.fields['servicesExternalReportSynthetic'].finalRevenue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td>{{ item.balance.quantity }}</td>
+                      <td *ngIf="onCheckField('servicesCosts')" class="negative">{{ item.balance.servicesCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('productsCosts')" class="negative">{{ item.balance.productsCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('totalCosts')" class="negative">{{ item.balance.totalCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('partialRevenue')" class="positive">{{ item.balance.partialRevenue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('finalRevenue')" class="positive">{{ item.balance.finalRevenue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>           
+                  </tbody>            
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate._general.layer.label.total }}</th>
+                      <th>{{ settings.data.balance.quantity }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')" class="negative">{{ settings.data.balance.servicesCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('productsCosts')" class="negative">{{ settings.data.balance.productsCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('totalCosts')" class="negative">{{ settings.data.balance.totalCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')" class="positive">{{ settings.data.balance.partialRevenue | currency:'' }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')" class="positive">{{ settings.data.balance.finalRevenue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-services-intenal" *ngIf="settings.id == 'internal'">
+      <div *ngIf="settings.type == 'servicesInternalReportSynthetic'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.internal.fields['servicesInternalReportSynthetic'].date.internal }}</th>
+                      <th>{{ translate.internal.fields['servicesInternalReportSynthetic'].quantity.internal }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')">{{ translate.internal.fields['servicesInternalReportSynthetic'].servicesCosts.internal }}</th>
+                      <th *ngIf="onCheckField('productsCosts')">{{ translate.internal.fields['servicesInternalReportSynthetic'].productsCosts.internal }}</th>
+                      <th *ngIf="onCheckField('totalCosts')">{{ translate.internal.fields['servicesInternalReportSynthetic'].totalCosts.internal }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')">{{ translate.internal.fields['servicesInternalReportSynthetic'].partialRevenue.internal }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')">{{ translate.internal.fields['servicesInternalReportSynthetic'].finalRevenue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td *ngIf="onCheckField('servicesCosts')" class="negative">{{ item.servicesCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('productsCosts')" class="negative">{{ item.productsCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('totalCosts')" class="negative">{{ item.totalCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('partialRevenue')" class="positive">{{ item.partialRevenue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('finalRevenue')" class="positive">{{ item.finalRevenue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>           
+                  </tbody>            
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate._general.layer.label.total }}</th>
+                      <th>{{ settings.data.balance.quantity }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')" class="negative">{{ settings.data.balance.servicesCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('productsCosts')" class="negative">{{ settings.data.balance.productsCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('totalCosts')" class="negative">{{ settings.data.balance.totalCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')" class="positive">{{ settings.data.balance.partialRevenue | currency:'' }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')" class="positive">{{ settings.data.balance.finalRevenue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'servicesInternalReportAnalytical'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th rowspan="2" class="col-medium">{{ translate.internal.fields['servicesInternalReportAnalytical'].date.internal }}</th>
+                      <th rowspan="2" class="col-small">{{ translate.internal.fields['servicesInternalReportAnalytical'].code.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('collaborator')">{{ translate.internal.fields['servicesInternalReportAnalytical'].collaborator.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('customer')">{{ translate.internal.fields['servicesInternalReportAnalytical'].customer.internal }}</th>
+                      <th [attr.colspan]="onCheckColspan('services')" class="reducePadding" *ngIf="onCheckField('services')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.label }}</th>
+                      <th [attr.colspan]="onCheckColspan('products')" class="reducePadding" *ngIf="onCheckField('products')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.label }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].discount.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].fee.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('servicesCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].servicesCosts.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('productsCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].productsCosts.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('totalCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].totalCosts.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('partialRevenue')">{{ translate.internal.fields['servicesInternalReportAnalytical'].partialRevenue.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('finalRevenue')">{{ translate.internal.fields['servicesInternalReportAnalytical'].finalRevenue.internal }}</th>
+                    </tr>
+                    <tr class="subLine" *ngIf="onCheckField('services') || onCheckField('products')">    
+                      <!-- Services -->
+                      <th class="col-small" *ngIf="onCheckField('services/code')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.code }}</th>
+                      <th class="col-large" *ngIf="onCheckField('services/name')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.name }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/cost')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.cost }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/price')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.price }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.discount }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.fee }}</th>
+                      <!-- Products -->
+                      <th class="col-small" *ngIf="onCheckField('products/code')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.code }}</th>
+                      <th class="col-large" *ngIf="onCheckField('products/name')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.name }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/quantity')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.quantity }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/cost')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.cost }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/price')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.price }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.discount }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.fee }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('collaborator')" class="text-left">{{ item.operator.name }}</td>
+                      <td *ngIf="onCheckField('customer')" class="text-left">{{ item.customer.name }}</td>                      
+                      <td [attr.colspan]="onCheckColspan('services')" class="resetPadding" *ngIf="onCheckField('services')">
+                        <table>
+                          <tr *ngFor="let item of item.services">
+                            <td class="col-small" *ngIf="onCheckField('services/code')">{{ item.code }}</td>
+                            <td class="col-large text-left" *ngIf="onCheckField('services/name')">{{ item.name }}</td>                      
+                            <td class="col-small negative" *ngIf="onCheckField('services/cost')">{{ (item.costPrice || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('services/price')">{{ (item.customPrice || 0) | currency:'' }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('services/discount')">{{ (item.discount || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('services/fee')">{{ (item.fee || 0) | currency:'' }}</td>
+                          </tr>
+                          <tr *ngIf="!item.services || (item.services?.length == 0)">
+                            <td class="col-small" *ngIf="onCheckField('services/code')"></td>
+                            <td class="col-large" *ngIf="onCheckField('services/name')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/cost')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/price')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/discount')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/fee')"></td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td [attr.colspan]="onCheckColspan('products')" class="resetPadding" *ngIf="onCheckField('products')">
+                        <table>
+                          <tr *ngFor="let item of item.products">
+                            <td class="col-small" *ngIf="onCheckField('products/code')">{{ item.code }}</td>
+                            <td class="col-large text-left" *ngIf="onCheckField('products/name')">{{ item.name }}</td>
+                            <td class="col-small" *ngIf="onCheckField('products/quantity')">{{ item.quantity }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('products/cost')">{{ (item.costPrice || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('products/price')">{{ (item.salePrice || 0) | currency:'' }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('products/discount')">{{ (item.discount || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('products/fee')">{{ (item.fee || 0) | currency:'' }}</td>                 
+                          </tr>
+                          <tr *ngIf="!item.products || item.products?.length == 0">
+                            <td class="col-small" *ngIf="onCheckField('products/code')"></td>
+                            <td class="col-large" *ngIf="onCheckField('products/name')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/quantity')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/cost')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/price')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/discount')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/fee')"></td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="negative" *ngIf="onCheckField('discount')">{{ (item.balance?.subtotal?.discount || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('fee')">{{ (item.balance?.fee || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('servicesCosts')">{{ (item.balance?.servicesCosts || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('productsCosts')">{{ (item.balance?.productsCosts || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('totalCosts')">{{ (item.balance?.totalCosts || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('partialRevenue')">{{ (item.balance?.partialRevenue || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('finalRevenue')">{{ (item.balance?.finalRevenue || 0) | currency:'' }}</td>
+                    </tr>  
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td [attr.colspan]="onCheckColspan()" class="resetPadding">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>   
+                    </tr>
+                  </tbody>            
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr class="internal-body">
+                      <th>{{ translate._general.layer.label.total }}</th>
+                      <th></th>
+                      <th *ngIf="onCheckField('collaborator')"></th>
+                      <th *ngIf="onCheckField('customer')"></th>
+                      <th [attr.colspan]="onCheckColspan('services')" *ngIf="onCheckField('services')"></th>
+                      <th [attr.colspan]="onCheckColspan('products')" *ngIf="onCheckField('products')"></th>
+                      <th class="negative" *ngIf="onCheckField('discount')">{{ (settings.data.balance.discount || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('fee')">{{ (settings.data.balance.fee || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('servicesCosts')">{{ (settings.data.balance.servicesCosts || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('productsCosts')">{{ (settings.data.balance.productsCosts || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('totalCosts')">{{ (settings.data.balance.totalCosts || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('partialRevenue')">{{ (settings.data.balance.partialRevenue || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('finalRevenue')">{{ (settings.data.balance.finalRevenue || 0) | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-services-extenal " *ngIf="settings.id == 'external'">
+      <div *ngIf="settings.type == 'servicesExternalReportSynthetic'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.external.fields['servicesExternalReportSynthetic'].date.internal }}</th>
+                      <th>{{ translate.external.fields['servicesExternalReportSynthetic'].quantity.internal }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].servicesCosts.internal }}</th>
+                      <th *ngIf="onCheckField('productsCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].productsCosts.internal }}</th>
+                      <th *ngIf="onCheckField('totalCosts')">{{ translate.external.fields['servicesExternalReportSynthetic'].totalCosts.internal }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')">{{ translate.external.fields['servicesExternalReportSynthetic'].partialRevenue.internal }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')">{{ translate.external.fields['servicesExternalReportSynthetic'].finalRevenue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td *ngIf="onCheckField('servicesCosts')" class="negative">{{ item.servicesCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('productsCosts')" class="negative">{{ item.productsCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('totalCosts')" class="negative">{{ item.totalCosts | currency:'' }}</td>
+                      <td *ngIf="onCheckField('partialRevenue')" class="positive">{{ item.partialRevenue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('finalRevenue')" class="positive">{{ item.finalRevenue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>           
+                  </tbody>            
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate._general.layer.label.total }}</th>
+                      <th>{{ settings.data.balance.quantity }}</th>
+                      <th *ngIf="onCheckField('servicesCosts')" class="negative">{{ settings.data.balance.servicesCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('productsCosts')" class="negative">{{ settings.data.balance.productsCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('totalCosts')" class="negative">{{ settings.data.balance.totalCosts | currency:'' }}</th>
+                      <th *ngIf="onCheckField('partialRevenue')" class="positive">{{ settings.data.balance.partialRevenue | currency:'' }}</th>
+                      <th *ngIf="onCheckField('finalRevenue')" class="positive">{{ settings.data.balance.finalRevenue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'servicesExternalReportAnalytical'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">   
+                    <tr>
+                      <th rowspan="2" class="col-medium">{{ translate.internal.fields['servicesInternalReportAnalytical'].date.internal }}</th>
+                      <th rowspan="2" class="col-small">{{ translate.internal.fields['servicesInternalReportAnalytical'].code.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('collaborator')">{{ translate.internal.fields['servicesInternalReportAnalytical'].collaborator.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('customer')">{{ translate.internal.fields['servicesInternalReportAnalytical'].customer.internal }}</th>
+                      <th [attr.colspan]="onCheckColspan('services')" class="reducePadding" *ngIf="onCheckField('services')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.label }}</th>
+                      <th [attr.colspan]="onCheckColspan('products')" class="reducePadding" *ngIf="onCheckField('products')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.label }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].discount.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].fee.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('servicesCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].servicesCosts.internal }}</th>
+                      <th rowspan="2" class="col-large" *ngIf="onCheckField('productsCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].productsCosts.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('totalCosts')">{{ translate.internal.fields['servicesInternalReportAnalytical'].totalCosts.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('partialRevenue')">{{ translate.internal.fields['servicesInternalReportAnalytical'].partialRevenue.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('finalRevenue')">{{ translate.internal.fields['servicesInternalReportAnalytical'].finalRevenue.internal }}</th>
+                    </tr>
+                    <tr class="subLine" *ngIf="onCheckField('services') || onCheckField('products')">    
+                      <!-- Services -->
+                      <th class="col-small" *ngIf="onCheckField('services/code')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.code }}</th>
+                      <th class="col-large" *ngIf="onCheckField('services/name')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.name }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/cost')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.cost }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/price')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.price }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.discount }}</th>
+                      <th class="col-small" *ngIf="onCheckField('services/fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].services.internal.sub.fee }}</th>
+                      <!-- Products -->
+                      <th class="col-small" *ngIf="onCheckField('products/code')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.code }}</th>
+                      <th class="col-large" *ngIf="onCheckField('products/name')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.name }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/quantity')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.quantity }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/cost')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.cost }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/price')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.price }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/discount')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.discount }}</th>
+                      <th class="col-small" *ngIf="onCheckField('products/fee')">{{ translate.internal.fields['servicesInternalReportAnalytical'].products.internal.sub.fee }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('collaborator')" class="text-left">{{ item.operator.name }}</td>
+                      <td *ngIf="onCheckField('customer')" class="text-left">{{ item.customer.name }}</td>
+                      <td [attr.colspan]="onCheckColspan('services')" class="resetPadding" *ngIf="onCheckField('services')">
+                        <table>
+                          <tr *ngFor="let item of item.services">
+                            <td class="col-small" *ngIf="onCheckField('services/code')">{{ item.code }}</td>
+                            <td class="col-large text-left" *ngIf="onCheckField('services/name')">{{ item.name }}</td>                      
+                            <td class="col-small negative" *ngIf="onCheckField('services/cost')">{{ (item.costPrice || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('services/price')">{{ (item.customPrice || 0) | currency:'' }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('services/discount')">{{ (item.discount || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('services/fee')">{{ (item.fee || 0) | currency:'' }}</td>
+                          </tr>
+                          <tr *ngIf="!item.services || (item.services?.length == 0)">
+                            <td class="col-small" *ngIf="onCheckField('services/code')"></td>
+                            <td class="col-large" *ngIf="onCheckField('services/name')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/cost')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/price')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/discount')"></td>
+                            <td class="col-small" *ngIf="onCheckField('services/fee')"></td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td [attr.colspan]="onCheckColspan('products')" class="resetPadding" *ngIf="onCheckField('products')">
+                        <table>
+                          <tr *ngFor="let item of item.products">
+                            <td class="col-small" *ngIf="onCheckField('products/code')">{{ item.code }}</td>
+                            <td class="col-large text-left" *ngIf="onCheckField('products/name')">{{ item.name }}</td>
+                            <td class="col-small" *ngIf="onCheckField('products/quantity')">{{ item.quantity }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('products/cost')">{{ (item.costPrice || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('products/price')">{{ (item.salePrice || 0) | currency:'' }}</td>
+                            <td class="col-small negative" *ngIf="onCheckField('products/discount')">{{ (item.discount || 0) | currency:'' }}</td>
+                            <td class="col-small positive" *ngIf="onCheckField('products/fee')">{{ (item.fee || 0) | currency:'' }}</td>                 
+                          </tr>
+                          <tr *ngIf="!item.products || item.products?.length == 0">
+                            <td class="col-small" *ngIf="onCheckField('products/code')"></td>
+                            <td class="col-large" *ngIf="onCheckField('products/name')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/quantity')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/cost')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/price')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/discount')"></td>
+                            <td class="col-small" *ngIf="onCheckField('products/fee')"></td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="negative" *ngIf="onCheckField('discount')">{{ (item.balance?.subtotal?.discount || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('fee')">{{ (item.balance?.fee || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('servicesCosts')">{{ (item.balance?.servicesCosts || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('productsCosts')">{{ (item.balance?.productsCosts || 0) | currency:'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('totalCosts')">{{ (item.balance?.totalCosts || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('partialRevenue')">{{ (item.balance?.partialRevenue || 0) | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('finalRevenue')">{{ (item.balance?.finalRevenue || 0) | currency:'' }}</td>
+                    </tr>  
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td [attr.colspan]="onCheckColspan()" class="resetPadding">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>   
+                    </tr>
+                  </tbody>            
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr class="internal-body">
+                      <th>{{ translate._general.layer.label.total }}</th>
+                      <th></th>
+                      <th *ngIf="onCheckField('collaborator')"></th>
+                      <th *ngIf="onCheckField('customer')"></th>
+                      <th [attr.colspan]="onCheckColspan('services')" *ngIf="onCheckField('services')"></th>
+                      <th [attr.colspan]="onCheckColspan('products')" *ngIf="onCheckField('products')"></th>
+                      <th class="negative" *ngIf="onCheckField('discount')">{{ (settings.data.balance.discount || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('fee')">{{ (settings.data.balance.fee || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('servicesCosts')">{{ (settings.data.balance.servicesCosts || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('productsCosts')">{{ (settings.data.balance.productsCosts || 0) | currency:'' }}</th>
+                      <th class="negative" *ngIf="onCheckField('totalCosts')">{{ (settings.data.balance.totalCosts || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('partialRevenue')">{{ (settings.data.balance.partialRevenue || 0) | currency:'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('finalRevenue')">{{ (settings.data.balance.finalRevenue || 0) | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-curveABC" *ngIf="settings.id == 'curveABC'">
+      <div class="container-default" *ngIf="settings.type == 'default'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead>
+                    <tr *ngIf="settings.data?.length > 0">
+                      <th class="col-small"></th>
+                      <th class="col-small">{{ translate.curveABC.fields['default'].code.internal }}</th>
+                      <th class="col-large">{{ translate.curveABC.fields['default'].name.internal }}</th>
+                      <th class="col-medium">{{ translate.curveABC.fields['default'].quantity.internal }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('averageCost')">{{ translate.curveABC.fields['default'].averageCost.internal }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('averagePrice')">{{ translate.curveABC.fields['default'].averagePrice.internal }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('revenue')">{{ translate.curveABC.fields['default'].revenue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data">
+                      <td class="{{ 'curve-' + item.classification }}">{{ item.classification }}</td>
+                      <td>{{ item.code }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td class="negative" *ngIf="onCheckField('averageCost')">{{ item.averageCost | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('averagePrice')">{{ item.averagePrice | currency:'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('revenue')">{{ item.contributionMargin | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

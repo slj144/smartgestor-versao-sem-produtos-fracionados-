@@ -1,0 +1,33 @@
+<!-- Arquivo: crm.component.html -->
+<!-- Localização: src/app/pages/crm/crm.component.html -->
+<!-- Componente: Template do CRM com menu filtrado por permissões -->
+
+<div class="crm-container">
+    <!-- Header do CRM -->
+    <div class="crm-header">
+        <h1>
+            <icon name="rocket-outline" pack="eva"></icon>
+            {{ translate.header.title }}
+        </h1>
+        <p class="subtitle">{{ translate.header.subtitle }}</p>
+    </div>
+
+    <!-- Menu de navegação (apenas itens permitidos) -->
+    <div class="crm-nav" *ngIf="visibleMenu.length > 0">
+        <button *ngFor="let item of visibleMenu" class="nav-item" [class.active]="item.active" (click)="navigate(item)">
+            <icon [name]="item.icon" pack="eva"></icon>
+            <span>{{ item.title }}</span>
+        </button>
+    </div>
+
+    <!-- Mensagem se não tem permissões -->
+    <div class="no-permissions" *ngIf="visibleMenu.length === 0">
+        <icon name="alert-circle-outline" pack="eva"></icon>
+        <p>{{ translate.header.noPermission }}</p>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="crm-content" *ngIf="visibleMenu.length > 0">
+        <router-outlet></router-outlet>
+    </div>
+</div>

@@ -1,0 +1,345 @@
+
+#customers-selector {
+  padding: 10px 10px 70px;
+  header {
+    height: 32px;
+    position: relative;
+    background-color: #fff;
+    margin-bottom: 15px;
+    .container-search {
+      height: 100%;
+      $color: #bbb;    
+      .search-bar {
+        width: 100%;
+        max-width: 100%;
+        height: 40px;
+        border: 1px solid #eee;
+        border-bottom: 1px solid #ccc;
+        background-color: #fff;
+        box-shadow: 0 2px 3px #ddd;
+        overflow: hidden;
+        position: absolute;
+        border-radius: 5px;
+        margin: 0 auto;
+        input {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          padding: 10px 75px 10px 10px;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: #444;
+          font-size: 14px;
+          vertical-align: middle;
+          z-index: 0;
+          &::placeholder {
+            color: #999;
+          }
+        }
+        button {
+          width: 40px;
+          height: 40px;      
+          border: none;
+          outline: none;
+          border-radius: 0 5px 5px 0;
+          color: $color;
+          background-color: #fff;
+          box-shadow: none;
+          position: absolute;
+          top: 0;
+          margin: 0;        
+          transition: all 0.3s ease-in-out;
+          z-index: 2;
+          cursor: pointer;
+          icon {
+            position: relative;
+            top: -1px;
+            font-size: 17px;
+          }
+          &.btnReset {
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            color: #999;
+            background-color: #eee;
+            top: 50%;
+            right: 45px;
+            transform: translateY(-50%);
+            padding: 0;
+            icon {
+              font-size: 14px;
+            }
+          }
+          &.btnSearch {
+            right: 0;
+            color: #fff;
+            background-color: #bbb;
+            border-left: 1px solid rgb(228, 228, 228);
+            &:hover {
+              color: #fff !important;
+              opacity: 0.8;
+            }
+          }
+          &:hover {
+            color: #aaa;
+          }
+        }
+      }
+    }
+  }
+  main {
+    text-align: center;
+    .container-content {
+      padding-top: 5px;
+      .table-responsive {
+        table {                 
+          tbody {
+            tr {
+              cursor: pointer;
+              td {
+                font-size: 14px;
+                vertical-align: middle;
+                padding: 10px 5px;
+                p {
+                  margin: 0;
+                  font-size: 14px;
+                  line-height: 13px;
+                  text-align: left;
+                  span {
+                    &.label {
+                      color: #666;
+                      font-size: 11px;
+                      font-weight: 600;
+                    }
+                    &.value {
+                      color: #888;
+                      font-size: 12px;
+                      margin-left: 4px;
+                    }
+                  }
+                }
+                .btnCheck {
+                  width: 25px;
+                  height: 25px;
+                  padding: 0;
+                  border: 1px solid #ccc;
+                  outline: none;          
+                  margin: 2px;
+                  color: #ccc;
+                  background-color: #fff;
+                  border-radius: 100%;                                      
+                  transition: all 0.3s ease-in-out;
+                  display: inline-table;
+                  cursor: pointer;
+                  icon {
+                    font-size: 16px;
+                  }    
+                  &.active {
+                    color: green;
+                    border: 1px solid green;
+                  }                                    
+                  &:hover {
+                    color: rgba(128, 128, 128, 0.75);
+                    border: 1px solid rgba(128, 128, 128, 0.75);
+                  }                    
+                }
+                .btnAction {
+                  width: 30px;
+                  height: 30px;
+                  padding: 0;
+                  border: none;
+                  outline: none;          
+                  margin: 2px;
+                  background-color: #fff;
+                  border-radius: 5px;
+                  border: 1px solid #fff;
+                  transition: all 0.5s ease-in-out;                      
+                  display: inline-table;
+                  cursor: pointer;
+                  icon {
+                    font-size: 12px;
+                  }        
+                  &.btnEdit {
+                    color: goldenrod;
+                  }
+                  &.btnDelete {
+                    color: red;
+                  }
+                  &:last-child {
+                    margin-right: none;
+                  }
+                  &:hover {                 
+                    box-shadow: -1px 1px 4px #ddd !important;
+                    border: 1px solid rgb(224, 224, 224) !important;
+                  }
+                }
+                &:nth-child(1) {
+                  width: 50px;
+                }
+                &:nth-child(3) {
+                  width: 100px;
+                } 
+                &:nth-child(1),
+                &:nth-child(3) {
+                  text-align: center;
+                }
+              }                
+              &:hover {
+                background-color: cyan !important;
+              }                
+              &:nth-child(odd) {
+                background-color: lightcyan;
+              }
+            }
+          }
+        }
+      }                  
+    }
+    .container-placeholder {
+      width: 100%;
+      height: calc(100% - 53px);
+      padding: 0;
+      background-color: #fff;
+      position: absolute;
+      top: 53px;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: table;
+      z-index: 5;
+      overflow-y: auto !important;
+      .wrapper {
+        display: table-cell;
+        vertical-align: middle;
+      }
+    }
+    .container-toast {
+      .toast-register {
+        form {
+          label {
+            font-size: 12px;
+            margin-bottom: 1px;
+            text-align: left;
+          }
+          fieldset {
+            margin: 0;
+            padding: 0;
+            background-color: rgba(255, 255, 255, 0.6);
+            &:disabled {
+              opacity: 0.65;
+              background-color: #eee;
+            }
+          }       
+          input {
+            width: 100%;
+            margin: 0;
+            font-size: 13px;
+            box-shadow: none;          
+          }
+          input[disabled] {
+            opacity: 0.65;
+            background-color: #eee;
+          }
+          .container-fields {
+            width: 100%;
+            margin: 0;
+          } 
+          .form-group {
+            margin: 0;
+          }
+        }               
+      }
+      .toast-delete {
+        padding: 5px 15px 0;
+        h5 {
+          padding: 0;
+          color: rgb(53, 45, 45);
+          font-size: 14px;
+          font-weight: 600;
+          margin: 0;
+        }
+        .info {
+          padding-left: 20px;
+          padding-bottom: 10px;
+          border-bottom: 1px solid #ddd;
+          p {
+            margin: 0;
+            line-height: 13px;
+            span {
+              &.label {                    
+                color: #666;
+                font-size: 11px;
+                font-weight: 600;
+              }
+              &.value {                    
+                color: #888;
+                font-size: 12px;   
+                margin-left: 4px;                 
+              }
+            }
+          }
+        }
+      }
+      .toast-register,
+      .toast-delete {      
+        .container-buttons {
+          width: 100%;
+          height: 30px;
+          padding: 10px 10px;
+          text-align: right;
+          display: table;
+          button {
+            height: 30px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            display: inline-table;
+            transition: all 0.3s ease;
+            &.btnCancel {
+              color: rgba(234, 20, 20, 0.8) !important;
+              background-color: #fff !important;
+              font-size: 12px;
+              margin-right: 5px;
+            }
+            &.btnConfirm {
+              color: #fff !important;
+              background-color: rgb(100, 100, 234) !important;
+              font-size: 14px;
+            }
+            &:disabled {
+              opacity: 0.8;
+            }                 
+          }
+        }
+      }
+    }
+    .container-buttons {
+      .btnRegister {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border: none;
+        outline: none;
+        background-color: rgb(208, 141, 17);
+        border-radius: 100%;
+        color: #fff;
+        font-size: 15px;
+        box-shadow: 0 2px 5px #bbb;
+        margin: 0 auto;
+        transition: all 0.5s ease-in-out;
+        z-index: 5;
+        icon {
+          font-size: 25px;
+        }
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }    
+  }
+}

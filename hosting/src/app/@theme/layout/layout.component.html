@@ -1,0 +1,42 @@
+<div id="layout-container">
+
+  <app-menu (callback)="onMenuResponse($event)"></app-menu>
+
+  <div id="main-container">
+
+    <div class="header">
+
+      <button class="btn btn-default menuButton" (click)="onOpenMenu()">
+        <i class="eva eva-menu"></i>
+      </button>
+
+      <h1>{{ pageTitle }}</h1>
+
+      <div class="buttons-container">
+        <activity-bell></activity-bell>
+        <div class="dropdown">
+          <button class="btnGroup" data-bs-toggle="dropdown">
+            <icon name="menu-2-outline" pack="eva"></icon>
+          </button>
+
+          <ul class="dropdown-menu dropdown-menu-right">
+            <li (click)="onLogout()"><span class="dropdown-item">
+                <icon name="log-out-outline" pack="eva"></icon> Logout
+              </span></li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Global updates banner -->
+    <updates-banner></updates-banner>
+
+    <div class="body" id="infiniteScroll" (scroll)="onScroll()">
+      <ng-content select="router-outlet"></ng-content>
+      <notifications></notifications>
+    </div>
+
+  </div>
+
+</div>

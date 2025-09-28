@@ -1,0 +1,889 @@
+#containerFormUpdate {
+  background-color: #fff;
+  height: 100vh;
+
+  form {
+    background-color: #fff;
+    margin: 0 auto;
+    padding: 20px 20px 15px;
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      display: block;
+      margin-bottom: -8px;
+      background-color: transparent;
+      padding-right: 5px;
+      z-index: 10;
+    }
+
+    textarea {
+      height: 95px;
+      max-height: 95px;
+
+      &.important {
+        border-left-color: coral;
+
+        &:focus {
+          border-color: rgba(255, 127, 80, 0.75);
+        }
+      }
+    }
+
+    fieldset {
+      padding: 0;
+
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+
+    input {
+      &[type=file] {
+        display: none;
+      }
+
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+
+    small {
+      &.warning {
+        color: coral;
+        margin-top: 2px;
+        font-size: 11px;
+        display: block;
+        line-height: 12px;
+      }
+
+      &.error {
+        color: red;
+      }
+    }
+
+    input,
+    select,
+    textarea {
+      font-size: 14px;
+      padding-bottom: 4px;
+      border: none;
+      border-bottom: 1px solid #555 !important;
+      border-radius: 0;
+      box-shadow: none;
+      resize: none;
+    }
+
+    .supLabel {
+      margin-bottom: 0;
+      position: relative;
+      left: 10px;
+      background-color: #fff;
+      display: inline-block;
+    }
+
+    .tribute-name {
+      border-bottom: 1px dotted black;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 10px 0;
+    }
+
+    .wrapper-block {
+      margin: 0 12px;
+      padding-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      z-index: 1;
+    }
+
+    .container-errors {
+      margin: 0;
+
+      small {
+        font-size: 13px;
+        color: red;
+      }
+    }
+
+    .container-button {
+      border-top: 1px solid #ccc;
+
+      button {
+        margin: 10px 0 10px auto;
+        display: block;
+        padding: 5px 40px;
+        border-radius: 8px;
+        font-size: 14px;
+        background-color: rgb(102, 102, 255);
+        color: #fff;
+      }
+
+      @media screen and (max-width: 1024px) {
+        button {
+          width: 200px;
+          margin: 10px auto;
+        }
+      }
+    }
+
+    .container-form {
+      .container-field {
+        position: relative;
+        padding: 0;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+
+        button {
+          width: 30px;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+          margin: 0;
+          padding: 2px 0 0;
+          background-color: transparent;
+          border: none;
+          border-radius: 0;
+          outline: none;
+          text-align: right;
+          font-size: 14px;
+          font-weight: 500;
+          color: #666;
+          cursor: default;
+        }
+
+        input {
+          font-size: 14px;
+          padding-left: 30px;
+
+          &[disabled] {
+            background-color: rgba(255, 255, 255, 0.85);
+          }
+        }
+      }
+
+      .manager-quantity,
+      .manager-commecial-unit,
+      .manager-category,
+      .manager-provider {
+
+        select,
+        fieldset {
+          width: calc(100% - 40px);
+          margin-right: 5px;
+          float: left;
+        }
+
+        button {
+          width: 35px !important;
+          height: 35px !important;
+          padding: 0;
+          margin: 0;
+          float: left;
+          position: relative;
+          top: 0;
+          border-radius: 5px;
+          border: none;
+          outline: none;
+          color: #555;
+          border: 1px solid #555;
+          transition: all 0.3s ease;
+
+          icon {
+            font-size: 18px;
+          }
+
+          &:hover {
+            opacity: 0.75;
+          }
+        }
+      }
+    }
+
+    .deactivator {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: lightcyan !important;
+      border: 1px solid rgb(213, 213, 213);
+      border-radius: 5px;
+
+      table {
+        margin: 0;
+
+        tr {
+          td {
+            border: none;
+            padding: 10px 5px !important;
+            vertical-align: middle;
+
+            span {
+              font-size: 13px;
+            }
+
+            small {
+              color: #999;
+              font-size: 11px;
+            }
+
+            span,
+            small {
+              line-height: 13px;
+              display: block;
+            }
+
+            &:first-child {
+              width: 15px;
+              padding-left: 10px !important;
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+
+    .required {
+      label {
+        color: red !important;
+      }
+
+      input {
+        border-color: red !important;
+      }
+    }
+
+    .container-fieldset {
+      margin-top: 10px !important;
+    }
+
+    .container-image {
+      .wrapper {
+        width: 100%;
+        margin: 0 auto 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+        background-color: lightcyan;
+        cursor: pointer;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      @media screen and (max-width: 1024px) {
+        background-color: #eee;
+        border-radius: 10px;
+        padding: 10px 15px;
+        margin-bottom: 10px;
+
+        label {
+          margin-top: 10px !important;
+        }
+
+        .wrapper {
+          max-width: 200px;
+          max-height: 200px;
+          margin: 10px auto;
+        }
+      }
+    }
+
+    .resetPading {
+      padding: 0 !important;
+    }
+  }
+}
+
+.section-title {
+  color: #666;
+  margin: 20px 0 10px 0;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #eee;
+
+  icon {
+    margin-right: 5px;
+  }
+}
+
+.commission-preview {
+  padding: 10px;
+  background: #f8f9fa;
+  border-radius: 4px;
+  text-align: center;
+}
+
+// Ajuste para switch de comissão ficar alinhado
+.custom-control-switch {
+  padding-left: 2.25rem;
+
+  .custom-control-label {
+    font-size: 0.875rem;
+  }
+}
+
+// Texto de preview da comissão
+.text-info {
+  display: block;
+  margin: 5px 0 10px 0;
+
+  icon {
+    vertical-align: middle;
+    margin-right: 3px;
+  }
+}
+
+// ========== ESTILOS PARA CAMPO DE NOME MODERNIZADO ==========
+.modern-name-field {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
+  border: 2px solid #e1e4e8;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #6610f2);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: #007bff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.1);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .name-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    color: #24292e;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    icon {
+      font-size: 20px;
+      margin-right: 8px;
+      color: #007bff;
+    }
+
+    span {
+      color: #586069;
+    }
+  }
+
+  .name-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    &.focused {
+      .input-icon {
+        color: #007bff;
+        transform: scale(1.1);
+      }
+
+      .input-underline {
+        width: 100%;
+        background: linear-gradient(90deg, #007bff, #6610f2);
+      }
+
+      .modern-name-input {
+        padding-left: 20px;
+      }
+    }
+
+    .modern-name-input {
+      width: 100%;
+      padding: 12px 80px 12px 16px;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      color: #24292e;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+
+      &::placeholder {
+        color: #959da5;
+        font-weight: 400;
+      }
+
+      &:focus {
+        outline: none;
+      }
+
+      &:disabled {
+        background: #f6f8fa;
+        color: #959da5;
+        cursor: not-allowed;
+      }
+    }
+
+    .input-underline {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      width: 0;
+      background: linear-gradient(90deg, #007bff, #6610f2);
+      transition: width 0.3s ease;
+    }
+
+    .char-counter {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 12px;
+      color: #959da5;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 2px 6px;
+      border-radius: 4px;
+      z-index: 10;
+      pointer-events: none;
+
+      span {
+        &.warning {
+          color: #f66a0a;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+
+  .name-hints {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+    border-radius: 8px;
+    animation: slideDown 0.3s ease;
+
+    .hint-item {
+      display: flex;
+      align-items: center;
+      color: #d73a49;
+      font-size: 12px;
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      icon {
+        font-size: 14px;
+        margin-right: 6px;
+        color: #ffa000;
+      }
+    }
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+// Campos de Preço Modernizados
+.modern-price-field {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &.sale-price {
+    &::before {
+      background: linear-gradient(90deg, #28a745, #20c997);
+    }
+
+    &:hover {
+      border-color: #28a745;
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.15);
+    }
+
+    .price-header icon {
+      color: #28a745;
+    }
+  }
+
+  &.cost-price {
+    &::before {
+      background: linear-gradient(90deg, #dc3545, #e74c3c);
+    }
+
+    &:hover {
+      border-color: #dc3545;
+      box-shadow: 0 8px 25px rgba(220, 53, 69, 0.15);
+    }
+
+    .price-header icon {
+      color: #dc3545;
+    }
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .price-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    color: #495057;
+    font-size: 14px;
+
+    icon {
+      font-size: 18px;
+    }
+  }
+
+  .price-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .currency-symbol {
+      font-size: 18px;
+      font-weight: 700;
+      color: #6c757d;
+      margin-right: 8px;
+    }
+
+    .modern-price-input {
+      flex: 1;
+      padding: 12px 0;
+      border: none;
+      background: transparent;
+      font-size: 20px;
+      font-weight: 700;
+      color: #495057;
+      outline: none;
+
+      &::placeholder {
+        color: #adb5bd;
+        font-weight: 400;
+      }
+    }
+
+    .input-underline {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #e9ecef;
+      transition: all 0.3s ease;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 100%;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+    }
+
+    .modern-price-input:focus + .input-underline::after {
+      width: 100%;
+    }
+  }
+
+  &.sale-price .price-input-wrapper .modern-price-input:focus + .input-underline::after {
+    background: linear-gradient(90deg, #28a745, #20c997);
+  }
+
+  &.cost-price .price-input-wrapper .modern-price-input:focus + .input-underline::after {
+    background: linear-gradient(90deg, #dc3545, #e74c3c);
+  }
+
+  .margin-preview {
+    margin-top: 12px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-radius: 8px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #155724;
+  }
+}
+
+// Campo de Quantidade Modernizado
+.modern-quantity-field {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #17a2b8, #28a745);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  &:hover {
+    border-color: #17a2b8;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(23, 162, 184, 0.15);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  .quantity-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+
+    .quantity-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+
+      icon {
+        color: #17a2b8;
+        font-size: 18px;
+      }
+    }
+
+    .quantity-unit-badge {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+      &.base {
+        background: linear-gradient(135deg, #28a745, #20c997);
+        color: #ffffff;
+      }
+
+      &.subunit {
+        background: linear-gradient(135deg, #0d6efd, #3a86ff);
+        color: #ffffff;
+      }
+    }
+  }
+
+  .quantity-input-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .quantity-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #e9ecef;
+      background: #ffffff;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover:not(:disabled) {
+        border-color: #17a2b8;
+        background: #17a2b8;
+        color: white;
+        transform: scale(1.05);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      icon {
+        font-size: 18px;
+      }
+    }
+
+    .quantity-input-wrapper {
+      flex: 1;
+      position: relative;
+
+      .modern-quantity-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: none;
+        background: transparent;
+        font-size: 18px;
+        font-weight: 600;
+        text-align: center;
+        color: #495057;
+        outline: none;
+
+        &::placeholder {
+          color: #adb5bd;
+          font-weight: 400;
+        }
+      }
+
+      .input-underline {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #e9ecef;
+        transition: all 0.3s ease;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          width: 0;
+          height: 100%;
+          background: linear-gradient(90deg, #17a2b8, #28a745);
+          transition: all 0.3s ease;
+          transform: translateX(-50%);
+        }
+      }
+
+      .modern-quantity-input:focus + .input-underline::after {
+        width: 100%;
+      }
+    }
+  }
+
+  .quantity-help {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+    border-radius: 12px;
+    font-size: 12px;
+    color: #856404;
+    line-height: 1.4;
+
+    icon {
+      color: #f39c12;
+      font-size: 16px;
+      margin-top: 1px;
+    }
+  }
+}
+
+// 💰 ESTILOS DA MARGEM DE LUCRO
+.profit-margin-display {
+  margin-top: 12px;
+  opacity: 0;
+  animation: fadeInUp 0.4s ease-out 0.2s forwards;
+
+  .profit-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.1) 0%, rgba(25, 135, 84, 0.05) 100%);
+    border-radius: 8px;
+    border-left: 3px solid #28a745;
+    font-size: 12px;
+
+    .profit-icon {
+      color: #28a745;
+      font-size: 14px;
+    }
+
+    .profit-label {
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .profit-value {
+      font-weight: 600;
+      font-size: 13px;
+
+      &.positive {
+        color: #28a745;
+      }
+
+      &.negative {
+        color: #dc3545;
+      }
+    }
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

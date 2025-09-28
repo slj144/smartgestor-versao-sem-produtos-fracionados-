@@ -1,0 +1,481 @@
+
+modal {
+
+  position: relative;
+  overflow: auto;
+  
+  .container-view {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;
+    .container-external {
+      display: table-row;
+      .container-info {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          position: relative;
+          width: 700px;
+          max-width: 100%;
+          padding: 15px;
+          border: 1px solid #ddd;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 10px;
+          margin: 0 auto;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+
+
+  form {
+    .container-image {
+      width: 90px;
+      height: 90px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      img {
+        display: block;
+        width: 100% !important;
+        height: 100% !important;      
+      }
+    }
+    label {
+      font-size: 12px;
+      display: block;
+      margin-bottom: -3px;
+    }
+    input, select {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;          
+      outline: none !important;
+      &:focus{
+        outline: none !important;
+      }
+    }
+    input[type=file] {
+      display: none;
+    }  
+  }
+
+  .no-padding{
+    padding: 0
+  }
+
+  button {
+    margin: 10px auto;
+    display: block;
+    padding: 5px 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: rgb(102, 102, 255);
+    color: #fff;
+    &.btnBlue {
+      background-color: rgb(102, 102, 255);
+    }
+    &.btnRed {
+      background-color: indianred;
+    }
+  }  
+
+  .required {
+    border-color: indianred !important;
+    &:focus {
+      border-color: rgba(205, 92, 92, 0.75) !important;
+    }
+  }
+  
+  // Custom
+
+  .view{
+    padding-bottom: 30px;
+
+    .hide{
+      display: none !important;
+    }
+
+    .header{
+      position: relative;
+      margin: 0 0 10px 0;
+      padding: 10px;
+
+      .image-container{
+        max-width: 120px;
+        height: 120px;
+        position: relative;
+        display: table;
+        margin: 0 auto 0  auto;
+
+        img{
+          max-width: 120px !important;
+          height: 120px !important;
+        }
+      }
+    }
+
+    
+
+    .admin-account, .store-top-info{
+      display: block;
+      width: 100%;
+      padding: 10px;
+      list-style: none;
+      position: relative !important;
+      li{
+        &:first-child{
+
+          font: 400 1.1em "Tahoma";
+        }
+
+        font: 400 0.8em "Tahoma";
+      }
+      
+
+      &.admin-account{
+        margin: 0 !important;
+        // background-color: rgb(164, 250, 250);
+        background-color: rgb(209, 223, 239);
+        table{
+          width: 100% !important;
+          border: 1px solid transparent !important;
+          margin: 0 !important;
+          tbody{
+            tr{
+              border: 1px solid transparent !important;
+              td{
+                &:first-child{
+                  width: 85px;
+                }
+
+                .label{
+
+                  // color: white;
+                  color: rgb(109, 109, 109);
+                }
+
+                .value{
+                  color: rgb(109, 109, 109);
+                  // color: white;
+                  font: 400 13px "Arial";
+                }
+              }
+            }
+          }
+        }
+      }
+
+
+      &.store-top-info{
+        margin: auto !important;
+        float: none;
+        text-align: center;
+
+        .title{
+          font: 400 2.5em "Arial";
+        }
+        .label{
+
+          font: 400 0.85em "Arial";
+          color: gray;
+        }
+      }
+    }
+
+    .box-header{
+      text-align: left;
+      background-color: white;
+      padding: 5px 0;
+      color: rgb(92, 91, 91);
+      margin: 20px 0 0 0;
+      font-size: 1em;
+      text-transform: uppercase;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      border-bottom: 1px solid rgb(160, 166, 171);
+
+
+      &.admin-account-title{
+        padding: 10px 0;
+        text-align: center;
+        border-bottom: 1px solid rgb(184, 190, 193);
+        // background-color: rgb(164, 250, 250);
+        background-color: rgb(209, 223, 239);
+        color: rgb(109, 109, 109);
+        // color: white;
+      }
+    }
+
+    p{
+      margin: 40px 0 10px 0;
+      font-size: 1.3em;
+      color: rgb(109, 109, 109);
+    }
+
+
+    .box{
+      list-style: none;
+      margin: 0 0 20px 0;
+      padding: 15px !important;
+      box-shadow: none;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+
+      &.no-wrapper{
+
+        margin: 10px 0 20px 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+
+
+      li{
+        font: 300 1em "Arial";
+        color: rgb(128, 128, 128);
+        margin-top: 5px;
+        position: relative;
+
+        &:first-child{
+          margin-top: 0;
+        }
+
+        i{
+          margin-right: 10px;
+          position: relative;
+          top: 2px;
+          font-size: 1.3em !important;
+        }
+
+        .fa-phone{
+
+          color: rgb(76, 76, 239);
+        }
+
+        .fa-envelope{
+          color: rgb(177, 169, 132);
+          font-size: 0.80em;
+        }
+
+        .fa-whatsapp{
+          color: rgb(61, 141, 61);
+        }
+
+        .fa-user{
+          color: rgb(117, 117, 116);
+        }
+
+        .fa-user-shield{
+          color: rgb(165, 101, 64);
+        }
+        
+      }
+
+      &.address{
+        li{
+          padding-left: 25px;
+          .fa-map-marker-alt{
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: rgb(216, 84, 84);
+          }
+        }
+      }
+
+      &.admin-account{
+        li{
+          padding-left: 0;
+          &.padding{
+            padding-left: 25px;
+          }
+          .fa-user{
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: black;
+          }
+        }
+      }
+    }
+
+  }
+
+  .create,.edit{
+
+    .image-container{
+      width: 100px;
+      max-width: 200px;
+      position: relative;
+      display: table;
+      margin: 0 auto 20px auto;
+
+      img{
+        max-width: 200px;
+        cursor: pointer;
+      }
+    }
+
+    
+    &#branchForm{
+
+      p{
+
+        margin: 20px 0 10px 0;
+        display: block;
+        width: 100%;
+        float: none;
+        @media (min-width: 0) and (max-width: 768px){
+          &{
+            text-align: center;
+          }
+        }
+      } 
+
+      .caption{
+        padding: 0;
+        margin: 0;
+        &.status-danger{
+          padding: 0;
+          margin: 5px 0 10px 0 ;
+        }
+      }
+
+      .row{
+
+        padding: auto 20px !important;
+      }
+
+
+      input{
+        margin: 5px auto;
+        height: 35px;
+        color: rgb(93, 92, 92);
+        padding: 10px !important;
+        &.name{
+
+          text-align: center !important;
+        }
+        &::placeholder{
+          color: rgb(167, 165, 165);
+        }
+      }
+
+      select{
+        margin: 5px auto;
+      }
+
+      nb-select{
+        margin: 5px auto;
+        height: 35px;
+      }
+
+      .bottomSC{
+        height: 35px;
+        background: rgb(62, 130, 199);
+        border: 1px solid transparent;
+        color: white;
+        &:disabled{
+          background: rgb(163, 185, 206);
+        }
+
+        &:hover:enabled{
+          background: rgb(47, 109, 170);
+        }
+      }
+
+    
+      .box{
+        padding: 0;
+        margin: 0 0 10px 0;
+
+        .fieldLeft{
+          padding: 0 5px 0 0;
+          input{
+            width: 100% !important;
+          }
+
+          @media (min-width: 0) and (max-width: 768px){
+            &{
+              padding: 0;
+            }
+          }
+        }
+
+        .fieldRight{
+          padding: 0 0 0 5px;
+          input{
+            width: 100% !important;
+          }
+          @media (min-width: 0) and (max-width: 768px){
+            &{
+              padding: 0;
+            }
+          }
+        }
+
+      }
+
+    }
+
+  }
+
+  #containerBranchDelete {
+
+    .container-branch {
+      .container-image {
+        width: 90px;
+        height: 90px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        float: left;
+        margin-right: 10px;
+        background-color: cyan;
+        img {
+          width: 100%;
+          height: 100%;      
+        }
+      }
+      .container-info {
+        padding-top: 20px;
+        span {
+          display: block;
+          &.name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+          }
+          &.label {
+            font-size: 13px;
+            display: block;
+            color: #797979;
+            margin-right: 5px;
+          }
+          &.value {
+            font-size: 13px;
+            display: inline;
+            color: #888;
+          }
+        }
+      }         
+    }
+    .container-buttons {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      button {
+        display: inline-table;
+        padding: 5px 20px;
+        &:first-child {
+          margin-right: 5px;
+        }         
+      }
+    }       
+  }
+}
+

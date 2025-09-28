@@ -1,0 +1,398 @@
+<!-- Gráficos Modernos -->
+<!-- NOTA: Para os gráficos funcionarem, você precisa usar o arquivo<!-- Arquivo: sales-analysis.component.html -->
+<!-- Caminho: src/app/pages/crm/sales-analysis/sales-analysis.component.html -->
+<!-- O que faz: Template MELHORADO da análise de vendas com UX moderno e gráficos chamativos -->
+
+<div class="sales-analysis-container modern">
+    <!-- Header Compacto estilo menu -->
+    <div class="page-header-compact">
+        <h2 class="page-title">
+            <span class="icon">📊</span>
+            Análise de Vendas
+        </h2>
+        <div class="header-actions">
+            <button class="btn-action-compact" (click)="exportToExcel()" [disabled]="loading">
+                <span class="icon">📥</span>
+                <span>Exportar</span>
+            </button>
+            <button class="btn-refresh-compact" (click)="loadSales()" [disabled]="loading">
+                <span [class.spinning]="loading">🔄</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Subtítulo fora do header -->
+    <div class="page-subtitle">
+        Transforme dados em oportunidades de crescimento
+    </div>
+
+    <!-- Cards de Estatísticas Animados -->
+    <div class="stats-grid-modern">
+        <!-- Card Total de Vendas -->
+        <div class="stat-card-modern total-sales" [class.pulse]="!loading">
+            <div class="card-background"></div>
+            <div class="card-content">
+                <div class="card-icon">
+                    <span class="emoji">💰</span>
+                </div>
+                <div class="card-data">
+                    <h3 class="value">{{stats.totalSales}}</h3>
+                    <p class="label">Total de Vendas</p>
+                    <div class="trend positive">
+                        <span class="trend-icon">📈</span>
+                        <span class="trend-value">+12%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Valor Total -->
+        <div class="stat-card-modern total-value" [class.pulse]="!loading">
+            <div class="card-background"></div>
+            <div class="card-content">
+                <div class="card-icon">
+                    <span class="emoji">💵</span>
+                </div>
+                <div class="card-data">
+                    <h3 class="value">{{permissions.canViewValue ? formatCurrency(stats.totalValue) : '***'}}</h3>
+                    <p class="label">Valor Total</p>
+                    <div class="trend positive">
+                        <span class="trend-icon">🚀</span>
+                        <span class="trend-value">+8.5%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Ticket Médio -->
+        <div class="stat-card-modern avg-ticket" [class.pulse]="!loading">
+            <div class="card-background"></div>
+            <div class="card-content">
+                <div class="card-icon">
+                    <span class="emoji">🎯</span>
+                </div>
+                <div class="card-data">
+                    <h3 class="value">{{permissions.canViewValue ? formatCurrency(stats.averageTicket) : '***'}}</h3>
+                    <p class="label">Ticket Médio</p>
+                    <div class="trend negative">
+                        <span class="trend-icon">📉</span>
+                        <span class="trend-value">-2.3%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Conversões -->
+        <div class="stat-card-modern conversions" [class.pulse]="!loading">
+            <div class="card-background"></div>
+            <div class="card-content">
+                <div class="card-icon">
+                    <span class="emoji">🎉</span>
+                </div>
+                <div class="card-data">
+                    <h3 class="value">0</h3>
+                    <p class="label">Leads Convertidos</p>
+                    <div class="trend positive">
+                        <span class="trend-icon">✨</span>
+                        <span class="trend-value">+15%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seção de Filtros Modernos -->
+    <div class="filters-modern">
+        <div class="filter-card">
+            <h3 class="filter-title">
+                <span class="icon">📅</span>
+                Período de Análise
+            </h3>
+
+            <!-- Botões de Período Rápido -->
+            <div class="quick-filters">
+                <button class="quick-btn" [class.active]="quickFilter === 'today'" (click)="setQuickFilter('today')"
+                    style="color: inherit">
+                    <span [style.color]="quickFilter === 'today' ? '#ffffff' : ''">Hoje</span>
+                </button>
+                <button class="quick-btn" [class.active]="quickFilter === 'week'" (click)="setQuickFilter('week')"
+                    style="color: inherit">
+                    <span [style.color]="quickFilter === 'week' ? '#ffffff' : ''">Esta Semana</span>
+                </button>
+                <button class="quick-btn" [class.active]="quickFilter === 'month'" (click)="setQuickFilter('month')"
+                    style="color: inherit">
+                    <span [style.color]="quickFilter === 'month' ? '#ffffff' : ''">Este Mês</span>
+                </button>
+                <button class="quick-btn" [class.active]="quickFilter === 'custom'" (click)="setQuickFilter('custom')"
+                    style="color: inherit">
+                    <span [style.color]="quickFilter === 'custom' ? '#ffffff' : ''">Personalizado</span>
+                </button>
+            </div>
+
+            <!-- Seletor de Datas Customizado -->
+            <div class="date-selector" *ngIf="quickFilter === 'custom'">
+                <div class="date-input-group">
+                    <label>De:</label>
+                    <input type="date" class="date-input" [(ngModel)]="filters.dateFrom" (change)="loadSales()">
+                </div>
+                <div class="date-input-group">
+                    <label>Até:</label>
+                    <input type="date" class="date-input" [(ngModel)]="filters.dateTo" (change)="loadSales()">
+                </div>
+            </div>
+
+            <!-- Filtros Adicionais -->
+            <div class="additional-filters">
+                <div class="filter-group">
+                    <label>
+                        <span class="icon">👤</span>
+                        Cliente
+                    </label>
+                    <input type="text" class="filter-input" placeholder="Buscar cliente..."
+                        [(ngModel)]="filters.customer" (input)="applyFilters()">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos Modernos -->
+    <div class="charts-section" *ngIf="!loading && filteredSales.length > 0">
+        <!-- Gráfico de Vendas por Dia -->
+        <div class="chart-card-modern">
+            <div class="chart-header">
+                <h3>
+                    <span class="icon">📈</span>
+                    Vendas por Dia
+                </h3>
+                <div class="chart-legend">
+                    <span class="legend-item">
+                        <span class="dot" style="background: #667eea"></span>
+                        Vendas
+                    </span>
+                    <span class="legend-item">
+                        <span class="dot" style="background: #f093fb"></span>
+                        Meta
+                    </span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="salesChart" height="300"></canvas>
+            </div>
+        </div>
+
+        <!-- Gráfico de Pizza - Top Produtos (AGORA OCUPA TODA LARGURA) -->
+        <div class="chart-card-modern">
+            <div class="chart-header">
+                <h3>
+                    <span class="icon">🏆</span>
+                    Top 5 Produtos Mais Vendidos
+                </h3>
+            </div>
+            <div class="chart-container">
+                <canvas id="productsChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de Vendas Modernizada -->
+    <div class="sales-section-modern" *ngIf="!loading">
+        <div class="section-header">
+            <h3>
+                <span class="icon">🛒</span>
+                Vendas Detalhadas
+            </h3>
+            <div class="bulk-actions">
+                <button class="btn-action" [disabled]="selectedSales.size === 0 || processing"
+                    (click)="convertToLeads()"
+                    [style.background]="selectedSales.size === 0 || processing ? '#e2e8f0' : '#667eea'"
+                    [style.color]="selectedSales.size === 0 || processing ? '#a0aec0' : '#ffffff'">
+                    <span class="icon">🔄</span>
+                    <span [style.color]="selectedSales.size === 0 || processing ? '#a0aec0' : '#ffffff'">
+                        Converter em Leads ({{selectedSales.size}})
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Cabeçalho da Lista -->
+        <div class="sales-list-header">
+            <label class="checkbox-modern">
+                <input type="checkbox"
+                    [checked]="selectedSales.size === filteredSales.length && filteredSales.length > 0"
+                    (change)="toggleSelectAll()">
+                <span class="checkmark"></span>
+            </label>
+            <span class="results-count">{{filteredSales.length}} venda(s) encontrada(s)</span>
+        </div>
+
+        <!-- Lista de Vendas -->
+        <div class="sales-list-modern">
+            <div class="sale-card-modern" *ngFor="let sale of filteredSales"
+                [class.selected]="selectedSales.has(sale.id)" [class.expanded]="expandedSales.has(sale.id)">
+
+                <!-- Cabeçalho da Venda -->
+                <div class="sale-header" (click)="toggleSaleSelection(sale.id)">
+                    <label class="checkbox-modern" (click)="$event.stopPropagation()">
+                        <input type="checkbox" [checked]="selectedSales.has(sale.id)"
+                            (change)="toggleSaleSelection(sale.id)">
+                        <span class="checkmark"></span>
+                    </label>
+
+                    <div class="sale-info">
+                        <div class="sale-id">
+                            <span class="icon">🏷️</span>
+                            #{{sale.code || sale.id}}
+                        </div>
+                        <div class="sale-date">
+                            <span class="icon">📅</span>
+                            {{formatDate(sale.date)}}
+                        </div>
+                    </div>
+
+                    <div class="sale-customer">
+                        <div class="customer-name">
+                            <span class="icon">👤</span>
+                            <strong>{{sale.customerName || 'Cliente sem nome'}}</strong>
+                        </div>
+                        <div class="customer-contact">
+                            <span *ngIf="sale.customerPhone">📱 {{sale.customerPhone}}</span>
+                            <span *ngIf="sale.customerEmail">📧 {{sale.customerEmail}}</span>
+                        </div>
+                    </div>
+
+                    <div class="sale-value">
+                        <span class="currency">R$</span>
+                        <span class="amount">{{permissions.canViewValue ? formatValue(sale.total) : '***'}}</span>
+                    </div>
+
+                    <button class="btn-expand" (click)="toggleSaleExpansion(sale.id, $event)">
+                        <span class="icon" [class.rotated]="expandedSales.has(sale.id)">🔽</span>
+                    </button>
+                </div>
+
+                <!-- Detalhes Expandidos -->
+                <div class="sale-details" *ngIf="expandedSales.has(sale.id)">
+                    <div class="products-list">
+                        <h4>
+                            <span class="icon">📦</span>
+                            Produtos
+                        </h4>
+                        <div class="product-item" *ngFor="let product of sale.products">
+                            <span class="product-name">{{product.name}}</span>
+                            <span class="product-qty">{{product.quantity}}x</span>
+                            <span class="product-price">{{formatCurrency(product.unitaryPrice)}}</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-info" *ngIf="sale.paymentMethods && sale.paymentMethods.length > 0">
+                        <h4>
+                            <span class="icon">💳</span>
+                            Pagamentos
+                        </h4>
+                        <div class="payment-item" *ngFor="let payment of sale.paymentMethods">
+                            <span class="payment-method">{{payment.name}}</span>
+                            <span class="payment-value">{{formatCurrency(payment.value)}}</span>
+                        </div>
+                    </div>
+
+                    <div class="notes" *ngIf="sale.notes">
+                        <h4>
+                            <span class="icon">📝</span>
+                            Observações
+                        </h4>
+                        <p>{{sale.notes}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sem Resultados -->
+        <div class="no-results-modern" *ngIf="filteredSales.length === 0">
+            <div class="no-results-icon">📭</div>
+            <h3>Nenhuma venda encontrada</h3>
+            <p>Ajuste os filtros para ver resultados diferentes</p>
+        </div>
+    </div>
+
+    <!-- Loading Moderno -->
+    <div class="loading-modern" *ngIf="loading">
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+        </div>
+        <p>Carregando análise de vendas...</p>
+    </div>
+
+    <!-- Rankings Lado a Lado -->
+    <div class="rankings-section" *ngIf="!loading && filteredSales.length > 0">
+        <!-- Top Clientes -->
+        <div class="ranking-card">
+            <div class="ranking-header">
+                <h3>
+                    <span class="icon">👥</span>
+                    Top 5 Clientes
+                </h3>
+                <span class="badge">Melhores Compradores</span>
+            </div>
+            <div class="ranking-list">
+                <div class="ranking-item" *ngFor="let customer of stats.topCustomers; let i = index">
+                    <div class="rank-medal" [class]="'rank-' + (i + 1)">
+                        <span *ngIf="i === 0">🥇</span>
+                        <span *ngIf="i === 1">🥈</span>
+                        <span *ngIf="i === 2">🥉</span>
+                        <span *ngIf="i > 2">{{i + 1}}</span>
+                    </div>
+                    <div class="rank-info">
+                        <strong>{{customer.name}}</strong>
+                        <small>{{customer.count}} compra(s)</small>
+                    </div>
+                    <div class="rank-value">
+                        {{permissions.canViewValue ? formatCurrency(customer.total) : '***'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Produtos -->
+        <div class="ranking-card">
+            <div class="ranking-header">
+                <h3>
+                    <span class="icon">📦</span>
+                    Top 5 Produtos
+                </h3>
+                <span class="badge">Mais Vendidos</span>
+            </div>
+            <div class="ranking-list">
+                <div class="ranking-item" *ngFor="let product of stats.topProducts; let i = index">
+                    <div class="rank-medal" [class]="'rank-' + (i + 1)">
+                        <span *ngIf="i === 0">🥇</span>
+                        <span *ngIf="i === 1">🥈</span>
+                        <span *ngIf="i === 2">🥉</span>
+                        <span *ngIf="i > 2">{{i + 1}}</span>
+                    </div>
+                    <div class="rank-info">
+                        <strong>{{product.name}}</strong>
+                        <small>{{product.quantity}} unidade(s)</small>
+                    </div>
+                    <div class="rank-value">
+                        {{permissions.canViewValue ? formatCurrency(product.total) : '***'}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botão Flutuante de Converter Leads -->
+    <div class="floating-action-button" *ngIf="selectedSales.size > 0">
+        <button class="fab-button" [class.processing]="processing" (click)="convertToLeads()">
+            <span class="fab-icon">
+                🔄
+                <span class="fab-badge" *ngIf="selectedSales.size > 9">{{selectedSales.size}}</span>
+            </span>
+            <span class="fab-text">
+                Converter {{selectedSales.size}} {{selectedSales.size === 1 ? 'Lead' : 'Leads'}}
+            </span>
+        </button>
+    </div>
+</div>

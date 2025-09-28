@@ -1,0 +1,27 @@
+
+/* Importing Bootstrap SCSS file. */
+@import "./node_modules/bootstrap/scss/bootstrap";
+
+// Background color custom
+
+.bg-success {
+  background-color: $success;
+}
+
+.bg-info {
+  background-color: $info;
+}
+
+.bg-warning {
+  background-color: $warning;
+}
+
+.bg-danger {
+  background-color: $danger !important;
+}
+
+.fs {
+  &-7 { font-size: 0.9rem !important; }
+  &-8 { font-size: 0.8rem !important; }
+  &-9 { font-size: 0.7rem !important; }
+}

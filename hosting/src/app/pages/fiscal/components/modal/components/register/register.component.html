@@ -1,0 +1,508 @@
+<main id="container-request-register">
+  <div class="container-components-one">
+
+    <div class="container-customer" *ngIf="formSettingsControls.type.value == 'NFCE' && formSettingsControls.hasCustomer.value == true || formSettingsControls.type.value != 'NFCE'">
+      <h6 *ngIf="!embed">
+        <span>Cliente</span>
+        <button (click)="onOpenLayer('customers')" [disabled]="data.code"><icon name="search-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="data.customer">
+        <div class="container-table table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td>
+                  <span><span class="label">Nome: </span> <span class="value">{{ data.customer.name }}</span></span>
+                </td>
+                <td >
+                  <span *ngIf="formSettingsControls.destinyType.value != '3'">
+                    <span class="label">CPF/CNPJ:</span> 
+                    <input  class="form-control" type="text" (input)="onApplyCpfCnpjMask($event)" [value]="(data.customer?.personalDocument?.value || data.customer?.businessDocument?.value) || ''"/>
+                  </span>
+                  <span *ngIf="formSettingsControls.destinyType.value == '3'" [formGroup]="formGeneralSettings">
+                    <span class="label">Número de Documento:</span> 
+                    <input  class="form-control" type="text" formControlName="codigoEstrangeiro" [value]="(data.customer?.personalDocument?.value || data.customer?.businessDocument?.value) || ''" (input)="onApplyNumberMask($event)"/>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span>
+                    <span class="label">inscrição Municipal:</span> 
+                    <input  class="form-control" type="text" (input)="onApplyIM($event)" [value]="data.customer?.municipalInscription || ''"/>
+                  </span>
+                </td>
+                <td *ngIf="formSettingsControls.type.value != 'NFCE'">
+                  <span>
+                    <span class="label">inscrição Estadual:</span> 
+                    <input  class="form-control" type="text" (input)="onApplyIE($event)" [value]="data.customer?.stateInscription || ''"/>
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td *ngIf="data.customer?.addressCustom">
+                  <span><span class="label">Endereço: </span> <span class="value">{{ data.customer?.addressCustom }}</span></span>
+                </td>
+                <td >
+                  <span>
+                    <span class="label">Email:</span> 
+                    <input  class="form-control" type="text" (input)="onUpdateEmail($event)" [value]="data.customer?.contacts?.email || ''"/>
+                  </span>
+                </td>
+                <td *ngIf="data.customer?.contacts?.phone">
+                  <span><span class="label">Telefone: </span> <span class="value">{{ data.customer?.contacts?.phone }}</span></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <address style="width: 100%" [data]="data?.customer?.address" [isExport]="formSettingsControls.destinyType.value == '3'" (callback)="onAddressResponse($event)"></address>
+      </div>
+
+    </div>    
+
+
+    <div class="container-products" *ngIf="formSettingsControls.type.value != 'NFSE' || formSettingsControls.type.value == 'NFSE' && formSettingsControls.addProductsInService.value">
+      <h6>
+        <span>Produtos</span>
+
+        <div class="quick-search">
+          <input type="text" placeholder="Código" autocomplete="off" (keydown.enter)="onQuickSearch($event)" (input)="onApplyNumberMask($event)" />
+          <button (click)="onQuickSearch($event)"><icon name="search-outline" pack="eva"></icon></button>
+        </div>
+
+        <button (click)="onOpenLayer('products')"><icon name="funnel-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="data.products?.length > 0">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Código</th>
+                <th>Nome</th>      
+                <!-- <th *ngIf="!!embed">CNAE</th>           -->
+                <!-- <th *ngIf="!!embed">Código Serviço</th> -->
+                <th *ngIf="formSettingsControls.nfWithISSQN.value">Serviço</th>
+                <th>CFOP</th>
+                <th>Quantidade</th>
+                <th>Preço</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of (data?.products || []); let i = index">
+                <td class="action">
+                  <!-- *ngIf="!embed" -->
+                  <button class="btnClose" (click)="onDeleteProductItem(i)"><icon name="close" pack="eva"></icon></button>
+                </td>
+                <td class="code">{{ item.code }}</td>
+                <td class="name">{{ item.name }}</td>
+                <td width="90px" *ngIf="formSettingsControls.type.value != 'NFSE' && formSettingsControls.nfWithISSQN.value">
+                  <select #service class="form-control" (change)="onChangeISSQN(service, item, 'default')" [value]="item.serviceCode">
+                    <option></option>
+                    <option value="{{item.code}}" *ngFor="let item of (data.services || [])">{{ item.code + ' - ' + item.name }}</option>
+                  </select>
+                </td>
+
+                <td class="" *ngIf="formSettingsControls.type.value == 'NFSE'">
+                  <select #service class="form-control" (change)="onSelectServiceProduct(service, item)" [value]="item.serviceCode">
+                    <option *ngFor="let item of (data.services || [])">{{ item.code }}</option>
+                  </select>
+                </td>
+
+                <nf-cfop (callback)="onResponseCFOPProduct($event, item)" [data]="" [required]="false" [general]="false"></nf-cfop>
+
+                <!-- <td class="" *ngIf="!!embed">
+                  <select #serviceCode class="form-control" (change)="onChangeISSQN(serviceCode, item.codigo, 'scode')">
+                    <option *ngFor="let item of (data.servicesISSQNList || [])">{{ item }}</option>
+                  </select>
+                </td>
+                
+                <td class="" #cnae *ngIf="!!embed" (change)="onChangeISSQN(cnae, item.cnae, 'cnae')">
+                  <select class="form-control">
+                    <option *ngFor="let item of (data.servicesISSQNList || [])">{{ item.cnae }}</option>
+                  </select>
+                </td> -->
+
+                <td class="quantity">
+                  <input [disabled]="!!embed" [value]="item.selectedItems" autocomplete="off" (input)="onApplyQuantity(item, quantityField)" (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                </td>
+                 <td class="price">
+                  <input [disabled]="!!embed" [value]="item.unitaryPrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, priceField, 'product')" #priceField />
+                </td>
+                <td class="total">
+                  <input [disabled]="!!embed" [value]="(item.unitaryPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>  
+
+
+    <div class="container-services">
+      <h6>
+        <span>Serviços</span>
+        <button (click)="onOpenLayer('services')" *ngIf="!embed"><icon name="plus-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="data.services?.length > 0">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Código</th>
+                <th class="text-left">Nome</th>
+                <th>Valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of data.services; let i = index">
+                <td class="action">
+                  <button *ngIf="!embed" class="btnClose" (click)="onDeleteServiceItem(i)"><icon name="close" pack="eva"></icon></button>
+                </td>
+                <td class="code">{{ item.code }}</td>
+                <td class="name">{{ item.name }}</td>
+                <td class="price">
+                  <input [disabled]="!!embed" [value]="item.customPrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, priceField, 'service')" #priceField />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-cfop" *ngIf="formSettingsControls.type.value != 'NFSE'">
+      <nf-cfop (callback)="onResponseCFOP($event)" [data]="'5.102'"></nf-cfop>
+    </div>
+
+    <div class="container-description" [formGroup]="formGeneralSettings">
+
+      <h6>
+        <span>{{ 'Informacões Complementares' }}</span>
+      </h6>
+
+      <div class="data">
+        <textarea class="form-control" formControlName="informacoesComplementares" placeholder="Insira aqui.."></textarea>
+      </div>
+
+    </div>
+
+    <div class="container-payments">
+      
+      <div>
+        <h6>
+          <span>Pagamento</span>
+          <button (click)="onOpenLayer('paymentMethods')"><icon name="plus-outline" pack="eva"></icon></button>
+        </h6>
+      </div>
+
+      <nf-payments [data]="data"></nf-payments>
+
+    </div>
+
+    
+    <div class="container-payments" [formGroup]="formGeneralSettings" *ngIf="formSettingsControls.type.value != 'NFSE' && formSettingsControls.modalidadeFrete.value != '9'">
+      
+      <div>
+        <h6>
+          <span>Volumes</span>
+        </h6>
+      </div>
+
+      <div class="row" formGroupName="volumes" style="padding: 0 !important;margin: 0 !important;">
+
+        <div class="form-group col-4">
+          <label>Quantidade</label>
+          <input type="text" class="form-control" (input)="onApplyQuantityMask($event, formSettingsControls.volumes.controls.quantidade, false)">
+        </div>
+        <div class="form-group col-4">
+          <label>Espécie</label>
+          <input type="text" class="form-control" formControlName="especie" >
+        </div>
+        <div class="form-group col-4">
+          <label>Marca</label>
+          <input type="text" class="form-control" formControlName="marca" >
+        </div>
+        <div class="form-group col-4">
+          <label>Numeração</label>
+          <input type="text" class="form-control" formControlName="numeracao" (input)="onApplyQuantityMask($event, formSettingsControls.volumes.controls.numeracao, false)">
+        </div>
+        <div class="form-group col-4">
+          <label>Peso Liquido</label>
+          <input  class="form-control" type="text" (input)="onApplyQuantityMask($event, formSettingsControls.volumes.controls.pesoLiquido, true)"/>
+        </div>
+        <div class="form-group col-4">
+          <label>Peso Bruto</label>
+          <input  class="form-control" type="text"  (input)="onApplyQuantityMask($event, formSettingsControls.volumes.controls.pesoBruto, true)"/>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="container-export" [formGroup]="formGeneralSettings" *ngIf="formSettingsControls.destinyType.value == '3'">
+      
+      <div>
+        <h6>
+          <span>Exportação</span>
+        </h6>
+      </div>
+
+      <div class="row" formGroupName="export" style="padding: 0 !important;margin: 0 !important;">
+
+        <div class="form-group col-4">
+          <label>Estado de Embarque</label>
+          <select class="form-control" formControlName="estadoEmbarque" >
+            <option value="{{ state }}" *ngFor="let state of states">{{ state }}</option>
+          </select>
+        </div>
+        <div class="form-group col-4">
+          <label>Cidade de Embarque</label>
+          <input  class="form-control" type="text" formControlName="descricaoLocalEmbarque" />
+        </div>
+        <div class="form-group col-4">
+          <label>Descricao Local de Despacho</label>
+          <input  class="form-control" type="text" formControlName="descricaoLocalDespacho" />
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="container-components-two">
+
+    <div class="container-settings" [formGroup]="formGeneralSettings">
+      <h6>
+        <span>Geral</span>
+      </h6>     
+
+      <div class="data">
+        
+
+        <div class="form-group">
+          <label>Tipo</label>
+          <select id="changenftype" class="form-control" formControlName="type" (change)="onChangeNfType()">
+            <option>NFE</option>
+            <option>NFCE</option>
+            <option>NFSE</option>
+          </select>
+        </div>
+
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE'">
+          <label>Finalidade</label>
+          <select class="form-control" formControlName="finality">
+            <option value="1">1 - NF-e Normal</option>
+            <option value="2">2 - NF-e Complementar</option>
+            <option value="3">3 - NF-e de AJuste</option>
+            <option value="4">4 - NF-e de Devolução de Mercadoria</option>
+          </select>
+        </div>
+
+
+        <div class="form-group" >
+          <label>Série Da Nota Fiscal</label>
+          <select class="form-control" formControlName="serie">
+            <option *ngFor="let item of nfSeries[formSettingsControls.type.value]" value="{{ item.serie }}">{{ item.serie }}</option>
+          </select>
+        </div>
+ 
+
+        <div class="form-group">
+          <label>Tipo de Destino</label>
+          <select class="form-control" formControlName="destinyType" (change)="onChangeDestinyType()">
+            <option value="0">0 - Gerar Automaticamente</option>
+            <option value="1" *ngIf="formSettingsControls.type.value != 'NFSE'">1 - Operação Interna</option>
+            <option value="2" *ngIf="formSettingsControls.type.value != 'NFSE'">2 - Operação Interestadual</option>
+            <option value="3">3 - Operação com Exterior</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Natureza da Operação</label>
+          <select class="form-control" formControlName="operationNature">
+            <option>VENDA</option>
+            <option>DEVOLUÇÃO</option>
+            <option *ngIf="formSettingsControls.type.value == 'NFE' && !embed">COMPRA</option>
+            <option *ngIf="formSettingsControls.type.value == 'NFE' && !embed">TRASNFERÊNCIA</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'COMPRA' || formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'DEVOLUÇÃO'">
+          <label>Chave de Referência Nfe</label>
+          <input type="text" class="form-control" formControlName="notaReferenciada" />
+        </div>
+
+        <div class="form-group">
+          <label>Obter Tributos Atualizados</label>
+          <select class="form-control" formControlName="updateTributes">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFSE'">
+          <label>Adicionar Produtos ao Serviço</label>
+          <select class="form-control" formControlName="addProductsInService" (change)="onChangeBoolean($event, formSettingsControls.addProductsInService);onChangeAddProductsInService($event)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value != 'NFSE'">
+          <label>Nota Fiscal Conjugada</label>
+          <select class="form-control" formControlName="nfWithISSQN" (change)="onChangeConjugated(formSettingsControls.nfWithISSQN)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE'">
+          <label>Modalidade de Frete</label>
+          <select id="modalidadeFrete" class="form-control" formControlName="modalidadeFrete" #modalidadeFreteSelect (change)="onChangeNfFreteMod(modalidadeFreteSelect)">
+            <option value="0" *ngIf="formSettingsControls.type.value == 'NFE'">0 - Por conta do emitente</option>
+            <option value="1" *ngIf="formSettingsControls.type.value == 'NFE'">1 - Por conta do destinatário/remetente</option>
+            <!-- <option value="2">2 - Por conta de terceiros</option>
+            <option value="3">3 - Transporte Próprio por conta do Remetente</option>
+            <option value="4">4 - Transporte Próprio por conta do Destinatário</option> -->
+            <option value="9">9 - Sem frete</option>
+          </select>
+        </div>
+
+
+        <!-- <div class="form-group">
+          <label>Esperar Processamento Sefaz</label>
+          <select class="form-control" formControlName="waitSefaz" (change)="onChangeBoolean($event, formSettingsControls.waitSefaz)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div> -->
+
+        <!-- <div class="form-group">
+          <label>Tipo</label>
+          <select class="form-control" formControlName="emissionType">
+            <option value="1">1 - Emissão normal</option>
+            <option value="2">2 - Contingência FS-IA, com impressão do DANFE em formulário de segurança</option>
+            <option value="3">3 - Contingência SCAN (Sistema de Contingência do Ambiente Nacional)</option>
+            <option value="4">4 - Contingência DPEC (Declaração Prévia da Emissão em Contingência)</option>
+            <option value="5">5 - Contingência FS-DA, com impressão do DANFE em formulário de segurança</option>
+            <option value="6">6 - Contingência SVC-AN (SEFAZ Virtual de Contingência do AN)</option>
+            <option value="7">7 - Contingência SVC-RS (SEFAZ Virtual de Contingência do RS)</option>
+          </select>
+        </div> -->
+        
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE'">
+          <label>Presencial</label>
+          <select class="form-control" formControlName="presential" (change)="onChangeBoolean($event, formSettingsControls.presential)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE'">
+          <label>Consumidor Final</label>
+          <select class="form-control" formControlName="finalConsumer" (change)="onChangeBoolean($event, formSettingsControls.finalConsumer)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFCE'">
+          <label>Incluir Cliente Na Nota</label>
+          <select class="form-control" formControlName="hasCustomer" (change)="onChangeBoolean($event, formSettingsControls.hasCustomer)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Enviar Email</label>
+          <select class="form-control" formControlName="enviaremail" (change)="onChangeBoolean($event, formSettingsControls.enviaremail)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE'">
+          <label>Faturas</label>
+
+          <div class="billing-container">
+            <div class="row" *ngFor="let item of (formSettingsControls?.parcelas?.controls || [])">
+              <div class="form-control" [formGroup]="item">
+                <label>Vencimento</label>
+                <!--  -->
+                <input class="form-control" formControlName="dataVencimento" type="date"/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="container-balance" *ngIf="!embed || !!embed && formSettingsControls.type.value == 'NFSE' || !!embed && formSettingsControls.type.value != 'NFSE' ">
+      <h6>
+        <span>Balanço</span>
+      </h6>     
+
+      <div class="data">
+        <div class="container-subtotal">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th colspan="2">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="formSettingsControls.type.value != 'NFSE'">
+                  <td><span class="label">Produtos</span> <span class="line"></span></td>
+                  <td><span class="value">{{ (data.balance?.totalProducts || 0) | currency }}</span></td>
+                </tr>
+                <tr *ngIf="formSettingsControls.nfWithISSQN.value || formSettingsControls.type.value == 'NFSE'">
+                  <td><span class="label">Serviços</span> <span class="line"></span></td>
+                  <td><span class="value">{{ (data.balance?.totalServices || 0) | currency }}</span></td>
+                </tr>               
+                <!-- <tr>
+                  <td><span class="label">Desconto</span> <span class="line"></span></td>
+                  <td><span class="value">{{ (data.balance?.totalDiscount || 0) | currency }}</span></td>              
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="container-total">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <th>Total</th>
+                  <td>{{ (data.balance?.totalSale || 0) | currency }}</td>
+                </tr>
+              </tbody>              
+            </table>
+          </div>
+        </div>        
+      </div>
+    </div>
+    
+    <div class="container-button">
+      <button class="btn btnConfirm" (click)="onRegister()" [disabled]="isEnableSubmitButton()">Emitir</button>
+    </div>
+
+  </div>
+
+  <register-nf-layer (callback)="onLayerResponse($event)"></register-nf-layer>
+</main>

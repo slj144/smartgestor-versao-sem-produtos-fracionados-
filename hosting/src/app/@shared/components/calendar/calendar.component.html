@@ -1,0 +1,27 @@
+<div #calendar id="calendar-main">
+  <div class="calendar-header">
+    <!-- <button class="btn-previous"><icon name="arrow-ios-back-outline" pack="eva"></icon></button> -->
+    <h3 id="monthAndYear" style="text-align: center;"></h3>            
+    <!-- <button class="btn-next"><icon name="arrow-ios-forward-outline" pack="eva"></icon></button> -->
+    <form class="form-inline d-none" > 
+      <select class="form-control col-sm-4" name="month" id="month">
+        <option *ngFor="let item of months" [value]="item.value" [selected]="item.selected">{{ item.label }}</option>
+      </select>
+      <select class="form-control col-sm-4" name="year" id="year">
+        <option *ngFor="let item of years" [value]="item.value" [selected]="item.selected">{{ item.value }}</option>
+      </select>
+    </form>
+  </div>
+  <div class="calendar-body">
+    <table id="calendar" class="table table-borderless">
+      <thead id="calendar-days">
+        <tr>
+          <th *ngFor="let item of days">{{ item }}</th>
+        </tr>
+      </thead>
+      <tbody id="calendar-body">
+        <tr></tr>
+      </tbody>
+    </table>
+  </div>
+</div>

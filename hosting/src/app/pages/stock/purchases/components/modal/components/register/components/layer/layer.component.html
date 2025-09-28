@@ -1,0 +1,22 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="providers-container" [style.display]="(settings.activeComponent == 'providers' ? 'block' : 'none')">
+      <providers-selector (callback)="onProvidersResponse($event)"></providers-selector>
+    </div>
+
+    <div class="products-container" [style.display]="(settings.activeComponent == 'products' ? 'block' : 'none')">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+    <div class="accounts-container" [style.display]="(settings.activeComponent == 'billToPay' ? 'block' : 'none')">
+      <bills-to-pay-register (callback)="onBillsToPayResponse($event)" [embed]="true"></bills-to-pay-register>
+    </div>
+
+    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits')">
+      <general-selector #generalSelector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
+  </ng-container>
+</layer>

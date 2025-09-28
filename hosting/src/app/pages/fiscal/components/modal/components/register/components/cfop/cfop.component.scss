@@ -1,0 +1,65 @@
+
+#cfop-component {
+  padding: 0;
+  display: block;
+  background-color: #fff;
+  .required {
+    border-color: indianred;
+    &:focus {
+      border-color: rgba(205, 92, 92, 0.75);
+    }
+  }
+
+  h6 {
+    padding: 6px 0;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    position: relative;
+    button {
+      width: 30px;
+      height: 30px;
+      color: gray;
+      border-radius: 100%;
+      background-color: #fff;
+      border: none;
+      outline: none;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      transition: all 0.5s ease-in-out;
+      icon {
+        font-size: 15px;
+        margin: 1px 0 0;
+      }
+      &:hover {
+        opacity: 0.85;
+      }
+      &:disabled {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .container-cep{
+    display: flex;
+    width: 100%;
+    padding: 0 !important;
+    margin: -7px 0 0 0 !important;
+    flex-direction: row !important;
+    input{
+      width: calc(100% - 35px);
+    }
+    button{
+      width: 35px;
+      height: 37px;
+      margin: 0 !important;
+      padding: 0;
+      background-color: rgb(102, 102, 255);
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,111 @@
+
+<modal (callback)="onModalResponse($event)">  
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Providers/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" *ngIf="(settings.activeComponent === 'Providers/Read') || (settings.activeComponent === 'Providers/Delete')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+
+            <div class="container-data">
+              <section class="container-header">
+                <h6 class="name">{{ settings.data.name }}</h6>
+                <div class="content">
+                  <span class="personalDocument" *ngIf="settings.data.personalDocument">{{ settings.data.personalDocument.type + ': ' + settings.data.personalDocument.value }}</span>
+                  <span class="businessDocument" *ngIf="settings.data.businessDocument">{{ settings.data.businessDocument.type + ': ' + settings.data.businessDocument.value }}</span>
+                </div>               
+              </section>
+
+              <section class="container-description" *ngIf="settings.data.description">
+                <small>{{ translate.action.read.label.description.title }}</small>
+                <div class="content" [innerHTML]="settings.data.description"></div>
+              </section>
+
+              <section class="container-informations" *ngIf="settings.data.address?.postalCode">
+                <small>{{ translate.action.read.label.address.title }}</small>
+
+                <div class="table-responsive">
+                  <table class="table table-borderless">
+                    <tr *ngIf="settings.data.address.postalCode">
+                      <td>
+                        <span class="icon"><icon name="pin-outline" pack="eva"></icon></span>
+                      </td>
+                      <td>
+                        <span class="value">{{ settings.data.address.local + ' Nº ' + settings.data.address.number + ( settings.data.address.complement ? ' ' + settings.data.address.complement : '') + ', ' + settings.data.address.neighborhood + ', ' + settings.data.address.city + ' - ' + settings.data.address.state }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </section>
+
+              <section class="container-informations" *ngIf="settings.data.contacts?.email || settings.data.contacts?.phone">
+                <small>{{ translate.action.read.label.contact.title }}</small>
+
+                <div class="table-responsive">
+                  <table class="table table-borderless">
+                    <tr *ngIf="settings.data.contacts.email">
+                      <td>
+                        <span class="icon"><icon name="email-outline" pack="eva"></icon></span>
+                      </td>
+                      <td>
+                        <span class="value">{{ settings.data.contacts.email }}</span>                   
+                      </td>
+                    </tr>
+                    <tr *ngIf="settings.data.contacts.phone">
+                      <td>
+                        <span class="icon"><icon name="phone-call-outline" pack="eva"></icon></span>
+                      </td>
+                      <td>
+                        <span class="value">{{ settings.data.contacts.phone }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </section>
+            </div>
+
+            <div class="container-delete" *ngIf="settings.activeComponent === 'Providers/Delete'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="container-register" *ngIf="(settings.activeComponent === 'Providers/Create') || (settings.activeComponent === 'Providers/Update')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <providers-register (callback)="onRegisterResponse($event)"></providers-register>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container-data-export" *ngIf="settings.activeComponent === 'Providers/DataExport'">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <providers-data-export (callback)="onDataExportResponse($event)"></providers-data-export>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+  </div>
+</modal>

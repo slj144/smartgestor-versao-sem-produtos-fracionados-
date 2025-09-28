@@ -1,0 +1,159 @@
+<!-- Arquivo: birthday-customers.component.html -->
+<!-- Localização: src/app/pages/crm/components/birthday-customers/birthday-customers.component.html -->
+<!-- Descrição: Template HTML para exibir clientes aniversariantes com opções de envio de mensagem -->
+
+<div class="birthday-customers-container">
+
+  <!-- 🎂 CABEÇALHO -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <icon name="gift-outline" pack="eva"></icon>
+        Aniversários dos Clientes
+      </h1>
+      <p class="subtitle">Parabenize seus clientes em datas especiais</p>
+    </div>
+
+    <!-- Botão de atualizar -->
+    <button class="btn btn-outline" (click)="refreshList()" [disabled]="loading">
+      <icon name="refresh-outline" pack="eva" [class.spinning]="loading"></icon>
+      Atualizar
+    </button>
+  </div>
+
+  <!-- 📊 RESUMO RÁPIDO -->
+  <div class="summary-cards">
+    <div class="summary-card today">
+      <div class="card-icon">
+        <icon name="gift-outline" pack="eva"></icon>
+      </div>
+      <div class="card-content">
+        <h3>{{ todayBirthdays.length }}</h3>
+        <p>Hoje</p>
+      </div>
+    </div>
+
+    <div class="summary-card week">
+      <div class="card-icon">
+        <icon name="calendar-outline" pack="eva"></icon>
+      </div>
+      <div class="card-content">
+        <h3>{{ weekBirthdays.length }}</h3>
+        <p>Esta Semana</p>
+      </div>
+    </div>
+
+    <div class="summary-card month">
+      <div class="card-icon">
+        <icon name="trending-up-outline" pack="eva"></icon>
+      </div>
+      <div class="card-content">
+        <h3>{{ monthBirthdays.length }}</h3>
+        <p>Este Mês</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔍 FILTROS -->
+  <div class="filters-section">
+    <div class="filter-buttons">
+      <button class="filter-btn" [class.active]="filterPeriod === 'all'" (click)="filterPeriod = 'all'">
+        Todos ({{ birthdayCustomers.length }})
+      </button>
+
+      <button class="filter-btn today-filter" [class.active]="filterPeriod === 'today'"
+        (click)="filterPeriod = 'today'">
+        Hoje ({{ todayBirthdays.length }})
+      </button>
+
+      <button class="filter-btn week-filter" [class.active]="filterPeriod === 'week'" (click)="filterPeriod = 'week'">
+        Esta Semana ({{ weekBirthdays.length }})
+      </button>
+
+      <button class="filter-btn month-filter" [class.active]="filterPeriod === 'month'"
+        (click)="filterPeriod = 'month'">
+        Este Mês ({{ monthBirthdays.length }})
+      </button>
+    </div>
+  </div>
+
+  <!-- ⏳ LOADING -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner">
+      <icon name="loader-outline" pack="eva" class="spinning"></icon>
+      <p>Carregando aniversariantes...</p>
+    </div>
+  </div>
+
+  <!-- 📝 LISTA DE CLIENTES -->
+  <div class="customers-list" *ngIf="!loading">
+
+    <!-- Mensagem quando não há aniversariantes -->
+    <div class="empty-state" *ngIf="getFilteredCustomers().length === 0">
+      <icon name="gift-outline" pack="eva"></icon>
+      <h3>Nenhum aniversariante encontrado</h3>
+      <p *ngIf="filterPeriod === 'today'">Não há clientes fazendo aniversário hoje.</p>
+      <p *ngIf="filterPeriod === 'week'">Não há clientes fazendo aniversário esta semana.</p>
+      <p *ngIf="filterPeriod === 'month'">Não há clientes fazendo aniversário este mês.</p>
+      <p *ngIf="filterPeriod === 'all'">Nenhum cliente cadastrado possui data de nascimento.</p>
+    </div>
+
+    <!-- Cards dos Clientes Aniversariantes -->
+    <div class="customer-card" *ngFor="let customer of getFilteredCustomers()"
+      [class.birthday-today]="customer.category === 'today'" [class.birthday-week]="customer.category === 'this-week'">
+
+      <!-- Informações do Cliente -->
+      <div class="customer-info">
+        <div class="customer-avatar">
+          <icon name="person-outline" pack="eva"></icon>
+        </div>
+
+        <div class="customer-details">
+          <h4>{{ customer.name }}</h4>
+
+          <div class="customer-meta">
+            <span class="phone">
+              <icon name="phone-outline" pack="eva"></icon>
+              {{ customer.phone }}
+            </span>
+
+            <span class="birthday-info" [class.today]="customer.category === 'today'">
+              <icon name="gift-outline" pack="eva"></icon>
+              {{ getBirthdayText(customer) }}
+              <span *ngIf="customer.age" class="age">({{ customer.age }} anos)</span>
+            </span>
+          </div>
+
+          <div class="customer-stats" *ngIf="customer.totalSpent > 0">
+            <span class="total-spent">
+              <icon name="trending-up-outline" pack="eva"></icon>
+              Total gasto: {{ formatCurrency(customer.totalSpent) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ações -->
+      <div class="customer-actions">
+        <!-- Badge de Prioridade -->
+        <div class="priority-badge" [class]="customer.category">
+          <span *ngIf="customer.category === 'today'">🎂 HOJE!</span>
+          <span *ngIf="customer.category === 'this-week'">📅 Esta Semana</span>
+          <span *ngIf="customer.category === 'this-month'">📆 Este Mês</span>
+        </div>
+
+        <!-- Botão WhatsApp -->
+        <button class="btn btn-whatsapp" (click)="sendBirthdayMessage(customer)" [disabled]="!customer.phone"
+          type="button">
+          <icon name="message-circle-outline" pack="eva"></icon>
+          Parabenizar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 📱 MODAL DE TEMPLATES DE MENSAGEM -->
+<app-message-templates *ngIf="showTemplatesModal" [customer]="selectedCustomer" [showModal]="showTemplatesModal"
+  [filterCategory]="'aniversario'" (onClose)="closeTemplatesModal()" (onSelect)="onTemplateSelected($event)">
+</app-message-templates>

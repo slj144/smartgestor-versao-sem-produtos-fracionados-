@@ -1,0 +1,251 @@
+<!-- ARQUIVO: message-templates.component.html -->
+<!-- CAMINHO: src/app/pages/crm/components/message-templates/message-templates.component.html -->
+<!-- FUNÇÃO: Template HTML do modal de WhatsApp 100% responsivo para mobile -->
+
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-container" [class.garantia-mode]="isGarantiaDetected" (click)="$event.stopPropagation()">
+
+        <!-- CABEÇALHO -->
+        <div class="modal-header" [class.garantia-header]="isGarantiaDetected">
+            <h2>
+                <icon name="message-circle-outline" pack="eva"></icon>
+                Templates de WhatsApp
+                <!-- Badge quando detecta garantia -->
+                <span class="garantia-badge animated" *ngIf="isGarantiaDetected">
+                    🛡️ Garantia Detectada
+                </span>
+            </h2>
+            <button class="close-btn" (click)="closeModal()">
+                <icon name="close-outline" pack="eva"></icon>
+            </button>
+        </div>
+
+        <!-- ALERTA DE GARANTIA SIMPLIFICADO -->
+        <div class="garantia-alert-simple" *ngIf="isGarantiaDetected && suggestedTemplates.length > 0">
+            <div class="alert-content">
+                <span class="alert-icon">🛡️</span>
+                <span class="alert-text">Sistema detectou garantia! Templates relevantes foram priorizados.</span>
+            </div>
+        </div>
+
+        <!-- ÁREA DE CONTEÚDO -->
+        <div class="modal-content">
+
+            <!-- PAINEL LATERAL -->
+            <div class="sidebar-panel">
+
+                <!-- SEÇÃO DE CATEGORIAS - Adicionar após as categorias existentes -->
+                <div class="categories-section">
+                    <div class="category-buttons">
+                        <!-- Categoria: Primeiro Contato -->
+                        <button class="category-btn" [class.active]="selectedCategory === 'first-contact'"
+                            (click)="selectCategory('first-contact')">
+                            <span class="emoji">👋</span>
+                            <span>Primeiro Contato</span>
+                        </button>
+
+                        <!-- Categoria: Follow-up -->
+                        <button class="category-btn" [class.active]="selectedCategory === 'follow-up'"
+                            (click)="selectCategory('follow-up')">
+                            <span class="emoji">📞</span>
+                            <span>Follow-up</span>
+                        </button>
+
+                        <!-- Categoria: Pós-Venda -->
+                        <button class="category-btn" [class.active]="selectedCategory === 'pos-venda'"
+                            (click)="selectCategory('pos-venda')">
+                            <span class="emoji">✅</span>
+                            <span>Pós-Venda</span>
+                        </button>
+
+                        <!-- 🔄 NOVA CATEGORIA: RECOMPRA -->
+                        <button class="category-btn recompra-btn" [class.active]="selectedCategory === 'recompra'"
+                            [class.highlight]="customer?.isRecompra || customer?.contextData?.isRecompra"
+                            (click)="selectCategory('recompra')">
+                            <span class="emoji">🔄</span>
+                            <span>Recompra</span>
+                            <!-- Badge indicador se é atividade de recompra -->
+                            <span class="badge-new" *ngIf="customer?.isRecompra || customer?.contextData?.isRecompra">
+                                Auto
+                            </span>
+                        </button>
+
+                        <!-- Categoria: Recuperação -->
+                        <button class="category-btn" [class.active]="selectedCategory === 'recuperacao'"
+                            (click)="selectCategory('recuperacao')">
+                            <span class="emoji">🎯</span>
+                            <span>Recuperação</span>
+                        </button>
+
+                        <!-- Categoria: Garantia (se detectada) -->
+                        <button class="category-btn" *ngIf="isGarantiaDetected"
+                            [class.active]="selectedCategory === 'garantia'" [class.garantia-pulse]="isGarantiaDetected"
+                            (click)="selectCategory('garantia')">
+                            <span class="emoji">🛡️</span>
+                            <span>Garantia</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CSS ADICIONAL (adicionar no arquivo de estilos) -->
+                <style>
+                    .category-btn.recompra-btn {
+                        position: relative;
+                    }
+
+                    .category-btn.recompra-btn.highlight {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        animation: pulse-soft 2s infinite;
+                    }
+
+                    .badge-new {
+                        position: absolute;
+                        top: -5px;
+                        right: -5px;
+                        background: #ff4757;
+                        color: white;
+                        font-size: 10px;
+                        padding: 2px 6px;
+                        border-radius: 10px;
+                        font-weight: bold;
+                    }
+
+                    @keyframes pulse-soft {
+
+                        0%,
+                        100% {
+                            transform: scale(1);
+                            box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4);
+                        }
+
+                        50% {
+                            transform: scale(1.02);
+                            box-shadow: 0 0 0 10px rgba(102, 126, 234, 0);
+                        }
+                    }
+                </style>
+                <!-- Busca -->
+                <div class="search-container">
+                    <div class="search-input-wrapper">
+                        <icon name="search-outline" pack="eva"></icon>
+                        <input type="text" [(ngModel)]="searchTerm" placeholder="Buscar templates..."
+                            (input)="onSearchChange()">
+                        <button class="clear-btn" *ngIf="searchTerm" (click)="clearSearch()">
+                            <icon name="close-outline" pack="eva"></icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Templates -->
+                <div class="templates-container">
+                    <!-- Templates sugeridos (garantia) -->
+                    <div *ngIf="suggestedTemplates.length > 0 && isGarantiaDetected">
+                        <div style="padding: 10px 10px 5px; color: #ff9800; font-weight: 600; font-size: 13px;">
+                            🛡️ Recomendados para Garantia:
+                        </div>
+                        <div *ngFor="let template of suggestedTemplates" class="template-card garantia-suggested"
+                            [class.selected]="selectedTemplate?.id === template.id" (click)="selectTemplate(template)">
+                            <div class="template-header">
+                                <h4>{{ template.name }}</h4>
+                                <span>🛡️</span>
+                            </div>
+                            <div class="template-content">
+                                {{ template.content | slice:0:150 }}...
+                            </div>
+                            <div class="template-tags">
+                                <span class="tag" *ngFor="let tag of template.tags | slice:0:3">{{ tag }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Templates filtrados -->
+                    <div *ngFor="let template of getFilteredTemplates()" class="template-card"
+                        [class.selected]="selectedTemplate?.id === template.id" (click)="selectTemplate(template)">
+                        <div class="template-header">
+                            <h4>{{ template.name }}</h4>
+                            <span *ngIf="template.tags.includes('garantia')">🛡️</span>
+                        </div>
+                        <div class="template-content">
+                            {{ template.content | slice:0:150 }}...
+                        </div>
+                        <div class="template-tags">
+                            <span class="tag" *ngFor="let tag of template.tags | slice:0:3">{{ tag }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Sem templates -->
+                    <div class="no-templates" *ngIf="getFilteredTemplates().length === 0">
+                        <icon name="inbox-outline" pack="eva"></icon>
+                        <p>Nenhum template encontrado</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ÁREA DO EDITOR -->
+            <div class="editor-panel">
+
+                <!-- Mensagem quando não tem template selecionado -->
+                <div class="select-template-message" *ngIf="!selectedTemplate">
+                    <icon name="message-square-outline" pack="eva"></icon>
+                    <h3>Selecione um template</h3>
+                    <p>Escolha um template na lista ao lado para começar</p>
+                </div>
+
+                <!-- Editor quando tem template -->
+                <div class="editor-content" *ngIf="selectedTemplate">
+
+                    <!-- Cabeçalho do Editor -->
+                    <div class="editor-header-simple">
+                        <h3>
+                            <span *ngIf="selectedTemplate.tags.includes('garantia')">🛡️</span>
+                            {{ selectedTemplate.name }}
+                        </h3>
+                        <div class="editor-tools">
+                            <button class="tool-btn" (click)="reloadTemplate()" title="Recarregar">
+                                <icon name="refresh-outline" pack="eva"></icon>
+                            </button>
+                            <button class="tool-btn" (click)="copyMessage()" title="Copiar">
+                                <icon name="copy-outline" pack="eva"></icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Textarea -->
+                    <div class="editor-textarea">
+                        <textarea [(ngModel)]="editedMessage" placeholder="Digite sua mensagem aqui..."
+                            [style.height.px]="getTextareaHeight()" autocomplete="off" autocorrect="on"
+                            autocapitalize="sentences" spellcheck="true" (focus)="updateTextarea()"
+                            (input)="updateTextarea()">
+                        </textarea>
+                        <div class="char-count">{{ editedMessage.length }} caracteres</div>
+                    </div>
+
+                    <!-- Preview WhatsApp -->
+                    <div class="whatsapp-preview-simple">
+                        <h4>Preview da Mensagem</h4>
+                        <div class="preview-phone">
+                            <div class="message-bubble">
+                                <pre>{{ editedMessage }}</pre>
+                                <span class="message-time">{{ getCurrentTime() }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RODAPÉ SIMPLIFICADO -->
+        <div class="modal-footer-simple">
+            <button class="btn-cancel" (click)="closeModal()">
+                Cancelar
+            </button>
+            <button class="btn-send" [class.garantia]="isGarantiaDetected"
+                [disabled]="!selectedTemplate || !editedMessage" (click)="confirmSend()">
+                <icon name="paper-plane-outline" pack="eva"></icon>
+                Enviar WhatsApp
+            </button>
+        </div>
+
+    </div>
+</div>

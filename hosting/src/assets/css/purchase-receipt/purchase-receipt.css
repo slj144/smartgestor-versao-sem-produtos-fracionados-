@@ -1,0 +1,112 @@
+#containerPurchaseReceiptPrint header {
+  text-align: center;
+  margin: 5px 0; }
+  #containerPurchaseReceiptPrint header img {
+    width: 140px; }
+  #containerPurchaseReceiptPrint header span {
+    display: block;
+    font-size: 13px;
+    color: #bbb; }
+    #containerPurchaseReceiptPrint header span.name {
+      margin: 4px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #555; }
+#containerPurchaseReceiptPrint section {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  margin: 5px 0; }
+  #containerPurchaseReceiptPrint section.container-info .content {
+    padding: 5px 8px; }
+    #containerPurchaseReceiptPrint section.container-info .content span {
+      display: block;
+      font-size: 12px; }
+      #containerPurchaseReceiptPrint section.container-info .content span.icon {
+        font-size: 20px;
+        color: #6666ff; }
+      #containerPurchaseReceiptPrint section.container-info .content span.label {
+        display: inline;
+        color: #777;
+        margin-right: 5px;
+        font-weight: 600; }
+      #containerPurchaseReceiptPrint section.container-info .content span.value {
+        display: inline;
+        color: #898989; }
+    #containerPurchaseReceiptPrint section.container-info .content table {
+      width: 100%;
+      margin: 0; }
+      #containerPurchaseReceiptPrint section.container-info .content table tr td {
+        padding: 0; }
+        #containerPurchaseReceiptPrint section.container-info .content table tr td .container-store-info {
+          padding-left: 10px; }
+          #containerPurchaseReceiptPrint section.container-info .content table tr td .container-store-info .name {
+            font-size: 13px;
+            font-weight: 600; }
+  #containerPurchaseReceiptPrint section.container-products .content table {
+    width: 100%;
+    margin: 10px 0 0; }
+    #containerPurchaseReceiptPrint section.container-products .content table thead tr {
+      font-size: 12px; }
+      #containerPurchaseReceiptPrint section.container-products .content table thead tr th {
+        color: #777;
+        padding: 5px 10px;
+        font-weight: 500;
+        text-align: center;
+        vertical-align: middle; }
+    #containerPurchaseReceiptPrint section.container-products .content table tbody tr {
+      border-bottom: 1px solid #ddd; }
+      #containerPurchaseReceiptPrint section.container-products .content table tbody tr td {
+        vertical-align: middle;
+        border-right: 1px solid #eee; }
+        #containerPurchaseReceiptPrint section.container-products .content table tbody tr td span {
+          font-size: 13px;
+          color: #999; }
+          #containerPurchaseReceiptPrint section.container-products .content table tbody tr td span.price {
+            font-weight: bold; }
+        #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(1), #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(2), #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(4), #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(5), #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(6), #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:nth-child(7) {
+          text-align: center; }
+        #containerPurchaseReceiptPrint section.container-products .content table tbody tr td:last-child {
+          border-right: none; }
+      #containerPurchaseReceiptPrint section.container-products .content table tbody tr:last-child {
+        border-bottom: none; }
+  #containerPurchaseReceiptPrint section.container-balance .content {
+    padding: 5px; }
+    #containerPurchaseReceiptPrint section.container-balance .content table {
+      width: 100%;
+      margin: 0; }
+      #containerPurchaseReceiptPrint section.container-balance .content table tbody tr {
+        border-bottom: 1px solid #eee; }
+        #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td {
+          padding: 5px;
+          vertical-align: middle; }
+          #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td .container-fields {
+            margin-top: 10px; }
+          #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td span {
+            font-size: 13px; }
+            #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td span.label {
+              color: #555;
+              font-weight: 400;
+              margin-right: 4px; }
+          #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td > span {
+            display: block; }
+          #containerPurchaseReceiptPrint section.container-balance .content table tbody tr td:last-child {
+            width: 100px;
+            text-align: right;
+            font-weight: 600;
+            color: #333; }
+        #containerPurchaseReceiptPrint section.container-balance .content table tbody tr:last-child {
+          border-bottom: none; }
+  #containerPurchaseReceiptPrint section.container-note .content {
+    width: 100%;
+    color: #999;
+    padding: 5px;
+    white-space: pre-line;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px; }
+  #containerPurchaseReceiptPrint section.container-info .label, #containerPurchaseReceiptPrint section.container-products .label, #containerPurchaseReceiptPrint section.container-balance .label, #containerPurchaseReceiptPrint section.container-note .label {
+    color: #444;
+    font-size: 13px;
+    font-weight: 600; }
+
+/*# sourceMappingURL=purchase-receipt.css.map */

@@ -1,0 +1,15 @@
+<main>
+    <div>
+        <h5>{{ translate.label.title }}</h5>
+        <section class="container-instructions">
+            <p>{{ translate.label.info[0] }}</p>
+            <p>{{ translate.label.info[1] }}</p>
+        </section>
+        <section class="container-file">
+            <input id="inputXLSFile" type="file" accept=".xlsx" class="form-control" (change)="onFileChange($event)">
+        </section>
+        <button class="btn btn-primary" [disabled]="!valid" (click)="onImport()">
+            {{ translate.label.button }}
+        </button>
+    </div>
+</main>

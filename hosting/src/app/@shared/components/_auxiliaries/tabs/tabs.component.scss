@@ -1,0 +1,56 @@
+
+#tabs-wrapper {
+  width: 100%;
+  height: 100%;
+  #container-tab-options {
+    height: 40px;
+    .tab-option {
+      width: calc(100% / 3);
+      height: 100%;
+      padding: 10px;
+      margin: 0;
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      border: none;
+      outline: none;
+      background-color: #fff;
+      border-bottom: 3px solid #eee;
+      transition: all 0.3s ease-in-out;
+      border-right: 1px solid #eee;
+      &.active {
+        color: rgb(102, 102, 255);
+        border-bottom: 3px solid rgb(102, 102, 255);
+      }
+      &:hover {
+        background-color: rgb(250, 250, 250);
+      }
+      &:last-child {
+        border-right: none;
+      }
+
+      // Resize tabs automatically
+        
+      @for $i from 1 through 4 {
+        &:first-child:nth-last-child(#{$i}),
+        &:first-child:nth-last-child(#{$i}) ~ button {
+          width: calc(100% / #{$i});
+        }
+      }
+    }
+  }
+  #container-tab-content {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    position: relative;
+    ::ng-deep [slot=tab-items] {      
+      & > div {
+        display: none;
+        &.active {
+          display: block !important;
+        }
+      }
+    }
+  }
+}

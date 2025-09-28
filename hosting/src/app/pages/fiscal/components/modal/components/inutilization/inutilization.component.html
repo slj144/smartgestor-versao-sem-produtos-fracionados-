@@ -1,0 +1,41 @@
+
+<main id="container-request-register" [formGroup]="form" *ngIf="form">
+  <div class="container-components-one">
+
+    <div class="row">
+
+      <div class="form-group col-6">
+        <label>Ano</label>
+        <input type="text" class="form-control" formControlName="ano" placeholder="valor padrão ano atual.." />
+      </div>
+
+      <div class="form-group col-6">
+        <label>Série</label>
+        <input type="text" class="form-control" formControlName="serie" placeholder="" />
+      </div>
+
+      <div formGroupName="numeracao" class="form-group col-6">
+        <label>Número Inicial</label>
+        <input type="text" class="form-control" formControlName="inicial" placeholder="" />
+      </div>
+
+      <div formGroupName="numeracao" class="form-group col-6">
+        <label>Número Final</label>
+        <input type="text" class="form-control" formControlName="final" placeholder="" />
+      </div>
+
+      <div class="form-group col-12">
+        <label>Justificativa</label>
+        <textarea class="form-control" formControlName="justificativa" placeholder="Insira a justificativa aqui.."></textarea>
+      </div>
+
+
+      <div class="container-button">
+        <button class="btn btnConfirm" (click)="onRegister()" [disabled]="form.invalid">Enviar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

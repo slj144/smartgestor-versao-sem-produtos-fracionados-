@@ -1,0 +1,214 @@
+<main>
+  <div *ngIf="checkBootstrap">
+
+    <section class="container-selection" *ngIf="isMatrix">
+      <span class="title">Modo de Importação:</span>
+
+      <select class="form-control" value="{{ settings.informations.mode }}" (change)="onChangeSelect($event)">
+        <option value="register">Registro de Produtos</option>
+        <option value="update">Atualização de Produtos</option>
+      </select>
+    </section>
+
+    <section class="container-instructions" *ngIf="isMatrix">
+      <span class="title">Instruções de Importação:</span>
+
+      <div class="container-description">
+        <p *ngIf="settings.informations.mode == 'register'">Esse modo de importação é exclusivo para o registro de novos
+          produtos.</p>
+        <p *ngIf="settings.informations.mode == 'update'">Esse modo de importação é exclusivo para a atualização de
+          dados já existentes, ou seja, caso algum dos produtos presente no documento ainda não esteja cadastrado a
+          importação será impedida de ser concluída.</p>
+      </div>
+
+      <div class="container-steps">
+        <ol>
+          <li>
+            <span>Baixe e preencha a planilha Excel conforme a tabela abaixo:</span>
+
+            <a [href]="settings.model?.fileLink" [download]="settings.model?.fileName"
+              class="btn btn-primary btnDownload">
+              <icon name="download" pack="eva"></icon> <span>Baixar Planilha de Importação</span>
+            </a>
+          </li>
+          <li>
+            <span>Com a planilha aberta, adicione os dados a partir da segunda linha. De acordo com a tabela a
+              seguir:</span>
+            <small>Atenção: Caso os campos requeridos não recebam dados, isso resultará em erros.</small>
+
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Campo</th>
+                    <th>Descrição</th>
+                    <th>Requerido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CODIGO</td>
+                    <td>Código do produto</td>
+                    <td>{{ (settings.informations.mode == 'update' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>NOME</td>
+                    <td>Nome do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>QUANTIDADE</td>
+                    <td>Quantidade em estoque do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>PRECO DE CUSTO</td>
+                    <td>Preço de custo do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>PRECO DE VENDA</td>
+                    <td>Preço de venda do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>CATEGORIA</td>
+                    <td>Categoria do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>TIPO</td>
+                    <td>Tipo do produto</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>FORNECEDOR</td>
+                    <td>Tipo do produto</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>NUMERO DE SERIE</td>
+                    <td>Número de série do Produto</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>CODIGO DE BARRAS</td>
+                    <td>Código de barras do Produto</td>
+                    <td>{{ (settings.informations.mode == 'create/update' ? 'Sim' : '-') }}</td>
+                  </tr>
+                  <tr>
+                    <td>ALERTA</td>
+                    <td>Quantidade para ativar o alerta de estoque</td>
+                    <td>{{ (settings.informations.mode == 'register' ? 'Sim' : '-') }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li>
+          <li>
+            <span>Após finalizar a inserção de dados salve o documento no formato (.xlsx).</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="container-instructions" *ngIf="!isMatrix">
+      <span class="title">Instruções de Importação:</span>
+
+      <div class="container-description">
+        <p *ngIf="settings.informations.mode == 'update'">A importação de dados de um produto requer que o mesmo tenha
+          sido cadastrado previamente na Matriz. Caso contrário a importação não poderá ser executada.</p>
+      </div>
+
+      <div class="container-steps">
+        <ol>
+          <li>
+            <span>Baixe e preencha a planilha Excel conforme a tabela abaixo:</span>
+
+            <a [href]="settings.model?.fileLink" [download]="settings.model?.fileName"
+              class="btn btn-primary btnDownload">
+              <icon name="download" pack="eva"></icon> <span>Baixar Planilha de Importação</span>
+            </a>
+          </li>
+          <li>
+            <span>Com a planilha aberta, adicione os dados a partir da segunda linha. De acordo com a tabela a
+              seguir:</span>
+            <small>Atenção: Caso os campos requeridos não recebam dados, isso resultará em erros.</small>
+
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Campo</th>
+                    <th>Descrição</th>
+                    <th>Requerido</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>CODIGO</td>
+                    <td>Código do produto</td>
+                    <td>Sim</td>
+                  </tr>
+                  <tr>
+                    <td>NOME</td>
+                    <td>Nome do produto (SOMENTE VISUALIZAÇÃO)</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>QUANTIDADE</td>
+                    <td>Quantidade em estoque do produto</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>ALERTA</td>
+                    <td>Quantidade para ativar o alerta de estoque</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>PRECO DE CUSTO</td>
+                    <td>Preço de custo do produto</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>PRECO DE VENDA</td>
+                    <td>Preço de venda do produto</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </li>
+          <li>
+            <span>Após finalizar a inserção de dados salve o documento no formato (.xlsx).</span>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <section class="container-file">
+      <span class="title">Seleção de documento:</span>
+      <input id="inputXLSFile" type="file" accept=".xlsx" class="form-control" (click)="onClearInput($event)"
+        (change)="onChangeInput($event)" />
+      <small *ngIf="settings.informations.errors && (settings.informations.errors).length > 0">
+        {{ 'O documento possui ' + (settings.informations.errors).length + ' erro(s), confira abaixo mais detalhes.' }}
+      </small>
+    </section>
+
+    <section class="container-errors" *ngIf="settings.informations.errors && (settings.informations.errors).length > 0">
+      <span class="title">Erros no documento:</span>
+      <div class="wrapper">
+        <ol>
+          <li *ngFor="let erro of settings.informations.errors"><span [innerHtml]="erro"></span></li>
+        </ol>
+      </div>
+    </section>
+
+    <button class="btn btn-primary" [disabled]="!settings.informations.valid" (click)="onImport()">Iniciar
+      Importação</button>
+  </div>
+
+  <div *ngIf="!checkBootstrap" [nbSpinner]="!checkBootstrap" [nbSpinnerStatus]="'success'" [nbSpinnerSize]="'large'"
+    style="height: 50vh">
+  </div>
+</main>

@@ -1,0 +1,23 @@
+
+<div #toast id="toast-wrapper">
+  <div class="drawer">
+
+    <div class="toast-header" *ngIf="!settings.hideHeader">
+
+      <button class="btnClose" (click)="onClose()">
+        <icon name="arrow-ios-downward-outline" pack="eva"></icon>
+      </button>
+      
+      <div class="titles-container">
+        <h2 class="title">{{ settings.title }}</h2>
+        <h6 class="subtitle" *ngIf="settings.subtitle">{{ settings.subtitle }}</h6>
+      </div>
+
+    </div>
+
+    <div class="toast-body">
+      <ng-content></ng-content>
+    </div>
+
+  </div>
+</div>

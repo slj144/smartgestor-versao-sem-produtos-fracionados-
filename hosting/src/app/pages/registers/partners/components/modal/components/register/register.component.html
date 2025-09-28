@@ -1,0 +1,135 @@
+
+<div id="containerFormRegister" *ngIf="checkBootstrap">
+  <form [formGroup]="formPartner" class="form" autocomplete="off" (submit)="onSubmit()">
+
+    <div class="container-info">
+      <div class="row">
+        <div class="col-12 form-group">
+          <label>{{ translate.form.label.type.title }}</label>
+          <select formControlName="type" class="form-control {{ formControls.type.errors ? 'required' : '' }}">
+            <option value="legalPerson">{{ translate.form.label.type.option.legalPerson }}</option>
+            <option value="naturalPerson">{{ translate.form.label.type.option.naturalPerson }}</option>
+          </select>
+        </div>
+        
+        <div class="col-12 form-group">
+          <label>{{ translate.form.label.name }}</label>
+          <input type="text" formControlName="name" class="form-control nameField {{ formControls.name.errors ? 'required' : '' }}" />
+        </div>
+
+        <div class="col-12" *ngIf="isBrazil">
+          <div class="row">
+            <div class="col-12 form-group" *ngIf="formControls.type.value == 'legalPerson'">
+              <label>{{ translate.form.label.country.brazil.businessDocument }}</label>
+              <input type="text" formControlName="businessDocument" placeholder="__.___.___/____-__" class="form-control {{ formControls.businessDocument.errors ? 'required' : '' }}" (input)="onApplyCnpjMask($event, formControls.businessDocument)" />
+            </div>
+
+            <div class="col-12 form-group" *ngIf="formControls.type.value == 'naturalPerson'">
+              <label>{{ translate.form.label.country.brazil.personalDocument }}</label>
+              <input type="text" formControlName="personalDocument" placeholder="___.___.___-__" class="form-control {{ formControls.personalDocument.errors ? 'required' : '' }}" (input)="onApplyCpfMask($event, formControls.personalDocument)" />
+            </div>
+          </div>
+        </div>
+        
+        <div class="col-12" *ngIf="!isBrazil">
+          <div class="row">
+            <!--  -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-description">
+      <div class="row">      
+        <div class="col-12 form-group">
+          <label>{{ translate.form.label.description }}</label>
+          <textarea formControlName="description" class="form-control"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-contacts" formGroupName="contacts">
+      <div class="container-header" (click)="onToggleDropdown('contacts')">
+        <p>{{ translate.form.label.contact.title }}</p>
+      </div>
+      
+      <div class="container-content">
+        <div class="row">
+          <div class="col-12 col-lg-6" *ngIf="isBrazil">
+            <div class="row">
+              <div class="col-12 form-group">
+                <label>{{ translate.form.label.contact.sub.phone }}</label>
+                <input type="tel" formControlName="phone" placeholder="(_) _____-____" class="form-control {{ formContactsControls.phone.errors ? 'required' : '' }}" (input)="onApplyPhoneMask($event, formContactsControls.phone)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6" *ngIf="!isBrazil">
+            <div class="row">
+              <!--  -->
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6 form-group">
+            <label>{{ translate.form.label.contact.sub.email }}</label>
+            <input type="email" formControlName="email" class="form-control emailField" placeholder="exemplo@dominio.com" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-address" formGroupName="address">
+      <div class="container-header" (click)="onToggleDropdown('address')">
+        <p>{{ translate.form.label.address.title }}</p>
+      </div>
+
+      <div class="container-content">
+        <div class="row">
+          <div class="col-12 form-group">
+            <label>{{ translate.form.label.address.sub.postalCode }}</label>
+            <div class="container-cep clearfix">
+              <input type="text" formControlName="postalCode" placeholder="____-___" class="form-control" (input)="onApplyPostalCodeMask($event, formAddressControls.postalCode)" (keydown.enter)="onCEPData($event)" />
+              <button type="button" [nbSpinner]="checkSearchPostCode" nbSpinnerStatus="danger" [disabled]="!((formAddressControls.postalCode.value && formAddressControls.postalCode.value.length == 9) && formAddressControls.postalCode.valid)" (click)="onCEPData($event)"><icon name="search-outline" pack="eva"></icon></button>
+            </div>
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.label.address.sub.local }}</label>
+            <input type="text" formControlName="local" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.label.address.sub.number }}</label>
+            <input type="text" formControlName="number" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.label.address.sub.complement }}</label>
+            <input type="text" formControlName="complement" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.label.address.sub.neighborhood }}</label>
+            <input type="text" formControlName="neighborhood" class="form-control" />
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.label.address.sub.city }}</label>
+            <input type="text" formControlName="city" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.label.address.sub.state }}</label>
+            <select formControlName="state" class="form-control" *ngIf="settings.states">
+              <option *ngFor="let item of settings.states" value="{{ item }}">{{ item }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <small *ngIf="formPartner.invalid">{{ translate.form.notice }}</small>
+
+    <button type="submit" class="btn btnBlue" [disabled]="formPartner.invalid">{{ translate.form.button.submit }}</button>
+  </form>
+</div>

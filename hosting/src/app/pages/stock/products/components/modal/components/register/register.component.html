@@ -1,0 +1,872 @@
+<!-- ARQUIVO: src/app/pages/stock/products/components/modal/components/register/register.component.html -->
+<!-- FUNCIONALIDADE: Template HTML do formulário de cadastro/edição de produtos -->
+<!-- LOCALIZAÇÃO DA ALTERAÇÃO: Adicionar após os campos de preço (costPrice e salePrice) -->
+
+
+<div id="containerFormUpdate">
+
+  <div *ngIf="checkBootstrap">
+    <form class="form" [formGroup]="formProduct" (submit)="onSubmit()">
+      <div class="row">
+
+        <div class="col-12 col-lg-10 offset-lg-1 container-form">
+
+          <div class="row">
+
+            <div class="col-12 col-md-3 col-lg-2 pt-0 pt-md-2 container-image">
+
+              <label>{{ translate.details.section.image.title }}</label>
+
+              <fieldset [disabled]="!isMatrix" class="container-fieldset">
+
+                <div class="wrapper" (click)="onChooseImage('inputThumbnail','imgProduct')">
+                  <img id="imgProduct"
+                    [src]="settings.data.thumbnail?.url || 'assets/images/Stock/Products/image-placeholder.jpg'" />
+                </div>
+
+                <input id="inputThumbnail" type="file" accept="image/*" class="form-control" />
+              </fieldset>
+
+            </div>
+
+            <div class="col-12 col-md-9 col-lg-10">
+
+              <div id="ContainerInformations" class="row p-0 p-md-2">
+
+                <div class="col-12 px-0">
+
+                  <div class="row mx-0 mt-2 mt-md-0">
+
+                    <!-- <div class="col-2 form-group" [class.required]="formControl('code').errors">
+                      <label>{{ translate.form.code.label }}</label>
+                      <fieldset [disabled]="true">
+                        <input type="text" formControlName="code" class="form-control" placeholder="" />
+                      </fieldset>
+                      <small class="warning">{{ translate.form.code.info }}</small>
+                    </div> -->
+
+                    <!-- CAMPO DE NOME MODERNIZADO -->
+                    <div class="col-12 col-md-10">
+                      <div class="modern-name-field" [class.focused]="isNameInputFocused" [class.has-error]="formControl('name').errors">
+                        <div class="name-header">
+                          <icon name="edit-outline" pack="eva"></icon>
+                          <span>{{ translate.form.name.label }}</span>
+                          <span>*</span>
+                        </div>
+
+                        <div class="name-input-wrapper" [class.focused]="isNameInputFocused">
+                          <fieldset [disabled]="!isMatrix">
+                            <input
+                              type="text"
+                              formControlName="name"
+                              class="modern-name-input"
+                              placeholder="Nome do produto"
+                              (focus)="onNameInputFocus()"
+                              (blur)="onNameInputBlur()"
+                              maxlength="100"
+                            />
+                            <div class="input-underline"></div>
+                          </fieldset>
+                          <div class="char-counter">
+                            <span [class.warning]="getNameCharProgress() > 80">
+                              {{ formControl('name').value?.length || 0 }}/100
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="name-hints" *ngIf="formControl('name').errors && formControl('name').touched">
+                          <div class="hint-item" *ngIf="formControl('name').errors['required']">
+                            <icon name="alert-circle-outline" pack="eva"></icon>
+                            Campo obrigatório
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12"></div>
+
+                    <!-- LINHA ÚNICA: PREÇO DE CUSTO | PREÇO DE VENDA | QUANTIDADE -->
+                    <div class="col-12">
+                      <div class="row">
+                        <!-- CAMPO DE PREÇO DE VENDA MODERNIZADO -->
+                        <div class="col-12 col-md-4">
+                          <div class="modern-price-field sale-price" [class.focused]="isSalePriceInputFocused">
+                            <div class="price-header">
+                              <icon name="trending-up-outline" pack="eva"></icon>
+                              <span>{{ translate.form.salePrice.label }}</span>
+                            </div>
+
+                            <div class="price-input-wrapper">
+                              <span class="currency-symbol">R$</span>
+                              <input
+                                type="text"
+                                formControlName="salePrice"
+                                class="modern-price-input"
+                                placeholder="0,00"
+                                (focus)="onSalePriceInputFocus()"
+                                (blur)="onSalePriceInputBlur()"
+                                (input)="onApplyPriceMask($event, formControl('salePrice'))"
+                              />
+                              <div class="input-underline"></div>
+                            </div>
+
+                            <!-- MARGEM DE LUCRO -->
+                            <div class="profit-margin-display"
+                                 *ngIf="shouldShowProfitMargin()">
+                              <div class="profit-info">
+                                <icon name="trending-up-outline" pack="eva" class="profit-icon"></icon>
+                                <span class="profit-label">Margem:</span>
+                                <span class="profit-value"
+                                      [class.positive]="calculateProfitMargin().value > 0"
+                                      [class.negative]="calculateProfitMargin().value < 0">
+                                  {{ getProfitMarginDisplay() }}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- CAMPO DE PREÇO DE CUSTO MODERNIZADO -->
+                        <div class="col-12 col-md-4">
+                          <div class="modern-price-field cost-price" [class.focused]="isCostPriceInputFocused">
+                            <div class="price-header">
+                              <icon name="trending-down-outline" pack="eva"></icon>
+                              <span>{{ translate.form.costPrice.label }}</span>
+                            </div>
+
+                            <div class="price-input-wrapper">
+                              <span class="currency-symbol">R$</span>
+                              <input
+                                type="text"
+                                formControlName="costPrice"
+                                class="modern-price-input"
+                                placeholder="0,00"
+                                (focus)="onCostPriceInputFocus()"
+                                (blur)="onCostPriceInputBlur()"
+                                (input)="onApplyPriceMask($event, formControl('costPrice'))"
+                              />
+                              <div class="input-underline"></div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- CAMPO DE QUANTIDADE MODERNIZADO -->
+                        <div class="col-12 col-md-4">
+                          <div class="modern-quantity-field" [class.focused]="isQuantityInputFocused">
+                            <div class="quantity-header">
+                              <div class="quantity-title">
+                                <icon name="cube-outline" pack="eva"></icon>
+                                <span>{{ translate.form.quantity.label }}</span>
+                              </div>
+                              <div class="quantity-unit-badge base">
+                                UN
+                              </div>
+                            </div>
+
+                            <div class="quantity-input-container">
+                              <button
+                                type="button"
+                                class="quantity-btn"
+                                (click)="decreaseQuantity()"
+                                [disabled]="!isMatrix"
+                              >
+                                <icon name="minus-outline" pack="eva"></icon>
+                              </button>
+
+                              <div class="quantity-input-wrapper">
+                                <input
+                                  type="text"
+                                  formControlName="quantity"
+                                  class="modern-quantity-input"
+                                  placeholder="0"
+                                  (focus)="onQuantityInputFocus()"
+                                  (blur)="onQuantityInputBlur()"
+                                  (input)="onApplyNumberMask($event, formControl('quantity'))"
+                                />
+                                <div class="input-underline"></div>
+                              </div>
+
+                              <button
+                                type="button"
+                                class="quantity-btn"
+                                (click)="increaseQuantity()"
+                                [disabled]="!isMatrix"
+                              >
+                                <icon name="plus-outline" pack="eva"></icon>
+                              </button>
+                            </div>
+
+                            <div class="quantity-help">
+                              <icon name="info-outline" pack="eva"></icon>
+                              <span>Quantidade atual em estoque</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-12"></div>
+
+                    <div class="col-6 col-md-2 form-group" [class.required]="formControl('alert').errors">
+                      <label>{{ translate.form.alert.label }}</label>
+                      <input type="text" formControlName="alert" class="form-control"
+                        (input)="onApplyNumberMask($event, formControl('alert'))" />
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group" [class.required]="formControl('barcode').errors">
+                      <label>{{ translate.form.barcode.label }}</label>
+                      <fieldset [disabled]="!isMatrix">
+                        <input type="text" formControlName="barcode" class="form-control" placeholder="" />
+                      </fieldset>
+                      <!-- <small class="warning">{{ translate.form.barcode.info }}</small> -->
+                    </div>
+
+                    <!-- CAMPOS EM LINHA: Nº Série | Lote | Validade | Comissão -->
+                    <div class="col-6 col-md-2 form-group" [class.required]="formControl('serialNumber').errors">
+                      <label>{{ translate.form.serialNumber.label }}</label>
+                      <fieldset [disabled]="!isMatrix">
+                        <input type="text" formControlName="serialNumber" class="form-control" />
+                      </fieldset>
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group" [class.required]="formControl('batch').errors">
+                      <label>{{ translate.form.batch.label }}</label>
+                      <input type="text" formControlName="batch" class="form-control" />
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group" [class.required]="formControl('expirationDate').errors">
+                      <label>{{ translate.form.expirationDate.label }}</label>
+                      <input type="date" formControlName="expirationDate" class="form-control" />
+                    </div>
+
+                    <!-- Checkbox de comissão -->
+                    <div class="col-6 col-md-2 form-group">
+                      <label style="font-size: 0.8rem;">{{ translate.form.commission.enabled.label }}</label>
+                      <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="commissionEnabled"
+                          formControlName="commissionEnabled" (change)="onToggleCommission($event)">
+                        <label class="custom-control-label" for="commissionEnabled">
+                          <small>Ativar</small>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Tipo de comissão -->
+                    <div class="col-6 col-md-2 form-group" *ngIf="formControl('commissionEnabled').value">
+                      <label style="font-size: 0.8rem;">{{ translate.form.commission.type.label }}</label>
+                      <select formControlName="commissionType" class="form-control form-control-sm">
+                        <option value="percentage">{{ translate.form.commission.type.options.percentage }}</option>
+                        <option value="fixed">{{ translate.form.commission.type.options.fixed }}</option>
+                      </select>
+                    </div>
+
+                    <!-- Valor da comissão -->
+                    <div class="col-6 col-md-2 form-group" *ngIf="formControl('commissionEnabled').value">
+                      <label style="font-size: 0.8rem;">
+                        {{ formControl('commissionType').value === 'percentage'
+                        ? translate.form.commission.value.label.percentage
+                        : translate.form.commission.value.label.fixed }}
+                      </label>
+
+                      <!-- 🚨 MUDANÇAS IMPORTANTES AQUI -->
+                      <input type="text" formControlName="commissionValue"
+                        class="form-control form-control-sm text-right" [placeholder]="formControl('commissionType').value === 'percentage' 
+      ? 'Ex: 1.5' 
+      : 'Ex: 50,00'" (keyup)="onCommissionKeyUp($event)" (blur)="onApplyCommissionCorretion($event)"
+                        autocomplete="off">
+                      <!-- REMOVIDO: pattern, inputmode e mudado de (input) para (keyup) -->
+                    </div>
+
+                    <!-- 🔧 CORREÇÃO: Preview da comissão com formatação melhorada -->
+                    <div class="col-12"
+                      *ngIf="formControl('commissionEnabled').value && formControl('salePrice').value > 0 && formControl('commissionValue').value > 0">
+                      <small class="text-info">
+                        <icon name="info-outline" pack="eva" style="font-size: 14px;"></icon>
+                        {{ translate.form.commission.preview.label }}:
+                        <strong>{{ calculateCommissionPreview() | currency:'BRL':'symbol':'1.2-2' }}</strong>
+                        {{ translate.form.commission.preview.description }}
+                      </small>
+                    </div>
+
+                    <div class="col-12"></div> <!-- Quebra de linha antes de categoria -->
+
+                    <div class="col-12"></div>
+
+                    <div class="col-6 col-md-3 form-group" [class.required]="formControl('category').errors">
+
+                      <label>{{ translate.form.category.label }}*</label>
+
+                      <fieldset [disabled]="!isMatrix">
+                        <div class="manager-category clearfix">
+
+                          <select formControlName="category" class="form-control">
+                            <option value=""></option>
+                            <option *ngFor="let item of categoriesData" value="{{ item.code }}">{{ item.code + ' - ' +
+                              item.name }}</option>
+                          </select>
+
+                          <button type="button" (click)="onOpenLayer('categories')">
+                            <icon name="list-outline" pack="eva"></icon>
+                          </button>
+                        </div>
+                      </fieldset>
+
+                    </div>
+
+                    <div class="col-6 col-md-3 form-group" [class.required]="formControl('commercialUnit').errors">
+
+                      <label>{{ translate.form.commercialUnit.label }}*</label>
+
+                      <fieldset [disabled]="!isMatrix">
+                        <div class="manager-commecial-unit clearfix">
+
+                          <select formControlName="commercialUnit" class="form-control">
+                            <option value=""></option>
+                            <option *ngFor="let item of commercialUnitsData" value="{{ item.code }}">{{ item.code + ' -
+                              ' + item.name }}</option>
+                          </select>
+
+                          <button type="button" (click)="onOpenLayer('commercialUnits')">
+                            <icon name="list-outline" pack="eva"></icon>
+                          </button>
+
+                        </div>
+                      </fieldset>
+
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group" [class.required]="formControl('provider').errors">
+
+                      <label>{{ translate.form.provider.label }}</label>
+
+                      <fieldset [disabled]="!isMatrix">
+                        <div class="manager-provider clearfix">
+
+                          <select formControlName="provider" class="form-control">
+                            <option value=""></option>
+                            <option *ngFor="let item of providersData" value="{{ item.code }}">{{ item.code + ' - ' +
+                              item.name }}</option>
+                          </select>
+
+                          <button type="button" (click)="onOpenLayer('providers')">
+                            <icon name="list-outline" pack="eva"></icon>
+                          </button>
+
+                        </div>
+                      </fieldset>
+
+                    </div>
+
+                    <div class="col-12" *ngIf="isFiscal"></div>
+
+                    <div class="col-4 col-md-3 form-group" [class.required]="formControl('cest').errors"
+                      *ngIf="isFiscal">
+                      <label>CEST</label>
+                      <input type="text" formControlName="cest" class="form-control" placeholder="" maxlength="7" />
+                    </div>
+
+                    <div class="col-8 col-md-6 form-group" [class.required]="formControl('ncm').errors"
+                      *ngIf="isFiscal">
+                      <label>NCM*</label>
+                      <input type="text" formControlName="ncm" class="form-control" placeholder="" maxlength="8" />
+                    </div>
+
+                    <div class="col-8 col-md-3 form-group"
+                      [class.required]="formControl('codigoBeneficioFiscal').errors" *ngIf="isFiscal">
+                      <label>Codigo Beneficio Fiscal</label>
+                      <input type="text" formControlName="codigoBeneficioFiscal" class="form-control" placeholder="" />
+                    </div>
+
+                    <div class="col-8 col-md-3 form-group" [class.required]="formControl('internalCode').errors">
+                      <label>Código Interno</label>
+                      <input type="text" formControlName="internalCode" class="form-control" placeholder="" />
+                    </div>
+
+                    <div class="col-12 form-group" [class.required]="formControl('description').errors">
+                      <label>Observação</label>
+                      <textarea formControlName="description" class="form-control" placeholder="Descrição">
+
+                      </textarea>
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+
+                <!-- Especialização de produtos  -->
+
+                <div class="col-12 px-0" *ngIf="isFiscal">
+
+                  <div class="row mx-0 mt-2 mt-md-0">
+                    <div class="col-12 form-group">
+                      <label class="fw-bold">Detalhamento de produto</label>
+                      <select class="form-control" formControlName="specialization" #specialization
+                        (change)="onChangeSpecialization(specialization)">
+                        <option></option>
+                        <option value="fuel">Combustível</option>
+                        <option value="remedy">Medicamento</option>
+                      </select>
+                    </div>
+
+                    <!-- Combustível -->
+
+                    <div class="row mx-0" formGroupName="fuel" *ngIf="formControl('specialization').value == 'fuel'">
+
+                      <div class="col-6 col-md-6 form-group" [class.required]="formControl('fuel.codigoAnp').errors">
+                        <label>Código Anp*</label>
+                        <input type="text" formControlName="codigoAnp" class="form-control" placeholder=""
+                          maxlength="9" />
+                      </div>
+
+                      <div class="col-6 col-md-6 form-group" [class.required]="formControl('fuel.descricaoAnp').errors">
+                        <label>Descrição Anp*</label>
+                        <input type="text" formControlName="descricaoAnp" class="form-control" placeholder="" />
+                      </div>
+
+                    </div>
+
+                    <!-- Remédio -->
+
+                    <div class="row mx-0" formGroupName="remedy"
+                      *ngIf="formControl('specialization').value == 'remedy'">
+
+                      <div class="col-6 col-md-6 form-group"
+                        [class.required]="formControl('remedy.codigoAnvisa').errors">
+                        <label>Código Anvisa*</label>
+                        <input type="text" formControlName="codigoAnvisa" class="form-control" placeholder=""
+                          maxlength="13" />
+                      </div>
+
+                      <div class="col-6 col-md-6 form-group"
+                        [class.required]="formControl('remedy.motivoInsencaoAnvisa').errors">
+                        <label>Motivo Insenção Anvisa</label>
+                        <input type="text" formControlName="motivoInsencaoAnvisa" class="form-control" placeholder="" />
+                      </div>
+
+                      <div class="col-6 col-md-6 form-group"
+                        [class.required]="formControl('remedy.valorMaximo').errors">
+                        <label>Valor Maximo*</label>
+                        <input type="text" formControlName="valorMaximo" class="form-control" placeholder=""
+                          (input)="onApplyPriceMask($event, formControl('remedy.valorMaximo'))" />
+                      </div>
+
+                    </div>
+
+
+                  </div>
+
+                </div>
+
+
+
+                <div class="col-12 px-0" formGroupName="tributes" *ngIf="isFiscal">
+
+                  <div class="row mx-0" formGroupName="icms">
+
+                    <div class="col-12 mb-3 tribute-name">
+                      <span class="fw-bold">ICMS</span>
+                    </div>
+
+                    <div class="col-12 col-md-4 form-group"
+                      [class.required]="formControl('tributes.icms.origem').errors">
+                      <label>Origem*</label>
+                      <select formControlName="origem" class="form-control">
+                        <option *ngFor="let item of origemICMS" [value]="item.key">{{ item.value }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-12 {{ fiscalSettings.simplesNacional ? 'col-md-8' : 'col-md-4' }} form-group"
+                      [class.required]="formControl('tributes.icms.cst').errors">
+                      <label>CST*</label>
+                      <select formControlName="cst" class="form-control" #icmscst (change)="onChangeICMSCST(icmscst)">
+                        <optgroup *ngFor="let item of cstICMS" [label]="item.key">
+                          <option *ngFor="let option of item.options" [value]="option.key">{{ option.value }}</option>
+                        </optgroup>
+                      </select>
+                    </div>
+
+                    <div
+                      *ngIf="fiscalSettings.regimeTributarioEspecial != 5 && formControl('tributes.icms.cst').value == '900' "
+                      class="col-6 col-md-2 form-group" [class.required]="formControl('tributes.icms.aliquota').errors">
+                      <label>Alíquota</label>
+                      <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.icms.aliquota'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.icms.valor').errors">
+                      <label>Valor</label>
+                      <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.icms.valor'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-12 px-0 form-group"
+                      formGroupName="baseCalculo">
+
+                      <label class="supLabel">Base de cálculo</label>
+
+                      <div class="row wrapper-block">
+
+                        <div class="col-8 col-md-4 form-group"
+                          [class.required]="formControl('tributes.icms.baseCalculo.modalidadeDeterminacao').errors">
+                          <label>Modalidade de determinação*</label>
+                          <select formControlName="modalidadeDeterminacao" class="form-control">
+                            <option *ngFor="let item of bcModalidadeDeterminacaoICMS" [value]="item.key">{{ item.value
+                              }}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-4 col-md-2 form-group"
+                          [class.required]="formControl('tributes.icms.baseCalculo.valor').errors">
+                          <label>Valor</label>
+                          <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.baseCalculo.valor'))" />
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <div class="col-12 px-0 form-group" formGroupName="substituicaoTributaria">
+
+                      <label class="supLabel">Substituição Tributária</label>
+
+                      <div class="row wrapper-block">
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.icms.substituicaoTributaria.aliquota').errors">
+                          <label>Aliquota</label>
+                          <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.aliquota'))" />
+                        </div>
+
+                        <div class="col-6 col-md-3 form-group"
+                          [class.required]="formControl('tributes.icms.substituicaoTributaria.margemValorAdicionado.percentual').errors"
+                          formGroupName="margemValorAdicionado">
+                          <label>Margem de Valor Adicionado</label>
+                          <input type="text" formControlName="percentual" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.margemValorAdicionado.percentual'))" />
+                        </div>
+
+                        <div class="col-12 px-0 form-group" formGroupName="baseCalculo">
+
+                          <label class="supLabel">Base de cálculo</label>
+
+                          <div class="row wrapper-block">
+
+                            <div class="col-12 col-md-4 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.baseCalculo.modalidadeDeterminacao').errors">
+                              <label>Modalidade determinação</label>
+                              <select formControlName="modalidadeDeterminacao" class="form-control">
+                                <option *ngFor="let item of stBcModalidadeDeterminacaoICMS" [value]="item.key">{{
+                                  item.value }}</option>
+                              </select>
+                            </div>
+
+                            <div class="col-6 col-md-2 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.baseCalculo.valor').errors">
+                              <label>Valor</label>
+                              <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                                (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.baseCalculo.valor'))" />
+                            </div>
+
+                            <div class="col-6 col-md-2 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.baseCalculo.percentualReducao').errors">
+                              <label>Percentual de Redução</label>
+                              <input type="text" formControlName="percentualReducao" class="form-control"
+                                placeholder="0,00"
+                                (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.baseCalculo.percentualReducao'))" />
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                        <div *ngIf="!fiscalSettings.simplesNacional" class="col-12 px-0 form-group"
+                          formGroupName="fundoCombatePobreza">
+
+                          <label class="supLabel">Fundo de Combate a Pobreza</label>
+
+                          <div class="row wrapper-block">
+
+                            <div class="col-4 col-md-2 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.aliquota').errors">
+                              <label>Alíquota</label>
+                              <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                                (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.aliquota'))" />
+                            </div>
+
+                            <div class="col-4 col-md-2 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.valor').errors">
+                              <label>Valor</label>
+                              <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                                (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.valor'))" />
+                            </div>
+
+                            <div class="col-4 col-md-3 form-group"
+                              [class.required]="formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.baseCalculo.valor').errors"
+                              formGroupName="baseCalculo">
+                              <label>Base de cálculo</label>
+                              <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                                (input)="onApplyPriceMask($event, formControl('tributes.icms.substituicaoTributaria.fundoCombatePobreza.baseCalculo.valor'))" />
+                            </div>
+
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-12 px-0 form-group"
+                      formGroupName="fundoCombatePobreza">
+
+                      <label class="supLabel">Fundo de Combate a Pobreza</label>
+
+                      <div class="row wrapper-block">
+
+                        <div class="col-4 col-md-2 form-group"
+                          [class.required]="formControl('tributes.icms.fundoCombatePobreza.aliquota').errors">
+                          <label>Alíquota</label>
+                          <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.fundoCombatePobreza.aliquota'))" />
+                        </div>
+
+                        <div class="col-4 col-md-2 form-group"
+                          [class.required]="formControl('tributes.icms.fundoCombatePobreza.valor').errors">
+                          <label>Valor</label>
+                          <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.fundoCombatePobreza.valor'))" />
+                        </div>
+
+                        <div class="col-4 col-md-3 form-group"
+                          [class.required]="formControl('tributes.icms.fundoCombatePobreza.baseCalculo.valor').errors"
+                          formGroupName="baseCalculo">
+                          <label>Base de cálculo</label>
+                          <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.icms.fundoCombatePobreza.baseCalculo.valor'))" />
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="row mx-0" formGroupName="pis">
+
+                    <div class="col-12 mb-3 tribute-name">
+                      <span class="fw-bold">PIS</span>
+                    </div>
+
+                    <div class="col-12 form-group" [class.required]="formControl('tributes.pis.cst').errors">
+                      <label>CST*</label>
+                      <select formControlName="cst" class="form-control">
+                        <option *ngFor="let item of cstPIS" [value]="item.key">{{ item.value }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.pis.baseCalculo.valor').errors"
+                      formGroupName="baseCalculo">
+                      <label>Base de cálculo</label>
+                      <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.pis.baseCalculo.valor'))" />
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.pis.aliquota').errors">
+                      <label>Alíquota</label>
+                      <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.pis.aliquota'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.pis.valor').errors">
+                      <label>Valor</label>
+                      <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.pis.valor'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.pis.aliquotaReais').errors">
+                      <label>Alíquota em Reais</label>
+                      <input type="text" formControlName="aliquotaReais" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.pis.aliquotaReais'))" />
+                    </div>
+
+                    <div class="col-12 px-0 form-group" formGroupName="substituicaoTributaria">
+
+                      <label class="supLabel">Substituição Tributária</label>
+
+                      <div class="row wrapper-block">
+
+                        <div class="col-6 col-md-3 form-group"
+                          [class.required]="formControl('tributes.pis.substituicaoTributaria.baseCalculo').errors">
+                          <label>Base de cálculo</label>
+                          <input type="text" formControlName="baseCalculo" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.pis.substituicaoTributaria.baseCalculo'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.pis.substituicaoTributaria.aliquota').errors">
+                          <label>Alíquota</label>
+                          <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.pis.substituicaoTributaria.aliquota'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.pis.substituicaoTributaria.aliquotaReais').errors">
+                          <label>Alíquota em Reais</label>
+                          <input type="text" formControlName="aliquotaReais" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.pis.substituicaoTributaria.aliquotaReais'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.pis.substituicaoTributaria.valor').errors">
+                          <label>Valor</label>
+                          <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.pis.substituicaoTributaria.valor'))" />
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <div class="row mx-0" formGroupName="cofins">
+
+                    <div class="col-12 mb-3 tribute-name">
+                      <span class="fw-bold">COFINS</span>
+                    </div>
+
+                    <div class="col-12 form-group" [class.required]="formControl('tributes.cofins.cst').errors">
+                      <label>CST*</label>
+                      <select formControlName="cst" class="form-control">
+                        <option *ngFor="let item of cstCOFINS" [value]="item.key">{{ item.value }}</option>
+                      </select>
+                    </div>
+
+                    <div class="col-6 col-md-2 pr-4 form-group"
+                      [class.required]="formControl('tributes.cofins.aliquota').errors">
+                      <label>Alíquota</label>
+                      <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.cofins.aliquota'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.cofins.valor').errors">
+                      <label>Valor</label>
+                      <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.cofins.valor'))" />
+                    </div>
+
+                    <div class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.cofins.baseCalculo.valor').errors"
+                      formGroupName="baseCalculo">
+                      <label>Base de cálculo</label>
+                      <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.cofins.baseCalculo.valor'))" />
+                    </div>
+
+                    <div *ngIf="!fiscalSettings.simplesNacional" class="col-6 col-md-2 form-group"
+                      [class.required]="formControl('tributes.cofins.aliquotaReais').errors">
+                      <label>Alíquota em Reais</label>
+                      <input type="text" formControlName="aliquotaReais" class="form-control" placeholder="0,00"
+                        (input)="onApplyPriceMask($event, formControl('tributes.cofins.aliquotaReais'))" />
+                    </div>
+
+                    <div class="col-12 px-0 form-group" formGroupName="substituicaoTributaria">
+
+                      <label class="supLabel">Substituição Tributária</label>
+
+                      <div class="row wrapper-block">
+
+                        <div class="col-6 col-md-3 form-group"
+                          [class.required]="formControl('tributes.cofins.substituicaoTributaria.baseCalculo').errors">
+                          <label>Base de cálculo</label>
+                          <input type="text" formControlName="baseCalculo" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.cofins.substituicaoTributaria.baseCalculo'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.cofins.substituicaoTributaria.aliquota').errors">
+                          <label>Alíquota</label>
+                          <input type="text" formControlName="aliquota" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.cofins.substituicaoTributaria.aliquota'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.cofins.substituicaoTributaria.aliquotaReais').errors">
+                          <label>Alíquota em Reais</label>
+                          <input type="text" formControlName="aliquotaReais" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.cofins.substituicaoTributaria.aliquotaReais'))" />
+                        </div>
+
+                        <div class="col-6 col-md-2 form-group"
+                          [class.required]="formControl('tributes.cofins.substituicaoTributaria.valor').errors">
+                          <label>Valor</label>
+                          <input type="text" formControlName="valor" class="form-control" placeholder="0,00"
+                            (input)="onApplyPriceMask($event, formControl('tributes.cofins.substituicaoTributaria.valor'))" />
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          <div class="row">
+
+            <div class="col-12 form-group" *ngIf="isMatrix && isAdmin && (settings.action == 'Products/Update')">
+              <div class="table-responsive deactivator">
+                <table class="table ">
+                  <tr>
+                    <td><input id="checkbox-save" type="checkbox" formControlName="isDisabled" /></td>
+                    <td>
+                      <label for="checkbox-save">
+                        <span class="description">Deseja desativar esse produto temporariamente?</span>
+                        <small class="subDescription">Ao marcar essa opção este produto somente estará visivel nessa
+                          rotina.</small>
+                      </label>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="container-errors">
+            <small *ngIf="formProduct.invalid">{{ translate.form.messages.notice }}</small>
+          </div>
+
+          <div class="container-button">
+            <button type="submit" class="btn btnBlue" [disabled]="formProduct.invalid">{{ translate.form.buttons.submit
+              }}</button>
+          </div>
+
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <div *ngIf="!checkBootstrap" [nbSpinner]="!checkBootstrap" [nbSpinnerStatus]="'success'" [nbSpinnerSize]="'large'"
+    style="height: 50vh; min-height: 300px;"></div>
+
+  <products-register-layer (callback)="onLayerResponse($event)"></products-register-layer>
+
+</div>

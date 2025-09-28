@@ -1,0 +1,206 @@
+<!--
+  📁 ARQUIVO: cashier-front.component.html
+  📂 LOCALIZAÇÃO: src/app/pages/cashier/cashier-front/
+  🎯 FUNÇÃO: Componente principal do caixa - Gerencia header com ações e contém o PDV
+  ✨ MELHORIAS: Header moderno com botões agrupados, visual consistente e responsivo
+-->
+
+<div id="container-main" [class.activeFullscreen]="settingsComponent?.fullscreen">
+
+	<!-- Header Principal do Caixa -->
+	<header class="cashier-header" *ngIf="cashierControl.status == 'OPENED'">
+		<div class="header-container">
+
+			<!-- Logo/Título do Sistema -->
+			<div class="header-brand">
+				<icon name="shopping-cart-outline" pack="eva"></icon>
+				<span>PDV</span>
+			</div>
+
+			<!-- Ações Principais -->
+			<div class="header-actions">
+
+				<!-- Botões Desktop -->
+				<div class="desktop-actions">
+					<button class="action-btn records" (click)="onCashierRecords()" *ngIf="permissions.cashierRegisters"
+						[attr.aria-label]="translate.shortcut.cashRecords">
+						<icon name="copy-outline" pack="eva"></icon>
+						<span>{{ translate.shortcut.cashRecords }}</span>
+					</button>
+
+					<button class="action-btn inflow" (click)="onCashierInflow()" *ngIf="permissions.inputs"
+						[attr.aria-label]="translate.shortcut.cashInflow">
+						<icon name="log-in-outline" pack="eva"></icon>
+						<span>{{ translate.shortcut.cashInflow }}</span>
+					</button>
+
+					<button class="action-btn outflow" (click)="onCashierOutflow()" *ngIf="permissions.outputs"
+						[attr.aria-label]="translate.shortcut.cashOutflow">
+						<icon name="log-out-outline" pack="eva"></icon>
+						<span>{{ translate.shortcut.cashOutflow }}</span>
+					</button>
+
+                <button class="action-btn summary" (click)="onCashierReports()" *ngIf="permissions.cashierResume"
+                  [attr.aria-label]="translate.shortcut.cashSummary">
+                  <icon name="file-text-outline" pack="eva"></icon>
+                  <span>{{ translate.shortcut.cashSummary }}</span>
+                </button>
+
+                <button class="action-btn records" (click)="onVaultWithdraw()" *ngIf="permissions.outputs"
+                  [attr.aria-label]="translate.shortcut.cashVaultWithdraw">
+                  <icon name="arrow-upward-outline" pack="eva"></icon>
+                  <span>{{ translate.shortcut.cashVaultWithdraw }}</span>
+                </button>
+
+                <button class="action-btn inflow" (click)="onVaultReplenish()" *ngIf="permissions.inputs"
+                  [attr.aria-label]="translate.shortcut.cashVaultReplenish">
+                  <icon name="arrow-downward-outline" pack="eva"></icon>
+                  <span>{{ translate.shortcut.cashVaultReplenish }}</span>
+                </button>
+				</div>
+
+				<!-- Ações Secundárias -->
+				<div class="secondary-actions">
+					<button class="action-btn closing" (click)="onCashierClosing()" *ngIf="permissions.control?.closing"
+						[attr.aria-label]="translate.shortcut.cashClosing">
+						<icon name="lock-outline" pack="eva"></icon>
+						<span class="desktop-only">{{ translate.shortcut.cashClosing }}</span>
+					</button>
+
+					<!-- Menu Dropdown -->
+					<div class="dropdown">
+						<button class="action-btn menu" data-bs-toggle="dropdown" [attr.aria-label]="'Menu de opções'">
+							<icon name="more-vertical-outline" pack="eva"></icon>
+						</button>
+
+						<ul class="dropdown-menu dropdown-menu-end">
+
+							<!-- Ações Mobile -->
+							<div class="mobile-menu-section">
+								<li (click)="onCashierRecords()" *ngIf="permissions.cashierRegisters">
+									<a class="dropdown-item">
+										<icon name="copy-outline" pack="eva"></icon>
+										<span>{{ translate.dropdown.cashRecords }}</span>
+									</a>
+								</li>
+
+								<li (click)="onCashierInflow()" *ngIf="permissions.inputs">
+									<a class="dropdown-item">
+										<icon name="log-in-outline" pack="eva"></icon>
+										<span>{{ translate.dropdown.cashInflow }}</span>
+									</a>
+								</li>
+
+								<li (click)="onCashierOutflow()" *ngIf="permissions.outputs">
+									<a class="dropdown-item">
+										<icon name="log-out-outline" pack="eva"></icon>
+										<span>{{ translate.dropdown.cashOutflow }}</span>
+									</a>
+								</li>
+
+              <li (click)="onCashierReports()" *ngIf="permissions.cashierResume">
+                <a class="dropdown-item">
+                  <icon name="file-text-outline" pack="eva"></icon>
+                  <span>{{ translate.dropdown.cashSummary }}</span>
+                </a>
+              </li>
+
+							  <li (click)="onVaultWithdraw()" *ngIf="permissions.outputs">
+								<a class="dropdown-item">
+									<icon name="arrow-upward-outline" pack="eva"></icon>
+									<span>{{ translate.dropdown.cashVaultWithdraw }}</span>
+								</a>
+							  </li>
+
+							  <li (click)="onVaultReplenish()" *ngIf="permissions.inputs">
+								<a class="dropdown-item">
+									<icon name="arrow-downward-outline" pack="eva"></icon>
+									<span>{{ translate.dropdown.cashVaultReplenish }}</span>
+								</a>
+							  </li>
+
+							</div>
+
+							<!-- Separador -->
+							<li class="dropdown-divider mobile-only"></li>
+
+							<!-- Ações Gerais -->
+							<li (click)="onCashierClear()">
+								<a class="dropdown-item">
+									<icon name="refresh-outline" pack="eva"></icon>
+									<span>{{ translate.dropdown.resetPanel }}</span>
+								</a>
+							</li>
+
+							<li (click)="onFullscreen()">
+								<a class="dropdown-item">
+									<icon
+										[name]="!settingsComponent?.fullscreen ? 'expand-outline' : 'collapse-outline'"
+										pack="eva"></icon>
+									<span>{{ translate.dropdown.fullscreen }}</span>
+								</a>
+							</li>
+
+							<!-- Fechar Caixa -->
+							<li class="dropdown-divider" *ngIf="permissions.control?.closing"></li>
+
+							<li (click)="onCashierClosing()" *ngIf="permissions.control?.closing">
+								<a class="dropdown-item danger">
+									<icon name="lock-outline" pack="eva"></icon>
+									<span>{{ translate.dropdown.cashClosing }}</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+
+					<!-- 🆕 Faixa de atalhos no topo (ao lado dos botões) -->
+					<div class="shortcut-strip desktop-only" aria-label="Atalhos do PDV">
+						<span class="hint"><span class="kbd">F1</span><span class="sep">/</span><span class="kbd">Ctrl+1</span> Quantidade</span>
+						<span class="divider">•</span>
+						<span class="hint"><span class="kbd">F2</span><span class="sep">/</span><span class="kbd">Ctrl+2</span> Pagamento</span>
+						<span class="divider">•</span>
+						<span class="hint"><span class="kbd">F3</span><span class="sep">/</span><span class="kbd">Ctrl+3</span> Adicionar produtos</span>
+						<span class="divider">•</span>
+						<span class="hint"><span class="kbd">F4</span><span class="sep">/</span><span class="kbd">Ctrl+4</span> Concluir</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- Área Principal -->
+	<main class="cashier-main" *ngIf="!loading">
+
+		<!-- PDV Aberto -->
+		<ng-container *ngIf="cashierControl.status == 'OPENED'">
+			<cashier-front-pdv [permissions]="permissions"></cashier-front-pdv>
+		</ng-container>
+
+		<!-- Controle de Caixa -->
+		<ng-container *ngIf="(cashierControl.status == 'CLOSED') || (cashierControl.status == 'CLOSING')">
+			<cashier-front-control [settings]="settingsControl" [permissions]="permissions"></cashier-front-control>
+		</ng-container>
+
+	</main>
+
+	<!-- Estado de Carregamento -->
+	<div class="loading-overlay" *ngIf="loading">
+		<div class="loading-content">
+			<div class="spinner">
+				<div class="bounce1"></div>
+				<div class="bounce2"></div>
+				<div class="bounce3"></div>
+			</div>
+			<p>Carregando sistema de caixa...</p>
+		</div>
+	</div>
+
+</div>
+
+<!-- Componentes Modais -->
+<cashier-front-inflow></cashier-front-inflow>
+<cashier-front-outflow></cashier-front-outflow>
+<cashier-front-records></cashier-front-records>
+<cashier-front-reports></cashier-front-reports>
+<cashier-front-receipts></cashier-front-receipts>
+<cashier-front-vault></cashier-front-vault>

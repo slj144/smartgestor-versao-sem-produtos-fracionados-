@@ -1,0 +1,1170 @@
+<!-- 
+  Arquivo: layer.component.html
+  Funcionalidade: Template HTML para renderização de relatórios financeiros
+  Correção: Adicionado relatório analítico de comissões (linha 1151)
+-->
+
+<div id="sideLayer">
+  <div class="header">
+    <button class="btnClose" (click)="onClose()">
+      <icon name="arrow-back-outline" pack="eva"></icon>
+    </button>
+
+    <div class="container-titles">
+      <span class='title'>{{ settings.title }}</span>
+      <span class="subtitle">{{ translate._general.layer.titleBar.generated[0] + ' ' + (settings.date |
+        date:'dd/MM/yyyy') + ' ' + translate._general.layer.titleBar.generated[1] + ' ' + (settings.date | date:'HH:mm')
+        }}</span>
+    </div>
+
+    <div class="container-buttons" *ngIf="!!settings.download">
+      <div class="dropdown">
+        <button class="btnOthers" title="Outras Opções" data-bs-toggle="dropdown">
+          <icon name="more-vertical-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li (click)="onExportXLS()"><span class="dropdown-item">
+              <icon name="code-outline" pack="eva"></icon> {{ translate._general.layer.titleBar.button.exportXLS }}
+            </span></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="content">
+
+    <div class="container-cash-flow" *ngIf="settings.id == 'cashFlow'">
+      <div *ngIf="settings.type == 'default'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th rowspan="2" class="col-medium">{{ translate.cashFlow.fields.default.date.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('cashierResult')">{{
+                        translate.cashFlow.fields.default.cashierResult.internal }}</th>
+                      <th colspan="4" class="reducePadding" *ngIf="onCheckField('costs')">{{
+                        translate.cashFlow.fields.default.costs.internal.label }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('billing')">{{
+                        translate.cashFlow.fields.default.billing.internal }}</th>
+                      <th rowspan="2" class="col-medium" *ngIf="onCheckField('grossProfit')">{{
+                        translate.cashFlow.fields.default.grossProfit.internal }}</th>
+                    </tr>
+                    <!-- onCheckColspan -->
+                    <tr class="subLine" *ngIf="onCheckField('costs')">
+                      <!-- Costs -->
+                      <th class="col-medium" *ngIf="onCheckField('costs/products')">{{
+                        translate.cashFlow.fields.default.costs.internal.sub.products }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('costs/services')">{{
+                        translate.cashFlow.fields.default.costs.internal.sub.services }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('costs/payments')">{{
+                        translate.cashFlow.fields.default.costs.internal.sub.payments }}</th>
+                      <th class="col-medium" *ngIf="onCheckField('costs/total')">{{
+                        translate.cashFlow.fields.default.costs.internal.sub.total }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td class="positive" *ngIf="onCheckField('cashierResult')">{{ item.cashier | currency:'BRL':'' }}
+                      </td>
+                      <!-- <td class="positive" *ngIf="onCheckField('billsToReceiveResult')">{{ item.billsToReceive | currency:'BRL':'' }}</td>
+                      <td class="negative" *ngIf="onCheckField('billsToPayResult')">{{ item.billsToPay | currency:'BRL':'' }}</td> -->
+                      <td class="resetPadding" *ngIf="onCheckField('costs')" colspan="4">
+                        <table>
+                          <tr>
+                            <td class="col-medium negative">{{ item.productsCosts | currency:'BRL':'' }}</td>
+                            <td class="col-medium positive">{{ item.servicesCosts | currency:'BRL':'' }}</td>
+                            <td class="col-medium negative">{{ item.paymentsCosts | currency:'BRL':'' }}</td>
+                            <td class="col-medium positive">{{ item.costs | currency:'BRL':'' }}</td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="positive" *ngIf="onCheckField('billing')">{{ item.revenue | currency:'BRL':'' }}</td>
+                      <td class="positive" *ngIf="onCheckField('grossProfit')">{{ item.grossProfit | currency:'BRL':''
+                        }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.cashFlow.label.total }}</th>
+                      <th class="positive" *ngIf="onCheckField('cashierResult')">{{ settings.data.balance.cashier |
+                        currency:'BRL':'' }}</th>
+                      <th class="resetPadding" colspan="4" *ngIf="onCheckField('costs')">
+                        <table>
+                          <tr>
+                            <th class="col-medium negative">{{ settings.data.balance.productsCosts | currency:'BRL':''
+                              }}</th>
+                            <th class="col-medium positive">{{ settings.data.balance.servicesCosts | currency:'BRL':''
+                              }}</th>
+                            <th class="col-medium negative">{{ settings.data.balance.paymentsCosts | currency:'BRL':''
+                              }}</th>
+                            <th class="col-medium positive">{{ settings.data.balance.costs | currency:'BRL':'' }}</th>
+                          </tr>
+                        </table>
+                      </th>
+                      <th class="positive" *ngIf="onCheckField('billing')">{{ settings.data.balance.revenue |
+                        currency:'BRL':'' }}</th>
+                      <th class="positive" *ngIf="onCheckField('grossProfit')">{{ settings.data.balance.grossProfit |
+                        currency:'BRL':'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-bills-to-pay" *ngIf="settings.id == 'billsToPay'">
+
+      <div *ngIf="settings.type == 'paidAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.fields['paidAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToPay.fields['paidAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('beneficiary')">{{
+                        translate.billsToPay.fields['paidAccounts'].beneficiary.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToPay.fields['paidAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToPay.fields['paidAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dischargeDate')">{{
+                        translate.billsToPay.fields['paidAccounts'].dischargeDate.internal }}</th>
+                      <th *ngIf="onCheckField('installments')">{{
+                        translate.billsToPay.fields['paidAccounts'].installments.internal }}</th>
+                      <th *ngIf="onCheckField('discount')">{{
+                        translate.billsToPay.fields['paidAccounts'].discount.internal }}</th>
+                      <th *ngIf="onCheckField('interest')">{{
+                        translate.billsToPay.fields['paidAccounts'].interest.internal }}</th>
+                      <th *ngIf="onCheckField('amountPaid')">{{
+                        translate.billsToPay.fields['paidAccounts'].amountPaid.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToPay.fields['paidAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dischargeDate')">{{ item.dischargeDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installments')">{{ item.installments }}</td>
+                      <td *ngIf="onCheckField('discount')">{{ item.discount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('interest')">{{ item.interest | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountPaid')">{{ item.amountPaid | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('beneficiary')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dischargeDate')"></th>
+                      <th *ngIf="onCheckField('installments')"></th>
+                      <th *ngIf="onCheckField('discount')"></th>
+                      <th *ngIf="onCheckField('interest')"></th>
+                      <th *ngIf="onCheckField('amountPaid')" class="positive">{{ settings.data.balance.amountPaid |
+                        currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'pendingAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.fields['pendingAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToPay.fields['pendingAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('beneficiary')">{{
+                        translate.billsToPay.fields['pendingAccounts'].beneficiary.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToPay.fields['pendingAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToPay.fields['pendingAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToPay.fields['pendingAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToPay.fields['pendingAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToPay.fields['pendingAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountPaid')">{{
+                        translate.billsToPay.fields['pendingAccounts'].amountPaid.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToPay.fields['pendingAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToPay.fields['pendingAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountPaid')">{{ item.amountPaid | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('beneficiary')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountPaid')" class="positive">{{ settings.data.balance.amountPaid |
+                        currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'overdueAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.fields['overdueAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToPay.fields['overdueAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('beneficiary')">{{
+                        translate.billsToPay.fields['overdueAccounts'].beneficiary.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToPay.fields['overdueAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToPay.fields['overdueAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToPay.fields['overdueAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToPay.fields['overdueAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToPay.fields['overdueAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountPaid')">{{
+                        translate.billsToPay.fields['overdueAccounts'].amountPaid.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToPay.fields['overdueAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToPay.fields['overdueAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountPaid')">{{ item.amountPaid | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('beneficiary')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountPaid')" class="positive">{{ settings.data.balance.amountPaid |
+                        currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'canceledAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.fields['canceledAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToPay.fields['canceledAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('beneficiary')">{{
+                        translate.billsToPay.fields['canceledAccounts'].beneficiary.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToPay.fields['canceledAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToPay.fields['canceledAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToPay.fields['canceledAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToPay.fields['canceledAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToPay.fields['canceledAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountPaid')">{{
+                        translate.billsToPay.fields['canceledAccounts'].amountPaid.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToPay.fields['canceledAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToPay.fields['canceledAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountPaid')">{{ item.amountPaid | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('beneficiary')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountPaid')" class="positive">{{ settings.data.balance.amountPaid |
+                        currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="container-bills-to-receive" *ngIf="settings.id == 'billsToReceive'">
+
+      <div *ngIf="settings.type == 'receivedAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToReceive.fields['receivedAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('debtor')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].debtor.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dischargeDate')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].dischargeDate.internal }}</th>
+                      <th *ngIf="onCheckField('installments')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].installments.internal }}</th>
+                      <th *ngIf="onCheckField('discount')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].discount.internal }}</th>
+                      <th *ngIf="onCheckField('interest')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].interest.internal }}</th>
+                      <th *ngIf="onCheckField('amountReceived')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].amountReceived.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToReceive.fields['receivedAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('debtor')">{{ item.debtor.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <th *ngIf="onCheckField('dischargeDate')">{{ item.dischargeDate | date:'dd/MM/yyyy' }}</th>
+                      <td *ngIf="onCheckField('installments')">{{ item.installments }}</td>
+                      <td *ngIf="onCheckField('discount')">{{ item.discount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('interest')">{{ item.interest | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountReceived')">{{ item.amountReceived | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToReceive.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('debtor')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dischargeDate')"></th>
+                      <th *ngIf="onCheckField('installments')"></th>
+                      <th *ngIf="onCheckField('discount')"></th>
+                      <th *ngIf="onCheckField('interest')"></th>
+                      <th *ngIf="onCheckField('amountReceived')" class="positive">{{
+                        settings.data.balance.amountReceived | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'pendingAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToReceive.fields['pendingAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('debtor')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].debtor.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountReceived')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].amountReceived.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToReceive.fields['pendingAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('debtor')">{{ item.debtor.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountReceived')">{{ item.amountReceived | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('debtor')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountReceived')" class="positive">{{
+                        settings.data.balance.amountReceived | currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'overdueAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToReceive.fields['overdueAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('debtor')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].debtor.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountReceived')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].amountReceived.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToReceive.fields['overdueAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('debtor')">{{ item.debtor.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountReceived')">{{ item.amountReceived | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('debtor')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountReceived')" class="positive">{{
+                        settings.data.balance.amountReceived | currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="settings.type == 'canceledAccounts'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToReceive.fields['canceledAccounts'].code.internal }}</th>
+                      <th *ngIf="onCheckField('referenceCode')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].referenceCode.internal }}</th>
+                      <th *ngIf="onCheckField('debtor')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].debtor.internal }}</th>
+                      <th *ngIf="onCheckField('category')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('registerDate')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].registerDate.internal }}</th>
+                      <th *ngIf="onCheckField('dueDate')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].dueDate.internal }}</th>
+                      <th *ngIf="onCheckField('installmentsState')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].installmentsState.internal }}</th>
+                      <th *ngIf="onCheckField('installmentValue')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].installmentValue.internal }}</th>
+                      <th *ngIf="onCheckField('amountReceived')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].amountReceived.internal }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].pendingAmount.internal }}</th>
+                      <th *ngIf="onCheckField('accountValue')">{{
+                        translate.billsToReceive.fields['canceledAccounts'].accountValue.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td>{{ item.code }}</td>
+                      <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
+                      <td *ngIf="onCheckField('debtor')">{{ item.debtor.name }}</td>
+                      <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
+                      <td *ngIf="onCheckField('installmentValue')">{{ item.installmentValue | currency:'' }}</td>
+                      <td *ngIf="onCheckField('amountReceived')">{{ item.amountReceived | currency:'' }}</td>
+                      <td *ngIf="onCheckField('pendingAmount')">{{ item.pendingAmount | currency:'' }}</td>
+                      <td *ngIf="onCheckField('accountValue')">{{ item.accountValue | currency:'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.billsToPay.label.total }}</th>
+                      <th *ngIf="onCheckField('referenceCode')"></th>
+                      <th *ngIf="onCheckField('debtor')"></th>
+                      <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('registerDate')"></th>
+                      <th *ngIf="onCheckField('dueDate')"></th>
+                      <th *ngIf="onCheckField('installmentsState')"></th>
+                      <th *ngIf="onCheckField('installmentValue')"></th>
+                      <th *ngIf="onCheckField('amountReceived')" class="positive">{{
+                        settings.data.balance.amountReceived | currency:'' }}</th>
+                      <th *ngIf="onCheckField('pendingAmount')" class="positive">{{ settings.data.balance.pendingAmount
+                        | currency:'' }}</th>
+                      <th *ngIf="onCheckField('accountValue')" class="positive">{{ settings.data.balance.accountValue |
+                        currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="container-bank-transactions" *ngIf="settings.id == 'bankTransactions'">
+      <div *ngIf="settings.type == 'default'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th rowspan="2" class="col-medium">{{ translate.bankTransactions.fields.default.date.internal }}
+                      </th>
+                      <th rowspan="2" class="col-medium">{{ translate.bankTransactions.fields.default.code.internal }}
+                      </th>
+                      <th rowspan="2" class="col-medium">{{
+                        translate.bankTransactions.fields.default.operator.label.internal }}</th>
+                      <th rowspan="2" class="col-medium">{{
+                        translate.bankTransactions.fields.default.bankAccount.label.internal }}</th>
+                      <th rowspan="2" class="col-medium">{{
+                        translate.bankTransactions.fields.default.type.internal.label }}</th>
+                      <th rowspan="2" class="col-medium">{{ translate.bankTransactions.fields.default.value.internal }}
+                      </th>
+                    </tr>
+                    <!-- onCheckColspan -->
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.records">
+                      <td>{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td class="positive">{{ item.code }}</td>
+                      <td class="positive">{{ item.operator.username }}</td>
+                      <td class="positive">{{ item.bankAccount.code + ' - ' + item.bankAccount.name }}</td>
+                      <td class="{{ item.type == 'DEPOSIT' ? 'positive' : 'negative'}}">{{
+                        translate.bankTransactions.fields.default.type.internal.enum[item.type] }}</td>
+                      <td class="{{ item.type == 'DEPOSIT' ? 'positive' : 'negative'}}">{{ item.value |
+                        currency:'BRL':'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.bankTransactions.label.total }}</th>
+                      <th class="positive"></th>
+                      <th class="positive"></th>
+                      <th class="positive"></th>
+                      <th class="positive"></th>
+                      <th class="positive">{{ settings.data.balance.total | currency:'BRL':'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Seção de Comissões -->
+    <div class="container-commissions" *ngIf="settings.id == 'commissions'">
+
+      <!-- Relatório Sintético de Comissões (já existente) -->
+      <div *ngIf="settings.type == 'commissionReportSynthetic'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th class="col-medium">{{ translate.commissions.fields.default.collaborator.internal }}</th>
+                      <th class="col-medium">Valor da Venda</th>
+                      <th class="col-medium">Comissão</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.records">
+                      <td>{{ item.collaborator }}</td>
+                      <td class="positive">{{ (item.salesTotal || 0) | currency:'BRL':'' }}</td>
+                      <td class="positive">{{ (item.commission || 0) | currency:'BRL':'' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th>{{ translate.commissions.label.total }}</th>
+                      <th class="positive">{{ (settings.data.balance.salesTotal || 0) | currency:'BRL':'' }}</th>
+                      <th class="positive">{{ (settings.data.balance.total || 0) | currency:'BRL':'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <!-- NOVA SEÇÃO: Relatório Analítico de Comissões -->
+      <div *ngIf="settings.type == 'commissionReportAnalytical'">
+        <div class="table-responsive">
+          <table id="report" class="table">
+            <tr class="storeInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <div style="display: table-cell;">
+                  <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                  <div class="address" style="font-size: 11px; opacity: 0.75;"
+                    *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address
+                      + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' +
+                    settings.store.address.state }}</div>
+                  <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{
+                      translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}
+                  </div>
+                  <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{
+                      translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start |
+                    date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' +
+                    (settings.period.end | date:'dd/MM/yyyy') }}</div>
+                </div>
+              </td>
+            </tr>
+            <tr class="spacerXLS">
+              <td [attr.colspan]="onCheckColspan()"></td>
+            </tr>
+            <tr class="reportInfo">
+              <td [attr.colspan]="onCheckColspan()">
+                <table class="table">
+                  <thead *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th *ngIf="onCheckField('date')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].date.internal }}</th>
+                      <th *ngIf="onCheckField('saleCode')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].saleCode.internal }}</th>
+                      <th *ngIf="onCheckField('collaborator')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].collaborator.internal }}</th>
+                      <th *ngIf="onCheckField('customer')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].customer.internal }}</th>
+                      <th *ngIf="onCheckField('saleValue')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].saleValue.internal }}</th>
+                      <th>Origem</th>
+                      
+                      <th *ngIf="onCheckField('commissionPercentage')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].commissionPercentage.internal }}</th>
+                      <th *ngIf="onCheckField('commissionValue')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].commissionValue.internal }}</th>
+                      <th *ngIf="onCheckField('paymentDate')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].paymentDate.internal }}</th>
+                      <th *ngIf="onCheckField('observation')">{{
+                        translate.commissions.fields['commissionReportAnalytical'].observation.internal }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data?.records">
+                      <td *ngIf="onCheckField('date')">{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('saleCode')">{{ item.saleCode }}</td>
+                      <td *ngIf="onCheckField('collaborator')">{{ item.collaborator }}</td>
+                      <td *ngIf="onCheckField('customer')">{{ item.customer }}</td>
+                      <td *ngIf="onCheckField('saleValue')">{{ item.saleValue | currency:'BRL':'' }}</td>
+                      <td>{{ item.origin }}</td>
+                      
+                      <td *ngIf="onCheckField('commissionPercentage')">{{ item.commissionPercentage }}%</td>
+                      <td *ngIf="onCheckField('commissionValue')">{{ item.commissionValue | currency:'BRL':'' }}</td>
+                      <td *ngIf="onCheckField('paymentDate')">{{ item.paymentDate | date:'dd/MM/yyyy' }}</td>
+                      <td *ngIf="onCheckField('observation')">{{ item.observation || '----' }}</td>
+                    </tr>
+                    <tr *ngIf="settings.data?.records?.length == 0">
+                      <td class="resetPadding" [attr.colspan]="onCheckColspan()">
+                        <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="settings.data?.records?.length > 0">
+                    <tr>
+                      <th *ngIf="onCheckField('date')">{{ translate.commissions.label.total }}</th>
+                      <th *ngIf="onCheckField('saleCode')"></th>
+                      <th *ngIf="onCheckField('collaborator')"></th>
+                      <th *ngIf="onCheckField('customer')"></th>
+                      <th *ngIf="onCheckField('saleValue')" class="positive">{{ settings.data.balance.totalSalesValue |
+                        currency:'BRL':'' }}</th>
+                      <!-- Placeholder for Origem column to keep alignment -->
+                      <th></th>
+                      
+                      <th *ngIf="onCheckField('commissionPercentage')"></th>
+                      <th *ngIf="onCheckField('commissionValue')" class="positive">{{
+                        settings.data.balance.totalCommissionValue | currency:'BRL':'' }}</th>
+                      <th *ngIf="onCheckField('paymentDate')"></th>
+                      <th *ngIf="onCheckField('observation')"></th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

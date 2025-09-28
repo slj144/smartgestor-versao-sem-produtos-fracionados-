@@ -1,0 +1,86 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  ></custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+
+      <div class="container-table">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th>{{ translate.table.label.code }}</th>
+                <th class="text-left">{{ translate.table.label.name }}</th>
+                <th>{{ translate.table.label.actions }}</th>
+              </tr>
+            </thead>
+            <tbody>           
+              <tr *ngFor="let item of (searchData?.length > 0 ? searchData : recordsData)" (click)="onRead($event, item)">
+                <td colspan="3">
+                  <table class="table table-level-1">
+                    <tr>
+                      <td>{{ item.code }}</td>
+                      <td>
+                        <p [class.disabled]="item._isDisabled">{{ item.name }}</p>
+                        <span [class.disabled]="item._isDisabled" *ngIf="item.bankAccount?.name">
+                          <span class="value">{{ item.bankAccount.name + ' (' + item.bankAccount.agency + '/' + item.bankAccount.account + ')' }}</span>
+                        </span>
+                      </td>
+                      <td class="cell-action">
+                        <button class="btnAction btnAdd" (click)="onCreate($event, 'Provider/Create', item)" *ngIf="item.providers"><icon name="plus-outline" pack="eva"></icon></button>
+                        <button class="btnAction btnEdit" (click)="onUpdate($event, 'Method/Update', item)" *ngIf="!item.providers"><icon name="edit-outline" pack="eva"></icon></button>
+                        <button class="btnAction btnDelete" (click)="onDelete($event, 'Method/Delete', item)" *ngIf="!item.providers && !item._isDefault"><icon name="trash" pack="fa"></icon></button>
+                      </td>
+                    </tr>
+                    <tr *ngIf="item.providers">
+                      <td colspan="3" class="container-prodiders">
+                        <table colspan="2" class="table">
+                          <tr *ngFor="let provider of item.providers" (click)="onRead($event, provider)">
+                            <td>{{ '> ' + provider.code }}</td>
+                            <td>
+                              <p [class.disabled]="provider._isDisabled">{{ provider.name }}</p>
+                              <span [class.disabled]="provider._isDisabled" *ngIf="provider.bankAccount?.name">
+                                <span class="value">{{ provider.bankAccount.name + ' (' + provider.bankAccount.agency + '/' + provider.bankAccount.account + ')' }}</span>
+                              </span>
+                            </td>
+                            <td class="cell-action">
+                              <button class="btnAction btnEdit" (click)="onUpdate($event, 'Provider/Update', item, provider)"><icon name="edit-outline" pack="eva"></icon></button>
+                              <button class="btnAction btnDelete" (click)="onDelete($event, 'Provider/Delete', item, provider)"><icon name="trash" pack="fa"></icon></button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="item.providers.length == 0">
+                            <td class="no-providers" colspan="2">{{ translate.table.warning + ' ' + item.name + '.' }}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate($event, 'Method/Create')" *ngIf="permissions.actions.add"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>
+  
+  <placeholder [loading]="loading" [hasData]="recordsData.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<payment-methods-modal (callback)="onModalResponse($event)"></payment-methods-modal>

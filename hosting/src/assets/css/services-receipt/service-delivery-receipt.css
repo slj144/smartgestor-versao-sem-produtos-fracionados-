@@ -1,0 +1,503 @@
+#containerServiceOrderReceiptWarrantyA4 header,
+#containerServiceOrderReceiptDeliveryA4 header {
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #000;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table,
+#containerServiceOrderReceiptDeliveryA4 header table {
+  width: 100%;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td,
+#containerServiceOrderReceiptDeliveryA4 header table td {
+  width: auto;
+  vertical-align: middle;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td img,
+#containerServiceOrderReceiptDeliveryA4 header table td img {
+  width: 100px;
+  margin: 0 auto;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td h1,
+#containerServiceOrderReceiptDeliveryA4 header table td h1 {
+  padding: 0;
+  margin: 4px 0 6px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #000;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td p,
+#containerServiceOrderReceiptDeliveryA4 header table td p {
+  margin: 0;
+  line-height: 13px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td p span,
+#containerServiceOrderReceiptDeliveryA4 header table td p span {
+  font-size: 12px;
+  display: inline;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td p span.label,
+#containerServiceOrderReceiptDeliveryA4 header table td p span.label {
+  color: #111;
+  font-weight: 900;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td p span.value,
+#containerServiceOrderReceiptDeliveryA4 header table td p span.value {
+  color: #333;
+  margin-left: 4px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td:first-child,
+#containerServiceOrderReceiptDeliveryA4 header table td:first-child {
+  width: 100px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 header table td:last-child,
+#containerServiceOrderReceiptDeliveryA4 header table td:last-child {
+  padding-left: 15px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section,
+#containerServiceOrderReceiptDeliveryA4 section {
+  margin-bottom: 5px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section h5,
+#containerServiceOrderReceiptDeliveryA4 section h5 {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 5px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content,
+#containerServiceOrderReceiptDeliveryA4 section .content {
+  padding: 0;
+  padding-left: 15px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content p,
+#containerServiceOrderReceiptDeliveryA4 section .content p {
+  margin: 0;
+  line-height: 13px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content p span,
+#containerServiceOrderReceiptDeliveryA4 section .content p span {
+  font-size: 12px;
+  display: inline;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content p span.label,
+#containerServiceOrderReceiptDeliveryA4 section .content p span.label {
+  color: #222 !important;
+  font-weight: 600;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content p span.value,
+#containerServiceOrderReceiptDeliveryA4 section .content p span.value {
+  color: #777 !important;
+  margin-left: 4px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table {
+  width: 100%;
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table th,
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table td,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table th,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table td {
+  vertical-align: middle;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table th.col-xsmall,
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table td.col-xsmall,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table th.col-xsmall,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table td.col-xsmall {
+  width: 70px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table th.col-small,
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table td.col-small,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table th.col-small,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table td.col-small {
+  width: 110px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table th.col-medium,
+#containerServiceOrderReceiptWarrantyA4 section .content .table-responsive table td.col-medium,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table th.col-medium,
+#containerServiceOrderReceiptDeliveryA4 section .content .table-responsive table td.col-medium {
+  width: 138px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.info,
+#containerServiceOrderReceiptWarrantyA4 section.customer,
+#containerServiceOrderReceiptDeliveryA4 section.info,
+#containerServiceOrderReceiptDeliveryA4 section.customer {
+  margin: 4px 0 8px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.info table,
+#containerServiceOrderReceiptWarrantyA4 section.customer table,
+#containerServiceOrderReceiptDeliveryA4 section.info table,
+#containerServiceOrderReceiptDeliveryA4 section.customer table {
+  width: 100%;
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.info table tr td,
+#containerServiceOrderReceiptWarrantyA4 section.customer table tr td,
+#containerServiceOrderReceiptDeliveryA4 section.info table tr td,
+#containerServiceOrderReceiptDeliveryA4 section.customer table tr td {
+  font-size: 13px;
+  padding: 0 10px 0 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.info table tr td.date,
+#containerServiceOrderReceiptWarrantyA4 section.customer table tr td.date,
+#containerServiceOrderReceiptDeliveryA4 section.info table tr td.date,
+#containerServiceOrderReceiptDeliveryA4 section.customer table tr td.date {
+  text-align: right;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table,
+#containerServiceOrderReceiptWarrantyA4 section.products table,
+#containerServiceOrderReceiptDeliveryA4 section.services table,
+#containerServiceOrderReceiptDeliveryA4 section.products table {
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table thead tr,
+#containerServiceOrderReceiptWarrantyA4 section.products table thead tr,
+#containerServiceOrderReceiptDeliveryA4 section.services table thead tr,
+#containerServiceOrderReceiptDeliveryA4 section.products table thead tr {
+  font-size: 11px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table thead tr th,
+#containerServiceOrderReceiptWarrantyA4 section.products table thead tr th,
+#containerServiceOrderReceiptDeliveryA4 section.services table thead tr th,
+#containerServiceOrderReceiptDeliveryA4 section.products table thead tr th {
+  color: #111;
+  padding: 0 10px 2px;
+  font-weight: 500;
+  text-align: center;
+  vertical-align: middle;
+  border-bottom: 1px solid #333;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td {
+  padding: 5px;
+  vertical-align: middle;
+  border-right: 1px solid #555;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td span,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td span,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td span,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td span {
+  font-size: 12px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td span.price,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td span.price,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td span.price,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td span.price {
+  color: #222;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:nth-child(1),
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:nth-child(3),
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:nth-child(4),
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:nth-child(5),
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:nth-child(1),
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:nth-child(3),
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:nth-child(4),
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:nth-child(5),
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:nth-child(1),
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:nth-child(3),
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:nth-child(4),
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:nth-child(5),
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:nth-child(1),
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:nth-child(3),
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:nth-child(4),
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:nth-child(5) {
+  text-align: center;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:last-child,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:last-child {
+  border-right: none;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr td:last-child span.price,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr td:last-child span.price,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr td:last-child span.price,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr td:last-child span.price {
+  color: #222;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.services table tbody tr:last-child,
+#containerServiceOrderReceiptWarrantyA4 section.products table tbody tr:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.services table tbody tr:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.products table tbody tr:last-child {
+  border-bottom: none;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  column-count: 3;
+  column-width: calc(100% / 3);
+  column-gap: 10px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li {
+  margin-bottom: 2px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li label,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li label {
+  margin: 0 0 2px;
+  padding: 0;
+  display: block;
+  user-select: none;
+  font-size: 11px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li label span,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li label span {
+  position: relative;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li label span.icon,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li label span.icon {
+  margin-right: 3px;
+  top: 1px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li label span.icon img,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li label span.icon img {
+  width: 12px;
+  height: 12px;
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li label span.name,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li label span.name {
+  font-size: 10px;
+  top: -1px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li .sub,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li .sub {
+  padding-left: 15px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.checklist ul li .sub label,
+#containerServiceOrderReceiptDeliveryA4 section.checklist ul li .sub label {
+  margin-right: 10px;
+  display: inline-block;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.description h5,
+#containerServiceOrderReceiptDeliveryA4 section.description h5 {
+  padding-left: 3px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.description .content,
+#containerServiceOrderReceiptDeliveryA4 section.description .content {
+  width: 100%;
+  padding-left: 10px;
+  color: #111;
+  white-space: pre-line;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table,
+#containerServiceOrderReceiptDeliveryA4 section.balance table {
+  width: 100%;
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr {
+  text-align: left;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr th,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr th {
+  color: #000;
+  font-weight: 600;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td {
+  color: #111;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td .table-internal,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td .table-internal {
+  border-bottom: 1px solid #222;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td .table-internal tr td,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td .table-internal tr td {
+  padding: 0;
+  vertical-align: middle;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td .table-internal tr td.label,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td .table-internal tr td.label {
+  color: #222;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td .table-internal tr td:first-child,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td .table-internal tr td:first-child {
+  padding-left: 15px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td .table-internal tr td:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td .table-internal tr td:last-child {
+  padding-left: 5px;
+  width: 115px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td.total,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td.total {
+  color: #000;
+  padding-left: 15px;
+  font-weight: 600;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td.removePadding,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td.removePadding {
+  padding: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td:last-child {
+  width: 80px;
+  text-align: left;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr th,
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr td,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr th,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr td {
+  padding: 0 5px;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.balance table tr:last-child,
+#containerServiceOrderReceiptDeliveryA4 section.balance table tr:last-child {
+  border-top: 1px solid #eee;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms,
+#containerServiceOrderReceiptDeliveryA4 section.terms {
+  padding: 15px 10px;
+  margin: 20px 0 5px;
+  border-radius: 5px;
+  border: 1px solid #444 !important;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms h5,
+#containerServiceOrderReceiptDeliveryA4 section.terms h5 {
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms .content ul,
+#containerServiceOrderReceiptDeliveryA4 section.terms .content ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms .content ul li,
+#containerServiceOrderReceiptDeliveryA4 section.terms .content ul li {
+  font-size: 10px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms .content p,
+#containerServiceOrderReceiptDeliveryA4 section.terms .content p {
+  font-size: 10px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms.page-break,
+#containerServiceOrderReceiptDeliveryA4 section.terms.page-break {
+  page-break-before: always;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.terms .content,
+#containerServiceOrderReceiptDeliveryA4 section.terms .content {
+  white-space: pre-line;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.signatures,
+#containerServiceOrderReceiptDeliveryA4 section.signatures {
+  margin: 5px 0 0;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.signatures p,
+#containerServiceOrderReceiptDeliveryA4 section.signatures p {
+  border-bottom: 1px solid #222;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.signatures p span,
+#containerServiceOrderReceiptDeliveryA4 section.signatures p span {
+  position: relative;
+  bottom: -3px;
+  background-color: #fff;
+  padding-right: 5px;
+  color: #222;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.photos .photos-list,
+#containerServiceOrderReceiptDeliveryA4 section.photos .photos-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.photos .photos-list img,
+#containerServiceOrderReceiptDeliveryA4 section.photos .photos-list img {
+  width: 100px;
+  height: auto;
+  border: 1px solid #ccc;
+}
+
+#containerServiceOrderReceiptWarrantyA4 section.photos .label,
+#containerServiceOrderReceiptDeliveryA4 section.photos .label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  display: block;
+}
+
+/*# sourceMappingURL=service-delivery-receipt.css.map */

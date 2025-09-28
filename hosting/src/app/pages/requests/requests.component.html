@@ -1,0 +1,155 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+    *ngIf="!loading"
+  >
+
+    <ng-container slot="buttons-of-header">
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li *ngIf="permissions.sections.schemes" (click)="onOpenScheme()">
+            <span class="dropdown-item"><icon name="folder-outline" pack="eva" class="px-1"></icon> {{ translate.modal.action.others.schemes.title }}</span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-lg mt-2 mb-4">
+
+        <div class="thead fixed d-none d-lg-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-md-2 col-lg-1 text-center">{{ translate.table.label.date }}</div>
+            <div class="col-md-2 col-lg-4">{{ translate.table.label.customer }}</div>
+            <div class="col-md-2 col-lg-2">{{ translate.table.label.operator }}</div>
+            <div class="col-md-2 col-lg-1 text-center">{{ translate.table.label.requestStatus }}</div>
+            <div class="col-md-2 col-lg-1 text-center">{{ translate.table.label.saleStatus }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.value }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+  
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+  
+            <div class="col col-lg-1 flex-row flex-lg-column justify-content-start justify-content-lg-center text-center hr-down-lg-bottom">
+              <span class="label d-block d-lg-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold" (click)="onRead(item)">{{ item.code }}</span>
+            </div>
+            
+            <div class="col-auto col-md-2 col-lg-1 flex-row flex-lg-column justify-content-start justify-content-lg-center text-center hr-down-lg-bottom">
+              <span class="label d-block d-lg-none">{{ translate.table.label.date }}:</span>
+              <span class="value">{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+  
+            <div class="col-12 d-block d-lg-none m-0 p-0"></div>
+  
+            <div class="col-12 col-sm-6 col-lg-4 flex-row flex-lg-column justify-content-start justify-content-lg-center hr-down-lg-bottom vr-down-lg-right">
+              <span class="label d-block d-lg-none">{{ translate.table.label.customer }}:</span>
+              <span class="value">{{ item.customer.name }}</span>
+            </div>  
+  
+            <div class="col-12 col-sm-6 col-lg-2 flex-row flex-lg-column justify-content-start justify-content-lg-center hr-down-lg-bottom">
+              <span class="label d-block d-lg-none">{{ translate.table.label.operator }}:</span>
+              <span class="value">{{ item.operator.name }}</span>
+            </div>  
+
+            <div class="col-12 d-block d-lg-none m-0 p-0"></div>
+            
+            <div class="col col-sm-6 col-lg-1 text-start text-md-center hr-down-lg-bottom vr-down-lg-right">
+              <span class="label d-block d-lg-none">{{ translate.table.label.requestStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.requestStatus | lowercase)">{{ translate.table.enum.status[item.requestStatus] }}</span>
+              </div>
+            </div>  
+  
+            <div class="col col-sm-6 col-lg-1 text-start text-md-center hr-down-lg-bottom">
+              <span class="label d-block d-lg-none">{{ translate.table.label.saleStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.saleStatus | lowercase)">{{ translate.table.enum.status[item.saleStatus] }}</span>
+              </div>
+            </div>  
+
+            <div class="col-12 d-block d-lg-none m-0 p-0"></div>
+  
+            <div class="col col-lg-1 flex-row flex-lg-column justify-content-start justify-content-lg-center text-center">
+              <span class="label d-block d-lg-none">{{ translate.table.label.value }}</span>
+              <span class="value fw-bold costPrice">{{ item.balance?.total | currency }}</span>
+            </div>  
+            
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onAction('read', item)"><icon name="eye-outline" pack="eva"></icon></button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title" *ngIf="permissions.actions.edit" (click)="onAction('edit', item)"><icon name="edit-outline" pack="eva"></icon></button>
+
+                <div class="dropdown">
+                  <button class="btnAction btnOthers" data-bs-toggle="dropdown">
+                    <icon name="more-vertical-outline" pack="eva"></icon>
+                  </button>
+          
+                  <ul class="dropdown-menu dropdown-menu-right p-0">
+                    <li *ngIf="isMatrix && isAdmin" (click)="onDuplicate(item)">
+                      <span class="dropdown-item"><icon name="copy-outline" pack="eva" class="px-1"></icon> Duplicar</span>
+                    </li>
+                    <li *ngIf="isMatrix && permissions.actions.delete" (click)="onAction('cancel', item)">
+                      <span class="dropdown-item"><icon name="trash-2-outline" pack="eva" class="px-1"></icon> Cancelar</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>  
+  
+            <!-- <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onAction('read', item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title" [disabled]="!checkPermissionToEdit(item)" (click)="onAction('edit', item)"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnCancel" [tooltip]="translate.table.action.cancel.title" [disabled]="!checkPermissionToCancel(item)" (click)="onAction('cancel', item)"><icon name="close" pack="fa"></icon></button>
+
+                <div class="dropdown">
+                  <button class="btnAction btnOthers" data-bs-toggle="dropdown">
+                    <icon name="more-vertical-outline" pack="eva"></icon>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-right p-0">
+                    <li *ngIf="isMatrix && isAdmin" (click)="onDuplicate(item)">
+                      <span class="dropdown-item"><icon name="copy-outline" pack="eva" class="px-1"></icon>Duplicar</span>
+                    </li>
+                    <li *ngIf="isMatrix && permissions.actions.delete" (click)="onAction('cancel', item)">
+                      <span class="dropdown-item"><icon name="trash-2-outline" pack="eva" class="px-1"></icon>Deletar</span>
+                    </li>
+                  </ul>
+                </div>
+             
+              </div>
+            </div> -->
+  
+          </div>
+        </div>
+  
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onAction('create')"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+    
+  </main>
+  
+  <placeholder [loading]="loading" [hasData]="recordsData?.length > 0" [verticalAlign]="true" [icon]="'shopping-bag-outline'" [label]="translate._common.placeholder.noData.label"></placeholder>
+  
+</div>
+
+<requests-modal (callback)="onModalResponse($event)"></requests-modal>

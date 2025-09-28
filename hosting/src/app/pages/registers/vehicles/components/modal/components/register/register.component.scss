@@ -1,0 +1,184 @@
+
+#containerFormRegister {
+  padding: 0 10px;
+  form {
+    .container-owner {
+      margin-bottom: 5px;
+      border-bottom: 1px dotted #ccc;
+      background-color: #fff;
+      h6 {
+        padding: 15px 10px;
+        color: #555;
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0;
+        position: relative;
+        button {
+          width: 30px;
+          height: 30px;
+          color: gray;
+          border-radius: 100%;
+          background-color: #fff;
+          border: none;
+          outline: none;
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          transition: all 0.5s ease-in-out;
+          icon {
+            font-size: 15px;
+            margin: 1px 0 0;
+          }
+          &:hover {
+            opacity: 0.85;
+          }
+          &:disabled {
+            opacity: 0.7;
+          }
+        }
+      }
+      .data {
+        padding: 15px 10px;
+        border-top: 1px dotted #ccc;
+        p {
+          border: none;
+          margin: 0;
+          padding: 0;
+          span {
+            &.label {
+              font-weight: 600;
+              margin-right: 5px;
+            }
+            &.value {
+              font-weight: 400;
+            }
+          }
+        }
+      }
+    }
+    label {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }     
+    textarea {
+      height: 95px;
+      resize: none;
+    }
+    fieldset {
+      padding: 0;
+      &.code {
+        position: relative;
+        input {
+          padding-right: 35px;
+        }
+        button {
+          width: 35px !important;
+          height: 35px !important;
+          position: absolute;
+          top: 0;
+          right: 0;
+          background-color: transparent;
+          color: #888;
+          border: none;
+          outline: none;
+          transition: all 0.3s ease-in-out;
+          icon {
+            font-size: 14px;
+          }
+          &:hover {
+            color: #666;
+          }
+        }
+      }
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+    input, textarea, select {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;
+    }        
+    button[type=submit] {
+      margin: 10px auto 0;
+      display: block;
+      padding: 5px 40px;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: rgb(102, 102, 255);
+      color: #fff;
+      &.btnBlue {
+        background-color: rgb(102, 102, 255);
+      }
+      &.btnRed {
+        background-color: indianred;
+      }
+    }
+    .header {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+    .tribute-name {
+      border-bottom: 1px dotted black;
+      padding: 0 0 5px;
+      font-size: 14px;
+      font-weight: 600;
+      margin: 10px 0;      
+    }
+    .form-group {
+      margin: 0 0 8px;
+    }
+    .deactivator {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: lightcyan !important;
+      border: 1px solid rgb(213, 213, 213);
+      border-radius: 5px;
+      table {
+        margin: 0;
+        tr {
+          td {
+            border: none;
+            padding: 10px 5px !important;
+            vertical-align: middle;
+            span {
+              font-size: 13px;
+            }
+            small {
+              color: #999;
+              font-size: 11px;
+            }
+            span, small {              
+              line-height: 13px;
+              display: block;
+            }
+            &:first-child {
+              width: 15px;
+              padding-left: 10px !important;
+              text-align: right;
+            }
+          }
+        }
+      }              
+    }
+    .alert-required {
+      color: red;
+    } 
+    .field-required {
+      border-color: indianred;
+      &:focus {
+        border-color: rgba(205, 92, 92, 0.75);
+      }
+    }
+      
+    .required {
+      border-color: indianred !important;
+      &:focus {
+        border-color: rgba(205, 92, 92, 0.75) !important;
+      }
+    }
+  }
+  
+}

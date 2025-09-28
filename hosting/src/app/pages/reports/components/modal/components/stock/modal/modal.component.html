@@ -1,0 +1,10 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content">
+    <div id="container-filters" [style.display]="settings.activeComponent === 'ReportsStock/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+  </div>
+  
+</modal>

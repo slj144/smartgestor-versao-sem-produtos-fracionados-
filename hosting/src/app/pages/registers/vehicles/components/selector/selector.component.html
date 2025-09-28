@@ -1,0 +1,110 @@
+
+<div id="services-selector">
+
+  <header>
+    <div class="container-search">
+      <div #searchBar class="search-bar">
+        
+        <input type="text" name="search" [placeholder]="translate.searchBar.placeholder" autocomplete="off" (keydown.enter)="onSearch()" (input)="onCheckSearchBar(input.value)" #input />
+
+        <button class="btnReset" *ngIf="input.value != ''" (click)="onResetSearchBar()"><icon name="close" pack="eva"></icon></button>
+        <button class="btnSearch" (click)="onSearch()"><icon name="search-outline" pack="eva"></icon></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="container-search" *ngIf="recordsData?.length > 0">
+      <h5>{{ translate.search.info[0] + " - " + recordsData?.length + " " + translate.search.info[1] }}</h5>
+
+      <div class="container">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of recordsData" class="{{ item.selected ? 'active' : '' }}">
+                <td (click)="onSelectVehicle(item)">
+                  <button class="btnCheck {{ item.selected ? 'active' : '' }}"><icon name="checkmark-outline" pack="eva"></icon></button>
+                </td>
+                <td>
+                  <p class="name">{{ item.plate }}</p>
+
+                  <div class="container-info">
+                    <p><span class="label">{{ translate.selected.item.label.code }}:</span> <span class="value price">{{ item.code }}</span></p>
+                    <p><span class="label">{{ translate.selected.item.label.model }}:</span> <span class="value price">{{ item.model }}</span></p>
+                    <p><span class="label">{{ translate.selected.item.label.proprietary }}:</span> <span class="value price">{{ item.proprietary?.name }}</span></p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>    
+    </div>
+
+    <div class="container-selected" *ngIf="servicesSelected?.length > 0">
+      <h5>{{ translate.selected.title }}</h5>
+
+      <div class="table-responsive">
+        <table class="table table-borderless">
+          <tbody>
+            <tr *ngFor="let item of servicesSelected" class="{{ item.selected ? 'active' : '' }}">
+              <td>
+                <button class="btnCheck {{ item.selected ? 'active' : '' }}"><icon name="checkmark-outline" pack="eva"></icon></button>
+              </td>
+              <td>
+                <p class="name">{{ item.plate }}</p>
+
+                <div class="container-info">
+                  <p><span class="label">{{ translate.selected.item.label.code + ':' }}</span> <span class="value price">{{ item.code }}</span></p>
+                  <p><span class="label">{{ translate.selected.item.label.model + ':' }}</span> <span class="value price">{{ item.model }}</span></p>
+                  <p><span class="label">{{ translate.selected.item.label.proprietary }}:</span> <span class="value price">{{ item.proprietary?.name }}</span></p>
+                </div>               
+              </td>           
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>    
+
+    <div class="container-placeholder" *ngIf="servicesSelected?.length == 0">
+      <div class="wrapper">
+        <div *ngIf="!loading">
+          <div *ngIf="searchText == ''">
+            <img src="assets/images/_General/search-icon.jpg" />
+
+            <div class="info">
+              <p>{{ translate.placeholder.beforeSearch.label }}</p>
+              <small>{{ translate.placeholder.beforeSearch.instruction }}</small>
+            </div>
+          </div>
+          
+          <div *ngIf="searchText != ''">
+            <img src="assets/images/_General/search-icon-2.jpg" />
+
+            <div class="info">
+              <p>{{ translate.placeholder.afterSearch.label }}</p>
+              <button (click)="onRegisterVehicle()">{{ translate.placeholder.afterSearch.button.register.label }}</button>
+            </div>
+          </div>
+        </div>
+
+        <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+      </div>
+    </div>
+
+    <div class="container-toast">
+      <toast (callback)="onToastResponse($event)">
+        <vehicles-register (callback)="onRegisterResponse($event)"></vehicles-register>
+      </toast>
+    </div>
+  
+    <div class="container-buttons">
+      <button class="btnConfirm" (click)="onConfirmSelect()" *ngIf="servicesSelected?.length > 0">
+        <icon name="checkmark" pack="eva"></icon>
+      </button>
+    </div>
+
+  </main>
+
+</div>

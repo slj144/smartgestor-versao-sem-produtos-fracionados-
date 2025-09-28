@@ -1,0 +1,92 @@
+
+<div id="containerFormRegister" *ngIf="checkBootstrap">
+
+  <form [formGroup]="formScheme" class="form" autocomplete="off">
+
+    <div class="row p-2">
+
+      <div class="col-12 form-group">
+        <label>{{ translate.panel.name.label }}</label>
+        <input type="text" formControlName="name" class="form-control {{ formControls.name.errors ? 'field-required' : '' }} text-uppercase" />
+      </div>
+
+      <!-- <div class="col-12 form-group">
+        <label>{{ translate.panel.quantity.label }}</label>
+        <input type="text" formControlName="quantity" class="form-control {{ formControls.quantity.errors ? 'field-required' : '' }}" (input)="onApplyNumberMask($event, formControls.quantity)"/>
+      </div> -->
+      
+    </div>
+
+    <div class="container-products">
+
+      <h6>
+        <span>{{ translate.panel.products.title }}</span>
+
+        <div class="quick-search">
+          <input type="text" [placeholder]="translate.panel.products.quickSearch.placeholder" autocomplete="off" (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)" #inputQuickSearch />
+          <button (click)="onQuickSearch(inputQuickSearch)" type="button"><icon name="search-outline" pack="eva"></icon></button>
+        </div>
+
+        <button (click)="onOpenLayer('products')" type="button"><icon name="funnel-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data">
+
+        <div *ngIf="data.products?.length > 0">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>{{ translate.panel.products.label.code }}</th>
+                  <th class="text-left">{{ translate.panel.products.label.name }}</th>                
+                  <th>{{ translate.panel.products.label.quantity }}</th>
+                  <th>{{ translate.panel.products.label.price }}</th>
+                  <th>{{ translate.panel.products.label.total }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of data.products; let i = index">
+                  <td class="action">
+                    <button class="btnClose" type="button" (click)="onDeleteProductItem(i)"><icon name="close" pack="eva"></icon></button>
+                  </td>
+                  <td class="code">{{ item.code }}</td>
+                  <td class="name">{{ item.name }}</td>
+                  <td class="quantity">
+                    <input [value]="item.selectedItems ?? 1" autocomplete="off" (input)="onApplyQuantity(item, quantityField)" #quantityField />
+                  </td>
+                  <td class="price">
+                    <input [value]="item.unitaryPrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, priceField)" #priceField />
+                  </td>
+                  <td class="total">
+                    <input [value]="(item.unitaryPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div *ngIf="!data.products || (data.products?.length == 0)" class="placeholder-container">
+          <div class="wrapper">
+            <div class="icon-container">
+              <icon name="shopping-bag-outline" pack="eva"></icon>
+            </div>
+            <button type="button" class="btn btn-primary btn-add" (click)="onOpenLayer('products')">Adicionar produtos</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>  
+
+
+    <small class="alert-required" *ngIf="formScheme.invalid">{{ translate.panel.notice }}</small>
+    
+    <button class="btn btnBlue submit" type="button" [disabled]="formScheme.invalid || !data.products?.length" (click)="onSubmit()">{{ translate.panel.button.submit }}</button>
+
+  </form>
+  
+  <schemes-register-layer (callback)="onLayerResponse($event)"></schemes-register-layer>
+  
+</div>

@@ -1,0 +1,357 @@
+
+#container-main {
+  padding: 15px 10px 65px;
+  header {
+    height: 32px;
+    position: relative;
+    background-color: #fff;      
+    margin: 10px 15px;
+    .container-search {
+      $color: #aaa;
+      .btnFilter {
+        position: relative;
+        background-color: $color;
+        border-color: $color;
+        .badge {
+          width: 16px;
+          height: 16px;
+          border: none;
+          border-radius: 8px;
+          box-shadow: none;
+          background-color: chocolate;
+          font-size: 8px;
+          font-weight: 600;
+          position: absolute;
+          top: -5px;
+          right: -5px;
+        }
+      }
+      .search-bar {
+        width: 250px;
+        height: 30px;
+        max-width: calc(100% - 40px);
+        max-width: calc(100% - 72px);
+        border: 2px solid #ddd;
+        background-color: #fff;
+        overflow: hidden;
+        position: absolute;
+        left: 34px;          
+        border-radius: 17px;
+        button {
+          width: 26px;
+          height: 26px;      
+          border: none;
+          outline: none;
+          border-radius: 17px;
+          color: $color;
+          background-color: #fff;
+          box-shadow: none;
+          position: absolute;
+          margin-top: 0;
+          margin-left: 0;
+          z-index: 2;
+          top: 0;
+          right: 0;
+          transition: all 0.5s ease-in-out;
+          cursor: pointer;
+          icon {
+            position: relative;
+            top: -1px;
+            font-size: 13px;
+          }
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+        input {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          padding: 10px 30px 10px 12px;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          z-index: 0;
+          font-size: 13px;
+          vertical-align: middle;
+          &::placeholder {
+            color: #999;
+          }
+        }
+      }
+    }
+    .container-buttons {
+      width: auto;
+      position: absolute;
+      right: -2px;       
+      display: table;
+      .dropdown-menu {
+        .dropdown-item {
+          color: #555;
+          font-weight: 500;
+          font-size: 13px;
+          padding: 5px 10px;
+          user-select: none;            
+          border-bottom: 1px solid #aaa;
+          transition: all 0.3s ease-in-out;
+          cursor: pointer;
+          icon {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-right: 5px;
+          }
+          &:hover {
+            color: #aaa;
+          }
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+    }
+    .container-search,
+    .container-buttons {
+      button {
+        width: 30px;
+        height: 30px;
+        outline: none;
+        border-radius: 17px;
+        color: #fff;
+        background-color: rgb(102, 102, 255);
+        border: 1px solid rgb(102, 102, 255);
+        box-shadow: 0 2px 4px #ccc;
+        padding: 0;
+        margin: 0 2px;        
+        transition: all 0.5s ease-in-out;
+        &.btnFilter {
+          position: absolute;
+          left: 0;
+        }
+        &.btnAdd {
+          top: 0;
+          background-color: green;
+          border: 1px solid green;
+        }
+        &.btnOthers {
+          color: #fff;
+          border: 1px solid rgb(230, 229, 229);
+          background-color: #aaa;
+          border: 1px solid #aaa;
+          margin-top: -3px;
+          icon {
+            font-size: 14px;
+          }
+        }
+        &.btnAdd, &.btnFilter {
+          icon {
+            font-size: 15px;
+          }
+        }
+        &:last-child {
+          margin-right: 0;
+        }
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
+  main {
+    .container-tools {
+      height: 30px;
+      position: relative;
+      background-color: #fff;
+      margin: 0 17px;
+      padding-top: 5px;        
+      border-top: 1px solid rgba(0, 255, 255, 0.8);
+      border-bottom: 1px solid cyan;
+      .container-info {
+        position: absolute;
+        top: 0;
+        left: 5px;
+        display: table;
+        small {
+          color: #999;
+          font-size: 11px;
+        }
+      }
+      .container-modes {
+        width: auto;
+        position: absolute;
+        top: 3px;
+        right: -2px;       
+        display: table;
+        button {
+          width: 22px;
+          height: 22px;            
+          border-radius: 4px;
+          color: #999;
+          background-color: #fff;
+          border: none;
+          outline: none;
+          padding: 0;
+          margin: 0 2px;
+          transition: all 0.3s ease-in-out;   
+          icon {
+            font-size: 15px;
+          }    
+          &.active {
+            color: rgba(102, 102, 255, 0.75);
+          }
+          &:hover {
+            color: rgba(153, 153, 153, 0.85);
+          }
+        }
+      }
+    }
+    .container-table {
+      margin: 0 15px 50px;
+      .table-responsive {
+        table {
+          min-width: 750px;
+          margin: 0;
+          thead {
+            border-bottom: 1px solid cyan;
+            tr {      
+              font-size: 12px;
+              user-select: none;
+              th {
+                color: #777;
+                font-weight: 500;
+                padding: 5px 10px;
+                text-align: center;
+                &:nth-child(1), &:nth-child(3) {
+                  width: 110px;
+                }
+              }
+            }
+          }
+          tbody {
+            tr {
+              cursor: pointer;
+              td {
+                & > span {
+                  display: block; 
+                  font-size: 11px;                    
+                  margin-top: -4px;
+                  .value {
+                    color: #999;
+                  }
+                }
+              }
+              .table-level-1 {
+                tr {
+                  td {
+                    font-size: 13px;
+                    padding: 8px 10px;
+                    vertical-align: middle;
+                    p {
+                      color: #333;
+                      font-size: inherit;
+                      font-weight: 600;
+                      margin: 0;
+                      padding: 0;                        
+                    }
+                    .disabled {
+                      text-decoration: line-through;
+                    }
+                    .btnAction {
+                      width: 35px;
+                      height: 35px;
+                      padding: 0;
+                      border: none;
+                      outline: none;          
+                      margin: 2px;
+                      background-color: #fff;
+                      border-radius: 5px;
+                      border: 1px solid #fff;
+                      transition: all 0.5s ease-in-out;
+                      display: inline-table;
+                      cursor: pointer;
+                      icon {
+                        font-size: 15px;
+                        &[pack=fa] {
+                          font-size: 12px;
+                        }
+                      }
+                      &.btnAdd,
+                      &.btnEdit {
+                        color: green;
+                      }
+                      &.btnDelete {
+                        color: red;
+                      }
+                      &:hover {
+                        box-shadow: -1px 1px 4px #ddd !important;
+                        border: 1px solid rgb(224, 224, 224) !important;
+                      }
+                    }                  
+                    &.container-prodiders {
+                      padding: 0;
+                      table {
+                        border-top: 1px dotted rgba(170, 99, 237, 0.4) !important;
+                        tr {
+                          border-bottom: 1px dotted rgb(147, 190, 227) !important;
+                          td {                              
+                            color: #666 !important;
+                            font-weight: 400 !important;
+                            background-color: #fff;      
+                            &:first-child {
+                              text-align: right !important;
+                            }            
+                            &.no-providers {
+                              color: rgb(196, 34, 34) !important;
+                              padding: 15px 10px !important;
+                              text-align: center !important;
+                              background-color: rgb(238, 245, 246) !important;
+                            }                                                          
+                          }
+                          &:last-child {
+                            border-bottom: none !important;
+                          }
+                          &:hover {
+                            td:not(.no-providers) {
+                              font-weight: 600 !important;
+                            }                              
+                          }
+                        }
+                      }
+                    }
+                    &:nth-child(1) {
+                      text-align: center;
+                    }
+                    &:nth-child(2) {
+                      text-align: left;                        
+                    }
+                    &:nth-child(1), &:nth-child(3) {
+                      width: 110px !important;                        
+                    } 
+                    &:last-child {
+                      &.cell-action {
+                        width: 100px;
+                        color: coral;
+                        text-align: center;
+                      }
+                    }
+                  }         
+                }                               
+              }                
+              & > td {
+                padding: 0;
+              }
+              &:hover {
+                background-color: cyan !important;                                    
+              }
+            }  
+            & > tr {
+              border-bottom: 1px solid #ddd;
+              &:last-child {
+                border-bottom: none;
+              }
+            }             
+          }
+        }
+      }
+    } 
+  }
+}

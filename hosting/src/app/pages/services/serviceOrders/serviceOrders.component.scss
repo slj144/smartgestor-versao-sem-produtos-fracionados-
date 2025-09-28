@@ -1,0 +1,16 @@
+/*
+  Virtual Scroll viewport tweaks
+  - Mantém o container como bloco e rolagem suave
+  - Ajustes leves, sem interferir na lógica do componente
+*/
+
+:host ::ng-deep cdk-virtual-scroll-viewport.tbody {
+  display: block;
+  overflow: auto;
+  will-change: transform;
+}
+
+/* Garante espaçamento consistente nas linhas (compatível com rowSize) */
+:host ::ng-deep cdk-virtual-scroll-viewport.tbody .row {
+  box-sizing: border-box;
+}

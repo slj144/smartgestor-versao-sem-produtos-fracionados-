@@ -1,0 +1,101 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  ></custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-1">{{ translate.table.label.dueDate }}</div>
+            <div class="col-3">{{ translate.table.label.beneficiary }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.category }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.installments }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.value }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.status }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+            
+            <div class="col-auto col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.dueDate }}:</span>
+              <span class="value">{{ item.installments?.[item.currentInstallment]?.dueDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+
+            <div class="col-12 d-block d-md-none m-0 p-0"></div>
+            
+            <div class="col-12 col-md-3 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.beneficiary }}:</span>
+              <span class="value">{{ item.beneficiary?.name }}</span>
+            </div>
+
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.category }}:</span>
+              <span class="value">{{ item.category?.name }}</span>
+            </div>  
+            
+            <div class="col-5 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.installments }}:</span>
+              <div class="value fw-bold">
+                <span class="paid">{{ item.paidInstallments }}</span> / <span class="total">{{ item.totalInstallments }}</span>
+              </div>
+            </div>         
+            
+            <div class="col-7 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.value }}:</span>
+              <div class="value fw-bold">
+                <span class="paid">{{ item.paid | currency:'' }}</span> / <span class="total">{{ item.amount | currency:'' }}</span>
+              </div>
+            </div>
+
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.status }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.status | lowercase)">{{ translate.table.enum.status[item.status] }}</span>
+              </div>
+            </div>
+
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onAction('Read', item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title" [disabled]="!checkPermissionToUpdate(item)" (click)="onAction('Update', item)"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnCancel" [tooltip]="translate.table.action.cancel.title" [disabled]="!checkPermissionToCancel(item)" (click)="onAction('Cancel', item)" *ngIf="item.status != 'CANCELED'"><icon name="close" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title" [disabled]="!checkPermissionToDelete(item)" (click)="onAction('Delete', item)" *ngIf="item.status == 'CANCELED'"><icon name="trash" pack="fa"></icon></button>   
+              </div>
+            </div>  
+
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onAction('Create')"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>
+
+  <placeholder [loading]="loading" [hasData]="recordsData?.length" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<bills-to-pay-modal (callback)="onModalResponse($event)"></bills-to-pay-modal>

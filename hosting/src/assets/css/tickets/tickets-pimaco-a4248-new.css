@@ -1,0 +1,98 @@
+/* 
+ * PIMACO A4248 - Etiquetas 17,0 x 31,0 mm
+ * 96 etiquetas por folha (6 colunas x 16 linhas)  
+ * BASEADO NO FORMATO ORIGINAL tickets.css MAS COM DIMENSÕES A4248
+ */
+
+/* Avoid unexpected sizing on all elements - IGUAL AO ORIGINAL */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0; 
+}
+
+/* Configuration of elements for pdf - IGUAL AO ORIGINAL */
+#container {
+  width: 21cm;
+  height: 29.7cm; 
+}
+
+#container .page {
+  margin-top: 0.5cm;    /* Ajustado para A4248 */
+  margin-left: 0.3cm;   /* Ajustado para A4248 */
+}
+
+#container .page ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; 
+}
+
+/* AQUI ESTÁ A DIFERENÇA PRINCIPAL - DIMENSÕES PARA 6 COLUNAS A4248 */
+#container .page ul li {
+  width: 3.1cm;         /* Largura para caber 6 colunas (era 6.35cm para 3 colunas) */
+  max-width: 3.1cm;
+  height: 1.7cm;        /* Altura para caber 16 linhas (era 2.54cm) */
+  max-height: 1.7cm;
+  margin-right: 0.15cm; /* Margem menor entre colunas */
+  text-align: center;
+  display: block;
+  float: left; 
+}
+
+#container .page ul li .container-labels {
+  padding: 2px 4px;     /* Padding reduzido para etiquetas menores */
+}
+
+#container .page ul li .container-labels span {
+  width: 100%;
+  max-height: 12px;     /* Altura reduzida */
+  overflow: hidden;
+  font-size: 8px;       /* Fonte menor para A4248 */
+  font-weight: bold;
+  line-height: 9px;     /* Line-height ajustado */
+  display: block; 
+}
+
+#container .page ul li .container-labels span.name {
+  margin-bottom: 1px;   /* Margem reduzida */
+  text-align: left;
+  word-wrap: break-word; 
+}
+
+#container .page ul li .container-labels span.price {
+  color: #d00;          /* Mudei para vermelho mais visível */
+  text-align: right; 
+}
+
+/* FORÇA 6 COLUNAS EM VEZ DE 3 - ESTA É A MUDANÇA PRINCIPAL */
+#container .page ul li:nth-child(6n) {
+  margin-right: 0; 
+}
+
+/* CSS styling for before/after/avoid - IGUAL AO ORIGINAL */
+.before {
+  page-break-before: always; 
+}
+
+.after {
+  page-break-after: always; 
+}
+
+.avoid {
+  page-break-inside: avoid; 
+}
+
+/* AJUSTES ESPECÍFICOS PARA COMPONENTE BARCODE NO A4248 */
+barcode {
+  width: 100% !important;
+  max-width: 2.8cm !important;
+  height: 0.8cm !important;
+}
+
+barcode svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 2.8cm !important;
+  max-height: 0.8cm !important;
+}

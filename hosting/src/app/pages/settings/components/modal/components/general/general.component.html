@@ -1,0 +1,94 @@
+
+<div id="generalSettings">
+
+  <div class="container-view">
+    <div class="container-external">
+      <div class="container-info">
+        <div class="wrapper">
+          
+          <div class="container-language" *ngIf="settings.activeComponent == 'General/Language'">
+            <header>
+              <h6>{{ settings.translate.section.general.option.language.label }}</h6>
+              <small>{{ settings.translate.section.general.option.language.description }}</small>
+            </header>
+            
+            <form class="form" [formGroup]="formLanguage" (submit)="onSubmitLanguage()">
+        
+              <div class="form-group">
+                <div class="table-responsive container-options">
+                  <table class="table">
+                    <tr *ngFor="let item of languages; let i = index">
+                      <td><input id="{{ 'option-' + i }}" type="radio" formControlName="language" [value]="item.value" /></td>
+                      <td><label for="{{ 'option-' + i }}" class="description">{{ item.label }}</label></td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <div class="form-group" *ngIf="isAdmin">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-save" type="checkbox" formControlName="save" /></td>
+                      <td>
+                        <label for="checkbox-save">
+                          <span class="description">{{ settings.translate.modal.section.general.language.save.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.general.language.save.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="formLanguage.invalid">{{ settings.translate.modal.section.general.button.submit }}</button>
+            </form>
+          </div>
+        
+          <div class="container-currency" *ngIf="settings.activeComponent == 'General/Currency'">
+            <header>
+              <h6>{{ settings.translate.section.general.option.currency.label }}</h6>
+              <small>{{ settings.translate.section.general.option.currency.description }}</small>
+            </header>
+        
+            <form class="form" [formGroup]="formCurrency" (submit)="onSubmitCurrency()">
+        
+              <div class="form-group">
+                <div class="table-responsive container-options">
+                  <table class="table">
+                    <tr *ngFor="let item of currencies; let i = index">
+                      <td><input id="{{ 'radio-' + i }}" type="radio" formControlName="currency" [value]="item.value" /></td>
+                      <td><label for="{{ 'radio-' + i }}" class="description">{{ item.label }}</label></td>
+                    </tr>
+                  </table> 
+                </div>
+                      
+              </div>
+        
+              <div class="form-group" *ngIf="isAdmin">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table ">
+                    <tr>
+                      <td><input id="checkbox-save" type="checkbox" formControlName="save" /></td>
+                      <td>
+                        <label for="checkbox-save">
+                          <span class="description">{{ settings.translate.modal.section.general.currency.save.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.general.currency.save.subDescription }}</small>
+                        </label>              
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="formCurrency.invalid">{{ settings.translate.modal.section.general.button.submit }}</button>
+            </form> 
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  

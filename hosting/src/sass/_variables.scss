@@ -1,0 +1,68 @@
+$assetsPath: "/assets/";
+$imagesPath: $assetsPath + "images/";
+$fontsPath: $assetsPath + "fonts/";
+
+$bodyTop: 0;
+
+$blue: #172751;
+$green: #8fd017;
+$gray: #d8d8d8;
+$red: #dc3545;
+$yellow: #fdec92;
+$orange: #ff8b04;
+$cyan: #17a2b8;
+$red: #bd362f;
+
+$light-blue: #72b6f0;
+$light-blue-alt: #00ffffcc;
+$light-green: #69d0a4;
+$light-green-alt: #3CC898;
+$light-gray: #e7eaee;
+$light-gray-alt: #F8F8F8;
+$light-gray-alt-2: #d1d1d2;
+$light-danger: #ffe2e2;
+
+$medium-green: #a4ce57;
+$medium-green-alt: #b1d472;
+$medium-blue: #505dc4;
+$medium-cyan: #17a2b8;
+$medium-gray: #F1F2F4;
+$medium-gray-alt: #a9aaaa;
+$medium-gray-alt-2: #757575;
+$medium-danger: #FF0058;
+
+$dark-gray: #1d1d1d;
+$dark-blue: #102241;
+$dark-green: #2e7409;
+$dark-orange: #FFBA00;
+$dark-cyan: #058ba0;
+$dark-yellow: #FFEB00;
+
+$success: #51a351;
+$info: #2f96b4;
+$warning: #d0bc00;
+$danger: #bd362f;
+
+$bootstrap: (
+  "border-radius": 20px,
+);
+
+// Material Design breakpoints
+$grid-breakpoints: (
+  xs: 0,
+  // handset portrait (small, medium, large) | handset landscape (small)
+  sm: 600px,
+  // handset landscape (medium, large) | tablet portrait(small, large)
+  md: 960px,
+  //  tablet landscape (small, large)
+  lg: 1280px,
+  // laptops and desktops
+  xl: 1400px // large desktops
+);
+
+$container-max-widths: (
+  sm: 600px,
+  md: 960px,
+  lg: 1280px,
+  xl: 1280.2px,
+);

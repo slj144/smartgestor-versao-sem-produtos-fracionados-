@@ -1,0 +1,88 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  ></custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length > 0">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-3">{{ translate.table.label.name }}</div>
+            <div class="col-2">{{ translate.table.label.bank }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.agency }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.account }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.balance }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+  
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+  
+            <div class="col col-md-1 order-1 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+  
+            <div class="col-12 d-block d-md-none m-0 p-0"></div>
+  
+            <div class="col-6 col-md-3 order-3 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.name }}:</span>
+              <span class="value">{{ item.name }}</span>
+            </div>
+  
+            <div class="col-6 col-md-2 order-3 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.bank }}:</span>
+              <span class="value">{{ item.bank ?? '-' }}</span>
+            </div>
+            
+            <div class="col-12 col-md-1 order-3 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.agency }}:</span>
+              <span class="value">{{ item.agency }}</span>
+            </div>
+  
+            <div class="col-6 col-md-2 order-3 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.account }}:</span>
+              <span class="value">{{ item.account }}</span>
+            </div>  
+  
+            <div class="col-6 col-md-2 order-3 order-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.balance }}:</span>
+              <span class="value">{{ item.balance | currency }}</span>
+            </div>
+  
+            <div class="col-auto col-md-1 order-2 order-md-1 text-center p-1 hr-down-md-bottom">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onAction('Read', item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title" (click)="onAction('Update', item)"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title" [disabled]="item._isDefault" (click)="onAction('Delete', item)"><icon name="trash" pack="fa"></icon></button>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+  
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onAction('Create')"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>
+
+  <placeholder [loading]="loading" [hasData]="recordsData?.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<bank-accounts-modal (callback)="onModalResponse($event)"></bank-accounts-modal>

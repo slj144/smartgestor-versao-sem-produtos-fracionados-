@@ -1,0 +1,55 @@
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="main-container {{ settings.activeComponent === 'Checklist/Add' || settings.activeComponent === 'checklist/Edit' ? 'hideOverflow' : '' }}">
+      <div id="checklist" *ngIf="settings.activeComponent === 'Checklist/Add' || settings.activeComponent === 'Checklist/Edit'">
+        <div class="display-table">
+          <form class="display-table-cell" [formGroup]="model" (submit)="onConfirmSubmit()">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th colspan="2">
+                      <div class="form-group">
+                        <p class="title-box-header">{{ translate.modal.section.serviceOrders.form.checklistLabel }}</p>
+                        <input type="text" class="form-control" formControlName="name"  #nameInput />
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>    
+                  <p class="title-box">{{ translate.modal.section.serviceOrders.form.subchecklistLabel }}</p>
+                  <tr *ngFor="let item of formControls.subchecklist.controls; let i = index">
+                    <td>
+                      <input type="text" class="form-control" [formControl]="formControls.subchecklist.controls[i]" />
+                    </td>
+                    <td><button type="button" class="table-buttons btnAction btnDelete" (click)="onDeleteChecklist(i)"><icon name="close-outline" pack="eva"></icon></button></td>
+                  </tr>
+                  <tr class="create">
+                    <td><input type="text" class="form-control"  #subchecklistNameInput /></td>
+                    <td class="action-td"><button type="button" class="btnAddMethod" (click)="onCreateCheckList(formControls.name, subchecklistNameInput)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                  </tr>               
+                </tbody>              
+              </table>
+            </div>    
+    
+            <button [disabled]="model.invalid" type="submit" class="btnConfirm"><icon pack="eva" name="checkmark-outline"></icon></button>
+          </form>
+        </div>
+      </div> 
+      
+      <div id="checklistDelete" *ngIf="settings.activeComponent === 'Checklist/Delete'">
+        <div class="container-body clearfix">
+          <h6 class="title">{{ settings.data.name }}</h6>
+        </div>
+
+        <div class="container-buttons clearfix">
+          <button class="btn btnRed" (click)="settings.callback(settings.data, '','delete')">Confirmar</button>
+          <button class="btn btnBlue" (click)="onClose()">Cancelar</button>
+        </div>     
+      </div>  
+
+    </div>
+
+  </ng-container>
+</layer>

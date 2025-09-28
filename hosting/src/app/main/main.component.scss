@@ -1,0 +1,204 @@
+
+
+main {
+  width: 100vw !important;
+  height: 100vh !important;
+  display: block;
+  background-color: white;
+  background-size: cover;
+  background-position: center;
+  .wrapper {
+    display: table;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    width: 450px !important;
+    max-width: 100% !important;
+    transform: translate(-50%,-50%) !important;
+    @media (min-width: 0) and (max-width: 768px) {
+      min-width: 80%;
+      width: 80% !important;
+    }
+    @media (min-width: 768px) {
+      width: 50%;
+    }
+    .container-logo {
+      width: 200px;
+      max-width: 100%;
+      margin: 0 auto 30px;
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    form {
+      width: 100%;
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-size: 14px;
+        color: rgb(225, 225, 225);
+      }
+      input {
+        color: rgb(88, 87, 87) !important;
+      }
+      button {
+        color: white;
+        border: 1px solid transparent;
+        border-radius: 5px;
+        outline: none !important;
+        padding: 0 !important;
+        background: rgb(81, 83, 223);
+        transition: all 0.3s ease-in-out;
+        &:disabled {
+          background: rgb(134, 136, 240) !important;
+        }
+      }
+      input, button {
+        width: 100%;
+        height: 40px;
+        padding: 10px;
+      }
+      .forgot-password {
+        text-decoration: none;
+        margin-top: 0.2rem;
+        margin-bottom: 0.5rem;
+        color: rgb(128, 174, 186);
+        font-size: 13px;
+        float: right;
+        transition: all 0.3s ease-in-out;
+        &:hover{
+          color: #fff;
+          text-decoration: underline;
+        }
+      }
+      .caption {
+        margin-top: 0.5rem;
+      }    
+      .alert {
+        text-align: center;
+      }    
+      .title {
+        margin-top: 0;
+        margin-bottom: 0.75rem;
+        text-align: center;
+      }    
+      .sub-title {
+        margin-bottom: 2rem;
+        text-align: center;
+      }    
+      .form-control-group {
+        margin-bottom: 1rem;
+      }    
+      .form-control-group.accept-group {
+        display: flex;
+        justify-content: space-between;
+        margin: 2rem 0;
+      }
+      .required{
+        border-color: indianred !important;
+        &:focus{
+          border-color: rgba(205, 92, 92, 0.75) !important;
+        }
+      }
+    } 
+    nb-alert {
+      margin-bottom: 20px;
+      padding: 20px;
+      border-radius: 5px;
+      .alert-title,
+      .alert-message {
+        margin: 0 0 0.5rem;
+        color: rgb(56, 56, 56);
+      }
+
+      .alert-message{
+        color: rgb(86, 84, 84);
+      }
+
+      &.danger{
+        border: 1px solid rgb(213, 68, 68);
+        background-color: rgb(230, 190, 190);
+      }
+
+      &.success{
+        border: 1px solid rgb(66, 184, 66);
+        background-color: rgb(183, 211, 183);
+      }
+      .alert-message-list {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        color: white
+      }
+    }
+  }
+}
+
+.loadingTask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -100000;
+  opacity: 0;
+  background-color: rgba(0, 0, 0, 0.469);
+  color: rgb(216, 109, 109);
+  font-size: 30pt;
+  font-weight: 900;
+  .wrapper {
+    display: table;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);    
+  }
+  &.loadingTaskActive {
+    z-index: 2000000000000000000 !important;
+    opacity: 1 !important;
+  }
+}
+
+// Loader Settings
+
+@keyframes ldio-othlwtmaj0k {
+  0% { transform: translate(-50%,-50%) rotate(0deg); }
+  100% { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+.ldio-othlwtmaj0k div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 10px solid #26a749;
+  border-top-color: transparent;
+  border-radius: 50%;
+}
+
+.ldio-othlwtmaj0k div {
+  animation: ldio-othlwtmaj0k 1s linear infinite;
+  top: 100px;
+  left: 100px
+}
+
+.loadingio-spinner-rolling-o7st382gcni {
+  width: 200px;
+  height: 200px;
+  display: inline-block;
+  overflow: hidden;
+  background: none;
+}
+
+.ldio-othlwtmaj0k {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0;
+}
+
+.ldio-othlwtmaj0k div { 
+  box-sizing: content-box; 
+}

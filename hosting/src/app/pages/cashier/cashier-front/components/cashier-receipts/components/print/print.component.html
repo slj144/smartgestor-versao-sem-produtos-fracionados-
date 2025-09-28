@@ -1,0 +1,297 @@
+
+<iframe id="printingFrame" name="printingFrame" style="display: none;">
+  <head>
+    <meta charset="UTF-8">
+    <link href="/assets/css/sale-receipt/sale-receipt.css" rel="stylesheet">
+  </head>
+  <body>
+
+    <div id="containerSaleReceiptA4" *ngIf="settings.activeComponent == 'Print/SaleReceipt' && settings.format == 'A4'">
+
+      <header *ngIf="settings.storeInfo">
+        <img src="{{ settings.storeInfo.image }}"/>
+        <span class="name">{{ settings.storeInfo.billingName }}</span>
+        <span>{{ settings.storeInfo.address.addressLine + ', ' + settings.storeInfo.address.city + ' - ' + settings.storeInfo.address.state }}</span>
+        <span *ngIf="settings.translate.receipt.store.cnpj">{{ settings.translate.receipt.store.cnpj + ': ' + settings.storeInfo.cnpj }}</span>
+        <span>{{ settings.translate.receipt.store.phone + ': ' + settings.storeInfo.contacts.phone }}</span>
+      </header>
+      
+      <section class="info">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr>
+              <td><span class="label">{{ settings.translate.receipt.label.code + ':' }}</span> {{ settings.data.code }}</td>
+              <td class="date"><span class="label">{{ settings.translate.receipt.label.date + ':' }}</span> {{ settings.data.registerDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><span class="label">{{ settings.translate.receipt.label.operator + ':' }}</span> {{ settings.data.operator.name }}</td>
+            </tr>
+          </table>
+        </div>          
+      </section>
+
+      <section class="customer">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr>
+              <td><span class="label">{{ settings.translate.receipt.label.customer + ':' }}</span> {{ settings.data.customer.name }}</td>
+              <td *ngIf="settings.data?.customer?.personalDocument && settings.data?.customer?.personalDocument?.value" class="date"><span class="label">{{ settings.data?.customer?.personalDocument?.type + ':' }}</span> {{ settings.data.customer?.personalDocument?.value }}</td>
+              <td *ngIf="settings.data?.customer?.businessDocument && settings.data?.customer?.businessDocument?.value" class="date"><span class="label">{{ settings.data?.customer?.businessDocument?.type + ':' }}</span> {{ settings.data.customer?.businessDocument?.value }}</td>
+            </tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="services" *ngIf="settings.data?.service?.types?.length > 0">
+        <h5>{{ settings.translate.receipt.label.services.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr *ngFor="let item of settings.data.service.types">
+              <td><span>{{ item.code + ' - ' + item.name }}</span></td>
+            </tr>
+          </table>
+        </div>       
+      </section>
+
+      <section class="products">
+        <h5>{{ settings.translate.receipt.label.products.title }}</h5>
+        <div class="table-responsive" *ngIf="settings.data?.products?.length > 0">
+          <table class="table table-borderless">
+            <tr class="leval-1" *ngFor="let product of settings.data.products">
+              <table class="table table-borderless table-internal">
+                <tr>
+                  <td colspan="2">
+                    <span>#{{ product.code + ' - ' + product.name }}</span>
+                    <span class="serialNumber" *ngIf="product.serialNumber">{{ settings.translate.receipt.label.products.sub.serialNumber + ': ' + product.serialNumber }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>{{ product.quantity + ' x ' + ((product.unitaryPrice || product.salePrice) | currency) }}</td>
+                  <td class="total">{{ (product.quantity * (product.unitaryPrice || product.salePrice)) | currency }}</td>
+                </tr>
+              </table>
+            </tr>
+          </table>
+        </div>       
+      </section>
+
+      <section class="balance">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <th>{{ settings.translate.receipt.label.balance.subtotal.title + ':' }}</th>
+                <td class="level-1" colspan="2">
+                  <table class="table table-borderless table-internal">
+                    <tr class="info" *ngIf="settings.data.balance?.subtotal?.products > 0">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.products }}</td>
+                      <td class="value">{{ settings.data.balance.subtotal.products | currency }}</td>
+                    </tr>
+                    <tr class="info" *ngIf="settings.data.service?.code || (settings.data.balance?.subtotal?.services > 0)">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.services }}</td>
+                      <td class="value">{{ (settings.data.balance?.subtotal?.services || 0) | currency }}</td>
+                    </tr>                   
+                    <tr class="info" *ngIf="settings.data.balance?.subtotal?.discount > 0">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.discount }}</td>
+                      <td class="value">{{ settings.data.balance.subtotal.discount | currency }}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <th>{{ settings.translate.receipt.label.balance.total + ':' }}</th>
+                <td></td>
+                <td>
+                  <span class="total">{{ settings.data.balance.total | currency }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="payment" *ngIf="settings.data?.paymentMethods?.length > 0">
+        <h5>{{ settings.translate.receipt.label.payment.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of settings.data.paymentMethods">
+                <th>
+                  <span class="method" *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name | uppercase }}</span>
+                  <span class="method" *ngIf="item.code > 3000 && item.code < 4000">{{ 'Cartão de Débito' | uppercase }}</span>
+                  <span class="method" *ngIf="item.code > 4000 && item.code < 5000">{{ 'Cartão de Crédito ' + (item.fees.parcel == 1 ? '(À Vista)' : '(Parcelado em ' + item.fees.parcel + 'x)') | uppercase }}</span>
+                  <span class="note" *ngIf="item.note"><b>OBS:</b> {{ item.note }}</span>
+                </th>                  
+                <td><span class="value">{{ item.value | currency }}</span></td>
+              </tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="note" *ngIf="settings.data?.note">
+        <h5>{{ settings.translate.receipt.label.note.title }}</h5>
+        <div class="content" [innerHTML]="settings.data.note"></div>
+      </section>
+
+      <section class="terms" *ngIf="settings.warrantyTerm">
+        <h5>{{ settings.translate.receipt.label.warrantyTerm.title }}</h5>
+        <div [innerHtml]="settings.warrantyTerm"></div>
+      </section>
+
+      <section class="signatures">
+        <p><span>{{ settings.translate.receipt.label.signature.customer + ':' }}</span></p>
+        <p><span>{{ settings.translate.receipt.label.signature.responsible + ':' }}</span></p>
+      </section>
+      
+    </div>
+    
+    <div id="containerSaleReceiptThermal" *ngIf="settings.activeComponent == 'Print/SaleReceipt' && settings.format == 'THERMAL'">
+      <header *ngIf="settings.storeInfo">
+        <img src="{{ settings.storeInfo.image }}"/>
+        <span class="name">{{ settings.storeInfo.billingName }}</span>
+        <span class="address">{{ settings.storeInfo.address.addressLine + ', ' + settings.storeInfo.address.city + ' - ' + settings.storeInfo.address.state }}</span>
+        <span>{{ settings.translate.receipt.store.phone + ': ' + settings.storeInfo.contacts.phone }}</span>
+      </header>
+
+      <section class="info">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr>
+              <td><span class="label">{{ settings.translate.receipt.label.code + ':' }}</span> {{ settings.data.code }}</td>
+              <td class="date"><span class="label">{{ settings.translate.receipt.label.date + ':' }}</span> {{ settings.data.registerDate | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+            <tr>
+              <td colspan="2"><span class="label">{{ settings.translate.receipt.label.operator + ':' }}</span> {{ settings.data.operator.name }}</td>
+            </tr>
+          </table>
+        </div>          
+      </section>
+
+      <section class="customer">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr>
+              <td><span class="label">{{ settings.translate.receipt.label.customer + ':' }}</span></td>
+            </tr>
+            <tr>
+              <td><span class="">{{ settings.translate.receipt.label.name + ':' }}</span> {{ settings.data.customer.name }}</td>
+            </tr>
+            <tr>
+              <td *ngIf="settings.data?.customer?.personalDocument && settings.data?.customer?.personalDocument?.value"><span class="">{{ settings.data?.customer?.personalDocument?.type + ':' }}</span> {{ settings.data.customer?.personalDocument?.value }}</td>
+              <td *ngIf="settings.data?.customer?.businessDocument && settings.data?.customer?.businessDocument?.value"><span class="">{{ settings.data?.customer?.businessDocument?.type + ':' }}</span> {{ settings.data.customer?.businessDocument?.value }}</td>
+            </tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="services" *ngIf="settings.data?.service?.types?.length > 0">
+        <h5>{{ settings.translate.receipt.label.services.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr *ngFor="let service of settings.data.service.types; let i = index">
+              <td><span>{{ (i + 1) + ' - ' + service.name }}</span></td>
+            </tr>
+          </table>
+        </div>       
+      </section>
+
+      <section class="products">
+        <h5>{{ settings.translate.receipt.label.products.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tr class="leval-1" *ngFor="let product of settings.data.products">
+              <table class="table table-borderless table-internal">
+                <tr>
+                  <td colspan="2">
+                    <span class="name">#{{ product.code + ' - ' + product.name }}</span>
+                    <span class="serialNumber" *ngIf="product.serialNumber">{{ settings.translate.receipt.label.products.sub.serialNumber + ': ' + product.serialNumber }}</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="calc">{{ product.quantity + ' x ' + ((product.unitaryPrice || product.salePrice) | currency) }}</td>
+                  <td class="total">{{ (product.quantity * (product.unitaryPrice || product.salePrice)) | currency }}</td>
+                </tr>
+              </table>
+            </tr>
+          </table>
+        </div>       
+      </section>
+
+      <section class="balance">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <th>{{ settings.translate.receipt.label.balance.subtotal.title + ':' }}</th>
+                <td colspan="2"></td>                
+              </tr>
+              <tr>
+                <td colspan="3">
+                  <table class="table table-borderless table-internal">
+                    <tr class="info" *ngIf="settings.data.balance?.subtotal?.products > 0">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.products }}</td>
+                      <td class="value">{{ settings.data.balance.subtotal.products | currency }}</td>
+                    </tr>
+                    <tr class="info" *ngIf="settings.data.service?.code || (settings.data.balance?.subtotal?.service > 0)">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.services }}</td>
+                      <td class="value">{{ (settings.data.balance?.subtotal?.service || 0) | currency }}</td>
+                    </tr>                   
+                    <tr class="info" *ngIf="settings.data.balance?.subtotal?.discount > 0">
+                      <td class="label">{{ settings.translate.receipt.label.balance.subtotal.sub.discount }}</td>
+                      <td class="value">-{{ settings.data.balance.subtotal.discount | currency }}</td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <th>{{ settings.translate.receipt.label.balance.total + ':' }}</th>
+                <td></td>
+                <td>
+                  <span class="total">{{ settings.data.balance.total | currency }}</span>
+                </td>
+              </tr>             
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="payment" *ngIf="settings.data?.paymentMethods?.length > 0">
+        <h5>{{ settings.translate.receipt.label.payment.title }}</h5>
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of settings.data.paymentMethods">
+                <th>
+                  <span class="method" *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name | uppercase }}</span>
+                  <span class="method" *ngIf="item.code > 3000 && item.code < 4000">{{ 'Cartão de Débito' | uppercase }}</span>
+                  <span class="method" *ngIf="item.code > 4000 && item.code < 5000">{{ 'Cartão de Crédito ' + (item.fees.parcel == 1 ? '(À Vista)' : '(Parcelado em ' + item.fees.parcel + 'x)') | uppercase }}</span>
+                  <span class="note" *ngIf="item.note"><b>OBS:</b> {{ item.note }}</span>
+                </th>                  
+                <td><span class="value">{{ item.value | currency }}</span></td>
+              </tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="terms" *ngIf="settings.warrantyTerm">
+        <h5>{{ settings.translate.receipt.label.warrantyTerm.title }}</h5>
+        <div [innerHtml]="settings.warrantyTerm"></div>
+      </section>
+
+      <section class="signatures">
+        <div>
+          <span class="line"></span>
+          <span class="label">{{ settings.translate.receipt.label.signature.customer }}</span>
+        </div>
+
+        <div>
+          <span class="line"></span>
+          <span class="label">{{ settings.translate.receipt.label.signature.responsible }}</span>
+        </div>
+      </section>
+    </div>
+
+    <link href="/assets/css/sale-receipt/sale-receipt.css" rel="stylesheet">
+    
+  </body>
+</iframe>

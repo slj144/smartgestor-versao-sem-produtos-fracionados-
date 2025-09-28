@@ -1,0 +1,17 @@
+<div class="updates-banner" *ngIf="visible && update">
+  <div class="content">
+    <div class="title">
+      <icon name="alert-circle-outline" pack="eva"></icon>
+      <strong>{{ update.title }}</strong>
+      <span class="version" *ngIf="update.version">v{{ update.version }}</span>
+    </div>
+    <div class="message" [innerText]="update.message"></div>
+  </div>
+  <div class="actions">
+    <button class="btn-clear" *ngIf="update.requireCacheClear" (click)="onClearCache()">
+      Limpar cache agora
+    </button>
+    <button class="btn-dismiss" (click)="onDismiss()">Ok, entendi</button>
+  </div>
+</div>
+

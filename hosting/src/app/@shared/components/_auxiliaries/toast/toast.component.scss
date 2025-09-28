@@ -1,0 +1,96 @@
+
+#toast-wrapper {
+  width: 100%;
+  height: 100%;  
+  position: absolute !important;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  background-color: rgba(240, 240, 240, 0.5);
+  display: none;
+  z-index: 10;
+  .drawer {
+    max-width: 100%;
+    min-height: 50px;
+    max-height: calc(100% - 10px);
+    border-radius: 8px 8px 0 0;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px #ccc;
+    background-color: #fff;
+    position: absolute !important;
+    left: 5px;
+    right: 5px;
+    bottom: 0;
+    opacity: 0;
+    margin: 0 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 15;    
+    .toast-header {
+      height: 50px;
+      overflow: hidden;
+      text-align: left;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      z-index: 20;
+      .btnClose {
+        width: 35px;
+        height: 35px;
+        padding: 0;
+        margin-right: 8px;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        color: #888;
+        icon {
+          position: relative;
+          top: 3px;
+          padding: 0;
+          font-size: 18px;
+        }
+      }
+      .titles-container {
+        flex: 1;
+        .title {
+          font-size: 18px;        
+        }
+        .subtitle {
+          color: #999;
+          font-size: 12px;
+          margin-top: -4px !important;
+        }
+        .title,
+        .subtitle {
+          margin: 0;
+        }
+      }
+    }
+    .toast-body {
+      width: 100%;
+      padding: 10px 15px 15px;
+      position: relative;      
+      overflow: hidden;
+      ::ng-deep [slot=content] {
+        padding: 12px 16px;
+      }
+    }
+  }
+  &.active {
+    opacity: 1 !important;
+    display: block !important;
+    & > .drawer {
+      transition: all 1s ease-in-out;
+      opacity: 1 !important;
+    }
+  }
+}

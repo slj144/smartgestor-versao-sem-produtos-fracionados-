@@ -1,0 +1,78 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content">
+
+    <div id="container-view" *ngIf="settings.activeComponent != 'Fiscal/Add'">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+  
+            <cancel-adjust-note (callback)="onResponse($event)" *ngIf="settings.activeComponent == 'Fiscal/Edit' || settings.activeComponent == 'Fiscal/Cancel'"></cancel-adjust-note>
+        
+            <settings (callback)="onResponse($event)" *ngIf="settings.activeComponent == 'Fiscal/Settings'"></settings>
+
+            <inutilization-note (callback)="onResponse($event)" *ngIf="settings.activeComponent == 'Fiscal/Inutilization'"></inutilization-note>
+
+            <div class="container-data" *ngIf="settings.activeComponent == 'Fiscal/View'">
+
+              <section class="container-informations">
+                <div class="container-buttons">
+                  <div class="buttons">
+                    <button class="btn btn-secondary" *ngIf="this.pdfUrl" (click)="onViewInfo()"><icon pack="eva" name="info-outline"></icon><span>Informações</span></button>
+                    <button class="btn btn-secondary" *ngIf="settings.data.status == 'CONCLUIDO'" (click)="onDownload(settings.data, 'PDF')"><icon pack="eva" name="cloud-download-outline"></icon><span>PDF</span></button>
+                    <button class="btn btn-secondary" *ngIf=" settings.data.status != 'PROCESSANDO' &&  settings.data.type == 'NFSE' || settings.data.type != 'NFSE'" (click)="onDownload(settings.data, 'XML')"><icon pack="eva" name="cloud-download-outline"></icon><span>XML</span></button>
+                    <div class="dropdown">
+                      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        CCE
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li *ngIf="settings.data.status == 'CONCLUIDO'" (click)="onDownload(settings.data, 'PDF','cce')"><a class="dropdown-item" >PDF</a></li>
+                        <li *ngIf=" settings.data.status != 'PROCESSANDO' &&  settings.data.type == 'NFSE' || settings.data.type != 'NFSE'" (click)="onDownload(settings.data, 'XML','cce')"><a class="dropdown-item" >XML</a></li>
+                      </ul>
+                  </div>
+                  </div>
+                </div>
+
+                <h5 *ngIf="!this.pdfUrl">Geral</h5>
+
+                <div class="content" *ngIf="!this.pdfUrl">
+                  <p><span class="label">Id: </span> <span class="value">{{ settings.data.id }}</span></p>
+                  <p><span class="label">IdIntegração: </span> <span class="value">{{ settings.data.idIntegracao }}</span></p>
+                  <p><span class="label">Emissão:</span> <span class="value negative">{{ settings.data.emissao }}</span></p>
+                  <p *ngIf="settings.data.autorizacao"><span class="label">Autorização:</span> <span class="value negative">{{ settings.data.autorizacao | date }}</span></p>
+                  <p *ngIf="settings.data.cancelamento"><span class="label">Cancelamento:</span> <span class="value negative">{{ settings.data.cancelamento | date }}</span></p>
+                  <p><span class="label">Tipo:</span> <span class="value positive">{{ settings.data.type }}</span></p>
+                  <p><span class="label">Situação:</span> <span class="value positive">{{ settings.data.situacao || settings.data.status }}</span></p>
+                  <p><span class="label">Número:</span> <span class="value positive">{{ settings.data.numero }}</span></p>
+                  <p><span class="label">Série:</span> <span class="value positive">{{ settings.data.serie }}</span></p>
+                  <p><span class="label">Mensagem:</span> <span class="value positive">{{ settings.data.mensagem }}</span></p>
+                </div>               
+              </section>
+
+              <section class="container-description" *ngIf="settings.data.description">
+                <h5>{{ translate.action.read.section.description.title }}</h5>
+                <div class="content" [innerHTML]="settings.data.description"></div>
+              </section>
+
+            </div>
+
+            <div class="nf-preview" [style.display]="this.pdfUrl ? 'block' : 'none'">
+              <iframe id="nfPreview"></iframe>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <register-nf (callback)="onResponse($event)" *ngIf="settings.activeComponent == 'Fiscal/Add'"></register-nf>
+
+
+  </div>
+
+  <div slot="components">
+    <nf-receipts (callback)="onPrintResponse($event)"></nf-receipts>
+  </div>
+
+</modal>

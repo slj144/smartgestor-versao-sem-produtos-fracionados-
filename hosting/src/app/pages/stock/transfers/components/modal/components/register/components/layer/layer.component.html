@@ -1,0 +1,18 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div [style.display]="(settings.activeComponent == 'stores' ? 'block' : 'none')">
+      <stores-selector (callback)="onStoresResponse($event)"></stores-selector>
+    </div>
+
+    <div [style.display]="(settings.activeComponent == 'products' ? 'block' : 'none')">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+    <div [style.display]="(settings.activeComponent == 'billToReceive' ? 'block' : 'none')">
+      <bills-to-receive-register (callback)="onBillsToReceiveResponse($event)"></bills-to-receive-register>
+    </div>
+
+  </ng-container>
+</layer>

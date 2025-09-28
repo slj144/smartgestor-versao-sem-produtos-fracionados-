@@ -1,0 +1,359 @@
+// Arquivo com melhorias visuais para o modal de pagamento
+// Mantém toda a lógica intacta, apenas melhora o visual
+
+#payment-methods-selector {
+  padding: 20px 20px 80px;
+  background: #f8f9fa;
+  min-height: 400px;
+
+  // Cabeçalho com barra de pesquisa
+  header {
+    height: 50px;
+    position: relative;
+    background-color: transparent;
+    margin-bottom: 25px;
+
+    .container-search {
+      height: 100%;
+
+      // Barra de pesquisa moderna
+      .search-bar {
+        width: 100%;
+        max-width: 100%;
+        height: 50px;
+        border: 2px solid #e9ecef;
+        background-color: #ffffff;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        position: relative;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+
+        // Efeito ao focar
+        &:focus-within {
+          border-color: #6366f1;
+          box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        // Campo de entrada
+        input {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          padding: 10px 120px 10px 24px;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          color: #2d3748;
+          font-size: 15px;
+          font-weight: 500;
+          vertical-align: middle;
+
+          &::placeholder {
+            color: #a0aec0;
+            font-weight: 400;
+          }
+        }
+
+        // Botões da barra de pesquisa
+        button {
+          width: 44px;
+          height: 44px;
+          border: none;
+          outline: none;
+          border-radius: 22px;
+          color: #718096;
+          background-color: transparent;
+          box-shadow: none;
+          position: absolute;
+          top: 3px;
+          margin: 0;
+          transition: all 0.3s ease;
+          cursor: pointer;
+
+          icon {
+            position: relative;
+            font-size: 20px;
+          }
+
+          // Botão de limpar
+          &.btnReset {
+            width: 32px;
+            height: 32px;
+            border-radius: 16px;
+            color: #e53e3e;
+            background-color: #fed7d7;
+            top: 50%;
+            right: 60px;
+            transform: translateY(-50%);
+            opacity: 0.9;
+
+            icon {
+              font-size: 16px;
+            }
+
+            &:hover {
+              opacity: 1;
+              background-color: #fc8181;
+              color: white;
+            }
+          }
+
+          // Botão de pesquisar
+          &.btnSearch {
+            right: 3px;
+            background-color: #6366f1;
+            color: white;
+
+            &:hover {
+              background-color: #5558e3;
+              transform: scale(1.05);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Área principal do conteúdo
+  main {
+    .container-content {
+      margin-bottom: 20px;
+
+      // Tabela melhorada
+      .table-responsive {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+
+        // Remove bordas da tabela padrão
+        .table {
+          margin-bottom: 0;
+
+          tbody tr {
+            transition: all 0.2s ease;
+
+            // Tabela interna para cada método
+            .table-level-1 {
+              margin: 0;
+              width: 100%;
+
+              // Linha do método de pagamento
+              tr {
+                cursor: pointer;
+                border-bottom: 1px solid #f7fafc;
+
+                &:hover {
+                  background-color: #f7fafc;
+                }
+
+                // Linha selecionada
+                &.selected {
+                  background-color: #e9d8fd;
+                }
+
+                // Célula com checkbox
+                td:first-child {
+                  width: 60px;
+                  padding: 16px 8px 16px 20px;
+                  vertical-align: middle;
+                }
+
+                // Célula com nome
+                td:last-child {
+                  padding: 16px 20px 16px 8px;
+
+                  span {
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: #2d3748;
+                    display: block;
+                    margin-bottom: 2px;
+                  }
+
+                  small {
+                    font-size: 13px;
+                    color: #718096;
+                    font-weight: 400;
+                  }
+                }
+
+                // Cabeçalho de grupo (cartões, etc)
+                &.method-header {
+                  background-color: #edf2f7;
+                  font-weight: 700;
+
+                  td {
+                    padding: 12px 20px;
+                    color: #4a5568;
+                    font-size: 14px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                  }
+
+                  &:hover {
+                    background-color: #e2e8f0;
+                  }
+                }
+
+                // Métodos ocultos
+                &.hidden {
+                  display: none;
+                }
+
+                // Submétodos (bandeiras de cartão)
+                &.method {
+                  td {
+                    padding-left: 40px;
+                    background-color: #fafafa;
+                  }
+
+                  &:hover {
+                    background-color: #f0f0f0;
+                  }
+                }
+              }
+
+              // Botão de check melhorado
+              .btnCheck {
+                width: 36px;
+                height: 36px;
+                border: 2px solid #cbd5e0;
+                background: white;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s ease;
+                cursor: pointer;
+
+                icon {
+                  font-size: 20px;
+                  color: transparent;
+                  transition: all 0.2s ease;
+                }
+
+                // Estado ativo/selecionado
+                &.active {
+                  background-color: #6366f1;
+                  border-color: #6366f1;
+                  transform: scale(1.1);
+
+                  icon {
+                    color: white;
+                  }
+                }
+
+                &:hover:not(.active) {
+                  border-color: #a0aec0;
+                  background-color: #f7fafc;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Container dos botões de ação
+    .container-buttons {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 100;
+
+      // Botão de confirmar seleção
+      .btnConfirm {
+        width: 60px;
+        height: 60px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        animation: pulse 2s infinite;
+
+        icon {
+          font-size: 28px;
+        }
+
+        &:hover {
+          transform: translateY(-2px) scale(1.05);
+          box-shadow: 0 6px 25px rgba(102, 126, 234, 0.5);
+        }
+
+        &:active {
+          transform: translateY(0) scale(0.98);
+        }
+      }
+    }
+  }
+
+  // Animação de pulse para o botão
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    50% {
+      box-shadow: 0 4px 30px rgba(102, 126, 234, 0.6);
+    }
+
+    100% {
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+  }
+
+  // Estado de carregamento
+  &.loading {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+// Responsividade para telas menores
+@media (max-width: 576px) {
+  #payment-methods-selector {
+    padding: 15px 15px 80px;
+
+    header {
+      .container-search {
+        .search-bar {
+          height: 44px;
+
+          input {
+            padding: 10px 100px 10px 20px;
+            font-size: 14px;
+          }
+
+          button {
+            width: 40px;
+            height: 40px;
+
+            &.btnReset {
+              right: 50px;
+            }
+          }
+        }
+      }
+    }
+
+    main {
+      .container-buttons {
+        bottom: 15px;
+        right: 15px;
+
+        .btnConfirm {
+          width: 56px;
+          height: 56px;
+        }
+      }
+    }
+  }
+}

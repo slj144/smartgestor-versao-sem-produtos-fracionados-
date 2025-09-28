@@ -1,0 +1,534 @@
+
+#containerSaleReceiptA4 {
+  header {
+    text-align: center;
+    margin: 10px 0;
+    img {
+      width: 140px;
+    }        
+    span {
+      display: block;
+      font-size: 13px;
+      color: #000;
+      &.name {
+        margin: 4px 0 0;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 15px;
+        text-transform: uppercase;
+        color: #000;
+      }
+    }
+  }
+  section {
+    margin-bottom: 12px;
+    h5 {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 5px;
+    }    
+    table {
+      th, td {
+        vertical-align: middle;
+      }
+    }
+    &.info, 
+    &.customer {
+      margin: 4px 0 8px;
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          td {
+            font-size: 13px;
+            padding: 0 10px 0 0;
+            color: #000;            
+            span {
+              &.label {
+                color: #000;
+                font-weight: 600;
+              }
+            }
+            &.date {
+              text-align: right;
+            }
+          }
+        }
+      }         
+    }
+    &.services {
+      h5 {
+        padding-left: 3px;
+      }
+      table {
+        width: 100%;
+        margin: 0;       
+        tr {
+          td {
+            padding: 0 5px;
+            font-size: 13px;
+            color: #000;
+            vertical-align: middle;
+            text-align: left;
+          }          
+        }        
+      }
+    }
+    &.products {
+      h5 {
+        padding-left: 3px;
+      }
+      table {
+        width: 100%;
+        margin: 0;       
+        tr {
+          td {
+            padding: 0 5px;
+            font-size: 13px;
+            color: #000;
+            vertical-align: middle;
+            text-align: left;            
+            span {
+              display: block;
+              &.serialNumber {
+                color: #000;
+                font-size: 11px;
+                margin-top: -3px;
+              }              
+            }            
+            &.total {
+              width: 80px;
+              font-weight: 600;
+              color: #000;
+              text-align: right;
+            }
+          }          
+        }
+        &.table-internal {
+          padding-bottom: 2px;
+          margin-bottom: 2px;
+          border-bottom: 1px solid #000;
+        }
+      }
+    }
+    &.balance {
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          text-align: left;
+          td {              
+            color: #000;
+            span {
+              margin: 0;                
+              &.total {
+                color: #000;
+                font-weight: 600;
+              }                  
+            }
+            &.level-1 {
+              padding: 0;
+            }
+            &:last-child {
+              width: 80px;      
+              text-align: right;
+            }
+          }
+          th {
+            width: 100px;             
+            max-width: 100px;
+            color: #000;        
+            font-weight: 600;
+          }  
+          th, td {
+            vertical-align: middle;
+            padding: 0 5px;
+            font-size: 13px;
+          }
+          &.info {
+            vertical-align: middle;
+            td {
+              &.label {                  
+                color: #000;
+              }
+              &.value {}
+            }              
+          }
+          &:last-child {
+            border-top: 1px solid #000;
+          }                              
+        }          
+      }
+    }
+    &.payment {
+      h5 {
+        padding-left: 3px;
+      }
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          text-align: left;
+          border-bottom: 1px solid #000;
+          th {
+            color: #000;           
+            font-weight: 600;
+            span {
+              display: block;
+              &.note {
+                color: #000;
+                padding-left: 10px;
+                font-size: 12px;
+                line-height: 12px;
+              }
+            }
+          }
+          td {
+            width: 110px;
+            text-align: right;
+            span {
+              margin: 0;
+              &.value {
+                color: #000;
+                font-weight: 600;
+              }
+            }
+          }
+          th, td {
+            padding: 0 5px;
+            font-size: 13px;
+            vertical-align: middle;
+          }              
+          &:last-child {
+            border-bottom: none;
+          }                              
+        }          
+      }
+    }
+    &.note {
+      h5 {
+        padding-left: 3px;
+      }
+      .content {
+        width: 100%;
+        padding-left: 10px;
+        color: #000;
+        white-space: pre-line;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+      }
+    }
+    &.terms {
+      padding: 10px;
+      margin: 20px 0;
+      border-radius: 5px;
+      border: 1px solid #000;     
+      background-color: rgb(238, 238, 238);      
+      h5 {
+        font-size: 12px;
+        text-align: center;
+      }
+      ul {
+        padding-left: 20px;
+        margin: 0;
+        li {
+          font-size: 11px;
+        }
+      }
+    }
+    &.signatures {
+      margin: 5px 0;
+      p {
+        border-bottom: 1px solid #000;            
+        span {
+          position: relative;
+          bottom: -2px;
+          background-color: #fff;
+          padding-right: 5px;
+          color: #555;
+          font-size: 13px;
+          font-weight: 600;          
+        }
+      }
+    }    
+  }
+}
+
+#containerSaleReceiptThermal {
+  header {
+    text-align: center;
+    margin: 10px 0 15px;
+    img {
+      width: 160px;
+      max-width: 100%;
+    }        
+    span {
+      display: block;
+      &.name {
+        margin: 4px 0 0;
+        color: #000;
+        font-size: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: 600;
+      }
+      &.name, 
+      &.phone {
+        text-transform: uppercase;
+      }
+      &.address,
+      &.phone {
+        color: #222;
+        font-size: 12px;
+        font-weight: 600;
+      }
+    }
+  }
+  section {
+    margin-bottom: 12px;
+    h5 {
+      color: #000;
+      font-size: 12px;
+      font-weight: 600;
+      margin: 0 0 5px;
+      text-transform: uppercase;
+    }    
+    table {
+      th, td {
+        vertical-align: middle;
+      }
+    }    
+    &.info,
+    &.customer {
+      margin: 0;
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          td {
+            font-size: 12px;
+            padding: 0 10px 0 0;         
+            span {
+              display: inline-block;
+              &.label {
+                color: #000;
+                font-weight: 600;
+                margin-right: 4px;
+                text-transform: uppercase;
+              }
+              &.value {
+                color: #222;
+                font-weight: 600;                
+              }
+            }
+            &.date {
+              text-align: right;
+            }
+          }
+        }
+      }         
+    }
+    &.services {
+      h5 {
+        padding-left: 3px;
+      }
+      table {
+        width: 100%;
+        margin: 0;       
+        tr {
+          td {
+            padding: 0 5px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #222;
+            vertical-align: middle;
+            text-align: left;
+          }          
+        }        
+      }
+    }
+    &.customer {
+      margin-bottom: 10px;
+    }
+    &.products {
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          td {
+            padding: 0 5px;
+            font-size: 12px;
+            color: #111;
+            vertical-align: middle;
+            text-align: left;            
+            span {
+              display: block;
+              &.name {
+                font-weight: 600;
+              }
+              &.serialNumber {
+                color: #333;
+                font-size: 11px;
+                font-weight: 600;
+                margin-top: -2px;
+              }              
+            }
+            &.calc {
+              color: #222;
+              font-weight: 600;
+            }          
+            &.total {
+              width: 80px;
+              color: #222;
+              font-weight: 600;
+              text-align: right;
+            }
+          }          
+        }
+        &.table-internal {
+          padding-bottom: 2px;
+          margin-bottom: 2px;
+          border-bottom: 1px solid #000;
+        }
+      }
+    }
+    &.balance {
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          text-align: left;
+          th {            
+            width: 50px;             
+            max-width: 100px;
+            color: #000;        
+            font-weight: 600;
+            text-transform: uppercase;
+            vertical-align: top;
+          } 
+          td {
+            padding: 0;
+            span {
+              margin: 0;                
+              &.total {
+                color: #000;
+                font-weight: 600;
+              }                  
+            }
+            .table-internal {
+              tr {
+                td {
+                  padding: 0;
+                  font-weight: 9px;
+                  &.label {                  
+                    color: #333;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    padding-left: 15px !important;
+                  }
+                  &.value {
+                    color: #333;
+                    font-weight: 600;
+                  }
+                }
+              }
+            }
+            &:last-child {
+              width: 80px;      
+              text-align: right;
+            }
+          }  
+          th, td {
+            padding: 0 5px;
+            font-size: 12px;
+          }
+          &:last-child {
+            border-top: 1px solid #eee;
+          }                              
+        }          
+      }
+    }
+    &.payment {
+      table {
+        width: 100%;
+        margin: 0;
+        tr {
+          text-align: left;
+          border-bottom: 1px solid #eee;
+          th {
+            color: #444;           
+            font-weight: 600;
+            span {
+              display: block;
+              &.note {
+                color: #666;
+                padding-left: 10px;
+                font-size: 12px;
+                line-height: 12px;
+              }
+            }
+          }
+          td {
+            width: 100px;
+            text-align: right;
+            span {
+              margin: 0;
+              &.value {
+                color: #222;
+                font-weight: 600;
+              }                  
+            }
+          }
+          th, td {
+            padding: 0 5px;
+            font-size: 12px;
+            vertical-align: middle;
+          }              
+          &:last-child {
+            border-bottom: none;
+          }                              
+        }          
+      }
+    }
+    &.note {
+      .content {
+        width: 100%;
+        color: #444;
+        white-space: pre-line;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+      }
+    }
+    &.terms {
+      margin: 20px 0;
+      border-radius: 5px;      
+      background-color: rgb(238, 238, 238);     
+      ul {
+        padding-left: 15px;
+        margin: 0;
+        li {
+          font-size: 11px;
+        }
+      }
+    }
+    &.signatures {
+      padding: 5px 0;
+      div {
+        span {
+          width: 100%;
+          display: block;
+          color: #222;
+          font-size: 11px;
+          font-weight: 600;
+          text-align: center;
+          text-transform: uppercase;
+          &.line {
+            margin-top: 35px;
+            border-bottom: 1px solid #444;            
+          }
+          &.label {
+            margin-top: 4px;
+          }
+        }
+      }     
+    }    
+  }   
+}

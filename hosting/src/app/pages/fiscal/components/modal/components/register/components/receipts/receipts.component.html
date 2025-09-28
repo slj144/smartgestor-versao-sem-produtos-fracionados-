@@ -1,0 +1,60 @@
+<div #modal id="ContainerCustomModal">
+  <div>
+    <div>
+      <div class="container-options">
+        <ul>
+          <!-- <li class="option-receipt-warranty">
+            <button (click)="onDownload('PDF')"><icon name="printer-outline" pack="eva"></icon></button>
+            <span><span class="title">{{ translate.settings.type.danfe }}</span><span class="format">{{ translate.settings.format.pdf }}</span></span>
+          </li>
+
+          <li class="option-receipt-delivery">
+            <button (click)="onDownload('XML')"><icon name="printer-outline" pack="eva"></icon></button>
+            <span><span class="title">{{ translate.settings.type.xml }}</span><span class="format">{{ translate.settings.format.xml }}</span></span>
+          </li> -->
+
+          <li class="option-receipt-warranty" *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nf"
+            (click)="onDownload('PDF','nf')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.settings.type.danfe.nf }}</span><span class="format">{{
+                translate.settings.format.pdf }}</span></span>
+          </li>
+
+
+          <li class="option-receipt-delivery" *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nf"
+            (click)="onDownload('XML', 'nf')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.settings.type.xml.nf }}</span><span class="format">{{
+                translate.settings.format.xml }}</span></span>
+          </li>
+
+          <li class="option-receipt-warranty" *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nfse"
+            (click)="onDownload('PDF','nfse')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.settings.type.danfe.nse }}</span><span class="format">{{
+                translate.settings.format.pdf }}</span></span>
+          </li>
+
+          <li class="option-receipt-delivery" *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nfse"
+            (click)="onDownload('XML', 'nfse')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.settings.type.xml.nse }}</span><span class="format">{{
+                translate.settings.format.xml }}</span></span>
+          </li>
+
+        </ul>
+
+        <button class="btnClose" (click)="onClose()">{{ translate.settings.button.close }}</button>
+      </div>
+
+    </div>
+  </div>
+</div>

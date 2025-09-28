@@ -1,0 +1,80 @@
+
+<div id="serviceOrdersSettings">
+  
+  <div class="container-view">
+    <div class="container-external">
+      <div class="container-info">
+        <div class="wrapper">
+
+					<div class="container-checklist" *ngIf="settings.activeComponent == 'ServiceOrders/Checklist'">
+            <header>
+              <h6>{{ translate.section.serviceOrders.option.checklist.label }}</h6>
+              <small>{{ translate.section.serviceOrders.option.checklist.description }}</small>
+              <div class="container-buttons">
+                <button class="btnAdd" title="Add Checklist" (click)="onShowChecklistLayer($event, 'add', null)"><icon name="plus-outline" pack="eva"></icon></button>
+              </div>
+            </header>
+           
+            <div class="table-responsive" *ngIf="serviceSettings && serviceSettings.checklist && serviceSettings.checklist.length > 0 && !loading">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>          
+                    <th>{{ translate.section.serviceOrders.option.checklist.list.name }}</th>
+                    <th>{{ translate.section.serviceOrders.option.checklist.list.actions }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of serviceSettings.checklist">
+                    <td>{{ item.name }}</td>
+                    <td>
+                      <button class="btnAction btnEdit" (click)="onShowChecklistLayer($event, 'edit', item)"><icon name="pencil-alt" pack="fa"></icon></button>
+                      <button class="btnAction btnDelete" (click)="onShowChecklistLayer($event, 'delete', item)"><icon name="trash" pack="fa"></icon></button>  
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>          
+                    <th>{{ translate.section.serviceOrders.option.checklist.list.name }}</th>
+                    <th>{{ translate.section.serviceOrders.option.checklist.list.actions }}</th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+    
+            <placeholder [loading]="loading" [hasData]="serviceSettings && serviceSettings.checklist && serviceSettings.checklist.length > 0"></placeholder>
+            <settings-service-orders-layer (callback)="onLayerResponse($event)"></settings-service-orders-layer>
+
+					</div>
+
+          <div class="container-warranty-term" *ngIf="settings.activeComponent == 'ServiceOrders/WarrantyTerm'">
+            <header>
+              <h6>{{ translate.section.serviceOrders.option.warrantyTerm.label }}</h6>
+              <small>{{ translate.section.serviceOrders.option.warrantyTerm.description }}</small>
+            </header>
+
+            <section>
+              <angular-editor [config]="editorConfig" [(ngModel)]="warrantyTerm" class="te-basic-tools"></angular-editor>
+            </section>
+
+            <button class="btn btnConfirmation btnBlue" (click)="onSubmitWarrantyTerm()" [disabled]="!warrantyTerm">{{ translate.modal.section.serviceOrders.button.submit }}</button>
+					</div>
+					
+					<div class="container-delivery-term" *ngIf="settings.activeComponent == 'ServiceOrders/DeliveryTerm'">
+            <header>
+              <h6>{{ translate.section.serviceOrders.option.deliveryTerm.label }}</h6>
+              <small>{{ translate.section.serviceOrders.option.deliveryTerm.description }}</small>
+            </header>
+
+            <section>
+              <angular-editor [config]="editorConfig" [(ngModel)]="deliveryTerm" class="te-basic-tools"></angular-editor>
+            </section>
+
+            <button class="btn btnConfirmation btnBlue" (click)="onSubmitDeliveryTerm()" [disabled]="!deliveryTerm">{{ translate.modal.section.serviceOrders.button.submit }}</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

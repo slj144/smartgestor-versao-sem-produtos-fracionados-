@@ -1,0 +1,103 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  >
+    <!-- <ng-container slot="buttons-of-header">
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">          
+          <li *ngIf="isAdmin" (click)="onDataExport()"><span class="dropdown-item"><icon name="code-outline" pack="eva"></icon> {{ translate.modal.action.others.dataExport.title }}</span></li>
+        </ul>
+      </div>
+    </ng-container>
+
+    <ng-container slot="buttons-of-tools">
+      <button class="btnViewMode {{ order == -1 ? 'active' : '' }}" title="Alterar ordem da listagem" (click)="onChangeOrderBy()"><icon name="bar-chart-2-outline" pack="eva"></icon></button>
+    </ng-container> -->
+  </custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.plate }}</div>
+            <div class="col-4">{{ translate.table.label.owner.name }}</div>
+            <div class="col-2">{{ translate.table.label.model }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.color }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.mileage }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+  
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+  
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.plate }}:</span>
+              <span class="value">{{ item.plate }}</span>
+            </div>
+
+            <div class="col-12 col-md-4 flex-row flex-md-column justify-content-start justify-content-md-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.owner.name }}:</span>
+              <span class="value">{{ item.proprietary?.name }}</span>
+            </div>
+            
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.model }}:</span>
+              <span class="value">{{ item.model }}</span>
+            </div>
+
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.color }}:</span>
+              <span class="value">{{ item.color }}</span>
+            </div>
+  
+            <div class="col col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.mileage }}:</span>
+              <span class="value">{{ item.mileage }}</span>
+            </div>
+
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onRead(item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title" (click)="onUpdate(item)" *ngIf="permissions.actions.edit"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title" (click)="onDelete(item)" *ngIf="permissions.actions.delete"><icon name="trash" pack="fa"></icon></button>
+              </div>
+            </div>  
+  
+          </div>
+        </div>
+  
+      </div>
+    </ng-container>
+
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate()" ><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+    
+  </main>
+  
+  <placeholder [loading]="loading" [hasData]="recordsData.length > 0" [verticalAlign]="true"></placeholder>
+  
+</div>
+
+<vehicles-modal (callback)="onModalResponse($event)"></vehicles-modal>

@@ -1,0 +1,11 @@
+<layer (callback)="onLayerReponse($event)">
+  <ng-container slot="content">
+    <div class="main-container">
+
+      <div *ngIf="settings.type == 'collaboratorProfiles'" id="collaboratorProfiles">
+        <collaborator-profiles-update (callback)="onCollaboratorProfilesReponse($event)"></collaborator-profiles-update>
+      </div>
+  
+    </div>
+  </ng-container>
+</layer>

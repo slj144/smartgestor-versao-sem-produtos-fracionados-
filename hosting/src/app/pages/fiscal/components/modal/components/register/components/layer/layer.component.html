@@ -1,0 +1,22 @@
+
+<layer (callback)="onLayerResponse($event)">  
+  <ng-container slot="content">
+
+    <div [style.display]="(settings.activeComponent == 'customers' ? 'block' : 'none')">
+      <customers-selector (callback)="onCustomerResponse($event)" [defaultAddress]="true"></customers-selector>
+    </div>
+    
+    <div [style.display]="(settings.activeComponent == 'services' ? 'block' : 'none')">
+      <services-selector (callback)="onServicesResponse($event)"></services-selector>
+    </div>
+
+    <div [style.display]="(settings.activeComponent == 'products' ? 'block' : 'none')">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+    <div [style.display]="(settings.activeComponent == 'paymentMethods' ? 'block' : 'none')">
+      <nf-payment-methods-selector (callback)="onPaymentMethodsResponse($event)"></nf-payment-methods-selector>
+    </div>
+
+  </ng-container>
+</layer>

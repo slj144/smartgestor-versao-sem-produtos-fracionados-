@@ -1,0 +1,49 @@
+
+main {
+  h5 {
+    color: #555;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-align: center;
+    display: block;
+  }
+  section {
+    margin: 0 0 15px;
+    &.container-instructions {
+      padding: 25px 0;
+      border-top: 1px solid #ddd;
+      border-bottom: 1px solid #ddd;
+      p {
+        max-width: 400px;
+        margin: 5px auto;
+        padding: 0 20px;
+        text-indent: 20px;
+        text-align: justify;
+        color: #777;
+        font-size: 13px;
+      }
+    }
+    &.container-content {
+      display: none;
+    }
+  }
+  button {
+    margin: 10px auto 0;
+    display: block;
+    padding: 5px 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: rgb(102, 102, 255);
+    color: #fff;
+    &.btnGreen {
+      background-color: green;
+    }
+    &.btnBlue {
+      background-color: rgb(102, 102, 255);
+    }
+    &.btnRed {
+      background-color: indianred;
+    }
+  }
+}

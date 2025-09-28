@@ -1,0 +1,236 @@
+#container-register {
+    padding: 0 10px;
+
+    form {
+        p {
+            font-size: 13px;
+            color: gray;
+            font-weight: 600;
+            margin: 0 12px 10px;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        label {
+            font-size: 12px;
+            margin-bottom: 1px;
+        }
+
+        fieldset {
+            padding: 0;
+
+            &[disabled] {
+                opacity: 0.65;
+                background-color: #eee;
+            }
+        }
+
+        input {
+            &.nameField {
+                text-transform: uppercase;
+            }
+
+            &.emailField {
+                text-transform: lowercase;
+            }
+        }
+
+        small {
+            &.warning {
+                color: red;
+                margin-top: 2px;
+                padding-left: 5px;
+                font-size: 11px;
+                display: block;
+                line-height: 12px;
+            }
+        }
+
+        button {
+            &[type=submit] {
+                margin: 15px auto 0;
+                display: block;
+                padding: 5px 40px;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: rgb(102, 102, 255);
+                color: #fff;
+
+                &.btnBlue {
+                    background-color: rgb(102, 102, 255);
+                }
+
+                &.btnRed {
+                    background-color: indianred;
+                }
+            }
+        }
+
+        input,
+        select {
+            font-size: 14px;
+            border-left: 4px solid rgb(102, 102, 255);
+            box-shadow: none;
+        }
+
+        .form-group {
+            margin-bottom: 6px;
+        }
+
+        .container-contacts {
+            margin-bottom: 10px;
+        }
+
+        .container-info,
+        .container-address {
+
+            .container-document,
+            .container-cep {
+                fieldset {
+                    position: relative;
+
+                    input {
+                        padding-right: 40px;
+                    }
+
+                    button {
+                        width: 34px !important;
+                        height: 34px !important;
+                        padding: 5px;
+                        margin: 0;
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        background-color: transparent;
+                        border-radius: 5px;
+                        border: none;
+                        outline: none;
+                        transition: all 0.3s ease-in-out;
+                        cursor: text;
+
+                        icon {
+                            font-size: 18px;
+                        }
+
+                        &.valid {
+                            color: goldenrod;
+                        }
+
+                        &.invalid {
+                            color: red;
+                        }
+
+                        &:disabled {
+                            opacity: 0.5;
+                        }
+
+                        &:hover {
+                            opacity: 0.75;
+                        }
+                    }
+                }
+            }
+        }
+
+        .container-info,
+        .container-contacts,
+        .container-address {
+            .container-header {
+                padding: 6px 0;
+                position: relative;
+                user-select: none;
+                cursor: pointer;
+
+                p {
+                    margin: 0;
+                }
+
+                button {
+                    width: 30px;
+                    height: 28px;
+                    padding: 0;
+                    outline: none;
+                    border: none;
+                    border-radius: 5px;
+                    color: #888;
+                    background-color: #fff;
+                    position: absolute;
+                    top: 6px;
+                    right: 0;
+                    transition: all 0.3s ease-in-out;
+
+                    icon {
+                        font-size: 18px;
+                        margin-top: 2px;
+                    }
+
+                    &.active {
+                        icon {
+                            transform: rotate(180deg);
+                        }
+                    }
+                }
+            }
+
+            .container-content {
+
+                // display: none;
+                &.active {
+                    display: block;
+                }
+            }
+        }
+
+        .issues {
+            margin-top: 15px;
+            padding: 5px 15px 12px;
+            border-radius: 5px;
+            background-color: rgba(252, 92, 92, 0.15);
+
+            label {
+                font-size: 13px;
+                font-weight: 600;
+                margin-bottom: 5px;
+            }
+
+            ul {
+                margin: 0;
+                padding: 0;
+                padding-left: 25px;
+
+                li {
+                    color: #666;
+                    font-size: 12px;
+                    line-height: 14px;
+                    // padding-bottom: 2px;
+                }
+            }
+        }
+
+        .required {
+            border-color: indianred;
+
+            &:focus {
+                border-color: rgba(205, 92, 92, 0.75);
+            }
+        }
+    }
+}
+
+// ===== REMOVE APENAS BOTÕES FANTASMAS DO CADASTRO DE CLIENTE =====
+// Específico para não afetar outras partes do sistema
+
+#container-register {
+
+    // Remove apenas botões vazios dentro de fieldsets
+    .container-document,
+    .container-cep {
+        fieldset {
+
+            // Remove botões vazios que não são de validação
+            button:empty:not(.valid):not(.invalid):not([type]) {
+                display: none !important;
+            }
+        }
+    }
+}

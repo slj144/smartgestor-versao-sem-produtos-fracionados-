@@ -1,0 +1,228 @@
+<!-- 
+Arquivo: public-link-manager.component.html
+Caminho: src/app/pages/crm/components/public-link-manager/public-link-manager.component.html
+O que faz: Interface para o admin configurar o formulário público
+-->
+
+<div class="public-link-manager">
+    <!-- Cabeçalho com o link e QR Code -->
+    <div class="link-section">
+        <h2>🔗 Link Público de Cadastro</h2>
+
+        <div class="link-display">
+            <input type="text" [value]="publicLink" readonly class="link-input">
+            <button (click)="copyLink()" class="btn-copy">📋 Copiar</button>
+            <button (click)="generateQRCode()" class="btn-qr">📱 QR Code</button>
+        </div>
+
+        <!-- QR Code (aparece quando clica no botão) -->
+        <div *ngIf="showQRCode" class="qr-code-section">
+            <div id="qrcode"></div>
+            <p>Escaneie com o celular para acessar</p>
+        </div>
+    </div>
+
+    <!-- Seção de Configurações da Empresa -->
+    <div class="company-section">
+        <h2>🏢 Nome da Empresa</h2>
+        <p class="help-text">Configure o nome que aparecerá na página de cadastro</p>
+
+        <div class="company-name-section">
+            <label>Nome da Empresa</label>
+            <input type="text" [(ngModel)]="companyName" placeholder="Digite o nome da sua empresa" class="company-input">
+            <button type="button" class="save-company-btn" (click)="saveCompanyInfo()">💾 Salvar Nome</button>
+        </div>
+    </div>
+
+    <!-- Seção de Configurações do Formulário -->
+    <div class="settings-section" *ngIf="settingsForm">
+        <h2>⚙️ Configurar Campos do Formulário</h2>
+        <p class="help-text">Escolha quais campos aparecem no formulário público e se são obrigatórios</p>
+
+        <form [formGroup]="settingsForm">
+            <!-- Configuração dos Campos -->
+            <div class="fields-config" formGroupName="fields">
+
+                <!-- Campo NOME -->
+                <div class="field-item" formGroupName="name">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">📝 Nome Completo</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.name.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                    </div>
+                </div>
+
+                <!-- Campo EMAIL -->
+                <div class="field-item" formGroupName="email">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">📧 E-mail</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.email.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                    </div>
+                </div>
+
+                <!-- Campo TELEFONE -->
+                <div class="field-item" formGroupName="phone">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">📱 Telefone</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.phone.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório (sempre)
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                    </div>
+                </div>
+
+                <!-- Campo CPF -->
+                <div class="field-item" formGroupName="cpf">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">🆔 CPF</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.cpf.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                    </div>
+                </div>
+
+                <!-- Campo DATA DE NASCIMENTO -->
+                <div class="field-item" formGroupName="birthDate">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">🎂 Data de Nascimento</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.birthDate.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                    </div>
+                </div>
+
+                <!-- Campo ENDEREÇO -->
+                <div class="field-item" formGroupName="address">
+                    <div class="field-header">
+                        <label class="field-toggle">
+                            <input type="checkbox" formControlName="show">
+                            <span class="toggle-slider"></span>
+                            <span class="field-name">📍 Endereço Completo</span>
+                        </label>
+                    </div>
+                    <div class="field-options" *ngIf="settingsForm.get('fields.address.show')?.value">
+                        <label>
+                            <input type="checkbox" formControlName="required">
+                            Obrigatório
+                        </label>
+                        <input type="text" formControlName="label" placeholder="Texto do campo">
+                        <p class="info-text">
+                            ℹ️ Inclui: CEP, Rua, Número, Complemento, Bairro, Cidade e Estado
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações de Aparência -->
+            <div class="appearance-config" formGroupName="appearance">
+                <h3>🎨 Aparência do Formulário</h3>
+
+
+
+                <div class="config-item">
+                    <label>Título do formulário:</label>
+                    <input type="text" formControlName="title" placeholder="Ex: Cadastre-se">
+                </div>
+
+                <div class="config-item">
+                    <label>Subtítulo:</label>
+                    <input type="text" formControlName="subtitle"
+                        placeholder="Ex: Preencha seus dados para se cadastrar">
+                </div>
+
+                <div class="config-item">
+                    <label>Mensagem de sucesso:</label>
+                    <textarea formControlName="successMessage"
+                        placeholder="Ex: Cadastro realizado com sucesso!"></textarea>
+                </div>
+            </div>
+
+            <!-- Botões de ação -->
+            <div class="actions">
+                <button type="button" (click)="saveSettings()" class="btn-save" [disabled]="loading">
+                    <span *ngIf="!loading">💾 Salvar Configurações</span>
+                    <span *ngIf="loading">⏳ Salvando...</span>
+                </button>
+                <button type="button" (click)="previewForm()" class="btn-preview">
+                    👁️ Visualizar Formulário
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="statistics-section">
+        <h3>📊 Estatísticas de Cadastros</h3>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-value">{{ statistics.totalRegistrations }}</span>
+                <span class="stat-label">Total de Cadastros</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ statistics.todayRegistrations }}</span>
+                <span class="stat-label">Cadastros Hoje</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ statistics.weekRegistrations }}</span>
+                <span class="stat-label">Esta Semana</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value">{{ statistics.monthRegistrations }}</span>
+                <span class="stat-label">Este Mês</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Últimos cadastros -->
+    <div class="recent-section" *ngIf="recentRegistrations.length > 0">
+        <h3>🕐 Últimos Cadastros</h3>
+        <div class="recent-list">
+            <div class="recent-item" *ngFor="let registration of recentRegistrations">
+                <span class="recent-name">{{ registration.name }}</span>
+                <span class="recent-date">{{ formatDate(registration.registerDate) }}</span>
+            </div>
+        </div>
+    </div>
+</div>

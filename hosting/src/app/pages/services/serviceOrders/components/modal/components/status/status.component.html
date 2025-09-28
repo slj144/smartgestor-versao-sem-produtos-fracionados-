@@ -1,0 +1,63 @@
+<table *ngIf="serviceData?.scheme?.data?.type == 'technicalAssistance'">
+  <tbody>
+    <tr>
+      <td *ngFor="let status of serviceData.scheme.data.status; index as i; trackBy: trackByStatus">
+
+        <button
+          [disabled]="serviceData.serviceStatus == 'CANCELED'"
+          #statusButton
+          class="status withIcon {{ setupServiceStatus(i) }}"  
+          (click)="onClickStatus($event, statusButton, status, serviceData.scheme.data.status)"
+          [tooltip]="setupServiceStatusName(status, true)"
+        >
+          <icon *ngIf="status == 'BUDGET'" pack="fa" name="file-invoice-dollar"></icon>
+          <icon *ngIf="status == 'AUTORIZATION'" pack="fa" name="user-check"></icon>
+          <icon *ngIf="status == 'PARTS'" pack="fa" name="th-large"></icon>
+          <icon *ngIf="status == 'REPAIR'" pack="fa" name="tools"></icon>
+          <icon *ngIf="status == 'WITHDRAWAL'" pack="fa" name="dolly"></icon>
+          <icon *ngIf="status == 'CONCLUDED'" pack="fa" name="check"></icon>
+        </button>
+
+      </td>
+      <td>
+        <button 
+          class="status withIcon {{ setupServiceStatus(serviceData.scheme.data.status.length) }}"  
+          [tooltip]="translate.scheme.technicalAssistance['PAYMENT']" (click)="onCompletePayment($event)">
+          <icon pack="fa" name="dollar-sign"></icon>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table *ngIf="serviceData?.scheme?.data?.type == 'mechanic'">
+  <tbody>
+    <tr>
+      <td *ngFor="let status of serviceData.scheme.data.status; index as i; trackBy: trackByStatus">
+
+        <button
+          [disabled]="serviceData.serviceStatus == 'CANCELED'"
+          #statusButton
+          class="status withIcon {{ setupServiceStatus(i) }}"  
+          (click)="onClickStatus($event, statusButton, status, serviceData.scheme.data.status)"
+          [tooltip]="setupServiceStatusName(status, true)"
+        >
+          <icon *ngIf="status == 'BUDGET'" pack="fa" name="file-invoice-dollar"></icon>
+          <icon *ngIf="status == 'AUTORIZATION'" pack="fa" name="user-check"></icon>
+          <icon *ngIf="status == 'PARTS'" pack="fa" name="th-large"></icon>
+          <!-- <icon *ngIf="status == 'REPAIR'" pack="fa" name="tools"></icon> -->
+          <!-- <icon *ngIf="status == 'WITHDRAWAL'" pack="fa" name="dolly"></icon> -->
+          <icon *ngIf="status == 'CONCLUDED'" pack="fa" name="check"></icon>
+        </button>
+
+      </td>
+      <td>
+        <button 
+          class="status withIcon {{ setupServiceStatus(serviceData.scheme.data.status.length) }}"  
+          [tooltip]="translate.scheme.technicalAssistance['PAYMENT']" (click)="onCompletePayment($event)">
+          <icon pack="fa" name="dollar-sign"></icon>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,114 @@
+
+<div class="component">
+  <main>
+    <div class="container-filters {{ selectedOption ? 'active' : '' }}">
+      
+      <div class="container-wrapper" *ngIf="activeFilters">
+        <h6>{{ translate.active }}</h6>
+
+        <div class="container-filters">
+          <ul class="clearfix" *ngIf="activeFilters.length > 0">
+            <li class="filter-item" *ngFor="let item of activeFilters; let i = index">
+              <span><span class="label">{{ item.info.label + ':' }}</span> <span class="value">{{ item.info.value }}</span></span>
+              <button (click)="onRemoveFilter(i)"><icon name="close-outline" pack="eva"></icon></button>
+            </li>
+          </ul>
+
+          <p *ngIf="activeFilters.length == 0">{{ translate.noFilter }}</p>
+        </div>            
+      </div>
+
+      <div class="container-wrapper">
+        <h6>{{ translate.add }}</h6>
+
+        <div class="container-form">            
+          <form class="form">
+            <div class="form-group">
+              <div class="container-options">
+                <label class="option-external col-12" *ngFor="let field of settings.fields">
+
+                  <input type="radio" [value]="field.property" [checked]="field.checked" (change)="onAtiveOption(field)" /> <span>{{ field.label }}</span>
+
+                  <button class="{{ field.collapsed ? 'active' : '' }}" *ngIf="field.options"><icon name="arrow-ios-downward-outline" pack="eva"></icon></button>
+
+                  <div class="container-options" *ngIf="field.options && field.collapsed">
+                    <label class="option-internal col-12" *ngFor="let option of field.options; let i = index">
+                      <input type="radio" [value]="option.property" [checked]="option.checked" (change)="onAtiveOption(field, i)" /> <span>{{ option.label }}</span>
+                    </label>
+                  </div>
+                </label>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <div class="container-floating">
+    <button class="btnAdd" *ngIf="selectedOption && (toastSettings.action == null)" (click)="onOpenToast($event, 'add')"><icon name="plus" pack="eva"></icon></button>
+
+    <div class="container-toast {{ toastSettings.action != null ? 'active' : '' }}">
+      <div class="row toast-header">
+        <!-- <button class="btnClose" (click)="onCloseToast()"><icon name="arrow-ios-downward-outline" pack="eva"></icon></button> -->
+        <span class="title">{{ toastSettings.title }}</span>
+      </div>
+
+      <div class="toast-content clearfix" *ngIf="toastSettings.action == 'add'">      
+        <form [formGroup]="formFilter" class="form">
+          <div class="row container-fields">                  
+            <div class="col-12 form-group">
+              <label>{{ selectedOption.path || selectedOption.label }}</label>
+
+              <div *ngIf="selectedOption.type == 'text'">
+                <input type="text" formControlName="value" class="form-control" />
+              </div>
+
+              <div *ngIf="selectedOption.type == 'cpf'">
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyCPFMask($event, formControls.value)"/>
+              </div>
+
+              <div *ngIf="selectedOption.type == 'cnpj'">
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyCNPJMask($event, formControls.value)"/>
+              </div>
+
+              <div *ngIf="selectedOption.type == 'phone'">
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyPhoneMask($event, formControls.value)" minlength="4"/>
+              </div>
+              
+              <div *ngIf="selectedOption.type == 'date'">
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyDateMask($event, formControls.value)" />
+              </div>
+
+              <div *ngIf="selectedOption.type == 'select'">
+                <select formControlName="value" class="form-control">
+                  <option *ngFor="let item of selectedOption.list" [value]="item.value">{{ item.label }}</option>
+                </select>
+              </div>
+
+              <div *ngIf="(selectedOption.type == 'number/integer') || (selectedOption.type == 'number/float')">
+                
+                <div class="container-operators">
+                  <label><input type="radio" formControlName="operator" title="Menor ou igual que" value="<=" /> <span>&lt;=</span></label>
+                  <label><input type="radio" formControlName="operator" title="Menor que" value="<" /> <span>&lt;</span></label>
+                  <label><input type="radio" formControlName="operator" title="Igual" value="=" /> <span>=</span></label>
+                  <label><input type="radio" formControlName="operator" title="Maior que" value=">" /> <span>&gt;</span></label>
+                  <label><input type="radio" formControlName="operator" title="Maior ou igual que" value=">=" /> <span>&gt;=</span></label>
+                </div>
+
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyNumberMask($event, formControls.value)" *ngIf="selectedOption.type == 'number/integer'" />                
+                <input type="text" formControlName="value" class="form-control" (input)="onApplyPriceMask($event, formControls.value)" *ngIf="selectedOption.type == 'number/float'" />
+              </div>
+            </div>
+          </div>
+
+          <div class="container-buttons">
+            <button type="button" class="btnAction btnEdit" (click)="onAddFilter()" [disabled]="formFilter.invalid"><icon name="checkmark-outline" pack="eva"></icon></button>
+          </div>
+        </form>  
+      </div>
+    </div>
+  </div>
+
+  <div class="container-floating-overlay"></div>
+</div>

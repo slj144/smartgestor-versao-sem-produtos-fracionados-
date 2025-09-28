@@ -1,0 +1,282 @@
+
+modal {
+  .container-view {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;
+    .container-external {
+      display: table-row;
+      .container-info {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          position: relative;
+          width: 700px;
+          max-width: 100%;
+          padding: 15px;
+          border: 1px solid #ddd;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 5px;
+          margin: 0 auto;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+
+  .container-main {
+
+    border-radius: 10px;
+    width: 900px !important;
+    max-width: 100%;
+    padding: 30px;
+
+    header {
+      position: relative;
+      height: 32px;
+      margin: 15px 16px;
+      .container-search {
+        $color: #aaa;
+        .btnFilter {
+          position: relative;
+          background-color: $color;
+          border-color: $color;
+          .badge {
+            width: 16px;
+            height: 16px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: none;
+            background-color: chocolate;
+            font-size: 8px;
+            font-weight: 600;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+          }
+        }
+        .search-bar {
+          width: 250px;
+          height: 30px;
+          max-width: calc(100% - 40px);
+          max-width: calc(100% - 72px);
+          border: 1px solid #ddd;
+          background-color: #fff;
+          overflow: hidden;
+          position: absolute;
+          left: 34px;          
+          border-radius: 17px;
+          button {
+            width: 25px;
+            height: 25px;      
+            border: none;
+            outline: none;
+            border-radius: 17px;
+            color: $color;
+            background-color: #fff;
+            box-shadow: none;
+            position: absolute;
+            margin-top: 0;
+            margin-left: 0;
+            z-index: 2;
+            top: 2px;
+            right: 2px;
+            transition: all 0.5s ease-in-out;
+            cursor: pointer;
+            icon {
+              position: relative;
+              top: -1px;
+              font-size: 13px;
+            }
+            &:hover {
+              opacity: 0.8;
+            }
+          }
+          input {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            padding: 10px 30px 10px 12px;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            z-index: 0;
+            font-size: 13px;
+            vertical-align: middle;
+            &::placeholder {
+              color: #999;
+            }
+          }
+        }
+      }
+      .container-buttons {
+        width: auto;
+        position: absolute;
+        right: -2px;       
+        display: table;
+        .dropdown-menu {
+          .dropdown-item {
+            color: #555;
+            font-weight: 500;
+            font-size: 13px;
+            padding: 5px 10px;
+            user-select: none;
+            cursor: pointer;
+            border-bottom: 1px solid #aaa;
+            transition: all 0.3s ease-in-out;
+            icon {
+              font-size: 13px;
+              opacity: 0.85;
+              margin-right: 5px;
+            }
+            &:hover {
+              color: #aaa;
+            }
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+      }
+      .container-search,
+      .container-buttons {
+        button {
+          width: 30px;
+          height: 30px;
+          outline: none;
+          border-radius: 17px;
+          color: #fff;
+          background-color: rgb(102, 102, 255);
+          border: 1px solid rgb(102, 102, 255);
+          box-shadow: 0 2px 4px #ddd;
+          padding: 0;
+          margin: 0 1px;        
+          transition: all 0.5s ease-in-out;        
+          &.btnFilter {
+            position: absolute;
+            left: 0;
+          }
+          &.btnAdd {
+            background-color: green;
+            border: 1px solid green;
+          }
+          &.btnOthers {
+            color: #999;
+            border: 1px solid rgb(230, 229, 229);
+            background-color: #fff;
+            icon {
+              font-size: 14px;
+            }
+          }
+          &.btnAdd, &.btnFilter {
+            icon {
+              font-size: 15px;
+            }
+          }
+          &:hover {
+            opacity: 0.9;
+          }
+        }
+      }
+    }  
+    main {
+      table {
+        thead {
+          border-bottom: 1px solid cyan;
+        }
+        tfoot {
+          border-top: 1px solid cyan;
+          th {
+            color: #bbb !important;
+          }
+        }
+        thead, tfoot {
+          tr {      
+            font-size: 12px;
+            user-select: none;
+            th {
+              color: #777;
+              font-weight: 500;
+              padding: 5px 10px;
+              &:nth-child(3){
+                text-align: center;
+              }
+            }
+          }   
+        }
+        tbody {
+          tr {
+            cursor: pointer;
+            height: 30px;
+            td {
+              padding: 7px !important;
+              vertical-align: middle;
+              font-size: 13px;
+              .btnAction {
+                width: 35px;
+                height: 35px;
+                padding: 0;
+                border: none;
+                outline: none;          
+                margin: 2px;
+                background-color: #fff;
+                border-radius: 5px;
+                border: 1px solid #fff;
+                transition: all 0.5s ease-in-out;
+                display: inline-table;
+                cursor: pointer;
+                icon {
+                  font-size: 14px;
+                }
+                &.btnEdit {
+                  color: goldenrod;
+                }
+                &.btnDelete {
+                  color: red;
+                }
+                &:hover {
+                  box-shadow: -1px 1px 4px #ddd !important;
+                  border: 1px solid rgb(224, 224, 224) !important;
+                }
+
+                &:disabled{
+                  opacity: 0.5 !important;
+                }
+              }   
+              
+              .owner{
+                display: block;
+                color: coral;
+                margin-top: -5px;
+              }
+            }
+            &:hover {
+              background-color: cyan !important;
+            }
+            &:nth-child(odd) {
+              background-color: lightcyan;
+            }
+          }
+        }
+        thead, tfoot, tbody {          
+          th, td {            
+            &:nth-child(1) {
+              width: 110px;      
+            }
+            &:nth-child(1), &:nth-child(3),
+            &:nth-child(4), &:nth-child(5) {
+              text-align: center;
+            }
+            &:last-child {
+              width: 110px;
+            }
+          }          
+        }
+      }
+    }
+
+  }
+}
+
+

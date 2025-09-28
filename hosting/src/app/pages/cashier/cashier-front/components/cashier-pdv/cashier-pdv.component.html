@@ -1,0 +1,480 @@
+<!--
+  📁 ARQUIVO: cashier-pdv.component.html
+  📂 LOCALIZAÇÃO: src/app/pages/cashier/cashier-front/components/cashier-pdv/
+  🎯 FUNÇÃO: Template HTML do PDV - Interface principal de vendas
+  ✨ MELHORIAS: Layout moderno em cards com scroll independente
+-->
+
+<div id="container-cashier-pdv">
+
+  <div class="pdv-container">
+
+    <!-- Seção Esquerda - Cliente, Produtos e Serviços -->
+    <div class="pdv-main-section">
+
+      <!-- Card de Cliente -->
+      <div class="pdv-card customer-card" *ngIf="companyProfile?.registers?.components?.customers">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="person-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.customer.title }}</h3>
+          </div>
+          <button class="btn-action" (click)="onOpenLayer('customers')" [attr.aria-label]="'Buscar cliente'">
+            <icon name="search-outline" pack="eva"></icon>
+          </button>
+        </div>
+
+        <div class="card-body" *ngIf="data.customer">
+          <div class="customer-info">
+            <div class="info-main">
+              <h4>{{ data.customer.name }}</h4>
+              <div class="info-details">
+                <span class="info-item" *ngIf="data.customer?.personalDocument">
+                  <icon name="file-text-outline" pack="eva"></icon>
+                  {{ data.customer.personalDocument.type }}: {{ data.customer.personalDocument.value }}
+                </span>
+                <span class="info-item" *ngIf="data.customer?.businessDocument">
+                  <icon name="file-text-outline" pack="eva"></icon>
+                  {{ data.customer.businessDocument.type }}: {{ data.customer.businessDocument.value }}
+                </span>
+              </div>
+            </div>
+            <div class="info-contact">
+              <span class="info-item" *ngIf="data.customer?.address">
+                <icon name="pin-outline" pack="eva"></icon>
+                {{ data.customer?.address }}
+              </span>
+              <span class="info-item" *ngIf="data.customer?.contacts?.phone">
+                <icon name="phone-outline" pack="eva"></icon>
+                {{ data.customer?.contacts?.phone }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-empty" *ngIf="!data.customer">
+          <icon name="person-add-outline" pack="eva"></icon>
+          <p>Nenhum cliente selecionado</p>
+        </div>
+      </div>
+
+      <!-- Card de Membro (similar ao cliente) -->
+      <div class="pdv-card member-card" *ngIf="companyProfile?.registers?.components?.members">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="people-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.member.title }}</h3>
+          </div>
+          <button class="btn-action" (click)="onOpenLayer('members')" [disabled]="data.code">
+            <icon name="search-outline" pack="eva"></icon>
+          </button>
+        </div>
+
+        <div class="card-body" *ngIf="data.member">
+          <div class="customer-info">
+            <div class="info-main">
+              <h4>{{ data.member.name }}</h4>
+            </div>
+            <div class="info-contact">
+              <span class="info-item" *ngIf="data.member?.address">
+                <icon name="pin-outline" pack="eva"></icon>
+                {{ data.member?.address }}
+              </span>
+              <span class="info-item" *ngIf="data.member?.contacts?.phone">
+                <icon name="phone-outline" pack="eva"></icon>
+                {{ data.member?.contacts?.phone }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-empty" *ngIf="!data.member">
+          <icon name="people-outline" pack="eva"></icon>
+          <p>Nenhum membro selecionado</p>
+        </div>
+      </div>
+
+      <!-- Card de Serviços -->
+      <div class="pdv-card services-card" *ngIf="data.service?.types?.length > 0">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="briefcase-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.services.title }}</h3>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="services-list">
+            <div class="service-item" *ngFor="let item of data.service?.types">
+              <div class="service-info">
+                <span class="service-code">{{ item.code }}</span>
+                <span class="service-name">{{ item.name }}</span>
+              </div>
+              <div class="service-price">
+                <label>Preço:</label>
+                <div class="price-input">
+                  <span class="currency">R$</span>
+                  <input type="text" [value]="item.customPrice | currency:''" autocomplete="off"
+                    (input)="onApplyPrice(item, priceField, 'service')" #priceField />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Produtos -->
+      <div class="pdv-card products-card">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="shopping-bag-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.products.title }}</h3>
+          </div>
+          <div class="header-actions">
+            <div class="quick-search">
+              <icon name="search-outline" pack="eva"></icon>
+              <input type="text" [placeholder]="translate.panel.products.quickSearch.placeholder" autocomplete="off"
+                (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)"
+                #inputQuickSearch />
+              <button class="btn-quick-search" (click)="onQuickSearch(inputQuickSearch)">
+                <icon name="arrow-forward-outline" pack="eva"></icon>
+              </button>
+            </div>
+            <button class="btn-action" (click)="onOpenLayer('products')" title="Atalho: F3 ou Ctrl+3">
+              <icon name="options-2-outline" pack="eva"></icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="card-body" *ngIf="data.products?.length > 0">
+          <div class="products-list">
+            <!-- trackBy evita recriar DOM ao alterar quantidade/preço -->
+            <div class="product-item" *ngFor="let item of data.products; let i = index; trackBy: trackByProduct">
+              <button class="btn-remove" (click)="onDeleteProductItem(i)">
+                <icon name="close-circle-outline" pack="eva"></icon>
+              </button>
+
+              <div class="product-info">
+                <div class="product-header">
+                  <span class="product-code">#{{ item.code }}</span>
+                  <span class="product-name">{{ item.name }}</span>
+                  <span class="internal-code" *ngIf="item.internalCode">{{ item.internalCode }}</span>
+                </div>
+
+                <div class="product-controls">
+                  <div class="quantity-control quantity-control-enhanced">
+                    <label>Qtd:</label>
+                    <div class="quantity-input-wrapper">
+                      <button type="button" class="quantity-btn quantity-btn-decrease"
+                              (click)="onDecreaseQuantity(item)">
+                        <span>−</span>
+                      </button>
+                      <input type="text" [value]="item.selectedItems ?? 1" autocomplete="off"
+                        class="quantity-input-enhanced"
+                        (input)="onApplyQuantity(item, quantityField)"
+                        (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                      <button type="button" class="quantity-btn quantity-btn-increase"
+                              (click)="onIncreaseQuantity(item)">
+                        <span>+</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="price-control">
+                    <label>Preço:</label>
+                    <div class="price-input">
+                      <span class="currency">R$</span>
+                      <input type="text" [value]="item.unitaryPrice | currency:''" autocomplete="off"
+                        (input)="onApplyPrice(item, priceField, 'product')" #priceField />
+                    </div>
+                  </div>
+
+                  <div class="total-display">
+                    <label>Total:</label>
+                    <span class="total-value">{{ (item.unitaryPrice * item.selectedItems) | currency }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-empty" *ngIf="!data.products || (data.products?.length == 0)">
+          <div class="empty-state">
+            <icon name="shopping-bag-outline" pack="eva"></icon>
+            <p>Nenhum produto adicionado</p>
+            <button class="btn-primary" (click)="onOpenLayer('products')">
+              <icon name="plus-outline" pack="eva"></icon>
+              Adicionar produtos
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Seção Direita - Pagamento, Configurações e Total -->
+    <div class="pdv-sidebar">
+
+      <!-- Card de Pagamento -->
+      <div class="pdv-card payment-card">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="credit-card-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.paymentMethods.title }}</h3>
+          </div>
+          <button class="btn-action btn-add-payment" (click)="onOpenLayer('paymentMethods')" title="Atalho: F2 ou Ctrl+2">
+            <icon name="plus-outline" pack="eva"></icon>
+          </button>
+        </div>
+
+        <div class="card-body" *ngIf="data.paymentMethods?.length > 0">
+          <div class="payment-list">
+            <!-- trackBy evita recriar DOM entre alterações de valor/parcela -->
+            <div class="payment-item" *ngFor="let item of data.paymentMethods; let i = index; trackBy: trackByPaymentMethod">
+              <div class="payment-header">
+                <span class="payment-name">{{ (item.alternateName || item.name) }}</span>
+                <button class="btn-remove-payment" (click)="onDeletePaymentItem(i)">
+                  <icon name="close-outline" pack="eva"></icon>
+                </button>
+              </div>
+
+              <div class="payment-controls">
+                <div class="value-input">
+                  <label>{{ translate.panel.paymentMethods.label.value }}</label>
+                  <div class="input-group">
+                    <span class="currency">R$</span>
+                    <input type="text" placeholder="0,00" autocomplete="off" [value]="(item.value || 0) | currency:''"
+                      (input)="onPaymentValue(item, paymentValueField)" #paymentValueField />
+                  </div>
+                </div>
+
+                <div class="parcels-select"
+                  *ngIf="item.fees && ((item.code >= 4000 && item.code < 5000) || item.code == 9000 || item.methodCode == 9000)">
+                  <label>{{ translate.panel.paymentMethods.label.parcels }}</label>
+                  <select (change)="onPaymentParcel(item, paymentParcelField)"
+                    [value]="(item.parcelChecked ? item.parcelChecked : item.fees[0]?.parcel)" #paymentParcelField>
+                    <option *ngFor="let fee of item.fees" [value]="fee.parcel">{{ fee.parcel }}x</option>
+                  </select>
+                </div>
+
+                <button class="btn-note" (click)="onTogglePaymentNote(item)" [class.active]="item.hasNote">
+                  <icon name="file-text-outline" pack="eva"></icon>
+                </button>
+              </div>
+
+              <div class="payment-note" *ngIf="item.hasNote">
+                <input type="text" placeholder="Observação..." autocomplete="off" [value]="(item.note || '')"
+                  (input)="onPaymentNote(item, paymentNoteField)" #paymentNoteField />
+              </div>
+            </div>
+          </div>
+
+          <div class="payment-status" [class.accepted]="settings.paymentMethods.status == 'ACCEPTED'"
+            [class.complete]="settings.paymentMethods.status == 'ACCEPTED' && settings.paymentMethods.pendent == 0">
+            <div class="status-info">
+              <span class="received">
+                <icon name="download-outline" pack="eva"></icon>
+                Recebido: {{ (settings.paymentMethods.value | currency) }}
+              </span>
+              <span class="divider">•</span>
+              <span class="pending" *ngIf="settings.paymentMethods.pendent > 0">
+                <icon name="clock-outline" pack="eva"></icon>
+                Pendente: {{ (settings.paymentMethods.pendent | currency) }}
+              </span>
+              <span class="complete" *ngIf="settings.paymentMethods.pendent == 0">
+                <icon name="checkmark-circle-outline" pack="eva"></icon>
+                Pagamento completo
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-empty" *ngIf="!data.paymentMethods || (data.paymentMethods?.length == 0)">
+          <div class="empty-state">
+            <icon name="credit-card-outline" pack="eva"></icon>
+            <p>Nenhuma forma de pagamento</p>
+            <button class="btn-primary btn-add-payment-empty" (click)="onOpenLayer('paymentMethods')" title="Atalho: F2 ou Ctrl+2">
+              <icon name="plus-outline" pack="eva"></icon>
+              Adicionar pagamento
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Configurações -->
+      <div class="pdv-card settings-card">
+        <div class="card-header">
+          <div class="header-content">
+            <icon name="settings-2-outline" pack="eva" class="header-icon"></icon>
+            <h3>{{ translate.panel.settings.title }}</h3>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="settings-content">
+            <!-- Desconto -->
+            <div class="setting-item" *ngIf="permissions?.sales?.applyDiscount">
+              <label>
+                <icon name="percent-outline" pack="eva"></icon>
+                Desconto
+              </label>
+              <div class="setting-control">
+                <select class="select-discount" (change)="onApplyDiscount(selectDiscount, inputDiscount)"
+                  #selectDiscount>
+                  <option value="$">R$</option>
+                  <option value="%">%</option>
+                </select>
+                <input class="input-discount" type="text" placeholder="0,00" autocomplete="off"
+                  (input)="onApplyDiscount(selectDiscount, inputDiscount)" #inputDiscount />
+              </div>
+            </div>
+
+            <!-- Garantia -->
+            <div class="setting-item warranty-item">
+              <label>
+                <icon name="shield-outline" pack="eva"></icon>
+                {{ translate.panel.settings.option.warranty.label }}
+              </label>
+              <input type="text" class="warranty-input"
+                [placeholder]="translate.panel.settings.option.warranty.placeholder" [(ngModel)]="data.warranty"
+                maxlength="100">
+
+              <div class="warranty-suggestions">
+                <button type="button" (click)="setWarranty('3 meses')">3 meses</button>
+                <button type="button" (click)="setWarranty('6 meses')">6 meses</button>
+                <button type="button" (click)="setWarranty('1 ano')">1 ano</button>
+                <button type="button" (click)="setWarranty('2 anos')">2 anos</button>
+              </div>
+            </div>
+
+            <!-- 🆕 Preferência: Alerta de venda pendente -->
+            <div class="setting-item">
+              <label>
+                <icon name="alert-triangle-outline" pack="eva"></icon>
+                Alerta de venda pendente
+              </label>
+              <div class="setting-control">
+                <label class="toggle">
+                  <input type="checkbox" [checked]="settings?.pendingSaleModalEnabled" (change)="onTogglePendingSaleAlert($event)" />
+                  <span>Ativar</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card de Total -->
+      <div class="pdv-card total-card">
+        <div class="card-body">
+          <div class="balance-details">
+            <div class="balance-item">
+              <span class="label">{{ translate.panel.balance.label.subtotal.integrant.products }}</span>
+              <span class="value">{{ (data.balance?.totalProducts || 0) | currency }}</span>
+            </div>
+            <div class="balance-item" *ngIf="(data.service?.types?.length > 0) || (data.service?.additional > 0)">
+              <span class="label">{{ translate.panel.balance.label.subtotal.integrant.services }}</span>
+              <span class="value">{{ (data.balance?.totalServices || 0) | currency }}</span>
+            </div>
+            <div class="balance-item" *ngIf="data.balance?.totalDiscount > 0">
+              <span class="label">{{ translate.panel.balance.label.subtotal.integrant.discount }}</span>
+              <span class="value discount">-{{ (data.balance?.totalDiscount || 0) | currency }}</span>
+            </div>
+            <div class="balance-item" *ngIf="data.balance?.totalFee > 0">
+              <span class="label">{{ translate.panel.balance.label.subtotal.integrant.fee }}</span>
+              <span class="value">{{ (data.balance?.totalFee || 0) | currency }}</span>
+            </div>
+          </div>
+
+          <div class="balance-total">
+            <span class="label">{{ translate.panel.balance.label.total }}</span>
+            <span class="value">{{ (data.balance?.totalSale || 0) | currency }}</span>
+          </div>
+
+          <button class="btn-confirm" (click)="onRegister()" title="Atalho: F4 ou Ctrl+4"
+            [disabled]="!(!sending && (data.customer || data.member) && (data.service?.code || (data.products?.length > 0)) && (settings.paymentMethods?.status != 'REFUSED'))">
+            <span *ngIf="!sending">
+              <icon name="checkmark-circle-outline" pack="eva"></icon>
+              {{ translate.panel.button.register }}
+            </span>
+            <span *ngIf="sending" class="loading">
+              <span class="spinner"></span>
+              Processando...
+            </span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <cashier-pdv-layer (callback)="onLayerResponse($event)"></cashier-pdv-layer>
+
+</div>
+
+<!-- 🆕 MODAL DE QUANTIDADE (F1) -->
+<div class="quantity-modal-backdrop" *ngIf="settings?.quantityModal?.open">
+  <div class="quantity-modal" role="dialog" aria-modal="true" aria-label="Definir quantidade">
+    <div class="qm-header">
+      <icon name="pricetags-outline" pack="eva"></icon>
+      <h3>Quantidade</h3>
+    </div>
+    <div class="qm-body">
+      <input type="text"
+             #quantityInput
+             [value]="settings?.quantityModal?.value"
+             autocomplete="off"
+             autofocus
+             (keydown.enter)="onConfirmQuantityModal(quantityInput)"
+             (keydown.escape)="onCloseQuantityModal()"
+             (input)="onQuantityInput(quantityInput)" />
+      <div class="qm-hint">Enter para confirmar • Esc para cancelar • Atalho: F1</div>
+    </div>
+    <div class="qm-footer">
+      <button class="btn-cancel" type="button" (click)="onCloseQuantityModal()">Cancelar</button>
+      <button class="btn-confirm" type="button" (click)="onConfirmQuantityModal(quantityInput)">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- 🆕 MODAL: ALERTA DE VENDA PENDENTE -->
+<div class="pending-modal-backdrop" *ngIf="settings?.pendingSaleModal?.open">
+  <div class="pending-modal" role="dialog" aria-modal="true" [attr.aria-label]="translate.pendingModal.title">
+    <div class="pm-header">
+      <icon name="alert-triangle-outline" pack="eva"></icon>
+      <div class="pm-titles">
+        <h3>{{ translate.pendingModal.title }}</h3>
+        <p>{{ translate.pendingModal.subtitle }}</p>
+      </div>
+    </div>
+
+    <div class="pm-body">
+      <div class="pm-row" *ngIf="settings?.pendingSaleModal?.saleCode">
+        <span class="label">{{ translate.pendingModal.codeLabel }}</span>
+        <span class="value">{{ settings.pendingSaleModal.saleCode }}</span>
+      </div>
+      <div class="pm-row">
+        <span class="label">{{ translate.pendingModal.totalLabel }}</span>
+        <span class="value">{{ (settings?.pendingSaleModal?.saleTotal || 0) | currency }}</span>
+      </div>
+      <div class="pm-row warning">
+        <span class="label">{{ translate.pendingModal.pendingLabel }}</span>
+        <span class="value">{{ (settings?.pendingSaleModal?.pendingValue || 0) | currency }}</span>
+      </div>
+    </div>
+
+    <div class="pm-footer">
+      <button type="button" class="btn-review" (click)="onReviewPaymentsFromPending()">
+        <icon name="credit-card-outline" pack="eva"></icon>
+        {{ translate.pendingModal.actionReview }}
+      </button>
+      <button type="button" class="btn-ok" (click)="closePendingSaleModal()">
+        <icon name="checkmark-circle-2-outline" pack="eva"></icon>
+        {{ translate.pendingModal.actionOk }}
+      </button>
+    </div>
+  </div>
+  
+</div>

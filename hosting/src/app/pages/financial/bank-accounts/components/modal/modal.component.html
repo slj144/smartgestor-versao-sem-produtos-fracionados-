@@ -1,0 +1,114 @@
+
+<modal (callback)="onModalResponse($event)">
+  
+  <div slot="content">
+    
+    <div id="container-filters" [style.display]="settings.activeComponent === 'BankAccounts/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" class="centralizer" *ngIf="(settings.activeComponent === 'BankAccounts/Read') || (settings.activeComponent === 'BankAccounts/Delete')">
+      <div class="wrapper">
+
+        <div class="container-data">
+
+          <section class="info">
+            <h5>{{ translate.action.read.section.informations.title }}</h5>
+
+            <div class="content">
+              <p><span class="label">{{ translate.action.read.section.informations.label.code + ':' }}</span> <span class="value">{{ settings.data.code }}</span></p>
+              <p><span class="label">{{ translate.action.read.section.informations.label.name + ':' }}</span> <span class="value">{{ settings.data.name }}</span></p>
+              <p><span class="label">{{ translate.action.read.section.informations.label.agency + ':' }}</span> <span class="value">{{ settings.data.agency }}</span></p>
+              <p><span class="label">{{ translate.action.read.section.informations.label.account + ':' }}</span> <span class="value">{{ settings.data.account }}</span></p>
+            </div>                     
+          </section>
+
+          <section class="transactions" *ngIf="settings.data?.latestTransactions?.length > 0">
+            <h5>{{ translate.action.read.section.latestTransactions.title }}</h5>
+
+            <div class="content">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th>{{ translate.action.read.section.latestTransactions.label.date }}</th>
+                      <th>{{ translate.action.read.section.latestTransactions.label.description }}</th>
+                      <th>{{ translate.action.read.section.latestTransactions.label.operation }}</th>
+                      <th>{{ translate.action.read.section.latestTransactions.label.value }}</th>
+                    </tr>                 
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.latestTransactions">
+                      <td><span>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span></td>
+                      <td><span>{{ (item.description || '----') }}</span></td>
+                      <td><span>{{ item.type?.parsed }}</span></td>
+                      <td><span class="value {{ (item.type.value == 'DEPOSIT' ? 'positive' : 'negative') }}">{{ item.value | currency:'' }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="balance">
+            <p><span class="label">{{ translate.action.read.section.balance.label }}</span> <span class="balance">{{ settings.data.balance | currency }}</span></p> 
+          </section>
+
+          <section class="actions" *ngIf="settings.activeComponent === 'BankAccounts/Read'">
+            <button type="button" class="btn btnBlue" (click)="onOpen({ activeComponent: 'BankAccounts/Transfer', data: settings.data })">{{ translate.action.transfer.title }}</button>
+          </section>
+
+          <section class="extract" *ngIf="(settings.activeComponent === 'BankAccounts/Read') && (settings.data?.latestTransactions?.length > 0)">
+            <h5>Movimentações Bancárias</h5>
+            
+            <div class="content clearfix">
+
+              <select class="form-control" #extractPeriodSelect>
+                <option value="last_7">Últimos 7 dias</option>
+                <option value="last_15">Últimos 15 dias</option>
+                <option value="last_30">Últimos 30 dias</option>
+              </select>
+
+              <button (click)="onPrintExtract(extractPeriodSelect.value)"><icon name="printer-outline" pack="eva"></icon></button>
+            </div>
+          </section>
+
+        </div>
+
+        <div class="container-delete" *ngIf="settings.activeComponent === 'BankAccounts/Delete'">
+          <div class="container-confirmation">
+            <div class="container-info">
+              <p>{{ translate.action.delete.notice }}</p>
+              <small>{{ translate.action.delete.warning }}</small>
+            </div>
+
+            <div class="container-buttons">
+              <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+              <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+            </div>
+          </div>
+        </div>
+                    
+      </div>       
+    </div>
+    
+    <div id="container-register" class="centralizer" *ngIf="(settings.activeComponent === 'BankAccounts/Create') || (settings.activeComponent === 'BankAccounts/Update')">
+      <div class="wrapper">
+        <bank-accounts-register (callback)="onRegisterResponse($event)"></bank-accounts-register>
+      </div>       
+    </div>
+
+    <div id="container-transfer" class="centralizer" *ngIf="(settings.activeComponent === 'BankAccounts/Transfer')">
+      <div class="wrapper">
+        <bank-accounts-transfer (callback)="onTransferResponse($event)"></bank-accounts-transfer>
+      </div>
+    </div>
+    
+  </div>
+  
+  <div slot="components">
+    <bank-accounts-layer (callBack)="onLayerResponse($event)"></bank-accounts-layer>
+    <bank-accounts-print (callback)="onPrintResponse($event)"></bank-accounts-print>
+  </div>
+
+</modal>

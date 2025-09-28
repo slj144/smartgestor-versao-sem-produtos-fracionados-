@@ -1,0 +1,91 @@
+<div id="containerFormRegister" *ngIf="checkBootstrap">
+
+  <form [formGroup]="formVehicle" class="form" autocomplete="off" (submit)="onSubmit()">
+
+    <div class="container-owner">
+      <h6>
+        <span>Proprietário</span>
+        <!-- [disabled]="settings.data?.code" -->
+        <button type="button" (click)="onOpenLayer('owners')">
+          <icon name="search-outline" pack="eva"></icon>
+        </button>
+      </h6>
+
+      <div class="data" *ngIf="formControls.proprietary.value">
+        <p>
+          <span class="label">{{ translate.panel.proprietary.label.name }}:</span> <span class="value">{{
+            formControls.proprietary.value?.name }}</span>
+        </p>
+
+        <p *ngIf="formControls.proprietary.value?.personalDocument">
+          <span class="label">{{ formControls.proprietary.value.personalDocument.type }}:</span> <span class="value">{{
+            formControls.proprietary.value?.personalDocument.value }}</span>
+        </p>
+
+        <p *ngIf="formControls.proprietary.value?.businessDocument">
+          <span class="label">{{ formControls.proprietary.value.businessDocument.type }}:</span> <span class="value">{{
+            formControls.proprietary.value?.businessDocument.value }}</span>
+        </p>
+
+        <p *ngIf="formControls.proprietary.value?.contacts?.phone">
+          <span class="label">{{ translate.panel.proprietary.label.phone }}:</span> <span class="value">{{
+            formControls.proprietary.value?.contacts?.phone }}</span>
+        </p>
+
+        <p *ngIf="formControls.proprietary.value?.contacts?.email">
+          <span class="label">{{ translate.panel.proprietary.label.email }}:</span> <span class="value">{{
+            formControls.proprietary.value?.contacts?.email }}</span>
+        </p>
+
+        <p *ngIf="formControls.proprietary.value?.address">
+          <span class="label">{{ translate.panel.proprietary.label.address }}:</span> <span class="value">{{
+            formControls.proprietary.value?.address }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="row p-2">
+
+      <div class="col-12 col-md-6 form-group">
+        <label>{{ translate.panel.vehicle.label.plate }}</label>
+        <input type="text" formControlName="plate"
+          class="form-control {{ formControls.plate.errors ? 'field-required' : '' }} text-uppercase"
+          (input)="onApplyPlateMask($event, formControls.plate)" />
+      </div>
+
+      <div class="col-12 col-md-6 form-group">
+        <label>{{ translate.panel.vehicle.label.model }}</label>
+        <input type="text" formControlName="model"
+          class="form-control {{ formControls.model.errors ? 'field-required' : '' }}" />
+      </div>
+
+      <div class="col-12 col-md-6 form-group">
+        <label>{{ translate.panel.vehicle.label.color }}</label>
+        <input type="text" formControlName="color"
+          class="form-control {{ formControls.color.errors ? 'field-required' : '' }} text-uppercase" />
+      </div>
+
+      <div class="col-12 col-md-6 form-group">
+        <label>{{ translate.panel.vehicle.label.mileage }}</label>
+        <input type="text" formControlName="mileage"
+          class="form-control {{ formControls.mileage.errors ? 'field-required' : '' }}"
+          (input)="onApplyMileageMask($event, formControls.mileage)" />
+      </div>
+
+      <div class="col-12 form-group">
+        <label>{{ translate.panel.vehicle.label.chassis }}</label>
+        <input type="text" formControlName="chassis" class="form-control" />
+      </div>
+
+    </div>
+
+    <small class="alert-required" *ngIf="formVehicle.invalid">{{ translate.panel.notice }}</small>
+
+    <button type="submit" class="btn btnBlue" [disabled]="formVehicle.invalid">{{ translate.panel.button.submit
+      }}</button>
+
+  </form>
+
+  <vehicles-register-layer (callback)="onLayerResponse($event)"></vehicles-register-layer>
+
+</div>

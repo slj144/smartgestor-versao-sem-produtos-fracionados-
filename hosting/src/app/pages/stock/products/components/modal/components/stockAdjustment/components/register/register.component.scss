@@ -1,0 +1,199 @@
+
+#containerFormUpdate {
+  padding: 10px 20px 20px;
+  overflow-y: auto;
+  form {
+    width: 500px;
+    max-width: 100%;
+    margin: 0 auto;
+    h6 {
+      color: #555;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 0 0 2px;
+      position: relative;
+      border-bottom: 1px solid #ddd;
+    }
+    label {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }
+    textarea {
+      height: 120px;
+      &.important {
+        border-left-color: coral;
+        &:focus {
+          border-color: rgba(255, 127, 80, 0.75);
+        }
+      }
+    }
+    fieldset {
+      padding: 0;
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+    input[type=file] {
+      display: none;
+    }
+    input[disabled] {
+      opacity: 0.65;
+      background-color: #eee;
+    }        
+    small {
+      &.info {            
+        color: #999;
+        display: block;
+        margin-top: -6px;
+        padding: 0;
+      }
+      &.error {
+        color: red;
+      }
+    }
+    button {
+      margin: 10px auto;
+      display: block;
+      padding: 5px 40px;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: rgb(102, 102, 255);
+      color: #fff;    
+    }
+    .container-field {
+      position: relative;
+      padding: 0;      
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      button {
+        width: 35px;
+        height: 100%;
+        position: absolute;
+        top: 0; 
+        right: 0;      
+        margin: 0;
+        padding: 2px 0 0;
+        background-color: transparent;
+        border: none;
+        border-radius: 0;
+        outline: none;        
+        font-weight: 500;
+        color: rgb(102, 102, 255);
+        cursor: pointer;
+        icon {
+          position: relative;
+          top: -1px;
+          font-size: 18px;
+        }
+        &:hover {
+          opacity: 0.7;
+        }
+        &:disabled {
+          color: rgba(205, 92, 92, 0.7);
+          cursor: default;
+        }
+      }      
+      input {
+        font-size: 14px;    
+        padding-right: 35px;
+        &[disabled] {
+          background-color: rgba(255, 255, 255, 0.85);
+        }
+      } 
+    }
+    .container-product {
+      margin-top: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px #ddd;
+      table {
+        tr {
+          cursor: pointer;
+          border-bottom: 1px solid cyan;
+          td {
+            padding: 10px;
+            vertical-align: middle;            
+            span {
+              font-size: 13px;
+              display: block;                
+              line-height: 14px;
+              &.label {
+                color: #666;
+                font-weight: 600;
+                margin-right: 5px;
+              }
+              &.value {
+                color: #888;                   
+              }
+              &.label,
+              &.value {
+                display: inline-block !important;
+              }
+            } 
+            .container-image {
+              width: 45px;
+              height: 45px;
+              margin: 0 auto;
+              border-radius: 5px;
+              box-shadow: 0 2px 4px #ccc;
+              background-color: #fff;
+              img {
+                width: 100%;
+                height: 100%;
+              }
+            }                           
+          }
+        }
+      }
+    }
+    .manager-type {
+      select, fieldset {
+        width: calc(100% - 40px);
+        margin-right: 5px;
+        float: left;
+      }
+      button {
+        width: 35px !important;
+        height: 35px !important;
+        padding: 0;
+        margin: 0;
+        float: left;
+        position: relative;
+        top: 0;
+        background-color: rgb(182, 182, 182);
+        background-image: linear-gradient(rgb(195, 186, 186), rgb(163, 163, 163));
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        icon {
+          font-size: 18px;
+        }
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }
+    input, select, textarea {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;
+      resize: none;
+    }
+    .required {
+      border-color: indianred;
+      &:focus {
+        border-color: rgba(205, 92, 92, 0.75);
+      }
+    } 
+  } 
+  .loader{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+  }
+}

@@ -1,0 +1,32 @@
+
+#address-component {
+  padding: 10px 10px 70px;
+  display: block;
+  background-color: #fff;
+  .required {
+    border-color: indianred;
+    &:focus {
+      border-color: rgba(205, 92, 92, 0.75);
+    }
+  }
+
+  .container-cep{
+    display: flex;
+    width: 100%;
+    padding: 0 !important;
+    margin: -7px 0 0 0 !important;
+    flex-direction: row !important;
+    input{
+      width: calc(100% - 35px);
+    }
+    button{
+      width: 35px;
+      height: 37px;
+      margin: 0 !important;
+      padding: 0;
+      background-color: rgb(102, 102, 255);
+      color: #fff;
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,333 @@
+<div id="container-main">
+
+  <tabs (callback)="onTabsResponse($event)">
+    <div slot="tab-items">
+
+      <div target="sales">
+
+        <div class="container-header">
+          <custom-header [loading]="loading" [filtersBadge]="filtersBadge" (filter)="onFilter($event)"
+            (search)="onSearch($event)">
+            <ng-container slot="buttons-of-header">
+              <div class="container-select">
+                <select (change)="onStatus($event)">
+                  <option value="ALL">{{ translate.tabs.segment.sales.statusSelector.all }}</option>
+                  <option value="CONCLUDED">{{ translate.tabs.segment.sales.statusSelector.concluded }}</option>
+                  <option value="PENDENT">{{ translate.tabs.segment.sales.statusSelector.pendent }}</option>
+                  <option value="CANCELED">{{ translate.tabs.segment.sales.statusSelector.canceled }}</option>
+                </select>
+              </div>
+            </ng-container>
+          </custom-header>
+        </div>
+
+        <div class="container-sales" *ngIf="!loading && recordsData?.length">
+          <ul class="row p-0">
+            <li class="col-12 col-lg-6 col-xl-4" *ngFor="let item of recordsData"
+              (click)="onRead($event, item, 'Sale')">
+              <div class="wrapper">
+                <div class="header {{ item.status | lowercase }}">
+
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span>{{ item.code }}</span>
+                        <small>{{ translate.tabs.segment.sales.block.label.code }}</small>
+                      </td>
+                      <td>
+                        <span>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                        <small>{{ translate.tabs.segment.sales.block.label.date }}</small>
+                      </td>
+                    </tr>
+                  </table>
+
+                </div>
+
+                <div class="info">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td *ngIf="item.customer">
+                        <small>{{ translate.tabs.segment.sales.block.label.customer }}:</small>
+                        <span>{{ item.customer.name }}</span>
+                      </td>
+                      <td *ngIf="item.member">
+                        <small>{{ translate.tabs.segment.sales.block.label.member }}:</small>
+                        <span>{{ item.member.name }}</span>
+                      </td>
+                      <td>
+                        <small>{{ translate.tabs.segment.sales.block.label.operator }}:</small>
+                        <span>{{ item.operator?.name }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="footer">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span><span class="label">{{ translate.tabs.segment.sales.block.label.value }}:</span> <span
+                            class="value">{{ item.balance?.total | currency }}</span></span>
+                      </td>
+                      <td *ngIf="!embed">
+                        <span><span class="label">{{ translate.tabs.segment.sales.block.label.status }}:</span> <span
+                            class="value">{{ translate.tabs.segment.sales.block.enum.status[item.status]
+                            }}</span></span>
+                      </td>
+                      <td *ngIf="embed && (item.status == 'PENDENT')" class="p-1">
+                        <button class="btnAction btnPrint" [tooltip]="translate.tabs.segment.sales.block.action.print"
+                          (click)="onPrint($event, item, 'Sale')">
+                          <icon name="printer-outline" pack="eva"></icon>
+                        </button>
+                        <button class="btnAction btnEdit" [tooltip]="translate.tabs.segment.sales.block.action.update"
+                          (click)="onUpdate($event, item, 'Sale')">
+                          <icon name="pencil-alt" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnCancel" [tooltip]="translate.tabs.segment.sales.block.action.cancel"
+                          (click)="onCancel($event, item, 'Sale')" *ngIf="permissions.cancelSales">
+                          <icon name="close" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnOperator"
+                          [tooltip]="translate.tabs.segment.sales.block.action.changeOperator"
+                          (click)="onChangeOperator($event, item)" *ngIf="permissions.changeOperator">
+                          <icon name="person"></icon>
+                        </button>
+                        <button class="btnAction btnDuplicate"
+                          [tooltip]="translate.tabs.segment.sales.block.action.duplicate"
+                          (click)="onDuplicate($event, item)" *ngIf="permissions.duplicateSales">
+                          <icon name="copy-outline" pack="eva"></icon>
+                        </button>
+                      </td>
+                      <td *ngIf="embed && (item.status == 'CONCLUDED')" class="p-1">
+                        <button class="btnAction btnPrint" [tooltip]="translate.tabs.segment.sales.block.action.print"
+                          (click)="onPrint($event, item, 'Sale')">
+                          <icon name="printer-outline" pack="eva"></icon>
+                        </button>
+                        <button class="btnAction btnEdit" [tooltip]="translate.tabs.segment.sales.block.action.update"
+                          (click)="onUpdate($event, item, 'Sale')"
+                          *ngIf="permissions.editSales && ((item.registerDate >= period?.start && item.registerDate <= period?.end) || isAdmin)">
+                          <icon name="pencil-alt" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnCancel" [tooltip]="translate.tabs.segment.sales.block.action.cancel"
+                          (click)="onCancel($event, item, 'Sale')" *ngIf="permissions.cancelSales">
+                          <icon name="close" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnOperator"
+                          [tooltip]="translate.tabs.segment.sales.block.action.changeOperator"
+                          (click)="onChangeOperator($event, item)" *ngIf="permissions.changeOperator">
+                          <icon name="person"></icon>
+                        </button>
+                        <button class="btnAction btnDuplicate"
+                          [tooltip]="translate.tabs.segment.sales.block.action.duplicate"
+                          (click)="onDuplicate($event, item)" *ngIf="permissions.duplicateSales">
+                          <icon name="copy-outline" pack="eva"></icon>
+                        </button>
+                        <button class="btnAction btnFiscal" [tooltip]="translate.tabs.segment.sales.block.action.fiscal"
+                          (click)="onEmitNf($event, item)" *ngIf="checkFiscal(item)">
+                          <icon name="file-text-outline" pack="eva"></icon>
+                        </button>
+                      </td>
+                      <td *ngIf="embed && (item.status == 'CANCELED')" class="p-1">
+                        <button class="btnAction btnPrint" [tooltip]="translate.tabs.segment.sales.block.action.print"
+                          (click)="onPrint($event, item, 'Sale')">
+                          <icon name="printer-outline" pack="eva"></icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div target="inflows">
+
+        <div class="container-header">
+          <custom-header [loading]="loading" [filtersBadge]="filtersBadge" (filter)="onFilter($event)"
+            (search)="onSearch($event)">
+            <ng-container slot="buttons-of-header">
+              <div class="container-select">
+                <select (change)="onStatus($event)">
+                  <option value="ALL">{{ translate.tabs.segment.inflows.statusSelector.all }}</option>
+                  <option value="CONCLUDED">{{ translate.tabs.segment.inflows.statusSelector.concluded }}</option>
+                  <option value="CANCELED">{{ translate.tabs.segment.inflows.statusSelector.canceled }}</option>
+                </select>
+              </div>
+            </ng-container>
+          </custom-header>
+        </div>
+
+        <div class="container-inflows" *ngIf="!loading && recordsData?.length">
+          <ul class="row p-0">
+            <li class="col-12 col-lg-6 col-xl-4" [title]="translate.tabs.segment.inflows.block.action.read.title"
+              *ngFor="let item of recordsData" (click)="onRead($event, item, 'Inflow')">
+              <div class="wrapper">
+                <div class="header {{ item.status | lowercase }}">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span>{{ item.code }}</span>
+                        <small>{{ translate.tabs.segment.inflows.block.label.code }}</small>
+                      </td>
+                      <td>
+                        <span>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                        <small>{{ translate.tabs.segment.inflows.block.label.date }}</small>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="info">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <small>{{ translate.tabs.segment.inflows.block.label.operator }}:</small>
+                        <span>{{ item.operator?.name }}</span>
+                      </td>
+                      <td>
+                        <small>{{ translate.tabs.segment.inflows.block.label.category }}:</small>
+                        <span>{{ item.category?.name }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="footer">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span><span class="label">{{ translate.tabs.segment.inflows.block.label.value }}:</span> <span
+                            class="value">{{ item.value | currency }}</span></span>
+                      </td>
+                      <td *ngIf="!embed">
+                        <span><span class="label">{{ translate.tabs.segment.inflows.block.label.status }}:</span> <span
+                            class="value">{{ translate.tabs.segment.inflows.block.enum.status[item.status]
+                            }}</span></span>
+                      </td>
+                      <td *ngIf="embed" class="p-1">
+                        <button class="btnAction btnCancel"
+                          [tooltip]="translate.tabs.segment.inflows.block.action.cancel"
+                          (click)="onCancel($event, item, 'Inflow')"
+                          *ngIf="permissions.cancelSales && (item.status == 'CONCLUDED')">
+                          <icon name="close" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnDelete"
+                          [tooltip]="translate.tabs.segment.inflows.block.action.delete"
+                          (click)="onDelete($event, item, 'Inflow')"
+                          *ngIf="permissions.cancelSales && (item.status == 'CANCELED')">
+                          <icon name="trash" pack="fa"></icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <div target="outflows">
+
+        <div class="container-header">
+          <custom-header [loading]="loading" [filtersBadge]="filtersBadge" (filter)="onFilter($event)"
+            (search)="onSearch($event)">
+            <ng-container slot="buttons-of-header">
+              <div class="container-select">
+                <select (change)="onStatus($event)">
+                  <option value="ALL">{{ translate.tabs.segment.outflows.statusSelector.all }}</option>
+                  <option value="CONCLUDED">{{ translate.tabs.segment.outflows.statusSelector.concluded }}</option>
+                  <option value="CANCELED">{{ translate.tabs.segment.outflows.statusSelector.canceled }}</option>
+                </select>
+              </div>
+            </ng-container>
+          </custom-header>
+        </div>
+
+        <div class="container-outflows" *ngIf="!loading && recordsData?.length">
+          <ul class="row p-0">
+            <li class="col-12 col-lg-6 col-xl-4" [title]="translate.tabs.segment.outflows.block.action.read.title"
+              *ngFor="let item of recordsData" (click)="onRead($event, item, 'Outflow')">
+              <div class="wrapper">
+                <div class="header {{ item.status | lowercase }}">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span>{{ item.code }}</span>
+                        <small>{{ translate.tabs.segment.outflows.block.label.code }}</small>
+                      </td>
+                      <td>
+                        <span>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                        <small>{{ translate.tabs.segment.outflows.block.label.date }}</small>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="info">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <small>{{ translate.tabs.segment.outflows.block.label.operator }}:</small>
+                        <span>{{ item.operator?.name }}</span>
+                      </td>
+                      <td>
+                        <small>{{ translate.tabs.segment.outflows.block.label.category }}:</small>
+                        <span>{{ item.category?.name }}</span>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <div class="footer">
+                  <table class="table table-borderless">
+                    <tr>
+                      <td>
+                        <span><span class="label">{{ translate.tabs.segment.outflows.block.label.value }}:</span> <span
+                            class="value">{{ item.value | currency }}</span></span>
+                      </td>
+                      <td *ngIf="!embed">
+                        <span><span class="label">{{ translate.tabs.segment.outflows.block.label.status }}:</span> <span
+                            class="value">{{ translate.tabs.segment.outflows.block.enum.status[item.status]
+                            }}</span></span>
+                      </td>
+                      <td *ngIf="embed" class="p-1">
+                        <button class="btnAction btnCancel"
+                          [tooltip]="translate.tabs.segment.outflows.block.action.cancel"
+                          (click)="onCancel($event, item, 'Outflow')"
+                          *ngIf="permissions.cancelSales && (item.status == 'CONCLUDED')">
+                          <icon name="close" pack="fa"></icon>
+                        </button>
+                        <button class="btnAction btnDelete"
+                          [tooltip]="translate.tabs.segment.outflows.block.action.delete"
+                          (click)="onDelete($event, item, 'Outflow')"
+                          *ngIf="permissions.cancelSales && (item.status == 'CANCELED')">
+                          <icon name="trash" pack="fa"></icon>
+                        </button>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+  </tabs>
+
+  <placeholder [loading]="loading" [hasData]="recordsData?.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<div *ngIf="!embed">
+  <cashier-front-receipts></cashier-front-receipts>
+</div>
+
+<cashier-records-modal (callback)="onModalResponse($event)"></cashier-records-modal>

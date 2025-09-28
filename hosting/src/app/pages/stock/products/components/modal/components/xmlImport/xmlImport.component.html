@@ -1,0 +1,151 @@
+
+<main id="container-xml-import">
+
+  <div class="{{ embed ? 'embed' : ''  }} panel">
+
+    <div class="container-components-one">
+
+      <div class="container-file">
+
+        <!-- <h6>
+          <span>Arquivo</span>
+        </h6>      -->
+  
+        <div class="data">
+  
+          <div class="form-group">
+            <label>Arquivo</label>
+    
+            <div class="container-attachment">
+              
+              <table>
+                <tr>
+                  <td><icon name="file-outline" pack="eva"></icon></td>
+                  <td>
+                    <span class="info" *ngIf="data.attachment">{{ data.attachment?.name + ' (' + data.attachment?.size + ' MB)' }}</span>
+                    <span class="no-file" *ngIf="!data.attachment">{{ translate.settings.label.attachment.message.noFile }}</span>
+                  </td>
+                  <td (click)="onCaptureXmlFile(attachment)">
+                    <button type="button"><icon name="edit-outline" pack="eva"></icon></button>
+                  </td>
+                </tr>
+              </table>
+    
+              <input type="file" #attachment />
+            </div>        
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-data" *ngIf="settings">
+        <span class="title">Dados para atualizar além dos tributos:</span>
+
+        <div class="container-data-items">
+          <label>
+            <input type="checkbox" [checked]="settings.fields.name" (change)="onToggleTicketData('name')" />
+            <span>Nome</span>
+          </label>
+
+          <label>
+            <input type="checkbox" [checked]="settings.fields.quantity" (change)="onToggleTicketData('quantity')" />
+            <span>Quantidade</span>
+          </label>
+
+          <label>
+            <input type="checkbox" [checked]="settings.fields.costPrice" (change)="onToggleTicketData('costPrice')" />
+            <span>P.Custo</span>
+          </label>
+        </div>
+      </div>
+  
+      <div class="container-products">
+
+        <h6>
+          <span>{{ translate.products.title }}</span>
+  
+          <!-- <div class="quick-search">
+            <input type="text" [placeholder]="translate.products.quickSearch.placeholder" autocomplete="off" (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)" #inputQuickSearch />
+            <button (click)="onQuickSearch(inputQuickSearch)"><icon name="search-outline" pack="eva"></icon></button>
+          </div>  -->
+  
+          <!-- <button (click)="onOpenLayer('products')"><icon name="funnel-outline" pack="eva"></icon></button> -->
+        </h6>
+  
+        <div class="data">
+
+          <div *ngIf="data.products?.length > 0">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>                
+                    <th></th>
+                    <th class="code">{{ translate.products.label.code }}</th>
+                    <th class="text-left">{{ translate.products.label.name }}</th>
+                    <th>{{ translate.products.label.costPrice }}</th>
+                    <!-- <th>{{ translate.products.label.salePrice }}</th> -->
+                    <th>Selecionar Produto</th>
+                    <!-- <th>{{ translate.products.label.total }}</th> -->
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of data.products; let i = index">
+                    <td class="action">
+                      <button class="btnClose" (click)="onDeleteProductItem(i)"><icon name="close" pack="eva"></icon></button>
+                    </td>
+                    <td class="code">{{ item.code }}</td>
+                    <td class="name">{{ item.name }}</td>
+                    <!-- <td class="quantity">
+                      <input [value]="item.selectedItems" autocomplete="off" (input)="onApplyQuantity(item, quantityField)" (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                    </td> -->
+                    <td class="price">
+                      <input [value]="item.costPrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, costPriceField, 'costPrice')" [disabled]="true" #costPriceField />
+                    </td>
+                    <!-- <td class="price">
+                      <input [value]="item.salePrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, salePriceField, 'salePrice')" [disabled]="true" #salePriceField />
+                    </td> -->
+
+                    <td class="product-search">
+                      <div class="quick-search">
+                        <input type="text" [placeholder]="translate.products.quickSearch.placeholder" autocomplete="off" (keydown.enter)="onQuickSearch(inputQuickSearch, i)" (input)="onApplyNumberMask($event)" #inputQuickSearch />
+                        <button (click)="onQuickSearch(inputQuickSearch, i)"><icon name="search-outline" pack="eva"></icon></button>
+                      </div> 
+                       <button class="openLayer" (click)="onOpenLayer('products', i)"><icon name="funnel-outline" pack="eva"></icon></button>
+                    </td>
+
+                    <!-- <td class="average">
+                      <input [value]="item.averageCost | currency:''" [disabled]="true" />
+                    </td> -->
+                    <!-- <td class="total">
+                      <input [value]="(item.costPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                    </td> -->
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="!data.products || (data.products?.length == 0)" class="placeholder-container">
+            <div class="wrapper">
+              <div class="icon-container">
+                <icon name="shopping-bag-outline" pack="eva"></icon>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    
+  </div>
+
+  <div class="floating-button">
+    <button class="btnAdd" (click)="onImport()" *ngIf="isEnabled()"><icon name="upload-outline" pack="eva"></icon></button>
+  </div>
+
+  <xml-import-layer (callback)="onLayerResponse($event)"></xml-import-layer>
+  
+</main>

@@ -1,0 +1,39 @@
+<div id="containerFormTransfer" *ngIf="checkBootstrap">
+
+  <form class="form" [formGroup]="formTransfer" (submit)="onSubmit()" autocomplete="off">
+
+    <div class="row">
+      <div class="col-6 form-group">
+        <label>{{ translate.form.fromAccount.label }}</label>
+        <select class="form-control {{ formControls.fromCode.errors ? 'required' : '' }}" formControlName="fromCode">
+          <option value="" disabled>--</option>
+          <option *ngFor="let item of accounts" [value]="item.code">{{ item.code }} - {{ item.name }}</option>
+        </select>
+      </div>
+      <div class="col-6 form-group">
+        <label>{{ translate.form.toAccount.label }}</label>
+        <select class="form-control {{ formControls.toCode.errors ? 'required' : '' }}" formControlName="toCode">
+          <option value="" disabled>--</option>
+          <option *ngFor="let item of accounts" [value]="item.code">{{ item.code }} - {{ item.name }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-6 form-group">
+        <label>{{ translate.form.amount.label }}</label>
+        <input type="text" class="form-control {{ formControls.amount.errors ? 'required' : '' }}" formControlName="amount" (input)="onPriceFieldMask($event, formControls.amount)" />
+      </div>
+      <div class="col-6 form-group">
+        <label>{{ translate.form.description.label }}</label>
+        <input type="text" class="form-control" formControlName="description" />
+      </div>
+    </div>
+
+    <small *ngIf="formTransfer.invalid">{{ translate.form.messages.notice }}</small>
+
+    <button type="submit" class="btn btnBlue" [disabled]="formTransfer.invalid">{{ translate.form.button.submit }}</button>
+  </form>
+
+</div>
+

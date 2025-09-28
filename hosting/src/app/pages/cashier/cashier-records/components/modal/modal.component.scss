@@ -1,0 +1,335 @@
+
+modal {
+  z-index: 1 !important;
+  #container-read {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;
+    table-layout: fixed;
+    // z-index: 1053 !important;
+    
+    .container-sale,
+    .container-input,
+    .container-output {
+      display: table-row;
+      .container-info {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          width: 700px;
+          max-width: 100%;
+          padding: 15px;
+          border: 1px solid #ddd;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 5px;
+          margin: 0 auto;
+          background-color: #fff;
+          .container-data {
+            padding: 0 5px;
+            section {
+              margin-bottom: 12px;
+              h5, .sub {
+                line-height: 22px;
+                font-size: 13px;
+                font-weight: 600;
+                margin: 0 0 10px;
+                border-bottom: 1px solid #ddd;
+              }
+              .sub{
+                border: none !important
+              }
+              .content {
+                padding: 0 0 5px;
+                padding-left: 15px;
+                p {
+                  margin: 0;
+                  line-height: 13px;
+                  span {
+                    display: inline;
+                    &.label {
+                      color: #666;
+                      font-size: 11px;
+                      font-weight: 600;
+                    }
+                    &.value {
+                      color: #888;
+                      font-size: 12px;
+                      margin-left: 4px;
+                    }
+                  }
+                }     
+                .table-responsive {
+                  table {
+                    margin: 0;
+                    th, td {
+                      vertical-align: middle;
+                      &.col-xsmall {
+                        width: 70px;
+                      }
+                      &.col-small {
+                        width: 110px;
+                      }
+                      &.col-medium {
+                        width: 138px;
+                      }
+                    }
+                  }
+                } 
+              }
+              &.info {
+                table {
+                  tr td {
+                    font-size: 12px;
+                    padding: 0;
+                    &.date {
+                      text-align: right;
+                      padding-right: 10px;
+                    }
+                  }
+                }
+              } 
+              &.services, 
+              &.products {
+                table {
+                  margin: 0;
+                  thead {                  
+                    tr {
+                      font-size: 11px;                    
+                      th {
+                        color: #777;
+                        padding: 0 10px;
+                        font-weight: 500;
+                        text-align: center;
+                        vertical-align: middle;
+                        border-bottom: 1px solid #ddd;
+                      }                  
+                    }
+                  }
+                  tbody {
+                    tr {
+                      border-bottom: 1px solid #ddd;
+                      td {
+                        padding: 5px;
+                        vertical-align: middle;
+                        border-right: 1px solid #eee;                      
+                        span {
+                          font-size: 12px;
+                          &.price {
+                            color: goldenrod;
+                          }
+                        }   
+                        &:nth-child(1), &:nth-child(3),
+                        &:nth-child(4), &:nth-child(5) {
+                          text-align: center;
+                        }                  
+                        &:last-child {
+                          border-right: none;
+                          span.price {
+                            color: green;
+                          }
+                        }
+                      }            
+                      &:last-child {
+                        border-bottom: none;
+                      }
+                    }               
+                  }
+                } 
+              }
+              &.balance {
+                table {
+                  tr {
+                    text-align: left;
+                    th {
+                      color: #555;
+                      font-size: 13px;             
+                      font-weight: 600;
+                    } 
+                    td {
+                      color: #666;
+                      .table-internal {   
+                        tr {                
+                          td {
+                            padding-top: 3px;
+                            padding-bottom: 3px;
+                            font-size: 11px;
+                            &.label {                          
+                              font-weight: 500;
+                              text-transform: uppercase;
+                            }
+                            &.value {
+                              font-weight: 600;
+                              text-align: left;
+                            }
+                          }
+                        }
+                      }                  
+                      &.total {
+                        color: coral;
+                        font-size: 13px;
+                        font-weight: 700;
+                        text-align: left;
+                      }                  
+                      &.removePadding {
+                        padding: 0 0 0 20px !important;
+                      }
+                    }                 
+                    th, td {
+                      vertical-align: middle;
+                      padding: 5px 10px 5px 0;                  
+                    }  
+                    &.markLine {
+                      border-top: 1px solid #000;
+                    }             
+                    &:last-child {
+                      border-top: 1px dotted #ddd;
+                    }                              
+                  }          
+                }
+              }
+              &.paymentMethods {
+                table {
+                  margin-bottom: 10px !important;
+                  tr {
+                    text-align: left;
+                    th {
+                      color: #666;
+                      font-weight: 600;                      
+                    }
+                    th, td {
+                      vertical-align: middle;
+                      padding: 2px 10px;
+                      font-size: 13px;    
+                      span {
+                        display: block;
+                      }
+                      &:last-child {
+                        text-align: right;
+                      }
+                    }    
+                    &.payment-history {
+                      padding: 0 !important;
+                      td {
+                        padding: 0 auto !important;
+                        border-top: 1px solid #ddd !important;
+                        border-bottom: 1px solid #ddd !important;
+                        small {
+                          margin: 0;
+                          padding: 0;
+                          color: gray;
+                          line-height: 5px;
+                        }
+                        &:first-child {
+                          padding-left: 25px;
+                        }
+                      }
+                    }
+                    &.payment-note {
+                      background-color: #eee;
+                      span {
+                        &.note {
+                          color: #999;
+                          padding: 5px 0;
+                          padding-left: 15px;
+                          font-size: 12px;
+                          line-height: 13px;
+                          text-align: left;
+                          b {
+                            color: #777;
+                            font-weight: 600;
+                          }
+                        }
+                      }
+                    }
+                    &:last-child {
+                      border-bottom: none;
+                    }
+                  }                 
+                }
+              }
+            }
+            .btnPrint {
+              font-size: 13px;
+              outline: none;
+              border-radius: 7px;
+              border: none;
+              padding: 8px 20px;
+              margin: 10px auto 5px;
+              display: block;
+              color: #fff;
+              box-shadow: 0 2px 4px #ccc;
+              background-color: rgb(102, 102, 255);
+              transition: all 0.5s ease-in-out;
+              icon {
+                font-size: 15px;
+                margin-right: 4px;
+              }                                  
+              &:hover {
+                opacity: 0.8;
+              }  
+            }   
+          }         
+        }
+      }
+    }
+    .container-cancel,
+    .container-delete {
+      .container-confirmation {
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+        .container-info {
+          width: 100%;
+          display: block;
+          padding: 20px 10px;
+          p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            color: gray;
+          }
+          small {
+            width: 75%;
+            margin: 0 auto;
+            color: rgba(255, 0, 0, 0.75);
+            text-align: center;
+            display: block;
+          }
+        }
+        .container-buttons {
+          width: 100%;
+          height: 30px;
+          padding: 10px 0 0;
+          text-align: right;
+          display: table;
+          border-top: 1px dotted #ddd;
+          button {
+            height: 30px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            display: inline-table;
+            transition: all 0.3s ease;
+            &.btnCancel {
+              color: rgba(234, 20, 20, 0.8) !important;
+              background-color: #fff !important;
+              font-size: 12px;
+              margin-right: 5px;
+            }
+            &.btnConfirm {
+              color: #fff !important;
+              background-color: rgb(100, 100, 234) !important;
+              font-size: 13px;
+            }
+            &:disabled {
+              opacity: 0.8;
+            }                 
+          }
+        }      
+      }
+    }
+  } 
+}

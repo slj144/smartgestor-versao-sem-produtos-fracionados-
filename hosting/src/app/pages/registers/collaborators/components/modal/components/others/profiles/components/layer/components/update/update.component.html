@@ -1,0 +1,54 @@
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container">
+      <div *ngIf="formControls">
+
+        <div *ngIf="settings.data && settings.data.action != 'delete'" id="containerCRU">
+          <form *ngIf="model" [formGroup]="model" (submit)="onConfirmSubmit()">
+    
+            <div class="form-group" *ngIf="settings.data.action != 'view'">
+              <label>{{ translate.profilesModal.profileName }}</label>
+              <input type="text" formControlName="name" class="form-control {{ model.value.name ? '' : 'required' }}"/>
+            </div>
+            
+            <p class="title" *ngIf="settings.data.action == 'view'"><span>{{ translate.profilesModal.profileName }} </span> {{ model.value.name }}</p>
+
+            <div class="form-group" *ngIf="settings.data.action == 'add' || settings.data.action == 'edit'">
+              <label>{{ translate.profilesModal.cloneProfile }}</label>
+              <select class="form-control" (change)="onChangeClone($event)" formControlName="cloneProfile">
+                <option></option>
+                <option value="{{ item.code }}" *ngFor="let item of profiles">{{ item.name }}</option>
+              </select>
+            </div>
+    
+            <div class="form-group">
+              <label>{{ translate.profilesModal.permissions }}</label>
+              <collaborators-permissions *ngIf="!submited" [settings]="settings" (callback)="onPermissionsReponse($event)"></collaborators-permissions>
+            </div>
+    
+            <small class="requiredMessage" *ngIf="model.invalid || !isSelectedPermissions()">{{ translate.profilesModal.mandatoryFields }}</small> 
+    
+            <button class="btn success" [disabled]="checkEnableButton()" *ngIf="settings.data.action != 'view'" type="submit">{{ translate.profilesModal.confirm }}</button>
+          </form>
+        </div>
+    
+        <div *ngIf="settings.data && settings.data.action == 'delete'" id="containerDelete">
+          <div class="container-confirmation">
+
+            <p>{{ translate.profilesModal.profileRemoveConfirmation }} ({{settings.data.selectedData.name}})?</p>
+  
+            <collaborators-permissions [settings]="settings" *ngIf="onPermissionsReponse" (callback)="onPermissionsReponse($event)"></collaborators-permissions>
+    
+            <div class="container-buttons clearfix">
+              <button class="btn btnBlue" (click)="onConfirmDelete()">Confirmar</button>
+              <button class="btn btnRed" (click)="onCloseLayer()">Cancelar</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+</layer>

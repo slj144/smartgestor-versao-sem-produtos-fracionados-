@@ -1,0 +1,144 @@
+
+.container-general,
+.container-sales,
+.container-inflows,
+.container-outflows {
+  padding: 10px;
+  h6 {
+    padding: 5px 0;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    color: #777;
+    margin: 10px 0;
+  }
+  table {
+    font-family: Arial, Helvetica, sans-serif !important;
+    thead {
+      tr {
+        border-top: none;          
+        th {
+          font-size: 12px;
+          text-align: center;
+          color: #888;
+          background-color: #e0e0e0;
+          &.col-small {
+            width: 120px !important;
+          }
+          &.col-medium {
+            width: 150px !important;
+          }
+        }               
+      }
+    }
+    tbody {
+      tr {
+        border-bottom: none;         
+        td {
+          font-size: 12px;
+          text-align: center;
+          vertical-align: middle;
+          color: #888;
+          table {
+            width: 100%;
+            tr {
+              border-bottom: 1px solid #ddd;   
+              background-color: transparent !important;                                     
+              td {
+                padding: 0 3px;
+                border: none;
+                text-align: left;                   
+                &:nth-child(2) {
+                  min-width: 120px;                          
+                }
+              }
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+          }
+          &.markColumn {                    
+            font-weight: 500;
+            background-color: rgba(226, 218, 218, 0.5);
+          }
+        }          
+        &:nth-child(odd) {
+          background-color: rgb(221, 243, 243);
+        }          
+      }
+    }
+    tfoot {
+      tr {
+        border-bottom: 1px solid #ddd;
+        background-color: #e0e0e0;
+        th {
+          color: #888;
+          font-weight: 600;
+        }                
+      }
+    }
+    tbody, tfoot {
+      tr {
+        td, th {                  
+          font-size: 12px;
+          text-align: center;
+          color: #888;
+          &.positive {
+            color: coral;
+          }
+          &.negative {
+            color: indianred;
+          }                  
+        }                        
+      }
+    }
+    thead, tbody, tfoot {
+      th, td {
+        border-right: 1px solid #ddd;
+        &:last-child {
+          border-right: none;
+        }
+      }
+    }
+  }
+  .btnPrint {
+    outline: none;
+    border-radius: 7px;
+    border: none;
+    padding: 10px 20px;
+    margin: 20px auto;
+    display: block;
+    color: #fff;
+    font-size: 13px;
+    box-shadow: 0 2px 4px #ccc;
+    background-color: rgb(102, 102, 255);
+    transition: all 0.5s ease-in-out;
+    icon {
+      font-size: 14px;
+      margin-right: 4px;
+    }
+    &:hover {
+      opacity: 0.85;
+    }  
+  }
+  .info-no-data {
+    padding: 50px 15px;
+    text-align: center;
+    i {
+      color: #bbb;
+      font-size: 50px;
+      margin-bottom: 10px;
+    }
+    p {
+      color: #999;
+      font-size: 14px;
+    }
+  }          
+}
+.loader {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

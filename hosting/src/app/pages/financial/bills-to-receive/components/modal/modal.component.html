@@ -1,0 +1,226 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content">
+    
+    <div id="container-filters" [style.display]="settings.activeComponent === 'BillsToReceive/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" *ngIf="(settings.activeComponent === 'BillsToReceive/Read') || (settings.activeComponent === 'BillsToReceive/Cancel') || (settings.activeComponent === 'BillsToReceive/Delete')">
+      <div class="container-external">
+        <div class="container-internal">          
+          <div class="wrapper">
+
+            <div class="container-data">
+              <section class="info">
+                <h5>{{ translate.action.read.section.info.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.code + ':' }}</span> <span class="value">{{ settings.data.code }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.referenceCode">
+                    <span class="label">{{ translate.action.read.section.info.label.referenceCode + ':' }}</span> <span class="value">{{ settings.data.referenceCode }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.status.title + ':' }}</span> <span class="value">{{ translate.action.read.section.info.label.status.enum[settings.data.status] }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="debtor">
+                <h5>{{ translate.action.read.section.debtor.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.debtor.label.code + ':' }}</span> <span class="value">{{ settings.data.debtor.code }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.debtor.label.name + ':' }}</span> <span class="value">{{ settings.data.debtor.name }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.debtor?.phone">
+                    <span class="label">{{ translate.action.read.section.debtor.label.phone + ':' }}</span> <span class="value">{{ settings.data.debtor.phone }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.debtor?.email">
+                    <span class="label">{{ translate.action.read.section.debtor.label.email + ':' }}</span> <span class="value">{{ settings.data.debtor.email }}</span>
+                  </p>
+                  
+                  <p *ngIf="settings.data.debtor?.address">
+                    <span class="label">{{ translate.action.read.section.debtor.label.address + ':' }}</span> <span class="value">{{ settings.data.debtor.address }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="category">
+                <h5>{{ translate.action.read.section.category.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.category.label.code + ':' }}</span> <span class="value">{{ settings.data.category?.code }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.category.label.name + ':' }}</span> <span class="value">{{ settings.data.category?.name }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="description" *ngIf="settings.data.description">
+                <h5>{{ translate.action.read.section.description.title }}</h5>
+                <div class="content">{{ settings.data.description }}</div>            
+              </section>
+
+              <section class="installments">
+                <h5>{{ translate.action.read.section.installments.title }}</h5>
+                
+                <div class="content">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>                          
+                          <th>{{ translate.action.read.section.installments.label.parcel }}</th>
+                          <th>{{ translate.action.read.section.installments.label.dueDate }}</th>
+                          <th>{{ translate.action.read.section.installments.label.amount }}</th>
+                          <th>{{ translate.action.read.section.installments.label.received }}</th>
+                          <th>{{ translate.action.read.section.installments.label.status }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngFor="let item of settings.data.installments">
+                          <tr class="parcel-tr">
+                            <td><span>{{ item.parcel }}</span></td>
+                            <td><span>{{ item.dueDate | date:'dd/MM/yyyy' }}</span></td>
+                            <td><span class="amount monetary">{{ item.amount | currency:'' }}</span></td>
+                            <td><span class="received monetary">{{ (item.receivedAmount || 0) | currency:'' }}</span></td>                          
+                            <td>
+                              <span class="status {{ (item.status == 'CONCLUDED' ? 'closed' : 'open') }}">
+                                <icon [name]="item.status == 'CONCLUDED' ? 'checkmark-circle-outline' : 'radio-button-off-outline'" pack="eva"></icon>
+                              </span>
+                            </td>
+                          </tr>
+                          <tr class="payment-methods-tr" *ngIf="item.paymentMethods?.length > 0">
+                            <td colspan="5" class="paymentMethods">
+                              <div class="table-responsive">
+                                <table  class="table table-borderless">
+                                  <tbody>
+                                    <tr *ngFor="let item of item.paymentMethods">
+                                      <table class="table table-borderless">
+                                        <tr>
+                                          <th>
+                                            <span class="method" *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name | uppercase }}</span>
+                                            <span class="method" *ngIf="item.code > 3000 && item.code < 4000">{{ 'Cartão de Débito' | uppercase }}</span>
+                                            <span class="method" *ngIf="item.code > 4000 && item.code < 5000">{{ 'Cartão de Crédito ' + (item.fees.parcel == 1 ? '(À Vista)' : '(Parcelado em ' + item.fees.parcel + 'x)') | uppercase }}</span>
+                                          </th>
+                                          <td class="col-small value"><span>{{ item.value | currency }}</span></td>
+                                        </tr>
+                                        <tr class="payment-history" *ngFor="let item of item.history">
+                                          <td>
+                                            <small>{{ item.date | date:'dd/MM/yyyy HH:mm' }}</small>
+                                          </td>
+                                          <td>
+                                            <small>{{ item.value | currency }}</small>
+                                          </td>
+                                        </tr>
+                                        <tr class="payment-note" *ngIf="item.note">
+                                          <td colspan="2">
+                                            <span class="note" *ngIf="item.note"><b>{{ translate.action.read.sale.section.paymentMethods.label.note + ':' }}</b> {{ item.note }}</span>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </tr>                        
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </tbody>                    
+                    </table>
+                  </div>
+                </div>            
+              </section>
+
+              <section class="balance">
+                <h5>{{ translate.action.read.section.balance.title }}</h5>
+
+                <div class="content">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.plots }}</span> <span class="line"></span></td>
+                          <td><span class="value">{{ settings.data.receivedInstallments + ' / ' + settings.data.totalInstallments }}</span></td>
+                        </tr>                   
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.received }}</span> <span class="line"></span></td>
+                          <td><span class="value monetary">{{ (settings.data.received || 0) | currency:'' }}</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.amount }}</span> <span class="line"></span></td>
+                          <td><span class="value monetary">{{ settings.data.amount | currency:'' }}</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+              
+              <!-- <button class="btnPrint" [title]="translate.action.read.button.print.title" (click)="onOpenPrinter()" *ngIf="settings.activeComponent === 'BillsToReceive/Read'"><icon name="printer-outline" pack="eva"></icon> {{ translate.action.read.button.print.label }}</button> -->
+            </div>
+
+            <div class="container-cancel" *ngIf="settings.activeComponent === 'BillsToReceive/Cancel'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.cancel.notice }}</p>
+                  <small>{{ translate.action.cancel.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.cancel.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onCancel()">{{ translate.action.cancel.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="container-delete" *ngIf="settings.activeComponent === 'BillsToReceive/Delete'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container-register" *ngIf="(settings.activeComponent === 'BillsToReceive/Create') || (settings.activeComponent === 'BillsToReceive/Update')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <bills-to-receive-register (callback)="onRegisterResponse($event)"></bills-to-receive-register>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div slot="components">
+    <bill-to-receive-print (callback)="onPrintResponse($event)"></bill-to-receive-print>
+  </div>
+
+</modal>

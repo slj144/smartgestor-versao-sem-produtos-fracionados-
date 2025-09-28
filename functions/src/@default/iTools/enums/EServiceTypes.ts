@@ -1,0 +1,5 @@
+export enum EServiceTypes{
+  DATABASE="DATABASE",
+  FUNCTIONS="FUNCTIONS",
+  STORAGE="STORAGE",
+}

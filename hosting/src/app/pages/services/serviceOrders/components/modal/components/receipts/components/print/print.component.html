@@ -1,0 +1,606 @@
+<iframe id="printingFrame" name="printingFrame" style="display: none">
+
+  <head>
+    <meta charset="UTF-8">
+
+    <!-- <link href="/assets/font/font-awesome/css/fa-regular.min.css" rel="stylesheet"> -->
+    <link href="/assets/css/services-receipt/service-warranty-receipt.css" rel="stylesheet">
+    <link href="/assets/css/services-receipt/service-delivery-receipt.css" rel="stylesheet">
+
+    <!-- <script async src="/assets/font/font-awesome/js/fa-regular.min.js"></script> -->
+  </head>
+
+  <body *ngIf="translate">
+
+    <div id="containerServiceOrderReceiptWarrantyA4"
+      *ngIf="settings.activeComponent == 'Print/Warranty' && settings.format == 'A4'">
+
+      <header *ngIf="storeInfo">
+        <table>
+          <tr>
+            <td>
+              <img src="{{ storeInfo.image }}" />
+            </td>
+            <td>
+              <h1>{{ storeInfo.billingName }}</h1>
+
+              <div class="info">
+                <p>
+                  <span class="label">{{ translate.receipt.header.address + ': ' }}</span> <span class="value">{{
+                    storeInfo.address.addressLine + ', ' + storeInfo.address.city + ' - ' + storeInfo.address.state
+                    }}</span>
+                </p>
+                <p>
+                  <span class="label">{{ translate.receipt.header.cnpj + ': ' }}</span> <span class="value">{{
+                    settings.storeInfo.cnpj }}</span>
+                </p>
+                <p>
+                  <span class="label">{{ translate.receipt.header.phone + ': ' }}</span> <span class="value">{{
+                    storeInfo.contacts.phone }}</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </header>
+
+      <section class="info">
+        <h5>{{ translate.receipt.content.informations.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.informations.label.code }}:</span> <span
+                      class="value">{{ data.code }}</span></p>
+                </td>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.informations.label.date }}:</span> <span
+                      class="value">{{ data.registerDate | date:'dd/MM/yyyy HH:mm' }}</span></p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p><span class="label">{{ translate.receipt.content.informations.label.operator }}:</span> <span
+                      class="value">{{ data.operator?.name }}</span></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="customer" *ngIf="data.customer">
+        <h5>{{ translate.receipt.content.customer.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.customer.label.name }}:</span> <span
+                      class="value">{{ data.customer?.name }}</span></p>
+                </td>
+                <td *ngIf="data.customer?.personalDocument || data.customer?.businessDocument" style="width: 50%;">
+                  <p *ngIf="data.customer?.personalDocument"><span class="label document">{{
+                      data.customer.personalDocument.type }}:</span> <span class="value">{{
+                      data.customer.personalDocument.value }}</span></p>
+                  <p *ngIf="data.customer?.businessDocument"><span class="label document">{{
+                      data.customer.businessDocument.type }}:</span> <span class="value">{{
+                      data.customer.businessDocument.value }}</span></p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2" *ngIf="data.customer?.phone">
+                  <p><span class="label">{{ translate.receipt.content.customer.label.phone }}:</span> <span
+                      class="value">{{ data.customer?.phone }}</span></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="vehicle" *ngIf="data.vehicle">
+        <h5>{{ translate.receipt.content.vehicle.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.vehicle.label.plate }}:</span> <span
+                      class="value">{{ data.vehicle.plate }}</span></p>
+                </td>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.vehicle.label.mileage }}:</span> <span
+                      class="value">{{ data.vehicle.mileage }}</span></p>
+                </td>
+              </tr>
+              <tr>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.vehicle.label.model }}:</span> <span
+                      class="value">{{ data.vehicle.model }}</span></p>
+                </td>
+                <td style="width: 50%;">
+                  <p><span class="label">{{ translate.receipt.content.vehicle.label.color }}:</span> <span
+                      class="value">{{ data.vehicle.color }}</span></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="equipment" *ngIf="data.equipment">
+        <h5>{{ translate.receipt.content.equipment.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr *ngIf="data.equipment">
+                <td *ngIf="data.equipment?.model">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.model }}:</span> <span
+                      class="value">{{ data.equipment?.model + ' (' + ((data.equipment?.brand) ? data.equipment?.brand
+                      :(data.equipment?.name) ? data.equipment?.name : '') + ')' }}</span>
+                  </p>
+                </td>
+                <td *ngIf="!data.equipment?.model && data.equipment?.brand">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span
+                      class="value">{{ data.equipment?.brand }}</span>
+                  </p>
+                </td>
+                <td *ngIf="!data.equipment?.model && !data.equipment?.brand && data.equipment?.name">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span
+                      class="value">{{ data.equipment?.name }}</span>
+                  </p>
+                </td>
+                <td *ngIf="data.equipment?.password">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.password }}:</span> <span
+                      class="value">{{ data.equipment?.password }}</span>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+      </section>
+      <section class="photos" *ngIf="data.photosBefore?.length || data.photosAfter?.length">
+        <h5>{{ translate.receipt.content.photos.title }}</h5>
+        <div class="content">
+          <div class="photos-group" *ngIf="data.photosBefore?.length">
+            <p class="label">{{ translate.receipt.content.photos.before }}</p>
+            <div class="photos-list">
+              <img *ngFor="let photo of data.photosBefore" [src]="photo" />
+            </div>
+          </div>
+          <div class="photos-group" *ngIf="data.photosAfter?.length">
+            <p class="label">{{ translate.receipt.content.photos.after }}</p>
+            <div class="photos-list">
+              <img *ngFor="let photo of data.photosAfter" [src]="photo" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="checklist" *ngIf="data.hasChecklist && (data.checklist?.length > 0)">
+        <h5>{{ translate.receipt.content.checklist.title }}</h5>
+
+        <div class="content">
+          <ul>
+            <li *ngFor="let item of data.checklist">
+              <label>
+                <span class="icon"><img
+                    src="/assets/font/font-awesome/svgs/regular/{{ item.checked ? 'check-square.svg' : 'square.svg' }}" /></span>
+                <span class="name">{{ item.name }}</span>
+              </label>
+
+              <div class="sub" *ngIf="item.subchecklist?.length > 0">
+                <label *ngFor="let subItem of item.subchecklist">
+                  <span class="icon"><img
+                      src="/assets/font/font-awesome/svgs/regular/{{ subItem.checked ? 'check-square.svg' : 'square.svg' }}" /></span>
+                  <span class="name">{{ subItem.name }}</span>
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="description" *ngIf="data.description">
+        <h5>{{ translate.receipt.content.description.title }}</h5>
+        <div class="content" [innerHTML]="data.description"></div>
+      </section>
+
+      <section class="services" *ngIf="data.services?.length > 0">
+        <h5>{{ translate.receipt.content.services.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{ translate.receipt.content.services.label.code }}</th>
+                  <th>{{ translate.receipt.content.services.label.description }}</th>
+                  <th>{{ translate.receipt.content.services.label.price }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of data.services">
+                  <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td class="col-small"><span class="price">{{ item.customPrice | currency:'' }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="products" *ngIf="data.products?.length > 0">
+        <h5>{{ translate.receipt.content.products.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{ translate.receipt.content.products.label.code }}</th>
+                  <th>{{ translate.receipt.content.products.label.name }}</th>
+                  <th>{{ translate.receipt.content.products.label.quantity }}</th>
+                  <th>{{ translate.receipt.content.products.label.price }}</th>
+                  <th>{{ translate.receipt.content.products.label.total }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of data.products">
+                  <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td class="col-small"><span>{{ item.quantity }}</span></td>
+                  <td class="col-small"><span class="price">{{ item.unitaryPrice | currency:'' }}</span></td>
+                  <td class="col-small"><span class="price">{{ (item.quantity * item.unitaryPrice) | currency:''
+                      }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="balance">
+        <h5>{{ translate.receipt.content.balance.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <th colspan="2">{{ translate.receipt.content.balance.label.subtotal.title }}:</th>
+                </tr>
+                <tr>
+                  <td class="removePadding" colspan="2">
+                    <table class="table table-borderless table-internal">
+                      <tr class="info" *ngIf="data.balance?.subtotal?.products">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.products }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.products | currency }}</td>
+                      </tr>
+                      <tr class="info" *ngIf="data.balance?.subtotal?.services">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.services }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.services | currency }}</td>
+                      </tr>
+                      <tr class="info" *ngIf="data.balance?.subtotal?.discount">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.discount }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.discount | currency }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr class="markLine">
+                  <th>{{ translate.receipt.content.balance.label.total }}:</th>
+                  <td class="col-small total">{{ data.balance.total | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="terms" *ngIf="settings.warrantyTerm"
+        [class.page-break]="data.photosBefore?.length || data.photosAfter?.length">
+        <h5>{{ translate.receipt.content.term.warranty.title }}</h5>
+        <div class="content" [innerHtml]="settings.warrantyTerm"></div>
+      </section>
+
+      <section class="signatures">
+        <p><span>{{ translate.receipt.content.signature.customer }}:</span></p>
+        <p><span>{{ translate.receipt.content.signature.responsible }}:</span></p>
+      </section>
+
+    </div>
+
+    <div id="containerServiceOrderReceiptDeliveryA4"
+      *ngIf="settings.activeComponent == 'Print/Delivery' && settings.format == 'A4'">
+
+      <header *ngIf="storeInfo">
+        <table>
+          <tr>
+            <td>
+              <img src="{{ storeInfo.image }}" />
+            </td>
+            <td>
+              <h1>{{ storeInfo.billingName }}</h1>
+
+              <div class="info">
+                <p>
+                  <span class="label">{{ translate.receipt.header.address + ': ' }}</span> <span class="value">{{
+                    storeInfo.address.addressLine + ', ' + storeInfo.address.city + ' - ' + storeInfo.address.state
+                    }}</span>
+                </p>
+                <p>
+                  <span class="label">{{ translate.receipt.header.phone + ': ' }}</span> <span class="value">{{
+                    storeInfo.contacts.phone }}</span>
+                </p>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </header>
+
+      <section class="info">
+        <h5>{{ translate.receipt.content.informations.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr>
+                <td>
+                  <p><span class="label">{{ translate.receipt.content.informations.label.code }}:</span> <span
+                      class="value">{{ data.code }}</span></p>
+                </td>
+                <td class="date">
+                  <p><span class="label">{{ translate.receipt.content.informations.label.date }}:</span> <span
+                      class="value">{{ data.registerDate | date:'dd/MM/yyyy HH:mm' }}</span></p>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="2">
+                  <p><span class="label">{{ translate.receipt.content.informations.label.operator }}:</span> <span
+                      class="value">{{ data.operator?.name }}</span></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="customer" *ngIf="data.customer">
+        <h5>{{ translate.receipt.content.customer.title }}</h5>
+
+        <div class="content">
+          <p>
+            <span class="label">{{ translate.receipt.content.customer.label.name }}:</span> <span class="value">{{
+              data.customer?.name }}</span>
+          </p>
+
+          <p *ngIf="data.customer?.personalDocument">
+            <span class="label document">{{ data.customer.personalDocument.type }}:</span> <span class="value">{{
+              data.customer.personalDocument.value }}</span>
+          </p>
+
+          <p *ngIf="data.customer?.businessDocument">
+            <span class="label document">{{ data.customer.businessDocument.type }}:</span> <span class="value">{{
+              data.customer.businessDocument.value }}</span>
+          </p>
+
+          <p *ngIf="data.customer?.phone">
+            <span class="label">{{ translate.receipt.content.customer.label.phone }}:</span> <span class="value">{{
+              data.customer?.phone }}</span>
+          </p>
+        </div>
+      </section>
+
+      <section class="equipment" *ngIf="data.equipment">
+        <h5>{{ translate.receipt.content.equipment.title }}</h5>
+
+        <!-- <div class="content">
+          <p *ngIf="data.equipment?.model">
+            <span class="label">{{ translate.receipt.content.equipment.label.model }}:</span> <span class="value">{{ data.equipment?.model + ' (' + ((data.equipment?.brand) ?  data.equipment?.brand :(data.equipment?.name) ? data.equipment?.name : '') + ')' }}</span>
+          </p>
+          <p *ngIf="!data.equipment?.model && data.equipment?.brand">
+            <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span class="value">{{ data.equipment?.brand }}</span>
+          </p>
+          <p *ngIf="!data.equipment?.model && !data.equipment?.brand && data.equipment?.name">
+            <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span class="value">{{ data.equipment?.name }}</span>
+          </p>
+        </div> --->
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tr *ngIf="data.equipment">
+                <td *ngIf="data.equipment?.model">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.model }}:</span> <span
+                      class="value">{{ data.equipment?.model + ' (' + ((data.equipment?.brand) ? data.equipment?.brand
+                      :(data.equipment?.name) ? data.equipment?.name : '') + ')' }}</span>
+                  </p>
+                </td>
+                <td *ngIf="!data.equipment?.model && data.equipment?.brand">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span
+                      class="value">{{ data.equipment?.brand }}</span>
+                  </p>
+                </td>
+                <td *ngIf="!data.equipment?.model && !data.equipment?.brand && data.equipment?.name">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.brand }}:</span> <span
+                      class="value">{{ data.equipment?.name }}</span>
+                  </p>
+                </td>
+                <td *ngIf="data.equipment?.password">
+                  <p>
+                    <span class="label">{{ translate.receipt.content.equipment.label.password }}:</span> <span
+                      class="value">{{ data.equipment?.password }}</span>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </section>
+      <section class="photos" *ngIf="data.photosBefore?.length || data.photosAfter?.length">
+        <h5>{{ translate.receipt.content.photos.title }}</h5>
+        <div class="content">
+          <div class="photos-group" *ngIf="data.photosBefore?.length">
+            <p class="label">{{ translate.receipt.content.photos.before }}</p>
+            <div class="photos-list">
+              <img *ngFor="let photo of data.photosBefore" [src]="photo" />
+            </div>
+          </div>
+          <div class="photos-group" *ngIf="data.photosAfter?.length">
+            <p class="label">{{ translate.receipt.content.photos.after }}</p>
+            <div class="photos-list">
+              <img *ngFor="let photo of data.photosAfter" [src]="photo" />
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="checklist" *ngIf="data.hasChecklist && (data.checklist?.length > 0)">
+        <h5>{{ translate.receipt.content.checklist.title }}</h5>
+
+        <div class="content">
+          <ul>
+            <li *ngFor="let item of data.checklist">
+              <label>
+                <span class="icon"><img src="/assets/font/font-awesome/svgs/regular/square.svg" /></span> <span
+                  class="name">{{ item.name }}</span>
+              </label>
+
+              <div class="sub" *ngIf="item.subchecklist?.length > 0">
+                <label *ngFor="let subItem of item.subchecklist">
+                  <span class="icon"><img src="/assets/font/font-awesome/svgs/regular/square.svg" /></span> <span
+                    class="name">{{ subItem.name }}</span>
+                </label>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="description" *ngIf="data.description">
+        <h5>{{ translate.receipt.content.description.title }}</h5>
+        <div class="content" [innerHTML]="data.description"></div>
+      </section>
+
+      <section class="services" *ngIf="data.services?.length > 0">
+        <h5>{{ translate.receipt.content.services.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{ translate.receipt.content.services.label.code }}</th>
+                  <th>{{ translate.receipt.content.services.label.description }}</th>
+                  <th>{{ translate.receipt.content.services.label.price }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of data.services">
+                  <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td class="col-small"><span class="price">{{ item.customPrice | currency:'' }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="products" *ngIf="data.products?.length > 0">
+        <h5>{{ translate.receipt.content.products.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>{{ translate.receipt.content.products.label.code }}</th>
+                  <th>{{ translate.receipt.content.products.label.name }}</th>
+                  <th>{{ translate.receipt.content.products.label.quantity }}</th>
+                  <th>{{ translate.receipt.content.products.label.price }}</th>
+                  <th>{{ translate.receipt.content.products.label.total }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of data.products">
+                  <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td class="col-small"><span>{{ item.quantity }}</span></td>
+                  <td class="col-small"><span class="price">{{ item.unitaryPrice | currency:'' }}</span></td>
+                  <td class="col-small"><span class="price">{{ (item.quantity * item.unitaryPrice) | currency:''
+                      }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="balance">
+        <h5>{{ translate.receipt.content.balance.title }}</h5>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <th colspan="2">{{ translate.receipt.content.balance.label.subtotal.title }}:</th>
+                </tr>
+                <tr>
+                  <td class="removePadding" colspan="2">
+                    <table class="table table-borderless table-internal">
+                      <tr class="info" *ngIf="data.balance?.subtotal?.products">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.products }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.products | currency }}</td>
+                      </tr>
+                      <tr class="info" *ngIf="data.balance?.subtotal?.services">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.services }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.services | currency }}</td>
+                      </tr>
+                      <tr class="info" *ngIf="data.balance?.subtotal?.discount">
+                        <td class="label">{{ translate.receipt.content.balance.label.subtotal.integrant.discount }}</td>
+                        <td class="col-small">{{ data.balance.subtotal.discount | currency }}</td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr class="markLine">
+                  <th>{{ translate.receipt.content.balance.label.total }}:</th>
+                  <td class="col-small total">{{ data.balance.total | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="terms" *ngIf="settings.deliveryTerm"
+        [class.page-break]="data.photosBefore?.length || data.photosAfter?.length">
+        <h5>{{ translate.receipt.content.term.delivery.title }}</h5>
+        <div class="content" [innerHtml]="settings.deliveryTerm"></div>
+      </section>
+
+      <section class="signatures">
+        <p><span>{{ translate.receipt.content.signature.customer }}:</span></p>
+        <p><span>{{ translate.receipt.content.signature.responsible }}:</span></p>
+      </section>
+
+    </div>
+
+  </body>
+</iframe>

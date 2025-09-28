@@ -1,0 +1,537 @@
+<main id="container-request-register">
+
+  <ng-container *ngIf="!camera.active">
+
+    <!-- <div class="panel" [formGroup]="formServiceOrder" *ngIf="permissions && formControls"> -->
+
+    <div class="panel" [formGroup]="formServiceOrder" *ngIf="permissions && formControls">
+
+      <div class="container-components-one">
+
+        <div class="container-customer" *ngIf="!companyProfile?.registers?.components?.vehicles?.active">
+
+          <h6>
+            <span>{{ translate.panel.customer.title }}</span>
+            <button (click)="onOpenLayer('customers')" [disabled]="data.code">
+              <icon name="search-outline" pack="eva"></icon>
+            </button>
+          </h6>
+
+          <div class="data" *ngIf="data.customer">
+            <div class="container-table table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td>
+                      <span><span class="label">{{ translate.panel.customer.label.name + ':' }}</span> <span
+                          class="value">{{ data.customer.name }}</span></span>
+                    </td>
+                    <td *ngIf="data.customer?.personalDocument">
+                      <span><span class="label">{{ data.customer.personalDocument.type + ':' }}</span> <span
+                          class="value">{{ data.customer.personalDocument.value }}</span></span>
+                    </td>
+                    <td *ngIf="data.customer?.businessDocument">
+                      <span><span class="label">{{ data.customer.businessDocument.type + ':' }}</span> <span
+                          class="value">{{ data.customer.businessDocument.value }}</span></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td *ngIf="data.customer?.address">
+                      <span><span class="label">{{ translate.panel.customer.label.address + ':' }}</span> <span
+                          class="value">{{ data.customer?.address }}</span></span>
+                    </td>
+                    <td *ngIf="data.customer?.contacts?.phone">
+                      <span><span class="label">{{ translate.panel.customer.label.phone + ':' }}</span> <span
+                          class="value">{{ data.customer?.contacts?.phone }}</span></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="container-vehicle" *ngIf="companyProfile?.registers?.components?.vehicles?.active">
+
+          <h6>
+            <span>{{ translate.panel.vehicle.title }}</span>
+            <button (click)="onOpenLayer('vehicles')" [disabled]="data.code">
+              <icon name="search-outline" pack="eva"></icon>
+            </button>
+          </h6>
+
+          <div class="data" *ngIf="data.vehicle">
+            <div class="container-table table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td *ngIf="data.vehicle.plate">
+                      <span><span class="label">{{ translate.panel.vehicle.label.plate }}:</span> <span class="value">{{
+                          data.vehicle.plate }}</span></span>
+                    </td>
+                    <td *ngIf="data.vehicle.model">
+                      <span><span class="label">{{ translate.panel.vehicle.label.model }}:</span> <span class="value">{{
+                          data.vehicle.model }}</span></span>
+                    </td>
+                    <td *ngIf="data.vehicle.mileage">
+                      <span><span class="label">{{ translate.panel.vehicle.label.mileage }}:</span> <span
+                          class="value">{{
+                          data.vehicle.mileage }}</span></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span><span class="label">{{ translate.panel.vehicle.label.proprietary.name }}:</span> <span
+                          class="value">{{ data.vehicle?.proprietary?.name }}</span></span>
+                    </td>
+                    <td *ngIf="data.vehicle.proprietary?.personalDocument?.value">
+                      <span><span class="label">{{ data.vehicle.proprietary.personalDocument.type }}:</span> <span
+                          class="value">{{ data.vehicle?.proprietary?.personalDocument?.value }}</span></span>
+                    </td>
+                    <td *ngIf="data.vehicle.proprietary?.businessDocument?.value">
+                      <span><span class="label">{{ data.vehicle.proprietary.businessDocument.type }}:</span> <span
+                          class="value">{{ data.vehicle?.proprietary?.businessDocument?.value }}</span></span>
+                    </td>
+                    <td *ngIf="data.vehicle.proprietary?.contacts?.phone">
+                      <span><span class="label">{{ translate.panel.vehicle.label.proprietary.phone }}:</span> <span
+                          class="value">{{ data.vehicle?.proprietary?.contacts?.phone }}</span></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+        <!-- Container de Fotos ANTES -->
+        <div class="container-photos">
+          <h6>
+            <!-- Título com contador de fotos -->
+            <span class="photo-counter">
+              {{ translate.panel.photos.before }}
+              <span class="badge" *ngIf="data.photosBefore?.length > 0">
+                {{ data.photosBefore.length }}/4
+              </span>
+            </span>
+
+            <!-- Botões de ação -->
+            <div class="photo-actions">
+              <!-- Botão de anexar arquivo -->
+              <button type="button" class="btn-file" data-tooltip="Escolher da galeria" (click)="beforeInput.click()"
+                [disabled]="!canEditPhotos() || (data.photosBefore?.length >= 4)">
+                <icon name="image-outline" pack="eva"></icon>
+              </button>
+
+              <!-- Botão de câmera -->
+              <button type="button" class="btn-camera" data-tooltip="Tirar foto" (click)="onOpenCamera('before')"
+                [disabled]="!canEditPhotos() || (data.photosBefore?.length >= 4)">
+                <icon name="camera" pack="eva"></icon>
+              </button>
+            </div>
+          </h6>
+
+          <!-- Input de arquivo oculto -->
+          <input type="file" accept="image/*" capture="environment" multiple (change)="onSelectPhotos($event, 'before')"
+            #beforeInput hidden>
+
+          <!-- Grid de fotos se houver -->
+          <div class="photos" *ngIf="data.photosBefore?.length > 0">
+            <div class="photo" *ngFor="let photo of data.photosBefore; let i = index">
+              <img [src]="photo" [alt]="'Foto antes ' + (i + 1)" />
+              <div class="photo-name">Foto {{ i + 1 }}</div>
+              <button type="button" (click)="onRemovePhoto(i, 'before')" [disabled]="!canEditPhotos()"
+                [attr.aria-label]="'Remover foto ' + (i + 1)">
+                <icon name="close" pack="eva"></icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Área de drop quando não há fotos -->
+          <div class="drop-zone" *ngIf="data.photosBefore?.length === 0 && canEditPhotos()">
+            <div class="drop-icon">📷</div>
+            <p>Clique nos botões acima para adicionar fotos</p>
+          </div>
+        </div>
+
+        <!-- Container de Fotos DEPOIS -->
+        <div class="container-photos">
+          <h6>
+            <!-- Título com contador de fotos -->
+            <span class="photo-counter">
+              {{ translate.panel.photos.after }}
+              <span class="badge" *ngIf="data.photosAfter?.length > 0">
+                {{ data.photosAfter.length }}/4
+              </span>
+            </span>
+
+            <!-- Botões de ação -->
+            <div class="photo-actions">
+              <!-- Botão de anexar arquivo -->
+              <button type="button" class="btn-file" data-tooltip="Escolher da galeria" (click)="afterInput.click()"
+                [disabled]="!canEditPhotos() || (data.photosAfter?.length >= 4)">
+                <icon name="image-outline" pack="eva"></icon>
+              </button>
+
+              <!-- Botão de câmera -->
+              <button type="button" class="btn-camera" data-tooltip="Tirar foto" (click)="onOpenCamera('after')"
+                [disabled]="!canEditPhotos() || (data.photosAfter?.length >= 4)">
+                <icon name="camera" pack="eva"></icon>
+              </button>
+            </div>
+          </h6>
+
+          <!-- Input de arquivo oculto -->
+          <input type="file" accept="image/*" capture="environment" multiple (change)="onSelectPhotos($event, 'after')"
+            #afterInput hidden>
+
+          <!-- Grid de fotos se houver -->
+          <div class="photos" *ngIf="data.photosAfter?.length > 0">
+            <div class="photo" *ngFor="let photo of data.photosAfter; let i = index">
+              <img [src]="photo" [alt]="'Foto depois ' + (i + 1)" />
+              <div class="photo-name">Foto {{ i + 1 }}</div>
+              <button type="button" (click)="onRemovePhoto(i, 'after')" [disabled]="!canEditPhotos()"
+                [attr.aria-label]="'Remover foto ' + (i + 1)">
+                <icon name="close" pack="eva"></icon>
+              </button>
+            </div>
+          </div>
+
+          <!-- Área de drop quando não há fotos -->
+          <div class="drop-zone" *ngIf="data.photosAfter?.length === 0 && canEditPhotos()">
+            <div class="drop-icon">📷</div>
+            <p>Clique nos botões acima para adicionar fotos</p>
+          </div>
+        </div>
+
+        <div class="container-services">
+
+          <h6>
+            <span>{{ translate.panel.services.title }}</span>
+            <button (click)="onOpenLayer('services')">
+              <icon name="plus-outline" pack="eva"></icon>
+            </button>
+          </h6>
+
+          <div class="data" *ngIf="data.services?.length > 0">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>{{ translate.panel.services.label.code }}</th>
+                    <th class="text-left">{{ translate.panel.services.label.name }}</th>
+                    <th *ngIf="permissions.editServiceCostPrice">{{ translate.panel.services.label.costPrice }}</th>
+                    <th>{{ translate.panel.services.label.price }}</th>
+                    <th *ngIf="(isAdmin || permissions.assignTechnician) && canEditExecutor()">Técnico</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of data.services; let i = index">
+                    <td class="action">
+                      <button class="btnClose" (click)="onDeleteServiceItem(i)">
+                        <icon name="close" pack="eva"></icon>
+                      </button>
+                    </td>
+                    <td class="code">{{ item.code }}</td>
+                    <td class="name">{{ item.name }}</td>
+                    <td class="price" *ngIf="permissions.editServiceCostPrice">
+                      <input [disabled]="!permissions.editServiceCostPrice" [value]="item.customCostPrice | currency:''"
+                        autocomplete="off" (input)="onApplyPrice(item, costPriceField, 'service-cost')"
+                        #costPriceField />
+                    </td>
+                    <td class="price">
+                      <input [disabled]="!permissions.editPrice" [value]="item.customPrice | currency:''"
+                        autocomplete="off" (input)="onApplyPrice(item, priceField, 'service')" #priceField />
+                    </td>
+                    <td class="executor" *ngIf="(isAdmin || permissions.assignTechnician) && canEditExecutor()">
+                      <select class="form-control form-control-sm"
+                              [ngModel]="item.executor?.username || ''"
+                              (ngModelChange)="onChangeServiceExecutor(i, $event)"
+                              [ngModelOptions]="{standalone: true}">
+                        <option value="">Selecionar técnico...</option>
+                        <option *ngFor="let collaborator of collaborators" [value]="collaborator.username">
+                          {{ collaborator.name }}
+                        </option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="container-products">
+
+          <h6>
+            <span>{{ translate.panel.products.title }}</span>
+
+            <div class="quick-search">
+              <input type="text" placeholder="Código" autocomplete="off" (keydown.enter)="onQuickSearch($event)"
+                (input)="onApplyNumberMask($event)" />
+              <button (click)="onQuickSearch($event)">
+                <icon name="search-outline" pack="eva"></icon>
+              </button>
+            </div>
+
+            <button (click)="onOpenLayer('products')">
+              <icon name="funnel-outline" pack="eva"></icon>
+            </button>
+          </h6>
+
+          <div class="data" *ngIf="data.products?.length > 0">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>{{ translate.panel.products.label.code }}</th>
+                    <th class="text-left">{{ translate.panel.products.label.name }}</th>
+                    <th>{{ translate.panel.products.label.quantity }}</th>
+                    <th>{{ translate.panel.products.label.price }}</th>
+                    <th>{{ translate.panel.products.label.total }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of data.products; let i = index">
+                    <td class="action">
+                      <button class="btnClose" (click)="onDeleteProductItem(i)">
+                        <icon name="close" pack="eva"></icon>
+                      </button>
+                    </td>
+                    <td class="code">{{ item.code }}</td>
+                    <td class="name">{{ item.name }}</td>
+                    <td class="quantity">
+                      <input [value]="item.selectedItems" autocomplete="off"
+                        (input)="onApplyQuantity(item, quantityField)"
+                        (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                    </td>
+                    <td class="price">
+                      <input [value]="item.unitaryPrice | currency:''" [disabled]="!permissions.editPrice"
+                        autocomplete="off" (input)="onApplyPrice(item, priceField, 'product')" #priceField />
+                    </td>
+                    <td class="total">
+                      <input [value]="(item.unitaryPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="container-description">
+
+          <h6>
+            <span>{{ 'Descrição' }}</span>
+          </h6>
+
+          <div class="data">
+            <textarea class="form-control" formControlName="description"
+              placeholder="Insira da descrição aqui.."></textarea>
+          </div>
+
+        </div>
+
+        <div class="clearfix">
+
+          <div class="container-equipment" formGroupName="equipment">
+
+            <h6>
+              <span>{{ translate.panel.equipment.title }}</span>
+            </h6>
+
+            <div class="data">
+              <div class="table-responsive">
+                <table>
+                  <tr>
+                    <td>
+                      <label>{{ translate.panel.equipment.label.model }}</label>
+                      <input type="text" formControlName="model" class="form-control" />
+                    </td>
+
+                    <td>
+                      <label>{{ translate.panel.equipment.label.brand }}</label>
+                      <input type="text" formControlName="brand" class="form-control" />
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td>
+                      <label>{{ translate.panel.equipment.label.password }}</label>
+                      <input type="text" formControlName="password" class="form-control" />
+                    </td>
+
+                    <td>
+                      <label>{{ translate.panel.equipment.label.serialNumber }}</label>
+                      <input type="text" formControlName="serialNumber" class="form-control" />
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="container-checklist">
+
+            <h6>
+              <span>{{ translate.panel.checklist.title }}</span>
+
+              <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" formControlName="checklist" id="customSwitch1" />
+                <label class="custom-control-label" for="customSwitch1"></label>
+              </div>
+            </h6>
+
+            <div class="data">
+              <fieldset [disabled]="!formControls.checklist.value">
+                <ul>
+                  <li *ngFor="let item of settings?.checklist">
+                    <label>
+                      <input type="checkbox" name="checklist" [value]="item.name" [checked]="item.checked"
+                        [disabled]="item.disabled" (change)="onChangeChecklist(item.name)" /> <span>{{ item.name
+                        }}</span>
+                    </label>
+
+                    <div class="sub" *ngIf="item.subchecklist?.length > 0">
+                      <label *ngFor="let subItem of item.subchecklist">
+                        <input type="checkbox" name="subchecklist" [value]="subItem.name" [checked]="subItem.checked"
+                          (change)="onChangeChecklist(subItem.name, item.name)" /> <span>{{ subItem.name }}</span>
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="container-components-two">
+
+        <div class="container-settings" formGroupName="settings">
+
+          <h6>
+            <span>{{ translate.panel.settings.title }}</span>
+          </h6>
+
+          <div class="data">
+
+
+            <div class="form-group">
+              <label>{{ translate.panel.settings.label.serviceExecution.title }}</label>
+              <select class="form-control" formControlName="serviceExecution" #serviceExecution>
+                <option value="INTERNAL">{{ translate.panel.settings.label.serviceExecution.options.internal }}</option>
+                <option value="EXTERNAL">{{ translate.panel.settings.label.serviceExecution.options.external }}</option>
+              </select>
+            </div>
+
+            <div class="form-group" *ngIf="serviceExecution.value == 'EXTERNAL'">
+              <label>{{ translate.panel.settings.label.technicalAssistance }}</label>
+              <select class="form-control" formControlName="technicalAssistance">
+                <option *ngFor="let item of settings.technicalAssistance" [value]="item.code">{{ item.name }}</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>{{ translate.panel.settings.label.entryDate }}</label>
+              <input type="date" class="form-control" formControlName="entryDate" />
+            </div>
+
+            <div class="form-group">
+              <label>{{ translate.panel.settings.label.deliveryDate }}</label>
+              <input type="date" class="form-control" formControlName="deliveryDate" />
+            </div>
+          </div>
+
+        </div>
+
+        <div class="container-balance">
+          <div class="data">
+            <div class="container-subtotal">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th colspan="2">{{ translate.panel.balance.label.subtotal.title }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="label">{{ translate.panel.balance.label.subtotal.integrant.services }}</span>
+                        <span class="line"></span>
+                      </td>
+                      <td><span class="value">{{ (data.balance?.totalServices || 0) | currency }}</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="label">{{ translate.panel.balance.label.subtotal.integrant.products }}</span>
+                        <span class="line"></span>
+                      </td>
+                      <td><span class="value">{{ (data.balance?.totalProducts || 0) | currency }}</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="label">{{ translate.panel.balance.label.subtotal.integrant.discount }}</span>
+                        <span class="line"></span>
+                      </td>
+                      <td><span class="value">{{ (data.balance?.totalDiscount || 0) | currency }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="container-total">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th>{{ translate.panel.balance.label.total }}</th>
+                      <td id="balanceTotalSale">{{ (data.balance?.totalSale || 0) | currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="container-button">
+          <button class="btn btn-confirm" (click)="onRegister()"
+            [disabled]="!((data.vehicle || data.customer || data.member) && !loading)">{{
+            translate.panel.button.register
+            }}</button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <service-orders-register-layer (callback)="onLayerResponse($event)"></service-orders-register-layer>
+
+  </ng-container>
+
+  <!-- MODAL DA CÂMERA MELHORADO -->
+  <div class="camera-modal" *ngIf="camera.active">
+    <video #video autoplay playsinline muted></video>
+    <div class="controls">
+      <button type="button" (click)="onCapturePhoto()">
+        <icon name="camera" pack="eva"></icon>
+        {{ translate.panel.photos.capture }}
+      </button>
+      <button type="button" (click)="onToggleCameraFacing()">
+        <icon name="flip-2" pack="eva"></icon>
+        {{ translate.panel.photos.switchCamera }}
+      </button>
+      <button type="button" (click)="onCloseCamera()">
+        <icon name="close" pack="eva"></icon>
+      </button>
+    </div>
+  </div>
+</main>

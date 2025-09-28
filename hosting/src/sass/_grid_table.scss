@@ -1,0 +1,582 @@
+// Arquivo: _grid_table.scss
+// Componente: Tabelas Grid Modernizadas (Correção de Alinhamento)
+// Localização: src/sass/_grid_table.scss
+
+@import 'variables';
+@import 'mixins';
+
+.custom-grid-table {
+  background: white;
+  border-radius: 16px;
+  overflow: visible;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+
+  // Para manter o border-radius funcionando com overflow visible
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 16px;
+    pointer-events: none;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .thead {
+    background: linear-gradient(135deg, #f8f9fa 0%, #f3f4f6 100%);
+    margin-bottom: 0;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+
+    &.fixed {
+      position: sticky;
+      top: $bodyTop;
+      background: rgba(255, 255, 255, 0.95) !important;
+      backdrop-filter: blur(10px);
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .row {
+      margin: 0;
+      display: flex;
+      align-items: center;
+
+      // Aplicar padding em todas as colunas do header
+      >[class*="col"] {
+        padding: 16px 20px;
+        font-weight: 600;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #6b7280;
+        position: relative;
+
+        // Garantir alinhamento correto
+        display: flex;
+        align-items: center;
+
+        // Centralizar texto quando necessário
+        &.text-center {
+          justify-content: center;
+        }
+
+        &.text-right {
+          justify-content: flex-end;
+        }
+
+        // Indicador de ordenação
+        &.sortable {
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:hover {
+            color: #374151;
+            background: rgba(102, 126, 234, 0.05);
+          }
+
+          &::after {
+            content: '↕';
+            margin-left: 8px;
+            opacity: 0.3;
+            font-size: 10px;
+          }
+
+          &.sorted-asc::after {
+            content: '↑';
+            opacity: 1;
+            color: #667eea;
+          }
+
+          &.sorted-desc::after {
+            content: '↓';
+            opacity: 1;
+            color: #667eea;
+          }
+        }
+      }
+    }
+  }
+
+  .tbody {
+    >.row {
+      margin: 0 0 2px;
+      background: white;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: visible;
+      z-index: 1;
+      display: flex;
+      align-items: stretch; // Importante para altura uniforme
+
+      // Efeito hover
+      &:hover {
+        background: #f9fafb;
+        transform: translateX(4px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        z-index: 2;
+
+        &::before {
+          opacity: 1;
+          transform: scaleY(1);
+        }
+      }
+
+      // Indicador lateral
+      &::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        opacity: 0;
+        transform: scaleY(0);
+        transition: all 0.2s;
+      }
+
+      // Estados
+      &.selected {
+        background: rgba(102, 126, 234, 0.05);
+
+        &::before {
+          opacity: 1;
+          transform: scaleY(1);
+        }
+      }
+
+      &.danger {
+        background: rgba(239, 68, 68, 0.05);
+
+        &::before {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+      }
+
+      &.success {
+        background: rgba(16, 185, 129, 0.05);
+
+        &::before {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+      }
+
+      // Aplicar padding em todas as colunas do body
+      >[class*="col"] {
+        padding: 16px 20px;
+        font-size: 14px;
+        color: #374151;
+        position: relative;
+
+        // Importante: alinhar conteúdo verticalmente
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        // Para colunas com flex-row (mobile)
+        &.flex-row {
+          @media (max-width: 767px) {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+          }
+        }
+
+        // Para colunas com flex-md-column
+        &.flex-md-column {
+          @media (min-width: 768px) {
+            flex-direction: column !important;
+          }
+        }
+
+        // Alinhamentos
+        &.text-center {
+          align-items: center;
+          text-align: center;
+        }
+
+        &.text-right {
+          align-items: flex-end;
+          text-align: right;
+        }
+
+        // Alinhamentos responsivos
+        &.text-md-center {
+          @media (min-width: 768px) {
+            align-items: center;
+            text-align: center;
+          }
+        }
+
+        .label {
+          font-size: 11px;
+          font-weight: 600;
+          color: #6b7280;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px;
+        }
+
+        .value {
+          font-size: 14px;
+          color: #111827;
+
+          // Para badges
+          .badge {
+            display: inline-block;
+          }
+        }
+
+        // Links
+        a {
+          color: #667eea;
+          text-decoration: none;
+          font-weight: 500;
+          transition: all 0.2s;
+          position: relative;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #667eea;
+            transition: width 0.2s;
+          }
+
+          &:hover {
+            color: #5a67d8;
+
+            &::after {
+              width: 100%;
+            }
+          }
+
+          &.btn {
+            padding: 6px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+
+            &::after {
+              display: none;
+            }
+
+            &:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .tfoot {
+    margin-top: 0;
+    background: linear-gradient(135deg, #f8f9fa 0%, #f3f4f6 100%);
+    border-top: 2px solid rgba(102, 126, 234, 0.1);
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+
+    .row {
+      margin: 0;
+      display: flex;
+
+      >[class*="col"] {
+        padding: 16px 20px;
+        font-weight: 600;
+        color: #1f2937;
+      }
+    }
+  }
+
+  // Preços e valores
+  .costPrice {
+    color: #dc2626;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .salePrice,
+  .executionPrice {
+    color: #f59e0b;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  // Botões de ação
+  .btnAction {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    outline: none;
+    margin: 0 4px 4px 0;
+    background-color: #f3f4f6;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    z-index: 200;
+
+    // Efeito ripple
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.4s, height 0.4s;
+    }
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      z-index: 11;
+
+      &::before {
+        width: 50px;
+        height: 50px;
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+
+    &.btnRead {
+      background: #e5e7eb;
+      color: #6b7280;
+
+      &:hover {
+        background: #d1d5db;
+        color: #4b5563;
+      }
+    }
+
+    &.btnEdit {
+      background: rgba(245, 158, 11, 0.1);
+      color: #d97706;
+
+      &:hover {
+        background: rgba(245, 158, 11, 0.2);
+        color: #b45309;
+      }
+    }
+
+    &.btnCancel,
+    &.btnDelete {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.2);
+        color: #b91c1c;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+
+      &:hover {
+        transform: none;
+        box-shadow: none;
+      }
+    }
+
+    icon {
+      font-size: 18px;
+    }
+  }
+
+  // Responsivo
+  &.responsive,
+  &.responsive-down-md {
+    @media (max-width: 767px) {
+      .thead {
+        display: none !important;
+      }
+
+      .tbody {
+        >.row {
+          display: block;
+          padding: 16px;
+          margin-bottom: 12px;
+          border-radius: 12px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+          >[class*="col"] {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: none !important;
+
+            &.hr-down-md-bottom {
+              border-bottom: 1px solid #f3f4f6;
+
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+
+            .label {
+              display: block !important;
+              margin-bottom: 0;
+              margin-right: 12px;
+              flex: 1;
+            }
+
+            .value {
+              text-align: right;
+              font-weight: 500;
+              flex-shrink: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Skeleton loader para carregamento
+  &.loading {
+    .tbody {
+      >.row {
+        >[class*="col"] {
+          position: relative;
+          overflow: hidden;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg,
+                #f3f4f6 25%,
+                #e5e7eb 50%,
+                #f3f4f6 75%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite;
+          }
+
+          * {
+            opacity: 0;
+          }
+        }
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+  }
+
+  // Modo compacto
+  &.compact {
+
+    .thead,
+    .tbody,
+    .tfoot {
+      .row {
+        >[class*="col"] {
+          padding: 12px 16px;
+          font-size: 13px;
+        }
+      }
+    }
+
+    .btnAction {
+      width: 32px;
+      height: 32px;
+
+      icon {
+        font-size: 16px;
+      }
+    }
+  }
+
+  // Classes para reduzir fonte
+  &.reduce-font-size {
+    .thead .row>[class*="col"] {
+      font-size: 11px;
+    }
+
+    .tbody .row>[class*="col"] {
+      font-size: 13px;
+
+      .value {
+        font-size: 13px;
+      }
+    }
+  }
+}
+
+// Mixins responsivos modernizados
+@mixin custom-media-breakpoint($size, $type) {
+  .custom-grid-table {
+    @if $type =='down' {
+      @include media-breakpoint-down(#{$size}) {
+        &.responsive-down-#{$size} {
+          .thead {
+            display: none;
+          }
+
+          .tbody>.row {
+            display: block;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+
+            >[class*="col"] {
+              display: flex;
+              justify-content: space-between;
+              padding: 8px 0;
+              font-size: 14px;
+
+              .hr-down-#{$size}-bottom {
+                border-bottom: 1px solid #f3f4f6;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@include custom-media-breakpoint('xl', 'down');
+@include custom-media-breakpoint('lg', 'down');
+@include custom-media-breakpoint('md', 'down');

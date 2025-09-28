@@ -1,0 +1,285 @@
+<main id="container-request-register">
+
+  <div class="panel">
+
+    <div class="container-components-one">
+
+      <div class="container-customer" *ngIf="companyProfile?.registers?.components?.customers">
+
+        <h6>
+          <span>{{ translate.panel.customer.title }}</span>
+          <button (click)="onOpenLayer('customers')">
+            <icon name="search-outline" pack="eva"></icon>
+          </button>
+        </h6>
+
+        <div class="data" *ngIf="data.customer">
+          <div class="container-table table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.panel.customer.label.name + ':' }}</span> <span
+                        class="value">{{ data.customer.name }}</span></span>
+                  </td>
+                  <td *ngIf="data.customer?.personalDocument">
+                    <span><span class="label">{{ data.customer.personalDocument.type + ':' }}</span> <span
+                        class="value">{{ data.customer.personalDocument.value }}</span></span>
+                  </td>
+                  <td *ngIf="data.customer?.businessDocument">
+                    <span><span class="label">{{ data.customer.businessDocument.type + ':' }}</span> <span
+                        class="value">{{ data.customer.businessDocument.value }}</span></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td *ngIf="data.customer?.address">
+                    <span><span class="label">{{ translate.panel.customer.label.address + ':' }}</span> <span
+                        class="value">{{ data.customer?.address }}</span></span>
+                  </td>
+                  <td *ngIf="data.customer?.contacts?.phone">
+                    <span><span class="label">{{ translate.panel.customer.label.phone + ':' }}</span> <span
+                        class="value">{{ data.customer?.contacts?.phone }}</span></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-member" *ngIf="companyProfile?.registers?.components?.members">
+
+        <h6>
+          <span>{{ translate.panel.member.title }}</span>
+          <button (click)="onOpenLayer('members')" [disabled]="data.code">
+            <icon name="search-outline" pack="eva"></icon>
+          </button>
+        </h6>
+
+        <div class="data" *ngIf="data.member">
+          <div class="container-table table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.panel.member.label.name + ':' }}</span> <span
+                        class="value">{{ data.member.name }}</span></span>
+                  </td>
+                  <td *ngIf="data.member?.cpf">
+                    <span><span class="label">{{ translate.panel.member.label.personalDocument + ':' }}</span> <span
+                        class="value">{{ data.member.cpf }}</span></span>
+                  </td>
+                  <td *ngIf="data.member?.cnpj">
+                    <span><span class="label">{{ translate.panel.member.label.businessDocument + ':' }}</span> <span
+                        class="value">{{ data.member.cnpj }}</span></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.panel.member.label.address + ':' }}</span> <span
+                        class="value">{{ data.member?.address }}</span></span>
+                  </td>
+                  <td>
+                    <span><span class="label">{{ translate.panel.member.label.phone + ':' }}</span> <span
+                        class="value">{{ data.member?.contacts?.phone }}</span></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-products">
+
+        <div class="pdv-card products-card">
+          <div class="card-header">
+            <div class="header-content">
+              <icon name="shopping-bag-outline" pack="eva" class="header-icon"></icon>
+              <h3>{{ translate.panel.products.title }}</h3>
+            </div>
+            <div class="header-actions">
+              <div class="quick-search">
+                <icon name="search-outline" pack="eva"></icon>
+                <input type="text" [placeholder]="translate.panel.products.quickSearch.placeholder" autocomplete="off"
+                  (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)"
+                  #inputQuickSearch />
+                <button class="btn-quick-search" (click)="onQuickSearch(inputQuickSearch)">
+                  <icon name="arrow-forward-outline" pack="eva"></icon>
+                </button>
+              </div>
+              <button class="btn-action" (click)="onOpenLayer('products')">
+                <icon name="options-2-outline" pack="eva"></icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="card-body" *ngIf="data.products?.length > 0">
+            <div class="products-list">
+              <div class="product-item" *ngFor="let item of data.products; let i = index">
+                <button class="btn-remove" (click)="onDeleteProductItem(i)">
+                  <icon name="close-circle-outline" pack="eva"></icon>
+                </button>
+
+                <div class="product-info">
+                  <div class="product-header">
+                    <span class="product-code">#{{ item.code }}</span>
+                    <span class="product-name">{{ item.name }}</span>
+                    <span class="internal-code" *ngIf="item.internalCode">{{ item.internalCode }}</span>
+                  </div>
+
+                  <div class="product-controls">
+                    <div class="quantity-control">
+                      <label>Qtd:</label>
+                      <input type="text" class="{{ data.scheme && !data.code && item.quantity == 0 ? 'outStock' : '' }}"
+                        [value]="item.selectedItems ?? 1" autocomplete="off"
+                        (input)="onApplyQuantity(item, quantityField)"
+                        (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                    </div>
+
+                    <div class="price-control">
+                      <label>Preço:</label>
+                      <div class="price-input">
+                        <span class="currency">R$</span>
+                        <input type="text" [value]="item.unitaryPrice | currency:''" autocomplete="off"
+                          (input)="onApplyPrice(item, priceField)" #priceField />
+                      </div>
+                    </div>
+
+                    <div class="total-display">
+                      <label>Total:</label>
+                      <span class="total-value">{{ (item.unitaryPrice * item.selectedItems) | currency }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-empty" *ngIf="!data.products || (data.products?.length == 0)">
+            <div class="empty-state">
+              <icon name="shopping-bag-outline" pack="eva"></icon>
+              <p>Nenhum produto adicionado</p>
+              <button class="btn-primary" (click)="onOpenLayer('products')">
+                <icon name="plus-outline" pack="eva"></icon>
+                Adicionar produtos
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="container-components-two">
+
+      <div class="container-settings">
+
+        <h6>
+          <icon name="settings-2-outline" pack="eva" class="settings-icon"></icon>
+          {{ translate.panel.settings.title }}
+        </h6>
+
+        <div class="data">
+
+          <div class="settings-item schemes" *ngIf="schemes?.length && settings.action == 'Requests/create'">
+            <h6 class="py-1">{{ translate.panel.scheme.title }}</h6>
+
+            <fieldset>
+              <div *ngFor="let scheme of schemes">
+                <div class="row">
+                  <label [for]="scheme._id"><input [id]="scheme._id" class="mt-1" name="scheme" type="checkbox"
+                      (input)="onChangeScheme($event, scheme)"> <span>{{ scheme.name }}</span></label>
+                  <div class="form-group" *ngIf="this.data?.scheme?.includes(scheme.code)">
+                    <label class="custom-control-label">{{ translate.panel.scheme.quantity }}</label>
+                    <input class="form-control" value="1" type="text"
+                      (input)="onApplyNumberMask($event);onChangeQuantityScheme(scheme, $event)" />
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+
+          </div>
+
+          <div class="settings-item">
+
+            <div class="option">
+              <div class="form-check form-switch">
+                <input type="checkbox" class="form-check-input" id="completeOrderSwitch"
+                  (change)="onCaptureCompleteOrder(completeOrderSwitch)" #completeOrderSwitch />
+                <label class="form-check-label" for="completeOrderSwitch">
+                  {{ translate.panel.settings.option.conclusion.label }}
+                </label>
+              </div>
+            </div>
+
+            <div class="description">
+              <small>{{ translate.panel.settings.option.conclusion.description }}</small>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="container-balance">
+
+        <div class="data">
+          <div class="container-subtotal">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th colspan="2">{{ translate.panel.balance.label.subtotal.title }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><span class="label">{{ translate.panel.balance.label.subtotal.integrant.products }}</span> <span
+                        class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalProducts || 0) | currency }}</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="label">{{ translate.panel.balance.label.subtotal.integrant.discount }}</span> <span
+                        class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalDiscount || 0) | currency }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="container-total">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <th>{{ translate.panel.balance.label.total }}</th>
+                    <td>{{ (data.balance?.totalSale || 0) | currency }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-button">
+        <button class="btn btn-confirm" (click)="onRegister()"
+          [disabled]="!(!sending && (data.customer || data.member) && (data.products?.length > 0) && (checkProducts))">{{
+          translate.panel.button.register }}</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <requests-register-layer (callback)="onLayerResponse($event)"></requests-register-layer>
+
+</main>

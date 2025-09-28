@@ -1,0 +1,117 @@
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+    <div *ngIf="settings.activeComponent === 'Store/Edit'" class="container centralizer">
+      <div class="wrapper">
+        <form class="form create" [formGroup]="model" (submit)="onConfimrSubmit($event)">
+
+          <div class="branche-header clearfix">
+            <div class="image-container" (click)="choiceImage($event, 'store')">
+              <img class="storeImage" src="{{ settings.data.selectedData.image ? settings.data.selectedData.image : '/assets/images/storeImageLorenIpsun.jpg' }}"/>
+              <input type="file" accept="image/*" name="image" class="inpfile hide"/>
+            </div>
+          </div>
+  
+          <div class="content">
+      
+            <div class="box row form-group">
+              <div class="col-12 col-md-6 fieldLeft form-group">
+                <label>{{ translate.mainModal.storeBillingName }}</label>
+                <input type="text" placeholder="" formControlName="billingName" class="form-control {{ formControls.billingName.errors ? 'required' : '' }}" />
+              </div>
+  
+              <div class="col-12 col-md-6 fieldRight form-group">
+                <label>CNPJ</label>
+                <input type="text" placeholder="00.000.000/0000-00" formControlName="cnpj" class="form-control {{ formControls.cnpj.errors ? 'required' : '' }}"/>
+              </div>
+            
+              <div class="{{ isFiscal && !isMatrix ? 'col-md-6' : 'col-md-12' }} col-12 no-padding">
+                <label>{{ translate.mainModal.storeSystemName }}</label>
+                <input type="text" placeholder="Nome" formControlName="name" class="form-control {{ formControls.name.errors ? 'required' : '' }}"/>
+              </div>
+
+              <div *ngIf="!isMatrix && isFiscal" class="col-12 col-md-6 fieldRight form-group">
+                <label>CNPJ EMISSÂO FISCAL</label>
+                <input type="text" placeholder="00.000.000/0000-00" formControlName="cnpjFiscal" class="form-control {{ formControls.cnpjFiscal.errors ? 'required' : '' }}"/>
+              </div>
+            
+            </div>
+  
+            <p class="box-header text-center">{{ translate.mainModal.adminAccount }}</p>
+  
+            <div class="admin-account box row form-group">
+  
+              <div class="image-container imgc-admin" (click)="choiceImage($event, 'admin')">
+                <img class="adminImage" src="{{ settings.data.selectedData.rootUser.image ?  settings.data.selectedData.rootUser.image :  '/assets/images/profile.png' }}"/>
+                <input type="file" accept="image/*" name="image" class="inpfileAdmin hide"/>
+              </div>
+  
+              <div class="col-12 col-md-10" formGroupName="rootUser">
+                <div class="row">
+                  <div class="col-12 form-group">
+                    <label>{{ translate.mainModal.name }}</label>
+                    <input type="text" formControlName="name"  class="form-control {{ rootUserControls.name.errors ? 'required' : '' }}"/>
+                  </div>
+                  <div class="col-12">
+                    <label>{{ translate.mainModal.contacts.email }}</label>
+                    <input type="text" formControlName="email" class="form-control {{ rootUserControls.email.errors ? 'required' : '' }}"/>
+                  </div>
+                </div>
+              </div>
+            
+            </div>      
+  
+              <p class="box-header">{{ translate.mainModal.address.title }}</p>
+              
+              <div class="address box row" formGroupName="address">
+            
+                <div class="col-12 col-md-6 fieldLeft form-group">
+                  <label>{{ translate.mainModal.address.addressLine }}</label>
+                  <input type="text" placeholder="" formControlName="addressLine" class="form-control {{ addressControls.addressLine.errors ? 'required' : '' }}"/>
+                </div>
+                <div class="col-12 col-md-6 fieldRight form-group">
+                  <label>{{ translate.mainModal.address.postalCode }}</label>
+                  <input type="text" placeholder="" formControlName="postalCode" class="form-control {{ addressControls.postalCode.errors ? 'required' : '' }}"/>
+                </div>
+  
+                <div class="col-12 col-md-6 fieldLeft form-group">
+                  <label>{{ translate.mainModal.address.city }}</label>
+                  <input type="text" placeholder="" formControlName="city" class="form-control {{ addressControls.city.errors ? 'required' : '' }}"/>
+                </div>
+                <div class="col-12 col-md-6 fieldRight form-group">
+                  <label>{{ translate.mainModal.address.state }}</label>
+                  <select class="form-control {{ addressControls.state.errors ? 'required' : '' }}" formControlName="state">
+                    <option *ngFor="let state of states" value="{{ state }}">{{ state }}</option>
+                  </select>
+                </div>
+                
+              </div>
+  
+              <p class="box-header">{{ translate.mainModal.contacts.title }}</p>
+            
+              <div class="contacts box row form-group" formGroupName="contacts">
+  
+                <div class="col-12 no-padding">
+                  <label>{{ translate.mainModal.contacts.email }}</label>
+                  <input type="email" placeholder="" class="col-12" formControlName="email" class="form-control {{ contactsControls.email.errors ? 'required' : '' }}"/>
+                </div>
+  
+                <div class="col-12 col-md-6 fieldLeft form-group">
+                  <label>{{ translate.mainModal.contacts.phone }}</label>
+                  <input type="text" placeholder="" formControlName="phone" class="form-control {{ contactsControls.phone.errors ? 'required' : '' }}"/>
+                </div>
+                <div class="col-12 col-md-6 fieldRight form-group">
+                  <label>{{ translate.mainModal.contacts.whatsapp }}</label>
+                  <input type="text" placeholder="" formControlName="whatsapp" class="form-control"/>
+                </div>
+  
+              </div>
+                    
+              <small *ngIf="model.invalid">{{ translate.mainModal.mandatoryFields }}</small>    
+  
+              <button type="submit" [disabled]="model.invalid || submited ? true : false" class="bottomSC col-12">{{ translate.mainModal.confirm }}</button>
+          </div> 
+        </form>
+      </div>        
+    </div>
+  </div>
+</modal>

@@ -1,0 +1,618 @@
+<!-- 
+📄 ARQUIVO: activities.component.html 
+📁 LOCALIZAÇÃO: src/app/pages/crm/activities/activities.component.html
+🎯 OBJETIVO: Template CORRIGIDO com modal limpo e templates de WhatsApp conectados
+-->
+
+<div class="activities-container">
+    <!-- ✅ CABEÇALHO MELHORADO - botões sempre visíveis -->
+    <div class="page-header">
+        <div class="header-content">
+            <h2>
+                <icon name="calendar-outline" pack="eva"></icon>
+                Atividades e Tarefas
+            </h2>
+            <p>{{ filteredActivities.length }} atividades encontradas</p>
+        </div>
+
+        <!-- ✅ BOTÕES PRINCIPAIS - sempre visíveis e bem posicionados -->
+        <div class="header-actions">
+            <!-- Botão de alternar visualização -->
+            <button class="btn btn-outline" (click)="toggleView()"
+                [tooltip]="calendarView ? 'Visualização em Lista' : 'Visualização em Calendário'" [disabled]="loading">
+                <icon [name]="calendarView ? 'list-outline' : 'calendar-outline'" pack="eva"></icon>
+                <span class="btn-text">{{ calendarView ? 'Lista' : 'Calendário' }}</span>
+            </button>
+
+            <!-- Botão principal de criar atividade -->
+            <button class="btn btn-primary" (click)="openCreateModal()" [disabled]="loading">
+                <icon name="plus-outline" pack="eva"></icon>
+                <span class="btn-text">Nova Atividade</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ✅ SEÇÃO DE FILTROS MELHORADA -->
+    <div class="filters-section" *ngIf="!loading">
+        <!-- Barra superior com busca e botão limpar -->
+        <div class="filters-header">
+            <!-- Campo de busca -->
+            <div class="search-box">
+                <icon name="search-outline" pack="eva"></icon>
+                <input type="text" class="form-control search-input"
+                    placeholder="Buscar por título, descrição, cliente, telefone..." [(ngModel)]="filters.searchText"
+                    (ngModelChange)="applyFilters()">
+            </div>
+
+            <!-- Contador e botão limpar -->
+            <div class="filters-actions">
+                <span class="filter-count" *ngIf="activeFiltersCount > 0">
+                    <icon name="funnel-outline" pack="eva"></icon>
+                    {{ activeFiltersCount }} filtro{{ activeFiltersCount > 1 ? 's' : '' }} ativo{{ activeFiltersCount >
+                    1 ? 's' : '' }}
+                </span>
+                <button class="btn btn-sm btn-outline-danger" *ngIf="activeFiltersCount > 0"
+                    (click)="clearAllFilters()">
+                    <icon name="close-outline" pack="eva"></icon>
+                    Limpar Filtros
+                </button>
+            </div>
+        </div>
+
+        <!-- Grade de filtros -->
+        <div class="filters-grid">
+            <!-- Filtro por tipo -->
+            <div class="filter-group">
+                <label>
+                    <icon name="layers-outline" pack="eva"></icon>
+                    Tipo de Atividade
+                </label>
+                <select class="form-control" [(ngModel)]="filters.type" (ngModelChange)="applyFilters()">
+                    <option value="all">Todos os Tipos</option>
+                    <option *ngFor="let type of typeOptions" [value]="type.value">
+                        {{ type.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Filtro por status -->
+            <div class="filter-group">
+                <label>
+                    <icon name="activity-outline" pack="eva"></icon>
+                    Status
+                </label>
+                <select class="form-control" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
+                    <option value="all">Todos os Status</option>
+                    <option *ngFor="let status of statusOptions" [value]="status.value">
+                        {{ status.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- NOVO: Filtro por prioridade -->
+            <div class="filter-group">
+                <label>
+                    <icon name="flag-outline" pack="eva"></icon>
+                    Prioridade
+                </label>
+                <select class="form-control" [(ngModel)]="filters.priority" (ngModelChange)="applyFilters()">
+                    <option value="all">Todas as Prioridades</option>
+                    <option *ngFor="let priority of priorityOptions" [value]="priority.value">
+                        {{ priority.label }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- Filtro por data -->
+            <div class="filter-group">
+                <label>
+                    <icon name="calendar-outline" pack="eva"></icon>
+                    Período
+                </label>
+                <select class="form-control" [(ngModel)]="filters.dateFilter" (ngModelChange)="applyFilters()">
+                    <option value="all">Todas as Datas</option>
+                    <option value="today">Hoje</option>
+                    <option value="week">Esta Semana</option>
+                    <option value="month">Este Mês</option>
+                    <option value="overdue">Atrasadas</option>
+                    <option value="custom">Período Customizado</option>
+                </select>
+            </div>
+
+            <!-- NOVO: Datas customizadas (só aparece se selecionar "Período Customizado") -->
+            <div class="filter-group date-range" *ngIf="filters.dateFilter === 'custom'">
+                <label>Data Inicial</label>
+                <input type="date" class="form-control" [(ngModel)]="filters.startDate"
+                    (ngModelChange)="applyFilters()">
+            </div>
+
+            <div class="filter-group date-range" *ngIf="filters.dateFilter === 'custom'">
+                <label>Data Final</label>
+                <input type="date" class="form-control" [(ngModel)]="filters.endDate" (ngModelChange)="applyFilters()">
+            </div>
+
+            <!-- Filtro por lead -->
+            <div class="filter-group">
+                <label>
+                    <icon name="person-outline" pack="eva"></icon>
+                    Cliente/Lead
+                </label>
+                <select class="form-control" [(ngModel)]="filters.leadId" (ngModelChange)="applyFilters()">
+                    <option value="">Todos os Clientes</option>
+                    <option *ngFor="let lead of leads" [value]="lead._id">
+                        {{ lead.name }}
+                    </option>
+                </select>
+            </div>
+
+            <!-- NOVO: Filtro por responsável -->
+            <div class="filter-group" *ngIf="assignedToOptions.length > 0">
+                <label>
+                    <icon name="people-outline" pack="eva"></icon>
+                    Responsável
+                </label>
+                <select class="form-control" [(ngModel)]="filters.assignedTo" (ngModelChange)="applyFilters()">
+                    <option value="all">Todos os Responsáveis</option>
+                    <option *ngFor="let user of assignedToOptions" [value]="user.id">
+                        {{ user.name }}
+                    </option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ RESUMO RÁPIDO -->
+    <div class="summary-cards" *ngIf="!loading">
+        <div class="summary-card pending">
+            <div class="card-icon">
+                <icon name="clock-outline" pack="eva"></icon>
+            </div>
+            <div class="card-content">
+                <h3>{{ getActivityCount('pending') }}</h3>
+                <p>Pendentes</p>
+            </div>
+        </div>
+
+        <div class="summary-card overdue">
+            <div class="card-icon">
+                <icon name="alert-triangle-outline" pack="eva"></icon>
+            </div>
+            <div class="card-content">
+                <h3>{{ getActivityCount('overdue') }}</h3>
+                <p>Atrasadas</p>
+            </div>
+        </div>
+
+        <div class="summary-card completed">
+            <div class="card-icon">
+                <icon name="checkmark-circle-outline" pack="eva"></icon>
+            </div>
+            <div class="card-content">
+                <h3>{{ getActivityCount('completed') }}</h3>
+                <p>Concluídas</p>
+            </div>
+        </div>
+
+        <div class="summary-card today">
+            <div class="card-icon">
+                <icon name="calendar-outline" pack="eva"></icon>
+            </div>
+            <div class="card-content">
+                <h3>{{ getTodayCount() }}</h3>
+                <p>Para Hoje</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ LOADING STATE -->
+    <div class="loading-state" *ngIf="loading">
+        <div class="loading-spinner">
+            <icon name="loader-outline" pack="eva"></icon>
+        </div>
+        <p>Carregando atividades...</p>
+    </div>
+
+    <!-- ✅ CONTEÚDO PRINCIPAL -->
+    <div class="activities-content" *ngIf="!loading">
+
+        <!-- VISUALIZAÇÃO EM LISTA -->
+        <div class="activities-list" *ngIf="!calendarView">
+
+            <!-- Mensagem quando não há atividades -->
+            <div class="empty-state" *ngIf="filteredActivities.length === 0">
+                <icon name="calendar-outline" pack="eva"></icon>
+                <h3>Nenhuma atividade encontrada</h3>
+                <p>Crie sua primeira atividade para começar a organizar suas tarefas</p>
+                <button class="btn btn-primary" (click)="openCreateModal()">
+                    <icon name="plus-outline" pack="eva"></icon>
+                    Criar Atividade
+                </button>
+            </div>
+
+            <!-- Lista de atividades -->
+            <div class="activity-card" *ngFor="let activity of filteredActivities; trackBy: trackByActivity"
+                [class]="'status-' + activity.status">
+
+                <!-- ✅ CABEÇALHO DA ATIVIDADE -->
+                <div class="activity-header">
+                    <div class="activity-info">
+                        <!-- Tipo da atividade com ícone -->
+                        <div class="activity-type" [class]="'type-' + activity.type">
+                            <icon [name]="getTypeIcon(activity.type)" pack="eva"></icon>
+                            <span>{{ getTypeLabel(activity.type) }}</span>
+                        </div>
+
+                        <!-- Título -->
+                        <h4 class="activity-title">{{ activity.title }}
+                            <!-- NOVO: Badge de Recompra -->
+                            <span class="badge-recompra" *ngIf="activity?.metadata?.activityType === 'recompra'">
+                                🔄 Recompra
+                            </span>
+                        </h4>
+
+                        <!-- Adicione após o título da atividade -->
+                        <span class="badge-boas-vindas" *ngIf="activity.metadata?.source === 'public_registration'">
+                            🎁 Boas-vindas
+                        </span>
+
+                        <!-- Nome do lead/cliente -->
+                        <p class="activity-lead" *ngIf="activity.leadName">
+                            <icon name="person-outline" pack="eva"></icon>
+                            {{ activity.leadName }}
+                        </p>
+                    </div>
+
+                    <!-- Status e prioridade -->
+                    <div class="activity-meta">
+                        <span class="activity-status" [class]="'status-' + activity.status">
+                            {{ getStatusLabel(activity.status) }}
+                        </span>
+                        <span class="activity-priority" [class]="'priority-' + activity.priority">
+                            {{ getPriorityLabel(activity.priority) }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ✅ DESCRIÇÃO -->
+                <div class="activity-description" *ngIf="activity.description">
+                    <p>{{ activity.description }}</p>
+                </div>
+
+                <!-- ✅ AGENDAMENTO -->
+                <div class="activity-schedule">
+                    <div class="schedule-info">
+                        <icon name="calendar-outline" pack="eva"></icon>
+                        <span>{{ formatDate(activity.scheduledDate) }}</span>
+                        <span *ngIf="activity.scheduledTime" class="schedule-time">
+                            {{ activity.scheduledTime }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ✅ AÇÕES - botões sempre visíveis com WhatsApp conectado aos templates -->
+                <div class="activity-actions">
+                    <!-- ✅ WHATSAPP COM TEMPLATES - ação principal -->
+                    <button class="btn btn-whatsapp" *ngIf="activity.leadPhone"
+                        (click)="openWhatsAppTemplates(activity)" tooltip="Enviar WhatsApp com Templates">
+                        <icon name="message-circle-outline" pack="eva"></icon>
+                        <span class="action-text">WhatsApp</span>
+                    </button>
+
+                    <!-- Ligação -->
+                    <button class="btn btn-primary" *ngIf="activity.leadPhone" (click)="makeCall(activity)"
+                        tooltip="Fazer Ligação">
+                        <icon name="phone-outline" pack="eva"></icon>
+                        <span class="action-text">Ligar</span>
+                    </button>
+
+                    <!-- Email -->
+                    <button class="btn btn-info" *ngIf="activity.leadEmail" (click)="sendEmail(activity)"
+                        tooltip="Enviar Email">
+                        <icon name="email-outline" pack="eva"></icon>
+                        <span class="action-text">Email</span>
+                    </button>
+
+                    <!-- Marcar como concluída -->
+                    <button class="btn btn-success" *ngIf="activity.status === 'pending'"
+                        (click)="markAsCompleted(activity)" tooltip="Marcar como Concluída">
+                        <icon name="checkmark-outline" pack="eva"></icon>
+                        <span class="action-text">Concluir</span>
+                    </button>
+
+                    <!-- Editar -->
+                    <button class="btn btn-outline" (click)="editActivity(activity)" tooltip="Editar Atividade">
+                        <icon name="edit-outline" pack="eva"></icon>
+                        <span class="action-text">Editar</span>
+                    </button>
+
+                    <!-- Excluir -->
+                    <button class="btn btn-danger" (click)="deleteActivity(activity)" tooltip="Excluir Atividade">
+                        <icon name="trash-outline" pack="eva"></icon>
+                        <span class="action-text">Excluir</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 🆕 VISUALIZAÇÃO EM CALENDÁRIO MELHORADA -->
+        <div class="calendar-view" *ngIf="calendarView">
+            <!-- Cabeçalho do calendário -->
+            <div class="calendar-header">
+                <!-- Navegação -->
+                <button class="btn-nav" (click)="previousMonth()">
+                    <icon name="chevron-left" pack="eva"></icon>
+                </button>
+
+                <div class="month-year">
+                    <h3>{{ monthNames[currentMonth.getMonth()] }} {{ currentMonth.getFullYear() }}</h3>
+                    <button class="btn-today" (click)="goToToday()">Hoje</button>
+                </div>
+
+                <button class="btn-nav" (click)="nextMonth()">
+                    <icon name="chevron-right" pack="eva"></icon>
+                </button>
+            </div>
+
+            <!-- Dias da semana -->
+            <div class="weekdays">
+                <div class="weekday" *ngFor="let day of weekDays">
+                    {{ day }}
+                </div>
+            </div>
+
+            <!-- Grid do calendário - TODOS OS DIAS CLICÁVEIS -->
+            <div class="calendar-grid">
+                <div class="calendar-day" *ngFor="let day of calendarDays" [class.other-month]="day.isOtherMonth"
+                    [class.today]="day.isToday" [class.has-activities]="day.hasActivities"
+                    [class.clickable]="!day.isOtherMonth" (click)="!day.isOtherMonth ? showDayActivities(day) : null">
+
+                    <!-- Número do dia -->
+                    <div class="day-header" *ngIf="!day.isOtherMonth">
+                        <span class="day-number">{{ day.day }}</span>
+                        <span class="activity-count" *ngIf="day.activities.length > 0">
+                            {{ day.activities.length }}
+                        </span>
+                    </div>
+
+                    <!-- Preview das atividades (máximo 3) -->
+                    <div class="day-activities" *ngIf="!day.isOtherMonth && day.activities.length > 0">
+                        <div class="activity-preview" *ngFor="let activity of day.activities.slice(0, 3)"
+                            [class]="'status-' + activity.status" [tooltip]="activity.title">
+                            <span class="activity-time">{{ getTimeFromDate(activity) }}</span>
+                            <span class="activity-title">{{ activity.title }}</span>
+                        </div>
+
+                        <!-- Indicador de mais atividades -->
+                        <div class="more-activities" *ngIf="day.activities.length > 3">
+                            +{{ day.activities.length - 3 }} mais
+                        </div>
+                    </div>
+
+                    <!-- Indicador visual para adicionar atividade (aparece no hover) -->
+                    <div class="add-activity-hint" *ngIf="!day.isOtherMonth">
+                        <icon name="plus-circle-outline" pack="eva"></icon>
+                    </div>
+                </div>
+            </div>
+            <!-- Legenda -->
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-dot status-pending"></span>
+                    <span>Pendente</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot status-completed"></span>
+                    <span>Concluída</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot status-overdue"></span>
+                    <span>Atrasada</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ MODAL DE CRIAÇÃO/EDIÇÃO - Z-INDEX CORRIGIDO -->
+<div class="activities-modal" *ngIf="showModal && !showTemplatesModal" [class.show]="showModal">
+
+    <!-- Backdrop do modal de atividades -->
+    <div class="modal-backdrop-activities" (click)="closeModal()"></div>
+
+    <div class="modal-dialog-activities">
+        <div class="modal-content-activities">
+            <!-- Cabeçalho do modal -->
+            <div class="modal-header-activities">
+                <h5 class="modal-title">
+                    <icon [name]="modalMode === 'create' ? 'plus-outline' : 'edit-outline'" pack="eva"></icon>
+                    {{ modalMode === 'create' ? 'Nova Atividade' : 'Editar Atividade' }}
+                </h5>
+                <button type="button" class="btn-close-activities" (click)="closeModal()">
+                    <icon name="close-outline" pack="eva"></icon>
+                </button>
+            </div>
+
+            <!-- Corpo do modal -->
+            <div class="modal-body-activities">
+                <form (ngSubmit)="saveActivity()" #activityFormRef="ngForm">
+
+                    <!-- Título -->
+                    <div class="form-group">
+                        <label for="title">Título *</label>
+                        <input type="text" id="title" class="form-control" [(ngModel)]="activityForm.title" name="title"
+                            placeholder="Digite o título da atividade" required>
+                    </div>
+
+                    <!-- Linha 1: Tipo e Lead -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="type">Tipo *</label>
+                            <select id="type" class="form-control" [(ngModel)]="activityForm.type" name="type" required>
+                                <option *ngFor="let type of typeOptions" [value]="type.value">
+                                    {{ type.label }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="leadId">Lead/Cliente</label>
+                            <select id="leadId" class="form-control" [(ngModel)]="activityForm.leadId" name="leadId">
+                                <option value="">Selecione um lead</option>
+                                <option *ngFor="let lead of leads" [value]="lead._id">
+                                    {{ lead.name }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Descrição -->
+                    <div class="form-group">
+                        <label for="description">Descrição</label>
+                        <textarea id="description" class="form-control" [(ngModel)]="activityForm.description"
+                            name="description" rows="3" placeholder="Descreva os detalhes da atividade"></textarea>
+                    </div>
+
+                    <!-- Linha 2: Data e Hora -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="scheduledDate">Data *</label>
+                            <input type="date" id="scheduledDate" class="form-control"
+                                [(ngModel)]="activityForm.scheduledDate" name="scheduledDate" required>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="scheduledTime">Horário</label>
+                            <input type="time" id="scheduledTime" class="form-control"
+                                [(ngModel)]="activityForm.scheduledTime" name="scheduledTime">
+                        </div>
+                    </div>
+
+                    <!-- Linha 3: Prioridade e Status -->
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="priority">Prioridade</label>
+                            <select id="priority" class="form-control" [(ngModel)]="activityForm.priority"
+                                name="priority">
+                                <option *ngFor="let priority of priorityOptions" [value]="priority.value">
+                                    {{ priority.label }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6" *ngIf="modalMode === 'edit'">
+                            <label for="status">Status</label>
+                            <select id="status" class="form-control" [(ngModel)]="activityForm.status" name="status">
+                                <option *ngFor="let status of statusOptions" [value]="status.value">
+                                    {{ status.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Rodapé do modal com botões -->
+            <div class="modal-footer-activities">
+                <button type="button" class="btn btn-secondary" (click)="closeModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" (click)="saveActivity()"
+                    [disabled]="!activityForm.title || !activityForm.type || !activityForm.scheduledDate">
+                    <icon name="save-outline" pack="eva"></icon>
+                    {{ modalMode === 'create' ? 'Criar Atividade' : 'Salvar Alterações' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ MODAL DE TEMPLATES DO WHATSAPP - Z-INDEX MAIS ALTO -->
+<app-message-templates *ngIf="showTemplatesModal" [customer]="selectedCustomerForTemplate"
+    [showModal]="showTemplatesModal" [filterCategory]="getTemplateCategory()" (onClose)="closeTemplatesModal()"
+    (onSelect)="onTemplateSelected($event)">
+</app-message-templates>
+
+<!-- 🆕 MODAL DE ATIVIDADES DO DIA - VERSÃO FINAL CORRIGIDA -->
+<div class="day-modal" *ngIf="showDayModal" [class.show]="showDayModal">
+    <div class="modal-backdrop" (click)="closeDayModal()"></div>
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Cabeçalho do modal -->
+            <div class="modal-header">
+                <h3>
+                    <icon name="calendar-outline" pack="eva"></icon>
+                    Atividades do dia {{ selectedDay?.day }} de {{ monthNames[currentMonth.getMonth()] }}
+                </h3>
+                <button class="btn-close" (click)="closeDayModal()">
+                    <icon name="close-outline" pack="eva"></icon>
+                </button>
+            </div>
+
+            <!-- Corpo do modal COM SCROLL -->
+            <div class="modal-body">
+                <div class="activities-scroll-container">
+                    <!-- Lista de atividades do dia -->
+                    <ng-container *ngIf="selectedDay && selectedDay.activities && selectedDay.activities.length > 0">
+                        <div class="day-activity-item" *ngFor="let activity of selectedDay.activities; let i = index"
+                            [ngClass]="'status-' + activity.status">
+
+                            <div class="activity-time-badge">
+                                <icon name="clock-outline" pack="eva"></icon>
+                                {{ getTimeFromDate(activity) }}
+                            </div>
+
+                            <div class="activity-content">
+                                <h4>{{ activity.title }}</h4>
+                                <p class="activity-description" *ngIf="activity.description">
+                                    {{ activity.description }}
+                                </p>
+
+                                <div class="activity-meta">
+                                    <!-- Cliente -->
+                                    <span class="meta-item" *ngIf="activity.leadName">
+                                        <icon name="person-outline" pack="eva"></icon>
+                                        {{ activity.leadName }}
+                                    </span>
+
+                                    <!-- Tipo -->
+                                    <span class="meta-item" *ngIf="activity.type">
+                                        <icon [name]="getTypeIcon(activity.type)" pack="eva"></icon>
+                                        {{ getTypeLabel(activity.type) }}
+                                    </span>
+
+                                    <!-- Status -->
+                                    <span class="meta-item status-badge" [ngClass]="'status-' + activity.status">
+                                        {{ getStatusLabel(activity.status) }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <!-- Mensagem quando não há atividades -->
+                    <div class="empty-day"
+                        *ngIf="!selectedDay || !selectedDay.activities || selectedDay.activities.length === 0">
+                        <icon name="calendar-outline" pack="eva"></icon>
+                        <p>Nenhuma atividade agendada para este dia</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé do modal -->
+            <div class="modal-footer">
+                <div class="footer-info">
+                    <span class="total-activities">
+                        <icon name="list-outline" pack="eva"></icon>
+                        Total: {{ selectedDay?.activities?.length || 0 }} atividade{{
+                        selectedDay?.activities?.length !== 1 ? 's' : '' }}
+                    </span>
+                </div>
+                <button class="btn btn-primary" (click)="openCreateModalForDay(selectedDay)">
+                    <icon name="plus-outline" pack="eva"></icon>
+                    Nova Atividade para este Dia
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,282 @@
+<!-- 
+Arquivo: public-registration.component.html
+Caminho: src/app/public/registration/public-registration.component.html
+O que faz: Template HTML do formulário público com visual melhorado
+-->
+
+<div class="public-registration-page">
+    <!-- Estado de carregamento -->
+    <div class="loading-container" *ngIf="loading">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Carregando...</p>
+        </div>
+    </div>
+
+    <!-- Estado de erro -->
+    <div class="error-container" *ngIf="hasError && !loading">
+        <div class="error-card">
+            <div class="error-icon">❌</div>
+            <h2>😕 Ops! Algo deu errado 😕</h2>
+            <p>{{ errorMessage }}</p>
+            <button class="btn btn-primary" (click)="resetForm()">
+                Tentar Novamente
+            </button>
+        </div>
+    </div>
+
+    <!-- Formulário principal -->
+    <div class="registration-container" *ngIf="!loading && !hasError && !submitted">
+
+        <div class="registration-card">
+            <!-- Cabeçalho com título -->
+            <div class="card-header">
+                <!-- Nome da empresa -->
+                <h1 class="company-name">🏢 {{ tenantInfo?.name || 'Nossa Empresa' }}</h1>
+
+                <!-- Título e subtítulo -->
+                <h2 class="form-title">✨ {{ formSettings?.appearance?.title || 'Cadastre-se' }}</h2>
+                <p class="form-subtitle">🎉 {{ formSettings?.appearance?.subtitle || 'Preencha seus dados e aproveite nossas ofertas exclusivas' }}</p>
+
+                <!-- Badge de desconto especial -->
+                <div class="discount-badge" *ngIf="formSettings?.appearance?.showDiscount">
+                    <span class="badge-icon">🎉</span>
+                    <span class="badge-text">Desconto especial para novos clientes!</span>
+                </div>
+            </div>
+
+            <!-- Formulário -->
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+                <!-- Indicador de campos obrigatórios -->
+                <div class="required-info">
+                    <span class="required-star">*</span> Campos obrigatórios
+                </div>
+
+                <!-- Nome -->
+                <div class="form-group" *ngIf="formSettings?.fields?.name?.show">
+                    <label class="form-label">
+                        <span class="label-icon">👤</span>
+                        {{ formSettings.fields.name.label }}
+                        <span class="required" *ngIf="formSettings.fields.name.required">*</span>
+                    </label>
+                    <input type="text" class="form-control" formControlName="name"
+                        placeholder="Digite seu nome completo"
+                        [class.error]="registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched">
+
+                    <!-- Mensagem de erro padronizada -->
+                    <div class="error-message"
+                        *ngIf="registrationForm.get('name')?.invalid && registrationForm.get('name')?.touched">
+                        <span *ngIf="registrationForm.get('name')?.errors?.['required']">
+                            Este campo é obrigatório
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Telefone -->
+                <div class="form-group" *ngIf="formSettings?.fields?.phone?.show">
+                    <label class="form-label">
+                        <span class="label-icon">📱</span>
+                        {{ formSettings.fields.phone.label }}
+                        <span class="required" *ngIf="formSettings.fields.phone.required">*</span>
+                    </label>
+                    <input type="text" class="form-control" formControlName="phone" (input)="applyPhoneMask($event)"
+                        placeholder="(00) 00000-0000"
+                        [class.error]="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched">
+
+                    <!-- Mensagem de erro padronizada -->
+                    <div class="error-message"
+                        *ngIf="registrationForm.get('phone')?.invalid && registrationForm.get('phone')?.touched">
+                        <span *ngIf="registrationForm.get('phone')?.errors?.['required']">
+                            Este campo é obrigatório
+                        </span>
+                        <span *ngIf="registrationForm.get('phone')?.errors?.['phoneAlreadyExists']">
+                            Este telefone já está cadastrado
+                        </span>
+                    </div>
+                </div>
+                <!-- E-mail -->
+                <div class="form-group" *ngIf="formSettings?.fields?.email?.show">
+                    <label class="form-label">
+                        <span class="label-icon">✉️</span>
+                        {{ formSettings.fields.email.label }}
+                        <span class="required" *ngIf="formSettings.fields.email.required">*</span>
+                        <span class="optional-badge" *ngIf="!formSettings.fields.email.required">Opcional</span>
+                    </label>
+                    <input type="email" class="form-control" formControlName="email" placeholder="seu@email.com"
+                        [class.error]="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+
+                    <!-- Mensagem de erro padronizada -->
+                    <div class="error-message"
+                        *ngIf="registrationForm.get('email')?.invalid && registrationForm.get('email')?.touched">
+                        <span *ngIf="registrationForm.get('email')?.errors?.['required']">
+                            Este campo é obrigatório
+                        </span>
+                        <span *ngIf="registrationForm.get('email')?.errors?.['email']">
+                            E-mail inválido
+                        </span>
+                    </div>
+                </div>
+
+                <!-- CPF -->
+                <div class="form-group" *ngIf="formSettings?.fields?.cpf?.show">
+                    <label class="form-label">
+                        <span class="label-icon">🆔</span>
+                        {{ formSettings.fields.cpf.label }}
+                        <span class="required" *ngIf="formSettings.fields.cpf.required">*</span>
+                        <span class="optional-badge" *ngIf="!formSettings.fields.cpf.required">Opcional</span>
+                    </label>
+                    <input type="text" class="form-control" formControlName="cpf" (input)="applyCpfMask($event)"
+                        placeholder="000.000.000-00"
+                        [class.error]="registrationForm.get('cpf')?.invalid && registrationForm.get('cpf')?.touched">
+
+                    <!-- Mensagem de erro padronizada -->
+                    <div class="error-message"
+                        *ngIf="registrationForm.get('cpf')?.invalid && registrationForm.get('cpf')?.touched">
+                        <span *ngIf="registrationForm.get('cpf')?.errors?.['required']">
+                            Este campo é obrigatório
+                        </span>
+                        <span *ngIf="registrationForm.get('cpf')?.errors?.['cpfAlreadyExists']">
+                            Este CPF já está cadastrado
+                        </span>
+                    </div>
+                </div>
+                <!-- Data de Nascimento -->
+                <div class="form-group" *ngIf="formSettings?.fields?.birthDate?.show">
+                    <label class="form-label">
+                        <span class="label-icon">🎂</span>
+                        {{ formSettings.fields.birthDate.label }}
+                        <span class="required" *ngIf="formSettings.fields.birthDate.required">*</span>
+                        <span class="optional-badge" *ngIf="!formSettings.fields.birthDate.required">Opcional</span>
+                    </label>
+                    <input type="date" class="form-control" formControlName="birthDate"
+                        [class.error]="registrationForm.get('birthDate')?.invalid && registrationForm.get('birthDate')?.touched">
+
+                    <!-- Mensagem de erro padronizada -->
+                    <div class="error-message"
+                        *ngIf="registrationForm.get('birthDate')?.invalid && registrationForm.get('birthDate')?.touched">
+                        <span *ngIf="registrationForm.get('birthDate')?.errors?.['required']">
+                            Este campo é obrigatório
+                        </span>
+                    </div>
+                </div>
+                <!-- Endereço (OPCIONAL) -->
+                <div class="form-group address-section" *ngIf="formSettings?.fields?.address?.show">
+                    <label class="form-label">
+                        <span class="label-icon">📍</span>
+                        {{ formSettings.fields.address.label }}
+                        <span class="optional-badge">Opcional</span>
+                    </label>
+
+                    <div class="address-group" formGroupName="address">
+                        <!-- CEP -->
+                        <div class="address-row">
+                            <div class="cep-field">
+                                <input type="text" class="form-control" formControlName="postalCode"
+                                    (input)="applyPostalCodeMask($event)" (blur)="searchAddress()"
+                                    placeholder="CEP: 00000-000">
+                                <button type="button" class="btn-search-cep" (click)="searchAddress()"
+                                    [disabled]="searchingCep">
+                                    <span *ngIf="!searchingCep">🔍</span>
+                                    <span *ngIf="searchingCep" class="mini-spinner"></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Rua e Número -->
+                        <div class="address-row">
+                            <input type="text" class="form-control flex-grow" formControlName="local"
+                                placeholder="Rua, Avenida, etc.">
+                            <input type="text" class="form-control address-number" formControlName="number"
+                                placeholder="Nº">
+                        </div>
+
+                        <!-- Complemento -->
+                        <div class="address-row">
+                            <input type="text" class="form-control" formControlName="complement"
+                                placeholder="Complemento (Apto, Sala, etc.)">
+                        </div>
+
+                        <!-- Bairro -->
+                        <div class="address-row">
+                            <input type="text" class="form-control" formControlName="neighborhood" placeholder="Bairro">
+                        </div>
+
+                        <!-- Cidade e Estado -->
+                        <div class="address-row">
+                            <input type="text" class="form-control flex-grow" formControlName="city"
+                                placeholder="Cidade">
+                            <input type="text" class="form-control address-state" formControlName="state"
+                                placeholder="UF" maxlength="2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Termos de uso (se habilitado) -->
+                <div class="form-group terms-group" *ngIf="formSettings?.security?.showTerms">
+                    <label class="checkbox-label">
+                        <input type="checkbox" formControlName="acceptTerms" class="checkbox-input">
+                        <span class="checkbox-text">
+                            Li e aceito os
+                            <a href="#" target="_blank" class="terms-link">termos de uso</a>
+                            e a
+                            <a href="#" target="_blank" class="terms-link">política de privacidade</a>
+                        </span>
+                    </label>
+                </div>
+
+                <!-- Botão de envio -->
+                <button type="submit" class="btn-submit" [disabled]="submitting || registrationForm.invalid"
+                    [class.loading]="submitting">
+                    <span *ngIf="!submitting">
+                        <span class="btn-icon">🚀</span>
+                        Cadastrar e Garantir Desconto
+                        <span class="btn-icon">🎁</span>
+                    </span>
+                    <span *ngIf="submitting">
+                        <span class="mini-spinner"></span>
+                        Cadastrando...
+                    </span>
+                </button>
+
+                <!-- Aviso de segurança -->
+                <div class="security-notice">
+                    <span class="lock-icon">🔒</span>
+                    Seus dados estão seguros e protegidos
+                </div>
+            </form>
+        </div>
+
+        <!-- Footer -->
+        <div class="registration-footer">
+            <p>© {{ currentYear }} {{ tenantInfo?.name || 'Nossa Empresa' }}. Todos os direitos reservados.</p>
+            <p class="footer-security">
+                <span class="lock-icon">🔒</span>
+                Ambiente seguro e protegido
+            </p>
+        </div>
+    </div>
+
+    <!-- Estado de sucesso -->
+    <div class="success-container" *ngIf="submitted && !loading">
+        <div class="success-card">
+            <div class="success-animation">
+                <div class="success-icon">✅</div>
+                <div class="confetti">🎉</div>
+            </div>
+            <h2>🎊 Parabéns! Cadastro realizado com sucesso! 🎊</h2>
+            <p class="success-message">
+                🎁 {{ formSettings?.appearance?.successMessage || 'Você garantiu seu desconto especial!' }} 🎁
+            </p>
+            <div class="success-info">
+                <p>📞 Em breve entraremos em contato com mais informações.</p>
+                <p class="discount-info">
+                    <strong>💯 Seu desconto foi garantido! 💯</strong><br>
+                    📱 Guarde seu telefone cadastrado para aproveitar na próxima compra.
+                </p>
+            </div>
+            <button class="btn btn-primary" (click)="resetForm()">
+                Fazer Novo Cadastro
+            </button>
+        </div>
+    </div>
+</div>

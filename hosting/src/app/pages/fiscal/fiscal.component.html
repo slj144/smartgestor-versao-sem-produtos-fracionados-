@@ -1,0 +1,183 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  >
+    <ng-container slot="buttons-of-header">
+      <div class="container-actions d-inline-block rounded me-2">
+        <div class="nf-type">
+          <select class="form-control px-4" (change)="onChangeNfType($event)" [value]="currentNfType">
+            <option>NFE</option>
+            <option>NFCE</option>
+            <option>NFSE</option>
+            <option value="inutilization">Inutilização Nota Fiscal</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">          
+          <li (click)="onSettings($event)"><span class="dropdown-item"><icon name="settings-outline" pack="eva"></icon> Configurações</span></li>
+          <li (click)="onEmitNf($event)"><span class="dropdown-item"><icon name="paper-plane-outline" pack="eva"></icon>Emitir Nfe/Nfce/Nfse</span></li>
+          <li (click)="onCancelNf($event)"><span class="dropdown-item"><icon name="close-outline" pack="eva"></icon>Cancelar Nfe/Nfce/Nfse</span></li>
+          <li (click)="onAdjustNf($event)"><span class="dropdown-item"><icon name="edit-outline" pack="eva"></icon>Correção de Nfe</span></li>
+          <li (click)="onInutlizationNf($event)"><span class="dropdown-item"><icon name="close-outline" pack="eva"></icon>Inutilizar Nfe</span></li>
+        </ul>
+      </div>
+    </ng-container>
+  </custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && fiscalNotes?.length && currentNfType != 'inutilization'">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-2 text-center">Id</div>
+            <div class="col-4">Identificador</div>
+            <div class="col-1 text-center">Emissão</div>
+            <div class="col-2 text-center">Situação</div>
+            <div class="col-1 text-center">Série</div>
+            <div class="col-1 text-center">Número</div>
+            <div class="col-1 text-center" *ngIf="permissions.actions.edit && currentNfType != 'NFCE' || permissions.actions.delete">Ações</div>
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of fiscalNotes">
+
+            <div class="col col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Id:</span>
+              <span class="value fw-bold">{{ item.id }}</span>
+            </div>
+            
+            <div class="col-auto col-md-4 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Identificador:</span>
+              <span class="value">{{ item.idIntegracao }}</span>
+            </div>
+
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Emissão:</span>
+              <span class="value">{{ item.emissao }}</span>
+            </div>  
+
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">Situação:</span>
+              <span class="value">{{ item.situacao || item.status }}</span>
+            </div>          
+
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">Série:</span>
+              <span class="value fw-bold costPrice">{{ item.serie }}</span>
+            </div>
+            
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">Número:</span>
+              <span class="value fw-bold costPrice">{{ item.numero }}</span>
+            </div>
+
+            <div class="col-auto col-md-1 text-center p-0 p-md-2 hr-down-md-bottom">
+              <div class="value">
+                <button class="btnAction btnRead" (click)="onRead(item)"><icon name="eye" pack="fa"></icon></button>
+
+                <ng-container *ngIf="permissions.actions.edit && currentNfType != 'NFCE' || permissions.actions.delete">
+                  <button class="btnAction btnEdit" (click)="onAdjustNf($event, item)" *ngIf="permissions.actions.edit && currentNfType == 'NFE' && item.status == 'CONCLUIDO'"><icon name="pencil-alt" pack="fa"></icon></button>
+                  <button class="btnAction btnDelete" (click)="onCancelNf($event, item)" *ngIf="permissions.actions.delete && item.status == 'CONCLUIDO'" [disabled]="checkCancel(item)"><icon name="close" pack="fa"></icon></button>
+                </ng-container>
+              </div>
+            </div>  
+
+          </div>
+        </div>
+
+      </div>
+      <div class="row" *ngIf="fiscalNotes?.length > 0">
+        <div class="col text-center">
+            <nav aria-label="Navegação de página">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <a class="page-link" href="#" (click)="onPreviousPage($event)" aria-label="Anterior">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#" (click)="onNextPage($event)" aria-label="Próximo">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+    </ng-container>   
+
+    <ng-container *ngIf="!loading && inutilizationfiscalNotes?.length && currentNfType == 'inutilization'">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-3 ">Id</div>
+            <div class="col-4">Protocolo</div>
+            <div class="col-1 text-center">Serie</div>
+            <div class="col-1 text-center">Nº Inicial</div>
+            <div class="col-1 text-center">N° Final</div>
+            <div class="col-2 text-center">Status</div>
+            <!-- <div class="col-1 text-center" *ngIf="permissions.actions.edit && currentNfType != 'NFCE' || permissions.actions.delete">Ações</div> -->
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of inutilizationfiscalNotes">
+
+            <div class="col col-md-3 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom ">
+              <span class="label d-block d-md-none">Id:</span>
+              <span class="value fw-bold">{{ item._id }}</span>
+            </div>
+
+            <div class="col-auto col-md-4 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Protocolo:</span>
+              <span class="value">{{ item.protocol }}</span>
+            </div>
+            
+            <div class="col-auto col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom text-center">
+              <span class="label d-block d-md-none">Serie:</span>
+              <span class="value">{{ item.data?.serie }}</span>
+            </div>
+
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Nº Inicial:</span>
+              <span class="value">{{ item.data?.numeracao?.inicial }}</span>
+            </div>  
+
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">Nº Final:</span>
+              <span class="value">{{ item.data?.numeracao?.final }}</span>
+            </div>  
+
+
+            <div class="col col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">Status:</span>
+              <span class="value fw-bold costPrice">{{ item.query?.data?.status }}</span>
+            </div>
+            
+          </div>
+        </div>
+
+      </div>
+    </ng-container>  
+
+  </main>  
+
+  <placeholder  [loading]="loading" [hasData]="fiscalNotes?.length > 0 || currentNfType == 'inutilization'" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<fiscal-modal (callback)="onModalResponse($event)"></fiscal-modal>

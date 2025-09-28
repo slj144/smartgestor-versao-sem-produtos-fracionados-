@@ -1,0 +1,89 @@
+<!-- 
+  Arquivo: cashier-receipts.component.html
+  Localização: components/modal/components/cashier-receipts/
+  Descrição: Template do componente de modal para opções de recibo do caixa.
+             Permite ao usuário escolher entre diferentes formatos de impressão (A4, térmica),
+             envio via WhatsApp e download de documentos fiscais (NF-e, NFS-e).impressao ok!
+-->
+<div #modal id="ContainerCustomModal">
+  <div class="container-view">
+    <div class="wrapper">
+      <div class="container-options">
+        <ul>
+          <!-- Opções de NOTA FISCAL primeiro quando existir NF -->
+          <li class="option-receipt-warranty"
+            *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nf && settings?.data?.nf?.status?.nf == 'CONCLUIDO'"
+            (click)="onDownload('PDF','nf')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span>
+              <span class="title" *ngIf="settings?.data?.nf?.type?.nf !== 'NFCE'">Imprimir Nota Fiscal (DANFE)</span>
+              <span class="title" *ngIf="settings?.data?.nf?.type?.nf === 'NFCE'">Imprimir Nota Fiscal (DANFCe)</span>
+              <span class="format">{{ translate.option.format.pdf }}</span>
+            </span>
+          </li>
+
+          <li class="option-receipt-delivery" *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nf"
+            (click)="onDownload('XML', 'nf')">
+            <button type="button">
+              <icon name="cloud-download-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">Baixar XML da Nota Fiscal</span><span class="format">{{ translate.option.format.xml }}</span></span>
+          </li>
+
+          <li class="option-receipt-warranty"
+            *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nfse && settings?.data?.nf?.status?.nfse == 'CONCLUIDO'"
+            (click)="onDownload('PDF','nfse')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">Imprimir Nota Fiscal de Serviço (PDF)</span><span class="format">{{ translate.option.format.pdf }}</span></span>
+          </li>
+
+          <li class="option-receipt-delivery"
+            *ngIf="settings?.data?.nf && settings?.data?.nf?.id?.nfse && settings?.data?.nf?.status?.nfse == 'CONCLUIDO'"
+            (click)="onDownload('XML', 'nfse')">
+            <button type="button">
+              <icon name="cloud-download-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">Baixar XML da NFS-e</span><span class="format">{{ translate.option.format.xml }}</span></span>
+          </li>
+
+          <!-- Botões de RECIBO abaixo -->
+          <li class="option-receipt-a4" (click)="onReceiptPrint('A4')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.option.title.default }}</span><span class="format">{{
+                translate.option.format.a4 }}</span></span>
+          </li>
+
+          <li class="option-receipt-thermal" (click)="onReceiptPrint('THERMAL')">
+            <button type="button">
+              <icon name="printer-outline" pack="eva"></icon>
+            </button>
+            <span><span class="title">{{ translate.option.title.default }}</span><span class="format">{{
+                translate.option.format.thermal }}</span></span>
+          </li>
+
+          <!-- WhatsApp: mostrar apenas quando NÃO houver nota fiscal vinculada -->
+          <li class="option-receipt-whatsapp" (click)="onSendWhatsApp()"
+              *ngIf="!(settings?.data?.nf?.id?.nf || settings?.data?.nf?.id?.nfse)">
+            <button type="button">
+              <icon name="message-circle-outline" pack="eva"></icon>
+            </button>
+            <span>
+              <span class="title">{{ translate.option.title.whatsapp }}</span>
+              <span class="format">{{ translate.option.format.whatsapp }}</span>
+            </span>
+          </li>
+        </ul>
+
+        <button class="btnClose" (click)="onClose()">{{ translate.option.button.close }}</button>
+      </div>
+
+      <cashier-receipts-print (callback)="onReceiptPrintResponse($event)"></cashier-receipts-print>
+    </div>
+  </div>
+</div>

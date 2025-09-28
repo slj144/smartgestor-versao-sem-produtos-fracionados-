@@ -1,0 +1,70 @@
+/* Avoid unexpected sizing on all elements. */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Configuration of elements for pdf. */
+#container {
+    width: 10cm;
+    height: 3cm;
+}
+
+#container .page {
+    margin: 0;
+}
+
+#container .page ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+#container .page ul li {
+    width: 5cm;
+    max-width: 5cm;
+    height: 3cm;
+    max-height: 3cm;
+    text-align: center;
+    display: block;
+    float: left;
+}
+
+#container .page ul li .container-labels {
+    padding: 5px;
+}
+
+#container .page ul li .container-labels span {
+    width: 100%;
+    max-height: 25px;
+    overflow: hidden;
+    font-size: 12px;
+    font-weight: bold;
+    line-height: 12px;
+    display: block;
+}
+
+#container .page ul li .container-labels span.name {
+    margin-bottom: 2px;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+#container .page ul li .container-labels span.price {
+    color: #666;
+    text-align: right;
+}
+
+/* CSS styling for before/after/avoid. */
+.before {
+    page-break-before: always;
+}
+
+.after {
+    page-break-after: always;
+}
+
+.avoid {
+    page-break-inside: avoid;
+}

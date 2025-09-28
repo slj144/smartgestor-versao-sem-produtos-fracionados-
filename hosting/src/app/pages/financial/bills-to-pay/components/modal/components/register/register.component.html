@@ -1,0 +1,252 @@
+
+<div id="containerFormRegister" *ngIf="checkBootstrap">
+
+  <form class="form" [formGroup]="formBills" (submit)="onSubmit()">
+
+    <div class="container-beneficiary">
+      <h6>
+        <span>{{ translate.panel.beneficiary.title }}</span>
+        <button type="button" (click)="onOpenLayer('beneficiaries')" [disabled]="settings.data?.code"><icon name="search-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="formControls.beneficiary.value">
+        <p>
+          <span class="label">{{ translate.panel.beneficiary.label.name + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.name }}</span>
+        </p>
+
+        <!-- <p *ngIf="formControls.beneficiary.value?.personalDocument">
+          <span class="label">{{ formControls.beneficiary.value.personalDocument.type + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.personalDocument.value }}</span>
+        </p>
+
+        <p *ngIf="formControls.beneficiary.value?.businessDocument">
+          <span class="label">{{ formControls.beneficiary.value.businessDocument.type + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.businessDocument.value }}</span>
+        </p> -->
+
+        <p *ngIf="formControls.beneficiary.value?.contacts?.phone">
+          <span class="label">{{ translate.panel.beneficiary.label.phone + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.contacts?.phone }}</span>
+        </p>
+
+        <p *ngIf="formControls.beneficiary.value?.contacts?.email">
+          <span class="label">{{ translate.panel.beneficiary.label.email + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.contacts?.email }}</span>
+        </p>
+        
+        <p *ngIf="formControls.beneficiary.value?.address">
+          <span class="label">{{ translate.panel.beneficiary.label.address + ':' }}</span> <span class="value">{{ formControls.beneficiary.value?.address }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="container-category">
+      <h6>
+        <span>{{ translate.panel.category.title }}</span>
+        <button type="button" (click)="onOpenLayer('categories')"><icon name="list-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="formControls.category.value">
+        <p>
+          <span class="label">{{ translate.panel.category.label.code + ':' }}</span> <span class="value">{{ formControls.category.value?.code }}</span>
+        </p>
+
+        <p>
+          <span class="label">{{ translate.panel.category.label.name + ':' }}</span> <span class="value">{{ formControls.category.value?.name }}</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="container-installments">
+      <h6>
+        <span>{{ translate.panel.installments.title }}</span>
+        <button type="button" (click)="onCreateParcel()"><icon name="plus-outline" pack="eva"></icon></button>
+      </h6>
+
+      <div class="data" *ngIf="formControls.installments.value?.length > 0">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of formControls.installments.value; let i = index">
+                <td class="action">
+                  <button class="btnClose" type="button" (click)="onDeleteParcel(i)"><icon name="close" pack="eva"></icon></button>
+                </td>          
+                <td class="parcel">
+                  <span>{{ translate.panel.installments.label.parcel }}</span>
+                  <p>{{ item.parcel }}</p>
+                </td>                
+                <td class="dueDate">
+                  <span>{{ translate.panel.installments.label.dueDate }}</span>
+                  <div class="container-flexboxes">
+                    <input type="text" [value]="item.dueDate" (input)="onApplyDateMask($event, item, dueDateParcel)" #dueDateParcel />
+                  </div>
+                </td>
+                <td class="value">
+                  <span>{{ translate.panel.installments.label.value }}</span>
+                  <div class="container-flexboxes">
+                    <input type="text" [value]="item.amount" (input)="onApplyValueMask($event, item, amountParcel);onFixInstallment($event, item)" #amountParcel />
+                    <small *ngIf="(item.discount > 0 || item.insterest > 0)">{{ ('(-' + (100 | currency:'') + ')') }}</small>
+                  </div>
+                </td>
+                <td class="paid">
+                  <span>{{ translate.panel.installments.label.paid }}</span>
+                  <p>{{ item.paidAmount }}</p>
+                </td>
+                <td class="disclosure">
+                  <button class="btnOpen" type="button" (click)="onOpenParcel(item)" [disabled]="embed"><icon name="arrow-ios-forward-outline" pack="eva"></icon></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>      
+    </div>
+
+    <div class="container-description">
+      <h6>
+        <span>{{ translate.panel.description.title }}</span>
+      </h6>
+
+      <div class="data">
+        <textarea formControlName="description" class="form-control" [placeholder]="translate.panel.description.field.textarea.placeholder"></textarea>
+      </div>
+    </div>
+
+    <div class="container-balance">
+      <h6>
+        <span>{{ translate.panel.balance.title }}</span>
+      </h6>
+
+      <div class="data">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><span class="label">{{ translate.panel.balance.label.plots }}</span> <span class="line"></span></td>
+                <td><span class="value">{{ paidInstallments + ' / ' + totalInstallments }}</span></td>
+              </tr>              
+              <tr>
+                <td><span class="label">{{ translate.panel.balance.label.paid }}</span> <span class="line"></span></td>
+                <td><span class="value monetary">{{ (paid || 0) | currency:'' }}</span></td>
+              </tr>
+              <tr>
+                <td><span class="label">{{ translate.panel.balance.label.amount }}</span> <span class="line"></span></td>
+                <td><span class="value monetary">{{ amount | currency:'' }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>   
+
+    <button type="submit" class="btn btnBlue" [disabled]="!(formBills.valid) && (formControls.installments.value.length > 0)">{{ translate.panel.button.register }}</button>
+    
+  </form>
+
+  <toast (callback)="onToastResponse($event)" *ngIf="!embed">
+
+    <div class="container-info">
+      <div class="data">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr> 
+                <td>
+                  <p><span class="label">{{ translate.toast.section.informations.label.parcel + ':' }}</span> <span class="value">{{ toastSettings.parcel }}</span></p>
+                </td>                
+                <td>
+                  <p><span class="label">{{ translate.toast.section.informations.label.amount + ':' }}</span> <span class="value monetary">{{ toastSettings.amount | currency:'' }}</span></p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <p><span class="label">{{ translate.toast.section.informations.label.dueDate + ':' }}</span> <span class="value">{{ toastSettings.dueDate | date:'dd/MM/yyyy' }}</span></p>
+                </td>
+                <td>
+                  <p><span class="label">{{ translate.toast.section.informations.label.paid + ':' }}</span> <span class="value monetary">{{ toastSettings.paidAmount | currency:'' }}</span></p>
+                </td>                
+              </tr>             
+            </tbody>
+          </table>
+        </div>
+      </div>     
+    </div>
+
+    <!-- <div class="container-settings">
+      <h6>
+        <span>{{ translate.toast.section.settings.title }}</span>
+      </h6>
+
+      <div class="data">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td class="discount">
+                  <span>{{ translate.toast.section.settings.label.discount }}</span>                
+                  <input type="text" [value]="toastSettings.discount" (input)="onApplyValueMask($event, toastSettings, 'discount')" />       
+                </td>                
+                <td class="interest">
+                  <span>{{ translate.toast.section.settings.label.interest }}</span>
+                  <input type="text" [value]="toastSettings.interest" (input)="onApplyValueMask($event, toastSettings, 'interest')" />               
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div> -->
+
+    <div class="container-payment-methods">
+      <h6>
+        <span>{{ translate.toast.section.paymentMethods.title }}</span>
+        <button (click)="onOpenLayer('paymentMethods')"><icon name="plus-outline" pack="eva"></icon></button>
+      </h6>        
+
+      <div class="data" *ngIf="toastSettings.paymentMethods || (toastSettings.paymentMethods?.length > 0)">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of toastSettings.paymentMethods; let i = index">
+                <td class="action">
+                  <button class="btnClose" type="button" (click)="onDeletePaymentMethod(i)"><icon name="close" pack="eva"></icon></button>
+                </td>
+                <td class="name">
+                  <span>{{ translate.toast.section.paymentMethods.label.name }}</span>
+                  <p>{{ item.name }}</p>
+                </td>
+                <td class="parcel">
+                  <div *ngIf="item.fees && item.fees.length > 0">
+                    <span>{{ translate.toast.section.paymentMethods.label.plots }}</span>
+                    <select [value]="(parcelChecked ? parcelChecked : item.fees[0].parcel)" (change)="onPaymentParcel(item, paymentParcelField)" #paymentParcelField>
+                      <option *ngFor="let item of item.fees" [value]="item.parcel">{{ 'x' + item.parcel }}</option>
+                    </select>
+                  </div>
+                </td>
+                <td class="value">
+                  <span>{{ translate.toast.section.paymentMethods.label.amount }}</span>
+                  <input type="text" placeholder="0,00" autocomplete="off" [value]="(item.value || 0) | currency:''" (input)="onPaymentValue(item, paymentValueField)" #paymentValueField />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="noData" *ngIf="!toastSettings.paymentMethods || (toastSettings.paymentMethods?.length == 0)">
+        <small>{{ translate.toast.section.paymentMethods.noData }}</small>
+      </div>
+    </div>
+    
+    <div class="container-balance">
+      <div class="container-value">
+        <span>{{ translate.toast.section.balance.label.amount }}</span>
+        <p>{{ (toastSettings.balance?.paidAmount || 0) | currency }}</p>
+      </div>
+
+      <div class="container-button">
+        <button type="button" class="btnConfirm" (click)="onConfirmPayment()"><icon name="checkmark-outline" pack="eva"></icon></button>
+      </div>
+    </div>
+
+  </toast>
+
+  <bills-to-pay-register-layer (callback)="onLayerResponse($event)"></bills-to-pay-register-layer>
+  
+</div>

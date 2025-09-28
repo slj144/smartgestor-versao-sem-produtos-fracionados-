@@ -1,0 +1,1224 @@
+// Arquivo: customer-detail-modal.component.scss
+// Localização: src/app/pages/crm/components/customer-detail-modal/customer-detail-modal.component.scss
+// Função: Estilos modernos e bonitos para o modal de detalhes do cliente
+
+// ===========================
+// VARIÁVEIS MODERNAS
+// ===========================
+// Cores principais com gradientes modernos
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+$warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+$info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+
+// Cores sólidas
+$primary-color: #667eea;
+$primary-light: #818cf8;
+$primary-dark: #5b21b6;
+
+$success-color: #10b981;
+$warning-color: #f59e0b;
+$danger-color: #ef4444;
+$info-color: #3b82f6;
+
+// Tons de cinza modernos
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+
+// Sombras modernas
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+$shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+// Bordas arredondadas
+$radius-sm: 6px;
+$radius-md: 8px;
+$radius-lg: 12px;
+$radius-xl: 16px;
+$radius-full: 9999px;
+
+// Espaçamentos
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-2xl: 48px;
+
+// Transições suaves
+$transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+// ===========================
+// MIXINS ÚTEIS
+// ===========================
+@mixin glass-effect {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+@mixin hover-lift {
+    transition: all $transition-normal;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: $shadow-lg;
+    }
+}
+
+@mixin gradient-text($gradient) {
+    background: $gradient;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+// ===========================
+// ANIMAÇÕES
+// ===========================
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// ===========================
+// MODAL OVERLAY
+// ===========================
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-lg;
+    animation: fadeIn $transition-fast;
+}
+
+// ===========================
+// MODAL CONTENT
+// ===========================
+.modal-content {
+    background: white;
+    border-radius: $radius-xl;
+    width: 100%;
+    max-width: 1100px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: $shadow-2xl;
+    animation: slideIn $transition-normal;
+    overflow: hidden;
+}
+
+// ===========================
+// MODAL HEADER
+// ===========================
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-lg $spacing-xl;
+    background: $primary-gradient;
+    color: white;
+
+    h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-md;
+        font-size: 24px;
+        font-weight: 600;
+
+        i {
+            font-size: 28px;
+            opacity: 0.9;
+        }
+    }
+
+    .close-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: $radius-full;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        i {
+            font-size: 24px;
+        }
+    }
+}
+
+// ===========================
+// LOADING STATE
+// ===========================
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-2xl * 2;
+    gap: $spacing-lg;
+
+    i.spinning {
+        font-size: 48px;
+        color: $primary-color;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $gray-500;
+        font-size: 16px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+}
+
+// ===========================
+// MODAL BODY
+// ===========================
+.modal-body {
+    flex: 1;
+    overflow-y: auto;
+    background: $gray-50;
+
+    // Scroll customizado
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $gray-100;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $gray-300;
+        border-radius: 4px;
+
+        &:hover {
+            background: $gray-400;
+        }
+    }
+}
+
+// ===========================
+// CUSTOMER INFO SECTION
+// ===========================
+.customer-info {
+    background: white;
+    padding: $spacing-xl;
+    border-bottom: 1px solid $gray-200;
+    box-shadow: $shadow-sm;
+
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 28px;
+        font-weight: 700;
+        color: $gray-800;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: $spacing-lg;
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: $spacing-sm;
+            padding: $spacing-md;
+            background: $gray-50;
+            border-radius: $radius-lg;
+            border: 1px solid $gray-200;
+            transition: all $transition-fast;
+
+            &:hover {
+                background: white;
+                border-color: $primary-light;
+                box-shadow: $shadow-md;
+            }
+
+            label {
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                color: $gray-500;
+                letter-spacing: 0.5px;
+            }
+
+            span {
+                font-size: 16px;
+                color: $gray-800;
+                font-weight: 500;
+
+                &.mono {
+                    font-family: 'Fira Code', 'Courier New', monospace;
+                    background: $gray-100;
+                    padding: $spacing-xs $spacing-sm;
+                    border-radius: $radius-sm;
+                    font-size: 14px;
+                    border: 1px solid $gray-200;
+                }
+
+                &.value {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: $success-color;
+                }
+            }
+        }
+    }
+}
+
+// ===========================
+// CATEGORY BADGES
+// ===========================
+.category-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing-xs $spacing-md;
+    border-radius: $radius-full;
+    font-size: 14px;
+    font-weight: 600;
+
+    &.category-hot {
+        background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+        color: white;
+    }
+
+    &.category-warm {
+        background: linear-gradient(135deg, #feca57, #ff9ff3);
+        color: white;
+    }
+
+    &.category-cold {
+        background: linear-gradient(135deg, #48dbfb, #0abde3);
+        color: white;
+    }
+
+    &.category-new {
+        background: linear-gradient(135deg, #00d2d3, #01a3a4);
+        color: white;
+    }
+}
+
+// ===========================
+// FILTERS SECTION
+// ===========================
+.filters-section {
+    display: flex;
+    gap: $spacing-lg;
+    padding: $spacing-lg $spacing-xl;
+    background: white;
+    border-bottom: 1px solid $gray-200;
+    box-shadow: $shadow-sm;
+    margin-bottom: 0; // Remove margem inferior para juntar com sales-summary
+
+    .filter-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: $gray-700;
+            text-transform: none; // Remove uppercase
+        }
+
+        .form-control {
+            padding: $spacing-sm $spacing-md;
+            border: 2px solid $gray-200;
+            border-radius: $radius-lg;
+            font-size: 14px;
+            transition: all $transition-fast;
+            background: white;
+            width: 100%;
+            height: 40px;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-color;
+                box-shadow: 0 0 0 3px rgba($primary-color, 0.1);
+            }
+
+            &::placeholder {
+                color: $gray-400;
+            }
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right $spacing-md center;
+            padding-right: $spacing-xl;
+        }
+    }
+}
+
+// ===========================
+// ORDERS SECTION
+// ===========================
+.orders-section {
+    padding: $spacing-xl;
+
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+}
+
+// ===========================
+// ORDERS LIST
+// ===========================
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+}
+
+// ===========================
+// ORDER CARD
+// ===========================
+.order-card {
+    background: white;
+    border-radius: $radius-lg;
+    overflow: visible; // Mudado para permitir sombras externas
+    box-shadow: $shadow-md;
+    transition: all $transition-normal;
+    margin-bottom: $spacing-md;
+    border: 2px solid transparent;
+
+    &:hover {
+        border-color: $primary-light;
+        box-shadow: 0 8px 24px rgba($primary-color, 0.15);
+    }
+
+    .order-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-lg;
+        background: linear-gradient(135deg, white 0%, $gray-50 100%);
+        cursor: pointer;
+        position: relative;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: linear-gradient(135deg, $gray-50 0%, $gray-100 100%);
+
+            .expand-button {
+                background: $primary-color;
+                color: white;
+                transform: scale(1.1);
+            }
+        }
+
+        .order-info {
+            display: flex;
+            align-items: center;
+            gap: $spacing-lg;
+            flex: 1;
+
+            .order-number {
+                font-weight: 700;
+                color: $gray-900;
+                font-size: 18px;
+                letter-spacing: -0.5px;
+            }
+
+            .order-date {
+                color: $gray-500;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                gap: $spacing-xs;
+
+                &::before {
+                    content: "📅";
+                    font-size: 16px;
+                }
+            }
+
+            .order-collection {
+                background: $primary-gradient;
+                color: white;
+                padding: 6px 16px;
+                border-radius: $radius-full;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+            }
+        }
+
+        .order-actions {
+            display: flex;
+            align-items: center;
+            gap: $spacing-lg;
+
+            .order-total {
+                text-align: right;
+
+                .total-label {
+                    font-size: 12px;
+                    color: $gray-500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                    margin-bottom: 4px;
+                }
+
+                .total-value {
+                    font-size: 24px;
+                    font-weight: 700;
+                    color: $success-color;
+                    letter-spacing: -0.5px;
+                }
+            }
+
+            .expand-button {
+                width: 48px;
+                height: 48px;
+                border-radius: $radius-full;
+                background: $gray-100;
+                border: 2px solid $gray-200;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: all $transition-fast;
+
+                i {
+                    font-size: 24px;
+                    color: $gray-600;
+                    transition: transform $transition-fast;
+                }
+
+                &.expanded i {
+                    transform: rotate(180deg);
+                }
+            }
+        }
+    }
+
+    .order-details {
+        padding: 0;
+        background: $gray-50;
+        border-top: 2px solid $gray-100;
+        animation: slideDown $transition-normal;
+
+        // Padding interno para o conteúdo
+        >.detail-section {
+            margin: $spacing-lg;
+
+            &:first-child {
+                margin-top: $spacing-lg;
+            }
+
+            &:last-child {
+                margin-bottom: $spacing-lg;
+            }
+        }
+    }
+}
+
+// ===========================
+// DETAIL SECTIONS
+// ===========================
+.detail-section {
+    margin-bottom: $spacing-lg;
+    padding: $spacing-lg;
+    background: white;
+    border-radius: $radius-lg;
+    border: 1px solid $gray-200;
+    box-shadow: $shadow-sm;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    h4 {
+        margin: 0 0 $spacing-md 0;
+        font-size: 16px;
+        font-weight: 700;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        padding-bottom: $spacing-sm;
+        border-bottom: 2px solid $gray-100;
+    }
+}
+
+// ===========================
+// TIPOGRAFIA MELHORADA
+// ===========================
+// Importar fontes do sistema para melhor legibilidade
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+// Hierarquia de títulos
+h2,
+h3,
+h4,
+h5 {
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+// ===========================
+// ITEMS LIST
+// ===========================
+.items-list {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-md;
+        background: $gray-50;
+        border-radius: $radius-md;
+        border: 1px solid $gray-200;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: white;
+            border-color: $primary-light;
+            box-shadow: $shadow-sm;
+            transform: translateX(4px);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+
+            .item-name {
+                font-weight: 600;
+                color: $gray-900;
+                font-size: 15px;
+                line-height: 1.4;
+            }
+
+            .item-code {
+                font-size: 12px;
+                color: $gray-500;
+                font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+                background: $gray-100;
+                padding: 2px 6px;
+                border-radius: $radius-sm;
+                display: inline-block;
+                width: fit-content;
+            }
+        }
+
+        .item-values {
+            display: flex;
+            align-items: center;
+            gap: $spacing-lg;
+            text-align: right;
+
+            .item-qty {
+                color: $gray-600;
+                font-size: 14px;
+                font-weight: 500;
+                background: $gray-100;
+                padding: 4px 8px;
+                border-radius: $radius-sm;
+            }
+
+            .item-price {
+                color: $gray-600;
+                font-size: 14px;
+                font-weight: 500;
+                min-width: 80px;
+            }
+
+            .item-total {
+                font-weight: 700;
+                color: $gray-900;
+                font-size: 16px;
+                min-width: 100px;
+            }
+        }
+    }
+}
+
+// ===========================
+// ORDERS DETAILS SECTION
+// ===========================
+.orders-details {
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: $gray-800;
+        padding: 0 $spacing-xl;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+}
+
+// ===========================
+// PAYMENT INFO LIST (MELHORADO)
+// ===========================
+.payment-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+
+    .payment-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-sm $spacing-md;
+        background: $gray-50;
+        border-radius: $radius-md;
+        border: 1px solid $gray-200;
+
+        label {
+            font-size: 14px;
+            color: $gray-600;
+            font-weight: 500;
+        }
+
+        span {
+            font-size: 14px;
+            color: $gray-800;
+            font-weight: 600;
+        }
+    }
+}
+
+// ===========================
+// ANALYSIS SECTION
+// ===========================
+.analysis-section {
+    padding: $spacing-xl;
+    background: white;
+    margin: $spacing-xl;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+}
+
+// ===========================
+// PROBLEM CARDS
+// ===========================
+.problem-card {
+    padding: $spacing-lg;
+    border-radius: $radius-lg;
+    margin-bottom: $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+
+    h5 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        color: $gray-700;
+    }
+
+    ul {
+        margin: $spacing-sm 0 0 $spacing-lg;
+        padding: 0;
+
+        li {
+            margin: $spacing-xs 0;
+            font-size: 14px;
+        }
+    }
+
+    // Estilos para problemas
+    background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+    border: 1px solid #feb2b2;
+    color: #c53030;
+
+    h5 {
+        color: #c53030;
+    }
+
+    // Estilo de sucesso
+    &.success {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        border: 1px solid #86efac;
+        color: #166534;
+
+        h5 {
+            color: #166534;
+        }
+    }
+}
+
+// ===========================
+// NO ORDERS MESSAGE
+// ===========================
+.no-orders {
+    text-align: center;
+    padding: $spacing-2xl * 2;
+    color: $gray-400;
+
+    i {
+        font-size: 64px;
+        opacity: 0.5;
+        margin-bottom: $spacing-lg;
+    }
+
+    p {
+        font-size: 18px;
+        color: $gray-500;
+    }
+}
+
+// ===========================
+// MODAL FOOTER
+// ===========================
+.modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-lg $spacing-xl;
+    background: white;
+    border-top: 1px solid $gray-200;
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+// ===========================
+// BUTTONS
+// ===========================
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    padding: $spacing-sm $spacing-lg;
+    border: none;
+    border-radius: $radius-lg;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: $shadow-md;
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: $shadow-sm;
+    }
+
+    &-secondary {
+        background: $gray-200;
+        color: $gray-700;
+
+        &:hover {
+            background: $gray-300;
+        }
+    }
+
+    &-primary {
+        background: $primary-gradient;
+        color: white;
+
+        &:hover {
+            box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+        }
+    }
+
+    i {
+        font-size: 18px;
+    }
+}
+
+// ===========================
+// RESPONSIVE DESIGN
+// ===========================
+@media (max-width: 768px) {
+    .modal-content {
+        max-width: 100%;
+        max-height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .modal-overlay {
+        padding: 0;
+    }
+
+    .modal-header {
+        padding: $spacing-md $spacing-lg;
+
+        h2 {
+            font-size: 20px;
+
+            i {
+                font-size: 24px;
+            }
+        }
+    }
+
+    .customer-info {
+        padding: $spacing-lg;
+
+        h3 {
+            font-size: 24px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+            gap: $spacing-md;
+        }
+    }
+
+    .filters-section {
+        flex-direction: column;
+        padding: $spacing-md $spacing-lg;
+    }
+
+    .orders-section {
+        padding: $spacing-lg;
+    }
+
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: $spacing-md;
+
+        .order-info {
+            flex-wrap: wrap;
+            gap: $spacing-sm;
+        }
+    }
+
+    .analysis-section {
+        margin: $spacing-lg;
+        padding: $spacing-lg;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        gap: $spacing-md;
+
+        .btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+}
+
+// ===========================
+// COLLECTIONS SUMMARY (NOVO)
+// ===========================
+.collections-summary {
+    padding: $spacing-xl;
+    background: white;
+    border-bottom: 1px solid $gray-200;
+
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+    }
+
+    .collection-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-md;
+
+        .collection-card {
+            background: linear-gradient(135deg, $gray-50 0%, white 100%);
+            border: 1px solid $gray-200;
+            border-radius: $radius-lg;
+            padding: $spacing-lg;
+            transition: all $transition-fast;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: $shadow-md;
+                border-color: $primary-light;
+            }
+
+            .collection-header {
+                display: flex;
+                align-items: center;
+                gap: $spacing-sm;
+                margin-bottom: $spacing-md;
+
+                i {
+                    font-size: 24px;
+                    color: $primary-color;
+                }
+
+                span {
+                    font-weight: 600;
+                    color: $gray-800;
+                    flex: 1;
+                }
+
+                .badge {
+                    background: $primary-gradient;
+                    color: white;
+                    padding: 4px 12px;
+                    border-radius: $radius-full;
+                    font-size: 12px;
+                    font-weight: 600;
+                }
+            }
+
+            .collection-stats {
+                p {
+                    margin: $spacing-xs 0;
+                    font-size: 14px;
+                    color: $gray-600;
+
+                    strong {
+                        color: $gray-700;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// ===========================
+// DETAIL GRID (NOVO)
+// ===========================
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+
+    >div {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        label {
+            font-size: 12px;
+            color: $gray-500;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        span {
+            font-size: 14px;
+            color: $gray-800;
+            font-weight: 500;
+
+            &.mono {
+                font-family: 'SF Mono', 'Monaco', monospace;
+                background: $gray-100;
+                padding: 2px 6px;
+                border-radius: $radius-sm;
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+// ===========================
+// RESUMO DE VENDAS (NOVO)
+// ===========================
+.sales-summary {
+    background: linear-gradient(135deg, white 0%, $gray-50 100%);
+    padding: $spacing-xl;
+    border-radius: $radius-lg;
+    margin: $spacing-lg;
+    box-shadow: $shadow-md;
+    border: 1px solid $gray-200;
+
+    h3 {
+        margin: 0 0 $spacing-lg 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        &::before {
+            content: "📊";
+            font-size: 24px;
+        }
+    }
+
+    .summary-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: $spacing-md;
+        margin-bottom: $spacing-lg;
+
+        .summary-card {
+            background: white;
+            padding: $spacing-lg;
+            border-radius: $radius-md;
+            border: 1px solid $gray-200;
+            text-align: center;
+            transition: all $transition-fast;
+
+            &:hover {
+                transform: translateY(-2px);
+                box-shadow: $shadow-md;
+                border-color: $primary-light;
+            }
+
+            .card-label {
+                font-size: 12px;
+                color: $gray-500;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: $spacing-xs;
+            }
+
+            .card-value {
+                font-size: 28px;
+                font-weight: 700;
+                color: $primary-color;
+                line-height: 1;
+
+                &.currency {
+                    color: $success-color;
+                }
+            }
+
+            .card-detail {
+                font-size: 14px;
+                color: $gray-600;
+                margin-top: $spacing-xs;
+            }
+        }
+    }
+}
+
+// ===========================
+// HISTÓRICO DETALHADO HEADER (NOVO)
+// ===========================
+.detailed-history-header {
+    padding: 0 $spacing-xl;
+    margin-bottom: $spacing-lg;
+
+    h3 {
+        margin: 0 0 $spacing-md 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: $gray-800;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        &::before {
+            content: "📋";
+            font-size: 24px;
+        }
+    }
+
+    .history-description {
+        color: $gray-600;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+}

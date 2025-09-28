@@ -1,0 +1,104 @@
+
+<main>
+  <div class="container-main" *ngIf="!loading">
+    <div class="container-header">
+      <div class="container-search">
+        <div class="search-bar">
+          <button><icon name="search" pack="fa"></icon></button>
+          <input type="text" placeholder="Pesquisar.." autocomplete="off" (keydown.enter)="onSearch($event)" />
+        </div>        
+      </div>
+
+      <div class="container-buttons">
+        <button class="btnAdd" title="Adicionar Ajuste" (click)="onCreate()"><icon name="plus-outline" pack="eva"></icon></button>        
+      </div>
+    </div>
+
+    <div class="container-body">
+      <div class="table-responsive" *ngIf="recordsData?.length > 0">
+        <table class="table table-borderless">
+          <thead>
+            <tr>
+              <th>{{ translate.table.label.date }}</th>
+              <th>{{ translate.table.label.code }}</th>              
+              <th>{{ translate.table.label.productCode }}</th>
+              <th>{{ translate.table.label.type }}</th>
+              <th>{{ translate.table.label.note }}</th>
+              <th>{{ translate.table.label.quantity }}</th>
+              <th>{{ translate.table.label.operation }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of recordsData" (click)="onRead(item)">
+              <td>{{ item.registerDate | date:'dd/MM/yyy HH:mm' }}</td>
+              <td>{{ item.code }}</td>
+              <td>{{ item.referenceCode }}</td>
+              <td>{{ item.adjustmentType?.name || '----' }}</td>
+              <td>{{ item.note | ellipsis:160 }}</td>
+              <td>{{ item.quantity }}</td>
+              <td>
+                <span class="{{ item.operation | lowercase }}">{{ translate.table.operation[item.operation] }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button class="btn btnLoadMore" (click)="onLoadMoreData()" *ngIf="enableLoadMoreButton">Carregar Mais</button>
+    </div>   
+    
+    <placeholder [loading]="false" [hasData]="recordsData?.length > 0" [verticalAlign]="true"></placeholder>
+  </div>
+
+  <div class="container-floating">
+    <div class="container-view">
+      <header>
+        <button class="btnClose" (click)="onCloseContainerFloating('view')"><icon name="arrow-back-outline" pack="eva"></icon></button>
+        <span class='title'>Detalhes do Ajuste</span>
+      </header>
+
+      <section class="content" *ngIf="viewingData">
+        <div class="row">
+          <span class="col-6">
+            <span class="label">Código:</span> <span class="value">{{ viewingData.code }}</span>
+          </span>         
+          <span class="col-6">
+            <span class="label">Referência do Produto:</span> <span class="value">{{ viewingData.productCode }}</span>
+          </span>
+          <span class="col-6">
+            <span class="label">Operação:</span> <span class="value">{{ (viewingData.operation == 'INPUT' ? 'ENTRADA' : 'SAÍDA') }}</span>
+          </span>
+          <span class="col-6">
+            <span class="label">Quantidade:</span> <span class="value">{{ viewingData.quantity }}</span>
+          </span>
+          <span class="col-6">
+            <span class="label">Data do ajuste:</span> <span class="value">{{ viewingData.datetime | date:'dd/MM/yyyy HH:mm' }}</span>
+          </span>
+        </div>
+
+        <div>
+          <span>
+            <span class="label">Nota de Ajuste:</span>
+          </span>
+          <div class="container-note">{{ viewingData.note }}</div>
+        </div>        
+      </section>
+    </div>
+
+    <div class="container-update">
+      <header *ngIf="headerVisibility">
+        <button class="btnClose" (click)="onCloseContainerFloating('update')"><icon name="arrow-back-outline" pack="eva"></icon></button>
+        <span class='title'>Adicionar Ajuste</span>
+      </header>
+
+      <stock-adjustment-register (callback)="onRegisterResponse($event)"></stock-adjustment-register>
+    </div>
+  </div>
+
+  <div *ngIf="loading"
+    [nbSpinner]="loading"
+    [nbSpinnerStatus]="'success'"
+    [nbSpinnerSize]="'large'"
+    class="loader">
+  </div>
+</main>

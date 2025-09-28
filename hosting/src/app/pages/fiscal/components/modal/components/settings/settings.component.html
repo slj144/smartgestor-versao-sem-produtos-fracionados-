@@ -1,0 +1,586 @@
+
+<main id="container-request-register" [formGroup]="form" *ngIf="form">
+  <div class="container-components-one" *ngIf="form">
+
+    <div class="container-description">
+
+      <div class="general row">
+
+        <h6 class="col-12">Geral <button><icon pack="eva" name="arrow-ios-downward-outline"></icon></button></h6>
+
+          <div class="form-group col-12 logo-container">
+            <div class="image-container" (click)="onClickInputFile($event, 'logotipo')">
+              <label>Arquivo (.jpg) de até 200K</label>
+              <img class="storeImage" src="{{ logotipoUrl ? logotipoUrl : '/assets/images/image-placeholder.jpg' }}"/>
+              <input type="file" accept="image/jpg" name="image" class="inpfile hide"/>
+            </div>
+          </div>
+
+          <div class="form-group col-12 col-md-4">
+            <span>CPF/CNPJ</span>
+            <input type="text" class="form-control {{ formControls.cpfCnpj.errors ? 'required' : '' }}" formControlName="cpfCnpj" placeholder="" (input)="onApplyNumberMask($event, formControls.cpfCnpj)"/>
+          </div>
+  
+          <div class="form-group col-12 col-md-4">
+            <span>Inscricao Municipal</span>
+            <input type="text" class="form-control {{ formControls.inscricaoMunicipal.errors ? 'required' : '' }}" formControlName="inscricaoMunicipal" placeholder=""  (input)="onApplyNumberMask($event, formControls.inscricaoMunicipal)"/>
+          </div>
+  
+          <div class="form-group col-12 col-md-4">
+            <span>Inscricao Estadual</span>
+            <input type="text" class="form-control {{ formControls.inscricaoEstadual.errors ? 'required' : '' }}" formControlName="inscricaoEstadual" placeholder="" (input)="onApplyNumberMask($event, formControls.inscricaoEstadual)" />
+          </div>
+
+
+          <div class="form-group col-12 col-md-4">
+            <span>Razao Social</span>
+            <input type="text" class="form-control {{ formControls.razaoSocial.errors ? 'required' : '' }}" formControlName="razaoSocial" placeholder="" />
+          </div>
+  
+          <div class="form-group col-12 col-md-4">
+            <span>Nome Fantasia</span>
+            <input type="text" class="form-control {{ formControls.nomeFantasia.errors ? 'required' : '' }}" formControlName="nomeFantasia" placeholder="" />
+          </div>
+  
+         
+          <div class="form-group col-12 col-md-4" [formGroup]="formCertificate" *ngIf="formCertificate">
+            <label class="label-cep">Certificado</label>
+            <div class="container-certificate">
+              <input type="text" formControlName="senha" placeholder="Senha" class="form-control {{ formCertificateControls.senha.errors ? 'required' : '' }}" />
+              <input style="display: none;" type="file" class="form-control" placeholder="" />
+              <button type="button" class="form-control"  (click)="onClickInputFile($event)" ><icon name="upload-outline" pack="eva"></icon></button>
+            </div>
+          </div>
+
+
+          <!-- <div class="form-group col-12 col-md-4">
+            <span>Simples Nacional</span>
+            <select class="form-control {{ formControls.simplesNacional.errors ? 'required' : '' }}" formControlName="simplesNacional" placeholder="" (change)="onChangeBoolean($event, formControls.simplesNacional)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div> -->
+  
+          <div class="form-group col-12 col-md-4">
+            <span>Regime Tributário</span>
+            <select #regimeTributario class="form-control {{ formControls.regimeTributario.errors ? 'required' : '' }}" formControlName="regimeTributario" placeholder="" (input)="onChangeRegTrib(regimeTributario)" >
+              <option value="0">0 - Nenhum</option>
+              <option value="1">1 - Simples Nacional</option>
+              <option value="2">2 - Simples Nacional - Excesso</option>
+              <option value="3">3 - Normal - Lucro Presumido</option>
+              <option value="4">4 - Normal - Lucro Real</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12 col-md-4">
+            <span>Regime Tributário Especial</span>
+            <select class="form-control {{ formControls.regimeTributarioEspecial.errors ? 'required' : '' }}" formControlName="regimeTributarioEspecial" placeholder="" >
+              <option value="0">0 - Sem Regime Tributário Especial</option>
+              <option value="1">1 - Micro Empresa Municipal</option>
+              <option value="2">2 - Estimativa</option>
+              <option value="3">3 - Sociedade de Profissionais</option>
+              <option value="4">4 - Cooperativa</option>
+              <option value="5">5 - Microempresário Individual - MEI</option>
+              <option value="6">6 - Microempresa ou Pequeno Porte - ME EPP</option>
+              <option value="7">7 - Lucro Real</option>
+              <option value="8">8 - Lucro Presumido</option>
+              <option value="9">9 - Tributação Normal</option>
+              <option value="10">10 - Simples nacional com excesso do sublimite</option>
+              <option value="11">11 - Empresa de Responsabilidade Limitada</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-12 col-md-4">
+            <span>Incentivo Fiscal</span>
+            <select class="form-control {{ formControls.incentivoFiscal.errors ? 'required' : '' }}" formControlName="incentivoFiscal" placeholder="" (change)="onChangeBoolean($event, formControls.incentivoFiscal)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12 col-md-4">
+            <span>Incentivador Cultural</span>
+            <select class="form-control {{ formControls.incentivadorCultural.errors ? 'required' : '' }}" formControlName="incentivadorCultural" placeholder="" (change)="onChangeBoolean($event, formControls.incentivadorCultural)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+
+          <div *ngIf="formControls.simplesNacional.value" class="row" [formGroup]="formAdditionalSettings">
+            <div class="vol-12">
+              <span>Credito Simples Nacional</span>
+            </div>
+            <div *ngIf="formControls.simplesNacional.value" class="form-group col-6">
+              <span>Percentual</span>
+              <input type="text" class="form-control" formControlName="percentual" placeholder="" (input)="onApplyPriceMask($event, formAdditionalSettings.controls.percentual)"/>
+            </div>
+            <div *ngIf="formControls.simplesNacional.value" class="form-group col-6">
+              <span>Valor</span>
+              <input type="text" class="form-control" formControlName="valor" placeholder="" (input)="onApplyPriceMask($event, formAdditionalSettings.controls.valor)"/>
+            </div>
+          </div>
+         
+
+       
+      </div>
+
+      
+      <div class="contacts row">
+
+        <h6 class="col-12">Contatos</h6>
+
+        <div class="form-group col-12 col-md-6">
+          <span>Número de Telefone com DDD</span>
+          <input type="text" class="form-control phone {{ formControls.telefone.controls.numero.errors ? 'required' : '' }}"  (input)="onCustomApplyPhoneMask($event)" placeholder="" />
+        </div>
+
+        <div class="form-group col-12 col-md-6">
+          <span>Email</span>
+          <input type="text" class="form-control {{ formControls.email.errors ? 'required' : '' }}" formControlName="email" placeholder="" />
+        </div>
+
+      </div>
+
+
+      <div class="address row" formGroupName="endereco">
+
+        <h6 class="col-12">Endereço</h6>
+
+        <div class="form-group col-12 col-md-4">
+          <label class="label-cep">CEP</label>
+          <div class="container-cep">
+            <input type="text" formControlName="cep" placeholder="____-___" class="form-control {{ formAddressControls.cep.errors ? 'required' : '' }}" (input)="onApplyPostalCodeMask($event, formAddressControls.cep)" (keydown.enter)="onCEPData($event)" />
+            <button type="button" class="form-control" [nbSpinner]="checkSearchPostCode" nbSpinnerStatus="danger" [disabled]="!((formAddressControls.cep.value && formAddressControls.cep.value.length == 9) && formAddressControls.cep.valid)" (click)="onCEPData($event)"><icon name="search-outline" pack="eva"></icon></button>
+          </div>
+        </div>
+
+        <div class="form-group col-12 col-md-4">
+          <span>Bairro</span>
+          <input type="text" class="form-control {{ formAddressControls.bairro.errors ? 'required' : '' }}" formControlName="bairro" placeholder="" />
+        </div>
+
+        <div class="form-group col-12 col-md-4">
+          <span>Cidade</span>
+          <input type="text" class="form-control {{ formAddressControls.descricaoCidade.errors ? 'required' : '' }}" formControlName="descricaoCidade" placeholder="" />
+        </div>
+
+        <div class="form-group col-12 col-md-4">
+          <span>Estado</span>
+          <input type="text" class="form-control {{ formAddressControls.estado.errors ? 'required' : '' }}" formControlName="estado" placeholder="" />
+        </div>
+        
+
+        <div class="form-group col-12 col-md-4">
+          <span>Logradouro</span>
+          <input type="text" class="form-control {{ formAddressControls.logradouro.errors ? 'required' : '' }}" formControlName="logradouro" placeholder="" />
+        </div>
+
+        <div class="form-group col-12 col-md-4">
+          <span>Tipo de Logradouro</span>
+
+          <select class="form-control {{ formAddressControls.tipoLogradouro.errors ? 'required' : '' }}" formControlName="tipoLogradouro">
+            <option>Área</option>
+            <option>Acesso</option>
+            <option>Acesso Local</option>
+            <option>Área Especial</option>
+            <option>Aeroporto</option>
+            <option>Avenida</option>
+            <option>Bloco</option>
+            <option>Cais</option>
+            <option>Conjunto</option>
+            <option>Comunidade</option>
+            <option>Condomínio</option>
+            <option>Campo</option>
+            <option>Distrito</option>
+            <option>Estrada</option>
+            <option>Estação</option>
+            <option>Quadra</option>
+            <option>Quinta</option>
+            <option>Rua</option>
+            <option>Residencial</option>
+            <option>Reta</option>
+          </select>
+        </div>
+        
+        <div class="form-group col-12 col-md-4">
+          <span>Número</span>
+          <input type="text" class="form-control {{ formAddressControls.numero.errors ? 'required' : '' }}" formControlName="numero" placeholder="" />
+        </div>
+          
+     
+
+        <div class="form-group col-12 col-md-4">
+          <span>Complemento</span>
+          <input type="text" class="form-control {{ formAddressControls.complemento.errors ? 'required' : '' }}" formControlName="complemento" placeholder="" />
+        </div>
+        
+        <div class="form-group col-12 col-md-4">
+          <span>Tipo de Bairo</span>
+
+          <input type="text" class="form-control {{ formAddressControls.tipoBairro.errors ? 'required' : '' }}" formControlName="tipoBairro" placeholder="" />
+          <!-- <select class="form-control {{ formAddressControls.tipoBairro.errors ? 'required' : '' }}" formControlName="tipoBairro">
+            <option value="Residencial">Residencial</option>
+          </select> -->
+        </div>
+        
+
+      </div>
+      
+
+      <!-- NFE -->
+       
+      <div class="nfe row" formGroupName="nfe">
+
+        <h6 class="col-12">NFE</h6>
+
+        <div class="row clearAll">
+
+          <div class="form-group col-12 col-md-4">
+            <span>Ativo</span>
+            <select class="form-control {{ formControls.nfe.controls.ativo.errors ? 'required' : '' }}" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfe.controls.ativo)" >
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+  
+          <!-- <div class="form-group col-12 col-md-4">
+            <span>Tipo de Contrato</span>
+            <input class="form-control {{ formControls.nfe.controls.tipoContrato.errors ? 'required' : '' }}" formControlName="tipoContrato" (input)="onApplyNumberMask($event, form.controls.nfe.controls.tipoContrato)"/>
+
+            <select class="form-control {{ formControls.simplesNacional.errors ? 'required' : '' }}" formControlName="tipoContrato" placeholder="" >
+              <option value="0">0 - Bilhetagem</option>
+              <option value="0">1 - Ilimitado</option>
+            </select>
+          </div> -->
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Ambiente de Produção</span>
+            <select class="form-control" formControlName="producao" placeholder="" (change)="onChangeBoolean($event, formControls.nfe.controls.config.controls.producao)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>DFE</span>
+            <div formGroupName="dfe">
+              <select class="form-control" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfe.controls.config.controls.dfe.controls.ativo)">
+                <option value="true">ATIVO</option>
+                <option value="false">DESATIVO</option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Enviar Nota por Email</span>
+            <div formGroupName="email">
+              <select class="form-control" formControlName="envio" placeholder="" (change)="onChangeBoolean($event, formControls.nfe.controls.config.controls.email.controls.envio)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Calculo Automatico Ibpt</span>
+            <div formGroupName="calculoAutomaticoIbpt">
+              <select class="form-control" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfe.controls.config.controls.calculoAutomaticoIbpt.controls.ativo)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+ 
+          <div class="form-group col-12 col-md-6  stack" formGroupName="config">
+            <span>Numeração</span>
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th>Série</th>
+                    <th>Número</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>    
+                  <tr *ngFor="let item of form.controls.nfe.controls.config.controls.numeracao.value.controls">
+                    <td>
+                      <input type="text" class="form-control" value="{{ item.value.serie }}" disabled/>
+                    </td>
+                    <td [formGroup]="item">
+                      <input type="text" class="form-control" formControlName="numero"/>
+                    </td>
+                    <td>
+                      <!-- <button type="button" class="btnAction btnDelete" (click)="onDeleteNumeration(form.controls.nfe.controls.config.controls.numeracao, item)"><icon name="close-outline" pack="eva"></icon></button> -->
+                    </td>
+                  </tr>
+                  <tr class="create">
+                    <td>
+                      <input type="text" class="form-control"  #nfeNumerationSerie />
+                    </td>
+                    <td>
+                      <input type="text" class="form-control"  #nfeNumerationNumber />
+                    </td>
+                    <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfe.controls.config.controls.numeracao, nfeNumerationSerie, nfeNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                  </tr>               
+                </tbody>              
+              </table>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- NFCE -->
+       
+      <div class="nfce row" formGroupName="nfce">
+
+        <h6 class="col-12">NFCE</h6>
+
+        <div class="row clearAll">
+          <div class="form-group col-12 col-md-4">
+            <span>Ativo</span>
+            <select class="form-control {{ formControls.nfce.controls.ativo.errors ? 'required' : '' }}" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfce.controls.ativo)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+  
+          <!-- <div class="form-group col-12 col-md-4">
+            <span>Tipo de Contrato</span>
+            <input class="form-control {{ formControls.nfce.controls.tipoContrato.errors ? 'required' : '' }}" formControlName="tipoContrato" (input)="onApplyNumberMask($event, form.controls.nfe.controls.tipoContrato)"/>
+          </div> -->
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Ambiente de Produção</span>
+            <select class="form-control" formControlName="producao" placeholder="" (change)="onChangeBoolean($event, formControls.nfce.controls.config.controls.producao)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>idCodigo Seguranca Contribuinte</span>
+            <div formGroupName="sefaz">
+              <input type="text" class="form-control" formControlName="idCodigoSegurancaContribuinte" placeholder="" />
+            </div>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Codigo Seguranca Contribuinte</span>
+            <div formGroupName="sefaz">
+              <input type="text" class="form-control" formControlName="codigoSegurancaContribuinte" placeholder="" />
+            </div>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Enviar Nota por Email</span>
+            <div formGroupName="email">
+              <select class="form-control" formControlName="envio" placeholder="" (change)="onChangeBoolean($event, formControls.nfce.controls.config.controls.email.controls.envio)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Calculo Automatico Ibpt</span>
+            <div formGroupName="calculoAutomaticoIbpt">
+              <select class="form-control" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfce.controls.config.controls.calculoAutomaticoIbpt.controls.ativo)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group col-12 col-md-6  stack" formGroupName="config">
+          <span>Numeração</span>
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>Série</th>
+                  <th>Número</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>    
+                <tr *ngFor="let item of form.controls.nfce.controls.config.controls.numeracao.value.controls">
+                  <td>
+                    <input type="text" class="form-control" value="{{ item.value.serie }}" disabled/>
+                  </td>
+                  <td [formGroup]="item">
+                    <!-- value="{{ item.value.numero }}" -->
+                    <input type="text" class="form-control" formControlName="numero"/>
+                  </td>
+                  <td>
+                    <!-- <button type="button" class="btnAction btnDelete" (click)="onDeleteNumeration(form.controls.nfce.controls.config.controls.numeracao, item)"><icon name="close-outline" pack="eva"></icon></button> -->
+                  </td>
+                </tr>
+                <tr class="create">
+                  <td>
+                    <input type="text" class="form-control"  #nfceNumerationSerie />
+                  </td>
+                  <td>
+                    <input type="text" class="form-control"  #nfceNumerationNumber />
+                  </td>
+                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfce.controls.config.controls.numeracao, nfceNumerationSerie, nfceNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                </tr>               
+              </tbody>              
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- NFSE -->
+
+      <div class="nfse row" formGroupName="nfse">
+
+        <h6 class="col-12">NFSE</h6>
+
+        <div class="row clearAll">
+          <div class="form-group col-12 col-md-4">
+            <span>Ativo</span>
+            <select class="form-control {{ formControls.nfse.controls.tipoContrato.errors ? 'required' : '' }}" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfse.controls.ativo)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+<!--   
+          <div class="form-group col-12 col-md-4">
+            <span>Tipo de Contrato</span>
+            <input class="form-control {{ formControls.nfse.controls.tipoContrato.errors ? 'required' : '' }}" formControlName="tipoContrato" (input)="onApplyNumberMask($event, form.controls.nfe.controls.tipoContrato)"/>
+          </div>
+   -->
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Ambiente de Produção</span>
+            <select class="form-control" formControlName="producao" placeholder="" (change)="onChangeBoolean($event, formControls.nfse.controls.config.controls.producao)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Ambiente Nacional</span>
+            <select class="form-control" formControlName="nfseNacional" placeholder="" (change)="onChangeBoolean($event, formControls.nfse.controls.config.controls.nfseNacional)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+  
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Enviar Nota por Email</span>
+            <div formGroupName="email">
+              <select class="form-control" formControlName="envio" placeholder="" (change)="onChangeBoolean($event, formControls.nfse.controls.config.controls.email.controls.envio)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Calculo Automatico Ibpt</span>
+            <div formGroupName="calculoAutomaticoIbpt">
+              <select class="form-control" formControlName="ativo" placeholder="" (change)="onChangeBoolean($event, formControls.nfse.controls.config.controls.calculoAutomaticoIbpt.controls.ativo)">
+                <option value="true">SIM</option>
+                <option value="false">NÃO</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group col-12 col-md-4" formGroupName="config">
+            <span>Lote</span>
+            <div formGroupName="rps">
+              <input class="form-control" formControlName="lote" (input)="onApplyNumberMask($event, form.controls.nfse.controls.config.controls.rps.controls.lote)"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="form-group col-12" formGroupName="config">
+          <span>Prefeitura</span>
+          <div class="row clearAll">
+            <div class="col-12 col-md-4" formGroupName="prefeitura">
+              <span>Login</span>  
+              <input class="form-control" formControlName="login"/>
+            </div>          
+            <div class="col-12 col-md-4" formGroupName="prefeitura">
+              <span>Senha</span>  
+              <input class="form-control" formControlName="senha"/>
+            </div>          
+            <div class="col-12 col-md-4" formGroupName="prefeitura">
+              <span>Receita Bruta</span>  
+              <input class="form-control" formControlName="receitaBruta"/>
+            </div>          
+            <div class="col-12 col-md-4" formGroupName="prefeitura">
+              <span>Lei</span>  
+              <input class="form-control" formControlName="lei"/>
+            </div>          
+            <div class="col-12 col-md-4" formGroupName="prefeitura">
+              <span>Data Inicio</span>  
+              <input class="form-control" formControlName="dataInicio"/>
+            </div>   
+          </div>
+        </div> -->
+
+     
+
+        <div class="col-12">
+
+        </div>
+        
+        <div class="form-group col-12 col-md-6  stack" formGroupName="config">
+          <span>Numeração</span>
+  
+
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>Série</th>
+                  <th>Número</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>    
+                <tr *ngFor="let item of form.controls.nfse.controls.config.controls.rps.controls.numeracao.value.controls">
+                  <td>
+                    <input type="text" class="form-control" value="{{ item.value.serie }}" disabled/>
+                  </td>
+                  <td [formGroup]="item">
+                    <input type="text" class="form-control" formControlName="numero"/>
+                  </td>
+                  <td>
+                    <!-- <button type="button" class="btnAction btnDelete" (click)="onDeleteNumeration(form.controls.nfse.controls.config.controls.rps.controls.numeracao, item)"><icon name="close-outline" pack="eva"></icon></button> -->
+                  </td>
+                </tr>
+                <tr class="create">
+                  <td>
+                    <input type="text" class="form-control"  #nfseNumerationSerie />
+                  </td>
+                  <td>
+                    <input type="text" class="form-control"  #nfseNumerationNumber />
+                  </td>
+                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfse.controls.config.controls.rps.controls.numeracao, nfseNumerationSerie, nfseNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                </tr>               
+              </tbody>              
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div class="container-button">
+        <button class="btn btnConfirm" type="button" (click)="onRegister()" [disabled]="form?.invalid || formCertificate?.invalid">Salvar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

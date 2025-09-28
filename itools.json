@@ -1,0 +1,23 @@
+{
+	"variation": "demo",
+	"functionsNodeModules": false,
+	"uploadKey": "d3c4b5e5394q3adf521",
+	"only": "hosting",
+	"release": {
+		"version": "2.0.47",
+		"date": "2021-10-01 15:52:00",
+		"info": {
+			"pt_BR": {
+				"description": "Essa nova versão é composta de algumas correções do sistema, inclusive otimizações necessárias para seu bom funcionamento. Confira a seguir as novidades:",
+				"list": []
+			},
+			"en_US": {
+				"description": "This new version is composed of some system fixes, including necessary optimizations for its proper functioning. Check out the news below:",
+				"list": []
+			}
+		},
+		"settings": {
+			"clearLocalStorage": false
+		}
+	}
+}

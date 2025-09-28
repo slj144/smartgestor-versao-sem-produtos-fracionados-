@@ -1,0 +1,72 @@
+
+<div id="stores-selector">
+
+  <header>
+    <div class="container-search">
+      <div #searchBar class="search-bar">
+        
+        <button class="btnFilter" (click)="onFilter()">
+          <button class="badge" *ngIf="filtersBadge > 0">{{ filtersBadge }}</button>
+          <icon name="funnel-outline" pack="eva"></icon>
+        </button>
+
+        <input type="text" name="search" [placeholder]="translate.searchBar.placeholder" autocomplete="off" (keydown.enter)="onSearch()" (input)="onCheckSearchBar(input.value)" #input />
+
+        <button class="btnReset" *ngIf="input.value != ''" (click)="onResetSearchBar()"><icon name="close" pack="eva"></icon></button>
+        <button class="btnSearch" (click)="onSearch()"><icon name="search-outline" pack="eva"></icon></button>
+      </div>
+    </div>
+  </header>
+
+  <main>    
+
+    <div class="container-content" *ngIf="!loading && (recordsData.length > 0)">
+      <div class="wrapper" *ngFor="let item of (searchData.length > 0 ? searchData : recordsData)">
+        <div class="container-info">
+          <p>
+            <span class="label">{{ translate.block.label.name + ':' }}</span> <span class="value">{{ item.name }}</span>
+          </p>
+
+          <p *ngIf="item.businessDocument">
+            <span class="label">{{ item.businessDocument.type + ':' }}</span> <span class="value">{{ item.businessDocument.value }}</span>
+          </p>
+
+          <p *ngIf="item.contacts?.phone">
+            <span class="label">{{ translate.block.label.phone + ':' }}</span> <span class="value">{{ item.contacts?.phone }}</span>
+          </p>
+
+          <p *ngIf="item.contacts?.email">
+            <span class="label">{{ translate.block.label.email + ':' }}</span> <span class="value">{{ item.contacts?.email }}</span>
+          </p>
+
+          <p *ngIf="item.address">
+            <span class="label">{{ translate.block.label.address + ':' }}</span> <span class="value">{{ item.address.addressLine + ', ' + item.address.city + ' - ' + item.address.state }}</span>
+          </p>
+        </div>
+
+        <div class="container-buttons">
+          <button class="btnSelect" (click)="onSelectStore(item)"><icon name="checkmark" pack="eva"></icon> <span>{{ translate.block.button.select.label }}</span></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-placeholder" *ngIf="(searchText != '') && (searchData.length == 0)">
+      <div class="wrapper">
+        <div *ngIf="!loading">
+          <div *ngIf="searchText != ''">
+            <img src="assets/images/_General/search-icon-2.jpg" />
+
+            <div class="info">
+              <p>{{ translate.placeholder.afterSearch.label }}</p>
+              <small>{{ translate.placeholder.afterSearch.instruction }}</small>
+            </div>
+          </div>
+        </div>
+
+        <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+      </div>
+    </div>
+
+  </main>
+
+</div>

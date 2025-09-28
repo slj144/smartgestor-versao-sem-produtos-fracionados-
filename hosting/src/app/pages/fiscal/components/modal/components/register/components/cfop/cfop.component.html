@@ -1,0 +1,581 @@
+
+<div id="cfop-component">
+  <div #cfopComponent class="row" [formGroup]="form" *ngIf="!loading">
+    <div class="form-group col-12">
+      <h6 *ngIf="general">
+        <span>CFOP</span>
+      </h6>
+
+      <select id="cfop-select" class="form-control  {{ formControls.cfop.errors ? 'required' : '' }}" formControlName="cfop">
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="1.100 - COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+          <option value="1.101">1.101 - Compra para industrialização ou produção rural</option>
+          <option value="1.102">1.102 - Compra para comercialização</option>
+          <option value="1.111">1.111 - Compra para industrialização de mercadoria recebida anteriormente em consignação industrial</option>
+          <option value="1.113">1.113 - Compra para comercialização, de mercadoria recebida anteriormente em consignação mercantil</option>
+          <option value="1.116">1.116 - Compra para industrialização ou produção rural originada de encomenda para recebimento futuro</option>
+          <option value="1.117">1.117 - Compra para comercialização originada de encomenda para recebimento futuro</option>
+          <option value="1.118">1.118 - Compra de mercadoria para comercialização pelo adquirente originário, entregue pelo vendedor remetente ao destinatário, em venda à ordem</option>
+          <option value="1.120">1.120 - Compra para industrialização, em venda à ordem, já recebida do vendedor remetente</option>
+          <option value="1.121">1.121 - Compra para comercialização, em venda à ordem, já recebida do vendedor remetente</option>
+          <option value="1.122">1.122 - Compra para industrialização em que a mercadoria foi remetida pelo fornecedor ao industrializador sem transitar pelo estabelecimento adquirente</option>
+          <option value="1.124">1.124 - Industrialização efetuada por outra empresa</option>
+          <option value="1.125">1.125 - Industrialização efetuada por outra empresa quando a mercadoria remetida para utilização no processo de industrialização não transitou pelo estabelecimento adquirente da mercadoria</option>
+          <option value="1.126">1.126 - compras para utilização na prestação de serviços sujeitas ao ICMS</option>
+          <option value="1.128">1.128 - compras para utilização na prestação de serviços sujeitas ao ISSQN</option>
+        </optgroup>
+
+        <optgroup label="1.150 - TRANSFERÊNCIAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+          <option value="1.151">1.151 - Transferência para industrialização ou produção rural</option>
+          <option value="1.152">1.152 - Transferência para comercialização</option>
+          <option value="1.153">1.153 - Transferência de energia elétrica para distribuição</option>
+          <option value="1.154">1.154 - Transferência para utilização na prestação de serviço </option>
+        </optgroup>
+
+        <!-- <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup>
+
+        <optgroup label="">
+
+        </optgroup> -->
+
+
+      <optgroup label="1.100 - COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+        <option value="1.101">1.101 - Compra para industrialização ou produção rural</option>
+        <option value="1.102">1.102 - Compra para comercialização</option>
+        <option value="1.111">1.111 - Compra para industrialização de mercadoria recebida anteriormente em consignação industrial</option>
+        <option value="1.113">1.113 - Compra para comercialização, de mercadoria recebida anteriormente em consignação mercantil</option>
+        <option value="1.116">1.116 - Compra para industrialização ou produção rural originada de encomenda para recebimento futuro</option>
+        <option value="1.117">1.117 - Compra para comercialização originada de encomenda para recebimento futuro</option>
+        <option value="1.118">1.118 - Compra de mercadoria para comercialização pelo adquirente originário, entregue pelo vendedor remetente ao destinatário, em venda à ordem</option>
+        <option value="1.120">1.120 - Compra para industrialização, em venda à ordem, já recebida do vendedor remetente</option>
+        <option value="1.121">1.121 - Compra para comercialização, em venda à ordem, já recebida do vendedor remetente</option>
+        <option value="1.122">1.122 - Compra para industrialização em que a mercadoria foi remetida pelo fornecedor ao industrializador sem transitar pelo estabelecimento adquirente</option>
+        <option value="1.124">1.124 - Industrialização efetuada por outra empresa</option>
+        <option value="1.125">1.125 - Industrialização efetuada por outra empresa quando a mercadoria remetida para utilização no processo de industrialização não transitou pelo estabelecimento adquirente da mercadoria</option>
+        <option value="1.126">1.126 - compras para utilização na prestação de serviços sujeitas ao ICMS</option>
+        <option value="1.128">1.128 - compras para utilização na prestação de serviços sujeitas ao ISSQN </option>
+      </optgroup>
+
+      <optgroup label="1.150 - TRANSFERÊNCIAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+        <option value="1.151">1.151 - Transferência para industrialização ou produção rural</option>
+        <option value="1.152">1.152 - Transferência para comercialização</option>
+        <option value="1.153">1.153 - Transferência de energia elétrica para distribuição</option>
+        <option value="1.154">1.154 - Transferência para utilização na prestação de serviço</option>
+      </optgroup>
+
+
+      <optgroup label="1.200 - DEVOLUÇÕES DE VENDAS DE PRODUÇÃO PRÓPRIA, DE TERCEIROS OU ANULAÇÕES DE VALORES">
+        <option value="1.201">1.201 - Devolução de venda de produção do estabelecimento</option>
+        <option value="1.202">1.202 - Devolução de venda de mercadoria adquirida ou recebida de terceiros</option>
+        <option value="1.203">1.203 - Devolução de venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+        <option value="1.204">1.204 - Devolução de venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+        <option value="1.205">1.205 - Anulação de valor relativo à prestação de serviço de comunicação</option>
+        <option value="1.206">1.206 - Anulação de valor relativo à prestação de serviço de transporte</option>
+        <option value="1.207">1.207 - Anulação de valor relativo à venda de energia elétrica</option>
+        <option value="1.208">1.208 - Devolução de produção do estabelecimento, remetida em transferência</option>
+        <option value="1.209">1.209 - Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência </option>
+      </optgroup>
+
+
+      <optgroup label="2.100 - COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+        <option value="2.101">2.101 - Compra para industrialização ou produção rural</option>
+        <option value="2.102">2.102 - Compra para comercialização</option>
+        <option value="2.111">2.111 - Compra para industrialização de mercadoria recebida anteriormente em consignação industrial</option>
+        <option value="2.113">2.113 - Compra para comercialização, de mercadoria recebida anteriormente em consignação mercantil</option>
+        <option value="2.116">2.116 - Compra para industrialização ou produção rural originada de encomenda para recebimento futuro</option>
+        <option value="2.117">2.117 - Compra para comercialização originada de encomenda para recebimento futuro</option>
+        <option value="2.118">2.118 - Compra de mercadoria para comercialização pelo adquirente originário, entregue pelo vendedor remetente ao destinatário, em venda à ordem</option>
+        <option value="2.120">2.120 - Compra para industrialização, em venda à ordem, já recebida do vendedor remetente</option>
+        <option value="2.121">2.121 - Compra para comercialização, em venda à ordem, já recebida do vendedor remetente</option>
+        <option value="2.122">2.122 - Compra para industrialização em que a mercadoria foi remetida pelo fornecedor ao industrializador sem transitar pelo estabelecimento adquirente</option>
+        <option value="2.124">2.124 - Industrialização efetuada por outra empresa</option>
+        <option value="2.125">2.125 - Industrialização efetuada por outra empresa quando a mercadoria remetida para utilização no processo de industrialização não transitou pelo estabelecimento adquirente da mercadoria</option>
+        <option value="2.126">2.126 - Compra para utilização na prestação de serviço</option>
+      </optgroup>
+
+      <optgroup label="2.200 - DEVOLUÇÕES DE VENDAS DE PRODUÇÃO PRÓPRIA, DE TERCEIROS OU ANULAÇÕES DE VALORES">
+        <option value="2.201">2.201 - Devolução de venda de produção do estabelecimento</option>
+        <option value="2.202">2.202 - Devolução de venda de mercadoria adquirida ou recebida de terceiros</option>
+        <option value="2.203">2.203 - Devolução de venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+        <option value="2.204">2.204 - Devolução de venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+        <option value="2.205">2.205 - Anulação de valor relativo à prestação de serviço de comunicação</option>
+        <option value="2.206">2.206 - Anulação de valor relativo à prestação de serviço de transporte</option>
+        <option value="2.207">2.207 - Anulação de valor relativo à venda de energia elétrica</option>
+        <option value="2.208">2.208 - Devolução de produção do estabelecimento, remetida em transferência</option>
+        <option value="2.209">2.209 - Devolução de mercadoria adquirida ou recebida de terceiros, remetida em transferência</option>
+      </optgroup>
+
+
+        <optgroup label="3.100 - COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU PRESTAÇÃO DE SERVIÇOS">
+          <option value="3.101">3.101 - Compra para industrialização ou produção rural</option>
+          <option value="3.102">3.102 - Compra para comercialização</option>
+          <option value="3.126">3.126 - Compra para utilização na prestação de serviço</option>
+          <option value="3.127">3.127 - Compra para industrialização sob o regime de "drawback"</option>
+        </optgroup>
+
+        <optgroup label="3.200 - DEVOLUÇÕES DE VENDAS DE PRODUÇÃO PRÓPRIA, DE TERCEIROS OU ANULAÇÕES DE VALORES">
+          <option value="3.201">3.201 - Devolução de venda de produção do estabelecimento</option>
+          <option value="3.202">3.202 - Devolução de venda de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="3.205">3.205 - Anulação de valor relativo à prestação de serviço de comunicação</option>
+          <option value="3.206">3.206 - Anulação de valor relativo à prestação de serviço de transporte</option>
+          <option value="3.207">3.207 - Anulação de valor relativo à venda de energia elétrica</option>
+          <option value="3.211">3.211 - Devolução de venda de produção do estabelecimento sob o regime de "drawback" </option>
+        </optgroup>
+
+        <optgroup label="3.550 - OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO">
+          <option value="3.551">3.551 - Compra de bem para o ativo imobilizado</option>
+          <option value="3.553">3.553 - Devolução de venda de bem do ativo imobilizado</option>
+          <option value="3.556">3.556 - Compra de material para uso ou consumo</option>
+          <option value="3.651">3.651 - Compra de combustível ou lubrificante para industrialização subseqüente</option>
+          <option value="3.652">3.652 - Compra de combustível ou lubrificante para comercialização</option>
+          <option value="3.653">3.653 - Compra de combustível ou lubrificante por consumidor ou usuário final </option>
+          <option value="3.900">3.900 - OUTRAS ENTRADAS DE MERCADORIAS OU AQUISIÇÕES DE SERVIÇOS</option>
+          <option value="3.930">3.930 - Lançamento efetuado a título de entrada de bem sob amparo de regime especial aduaneiro de admissão temporária</option>
+          <option value="3.949">3.949 - Outra entrada de mercadoria ou prestação de serviço não esp</option>
+        </optgroup>
+
+
+        <optgroup label="5.100 - VENDAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS">
+          <option value="5.101">5.101 - Venda de produção do estabelecimento</option>
+          <option value="5.102">5.102 - Venda de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="5.103">5.103 - Venda de produção do estabelecimento, efetuada fora do estabelecimento</option>
+          <option value="5.104">5.104 - Venda de mercadoria adquirida ou recebida de terceiros, efetuada fora do estabelecimento</option>
+          <option value="5.105">5.105 - Venda de produção do estabelecimento que não deva por ele transitar</option>
+          <option value="5.106">5.106 - Venda de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+          <option value="5.109">5.109 - Venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="5.110">5.110 - Venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="5.111">5.111 - Venda de produção do estabelecimento remetida anteriormente em consignação industrial</option>
+          <option value="5.112">5.112 - Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação industrial</option>
+          <option value="5.113">5.113 - Venda de produção do estabelecimento remetida anteriormente em consignação mercantil</option>
+          <option value="5.114">5.114 - Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil</option>
+          <option value="5.115">5.115 - Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil</option>
+          <option value="5.116">5.116 - Venda de produção do estabelecimento originada de encomenda para entrega futura</option>
+          <option value="5.117">5.117 - Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda para entrega futura</option>
+          <option value="5.118">5.118 - Venda de produção do estabelecimento entregue ao destinatário por conta e ordem do adquirente originário, em venda à ordem</option>
+          <option value="5.119">5.119 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário por conta e ordem do adquirente originário, em venda à ordem</option>
+          <option value="5.120">5.120 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário pelo vendedor remetente, em venda à ordem</option>
+          <option value="5.122">5.122 - Venda de produção do estabelecimento remetida para industrialização, por conta e ordem do adquirente, sem transitar pelo estabelecimento do adquirente</option>
+          <option value="5.123">5.123 - Venda de mercadoria adquirida ou recebida de terceiros remetida para industrialização, por conta e ordem do adquirente, sem transitar pelo estabelecimento do adquirente</option>
+          <option value="5.124">5.124 - Industrialização efetuada para outra empresa</option>
+          <option value="5.125">5.125 - Industrialização efetuada para outra empresa quando a mercadoria recebida para utilização no processo de industrialização não transitar pelo estabelecimento adquirente da mercadoria</option>
+        </optgroup>
+
+        <optgroup label="5.150 - TRANSFERÊNCIAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS">
+          <option value="5.151">5.151 - Transferência de produção do estabelecimento</option>
+          <option value="5.152">5.152 - Transferência de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="5.153">5.153 - Transferência de energia elétrica</option>
+          <option value="5.155">5.155 - Transferência de produção do estabelecimento, que não deva por ele transitar</option>
+          <option value="5.156">5.156 - Transferência de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+        </optgroup>
+
+        <optgroup label="5.200 - DEVOLUÇÕES DE COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU ANULAÇÕES DE VALORES">
+          <option value="5.201">5.201 - Devolução de compra para industrialização ou produção rural</option>
+          <option value="5.202">5.202 - Devolução de compra para comercialização</option>
+          <option value="5.205">5.205 - Anulação de valor relativo a aquisição de serviço de comunicação</option>
+          <option value="5.206">5.206 - Anulação de valor relativo a aquisição de serviço de transporte</option>
+          <option value="5.207">5.207 - Anulação de valor relativo à compra de energia elétrica</option>
+          <option value="5.208">5.208 - Devolução de mercadoria recebida em transferência para industrialização ou produção rural</option>
+          <option value="5.209">5.209 - Devolução de mercadoria recebida em transferência para comercialização</option>
+          <option value="5.210">5.210 - Devolução de compra para utilização na prestação de serviço sujeitas ao ICMS ou ISSQN</option>
+        </optgroup>
+
+        <optgroup label="5.300 - PRESTAÇÕES DE SERVIÇOS DE COMUNICAÇÃO">
+          <option value="5.301">5.301 - Prestação de serviço de comunicação para execução de serviço da mesma natureza</option>
+          <option value="5.302">5.302 - Prestação de serviço de comunicação a estabelecimento industrial</option>
+          <option value="5.303">5.303 - Prestação de serviço de comunicação a estabelecimento comercial</option>
+          <option value="5.304">5.304 - Prestação de serviço de comunicação a estabelecimento de prestador de serviço de transporte</option>
+          <option value="5.305">5.305 - Prestação de serviço de comunicação a estabelecimento de geradora ou de distribuidora de energia elétrica</option>
+          <option value="5.306">5.306 - Prestação de serviço de comunicação a estabelecimento de produtor rural</option>
+          <option value="5.307">5.307 - Prestação de serviço de comunicação a não contribuinte</option>
+          <option value="5.350">5.350 - PRESTAÇÕES DE SERVIÇOS DE TRANSPORTE</option>
+          <option value="5.351">5.351 - Prestação de serviço de transporte para execução de serviço da mesma natureza</option>
+          <option value="5.352">5.352 - Prestação de serviço de transporte a estabelecimento industrial</option>
+          <option value="5.353">5.353 - Prestação de serviço de transporte a estabelecimento comercial</option>
+          <option value="5.354">5.354 - Prestação de serviço de transporte a estabelecimento de prestador de serviço de comunicação</option>
+          <option value="5.355">5.355 - Prestação de serviço de transporte a estabelecimento de geradora ou de distribuidora de energia elétrica</option>
+          <option value="5.356">5.356 - Prestação de serviço de transporte a estabelecimento de produtor rural</option>
+          <option value="5.357">5.357 - Prestação de serviço de transporte a não contribuinte</option>
+          <option value="5.359">5.359 - Prestação de serviço de transporte a contribuinte ou a não contribuinte quando a mercadoria transportada está dispensada de emissão de nota fiscal </option>
+        </optgroup>
+  
+        <optgroup label="5.400 - SAÍDAS DE MERCADORIAS SUJEITAS AO REGIME DE SUBSTITUIÇÃO TRIBUTÁRIA">
+          <option value="5.401">5.401 - Venda de produção do estabelecimento em operação com produto sujeito ao regime de substituição tributária, na condição de contribuinte substituto</option>
+          <option value="5.402">5.402 - Venda de produção do estabelecimento de produto sujeito ao regime de substituição tributária, em operação entre contribuintes substitutos do mesmo produto</option>
+          <option value="5.403">5.403 - Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituto</option>
+          <option value="5.405">5.405 - Venda de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária, na condição de contribuinte substituído</option>
+          <option value="5.408">5.408 - Transferência de produção do estabelecimento em operação com produto sujeito ao regime de substituição tributária</option>
+          <option value="5.409">5.409 - Transferência de mercadoria adquirida ou recebida de terceiros em operação com mercadoria sujeita ao regime de substituição tributária</option>
+          <option value="5.410">5.410 - Devolução de compra para industrialização ou produção rural em operação com mercadoria sujeita ao regime de substituição tributária</option>
+          <option value="5.411">5.411 - Devolução de compra para comercialização em operação com mercadoria sujeita ao regime de substituição tributária</option>
+          <option value="5.412">5.412 - Devolução de bem do ativo imobilizado, em operação com mercadoria sujeita ao regime de substituição tributária</option>
+          <option value="5.413">5.413 - Devolução de mercadoria destinada ao uso ou consumo, em operação com mercadoria sujeita ao regime de substituição tributária</option>
+          <option value="5.414">5.414 - Remessa de produção do estabelecimento para venda fora do estabelecimento em operação com produto sujeito ao regime de substituição tributária</option>
+          <option value="5.415">5.415 - Remessa de mercadoria adquirida ou recebida de terceiros para venda fora do estabelecimento, em operação com mercadoria sujeita ao regime de substituição tributária </option>
+        </optgroup>
+
+        <optgroup label="5.450 - SISTEMAS DE INTEGRAÇÃO">
+          <option value="5.451">5.451 - Remessa de animal e de insumo para estabelecimento produtor</option>
+          <option value="5.500">5.500 - REMESSAS COM FIM ESPECÍFICO DE EXPORTAÇÃO E EVENTUAIS DEVOLUÇÕES</option>
+          <option value="5.501">5.501 - Remessa de produção do estabelecimento, com fim específico de exportação</option>
+          <option value="5.502">5.502 - Remessa de mercadoria adquirida ou recebida de terceiros, com fim específico de exportação</option>
+          <option value="5.503">5.503 - Devolução de mercadoria recebida com fim específico de exportação</option>
+          <option value="5.504">5.504 - Remessa de mercadorias para formação de lote de exportação, de produtos industrializados ou produzidos pelo próprio estabelecimento</option>
+          <option value="5.505">5.505 - Remessa de mercadorias, adquiridas ou recebidas de terceiros, para formação de lote de exportação</option>
+          <option value="5.550">5.550 - OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO</option>
+          <option value="5.551">5.551 - Venda de bem do ativo imobilizado</option>
+          <option value="5.552">5.552 - Transferência de bem do ativo imobilizado</option>
+          <option value="5.553">5.553 - Devolução de compra de bem para o ativo imobilizado</option>
+          <option value="5.554">5.554 - Remessa de bem do ativo imobilizado para uso fora do estabelecimento</option>
+          <option value="5.555">5.555 - Devolução de bem do ativo imobilizado de terceiro, recebido para uso no estabelecimento</option>
+          <option value="5.556">5.556 - Devolução de compra de material de uso ou consumo</option>
+          <option value="5.557">5.557 - Transferência de material de uso ou consumo</option>
+        </optgroup>
+
+        <optgroup label="5.600 - 5.600 - CRÉDITOS E RESSARCIMENTOS DE ICMS">
+          <option value="5.601">5.601 - Transferência de crédito de ICMS acumulado</option>
+          <option value="5.602">5.602 - Transferência de saldo credor de ICMS para outro estabelecimento da mesma empresa, destinado à compensação de saldo devedor de ICMS</option>
+          <option value="5.603">5.603 - Ressarcimento de ICMS retido por substituição tributária</option>
+          <option value="5.605">5.605 - Transferência de saldo devedor de ICMS de outro estabelecimento da mesma empresa</option>
+          <option value="5.606">5.606 - Utilização de saldo credor de ICMS para extinção por compensação de débitos fiscais</option>
+          <option value="5.651">5.651 - Venda de combustível ou lubrificante de produção do estabelecimento destinado à industrialização subseqüente</option>
+          <option value="5.652">5.652 - Venda de combustível ou lubrificante de produção do estabelecimento destinado à comercialização</option>
+          <option value="5.653">5.653 - Venda de combustível ou lubrificante de produção do estabelecimento destinado a consumidor ou usuário final</option>
+          <option value="5.654">5.654 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado à industrialização subseqüente</option>
+          <option value="5.655">5.655 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado à comercialização</option>
+          <option value="5.656">5.656 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado a consumidor ou usuário final</option>
+          <option value="5.657">5.657 - Remessa de combustível ou lubrificante adquirido ou recebido de terceiros para venda fora do estabelecimento</option>
+          <option value="5.658">5.658 - Transferência de combustível ou lubrificante de produção do estabelecimento</option>
+          <option value="5.659">5.659 - Transferência de combustível ou lubrificante adquirido ou recebido de terceiro</option>
+          <option value="5.660">5.660 - Devolução de compra de combustível ou lubrificante adquirido para industrialização subseqüente</option>
+          <option value="5.661">5.661 - Devolução de compra de combustível ou lubrificante adquirido para comercialização</option>
+          <option value="5.662">5.662 - Devolução de compra de combustível ou lubrificante adquirido por consumidor ou usuário final</option>
+          <option value="5.663">5.663 - Remessa para armazenagem de combustível ou lubrificante</option>
+          <option value="5.664">5.664 - Retorno de combustível ou lubrificante recebido para armazenagem</option>
+          <option value="5.665">5.665 - Retorno simbólico de combustível ou lubrificante recebido para armazenagem</option>
+          <option value="5.666">5.666 - Remessa por conta e ordem de terceiros de combustível ou lubrificante recebido para armazenagem</option>
+        </optgroup>
+
+        <optgroup label="5.900 - OUTRAS SAÍDAS DE MERCADORIAS OU PRESTAÇÕES DE SERVIÇOS ">
+          <option value="5.901">5.901 - Remessa para industrialização por encomenda</option>
+          <option value="5.902">5.902 - Retorno de mercadoria utilizada na industrialização por encomenda</option>
+          <option value="5.903">5.903 - Retorno de mercadoria recebida para industrialização e não aplicada no referido processo</option>
+          <option value="5.904">5.904 - Remessa para venda fora do estabelecimento</option>
+          <option value="5.905">5.905 - Remessa para depósito fechado ou armazém geral</option>
+          <option value="5.906">5.906 - Retorno de mercadoria depositada em depósito fechado ou armazém geral</option>
+          <option value="5.907">5.907 - Retorno simbólico de mercadoria depositada em depósito fechado ou armazém geral</option>
+          <option value="5.908">5.908 - Remessa de bem por conta de contrato de comodato</option>
+          <option value="5.909">5.909 - Retorno de bem recebido por conta de contrato de comodato</option>
+          <option value="5.910">5.910 - Remessa em bonificação, doação ou brinde</option>
+          <option value="5.911">5.911 - Remessa de amostra grátis</option>
+          <option value="5.912">5.912 - Remessa de mercadoria ou bem para demonstração</option>
+          <option value="5.913">5.913 - Retorno de mercadoria ou bem recebido para demonstração</option>
+          <option value="5.914">5.914 - Remessa de mercadoria ou bem para exposição ou feira</option>
+          <option value="5.915">5.915 - Remessa de mercadoria ou bem para conserto ou reparo</option>
+          <option value="5.916">5.916 - Retorno de mercadoria ou bem recebido para conserto ou reparo</option>
+          <option value="5.917">5.917 - Remessa de mercadoria em consignação mercantil ou industrial</option>
+          <option value="5.918">5.918 - Devolução de mercadoria recebida em consignação mercantil ou industrial</option>
+          <option value="5.919">5.919 - Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial</option>
+          <option value="5.920">5.920 - Remessa de vasilhame ou sacaria</option>
+          <option value="5.921">5.921 - Devolução de vasilhame ou sacaria</option>
+          <option value="5.922">5.922 - Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura</option>
+          <option value="5.923">5.923 - Remessa de mercadoria por conta e ordem de terceiros, em venda à ordem</option>
+          <option value="5.924">5.924 - Remessa para industrialização por conta e ordem do adquirente da mercadoria, quando esta não transitar pelo estabelecimento do adquirente</option>
+          <option value="5.925">5.925 - Retorno de mercadoria recebida para industrialização por conta e ordem do adquirente da mercadoria, quando aquela não transitar pelo estabelecimento do adquirente</option>
+          <option value="5.926">5.926 - Lançamento efetuado a título de reclassificação de mercadoria decorrente de formação de kit ou de sua desagregação</option>
+          <option value="5.927">5.927 - Lançamento efetuado a título de baixa de estoque decorrente de perda, roubo ou deterioração</option>
+          <option value="5.928">5.928 - Lançamento efetuado a título de baixa de estoque decorrente do encerramento da atividade da empresa</option>
+          <option value="5.929">5.929 - Lançamento efetuado em decorrência de emissão de documento fiscal relativo a operação ou prestação também registrada em equipamento Emissor de Cupom Fiscal - ECF</option>
+          <option value="5.931">5.931 - Lançamento efetuado em decorrência da responsabilidade de retenção do imposto por substituição tributária, atribuída ao remetente ou alienante da mercadoria, pelo serviço de transporte realizado por transportador autônomo ou por transportador não inscrito na unidade da Federação onde iniciado o serviço</option>
+          <option value="5.932">5.932 - Prestação de serviço de transporte iniciada em unidade da Federação diversa daquela onde inscrito o prestador</option>
+          <option value="5.933">5.933 - Prestação de serviço tributado pelo ISSQN</option>
+          <option value="5.949">5.949 - Outra saída de mercadoria ou prestação de serviço não especificado</option>
+        </optgroup>
+
+        <optgroup label="6.100 - VENDAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS">
+          <option value="6.101">6.101 - Venda de produção do estabelecimento</option>
+          <option value="6.102">6.102 - Venda de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="6.103">6.103 - Venda de produção do estabelecimento, efetuada fora do estabelecimento</option>
+          <option value="6.104">6.104 - Venda de mercadoria adquirida ou recebida de terceiros, efetuada fora do estabelecimento</option>
+          <option value="6.105">6.105 - Venda de produção do estabelecimento que não deva por ele transitar</option>
+          <option value="6.106">6.106 - Venda de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+          <option value="6.107">6.107 - Venda de produção do estabelecimento, destinada a não contribuinte</option>
+          <option value="6.108">6.108 - Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte</option>
+          <option value="6.109">6.109 - Venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="6.110">6.110 - Venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="6.111">6.111 - Venda de produção do estabelecimento remetida anteriormente em consignação industrial</option>
+          <option value="6.112">6.112 - Venda de mercadoria adquirida ou recebida de Terceiros remetida anteriormente em consignação industrial</option>
+          <option value="6.113">6.113 - Venda de produção do estabelecimento remetida anteriormente em consignação mercantil</option>
+          <option value="6.114">6.114 - Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil</option>
+          <option value="6.115">6.115 - Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil</option>
+          <option value="6.116">6.116 - Venda de produção do estabelecimento originada de encomenda para entrega futura</option>
+          <option value="6.117">6.117 - Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda para entrega futura</option>
+          <option value="6.118">6.118 - Venda de produção do estabelecimento entregue ao destinatário por conta e ordem do adquirente originário, em venda à ordem</option>
+          <option value="6.119">6.119 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário por conta e ordem d adquirente originário, em venda à ordem</option>
+          <option value="6.120">6.120 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário pelo vendedor remetente, em venda à ordem</option>
+          <option value="6.122">6.122 - Venda de produção do estabelecimento remetida para industrialização, por conta e ordem do adquirente sem transitar pelo estabelecimento do adquirente</option>
+          <option value="6.123">6.123 - Venda de mercadoria adquirida ou recebida de terceiros remetida para industrialização, por conta e orde do adquirente, sem transitar pelo estabelecimento do adquirente</option>
+          <option value="6.124">6.124 - Industrialização efetuada para outra empresa</option>
+          <option value="6.125">6.125 - Industrialização efetuada para outra empresa quando a mercadoria recebida para utilização no processo de industrialização não transitar pelo estabelecimento adquirente da mercadoria </option>
+        </optgroup>
+
+        <optgroup label="6.000 - SAÍDAS OU PRESTAÇÕES DE SERVIÇOS PARA OUTROS ESTADOS">
+          <option value="6.100"> - VENDAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS</option>
+          <option value="6.101">6.101 - Venda de produção do estabelecimento</option>
+          <option value="6.102">6.102 - Venda de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="6.103">6.103 - Venda de produção do estabelecimento, efetuada fora do estabelecimento</option>
+          <option value="6.104">6.104 - Venda de mercadoria adquirida ou recebida de terceiros, efetuada fora do estabelecimento</option>
+          <option value="6.105">6.105 - Venda de produção do estabelecimento que não deva por ele transitar</option>
+          <option value="6.106">6.106 - Venda de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+          <option value="6.107">6.107 - Venda de produção do estabelecimento, destinada a não contribuinte</option>
+          <option value="6.108">6.108 - Venda de mercadoria adquirida ou recebida de terceiros, destinada a não contribuinte</option>
+          <option value="6.109">6.109 - Venda de produção do estabelecimento, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="6.110">6.110 - Venda de mercadoria adquirida ou recebida de terceiros, destinada à Zona Franca de Manaus ou Áreas de Livre Comércio</option>
+          <option value="6.111">6.111 - Venda de produção do estabelecimento remetida anteriormente em consignação industrial</option>
+          <option value="6.112">6.112 - Venda de mercadoria adquirida ou recebida de Terceiros remetida anteriormente em consignação industrial</option>
+          <option value="6.113">6.113 - Venda de produção do estabelecimento remetida anteriormente em consignação mercantil</option>
+          <option value="6.114">6.114 - Venda de mercadoria adquirida ou recebida de terceiros remetida anteriormente em consignação mercantil</option>
+          <option value="6.115">6.115 - Venda de mercadoria adquirida ou recebida de terceiros, recebida anteriormente em consignação mercantil</option>
+          <option value="6.116">6.116 - Venda de produção do estabelecimento originada de encomenda para entrega futura</option>
+          <option value="6.117">6.117 - Venda de mercadoria adquirida ou recebida de terceiros, originada de encomenda para entrega futura</option>
+          <option value="6.118">6.118 - Venda de produção do estabelecimento entregue ao destinatário por conta e ordem do adquirente originário, em venda à ordem</option>
+          <option value="6.119">6.119 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário por conta e ordem do adquirente originário, em venda à ordem</option>
+          <option value="6.120">6.120 - Venda de mercadoria adquirida ou recebida de terceiros entregue ao destinatário pelo vendedor remetente, em venda à ordem</option>
+          <option value="6.122">6.122 - Venda de produção do estabelecimento remetida para industrialização, por conta e ordem do adquirente, sem transitar pelo estabelecimento do adquirente</option>
+          <option value="6.123">6.123 - Venda de mercadoria adquirida ou recebida de terceiros remetida para industrialização, por conta e ordem do adquirente, sem transitar pelo estabelecimento do adquirente</option>
+          <option value="6.124">6.124 - Industrialização efetuada para outra empresa</option>
+          <option value="6.125">6.125 - Industrialização efetuada para outra empresa quando a mercadoria recebida para utilização no processo de industrialização não transitar pelo estabelecimento adquirente da mercadoria</option>
+        </optgroup>
+       
+
+        <optgroup label="6.150 - TRANSFERÊNCIAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS">
+          <option value="6.151">6.151 - Transferência de produção do estabelecimento</option>
+          <option value="6.152">6.152 - Transferência de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="6.153">6.153 - Transferência de energia elétrica</option>
+          <option value="6.155">6.155 - Transferência de produção do estabelecimento, que não deva por ele transitar</option>
+          <option value="6.156">6.156 - Transferência de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+        </optgroup>
+
+        <optgroup label="6.200 - DEVOLUÇÕES DE COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU ANULAÇÕES DE VALORES">
+          <option value="6.201">6.201 - Devolução de compra para industrialização ou produção rural</option>
+          <option value="6.202">6.202 - Devolução de compra para comercialização</option>
+          <option value="6.205">6.205 - Anulação de valor relativo a aquisição de serviço de comunicação</option>
+          <option value="6.206">6.206 - Anulação de valor relativo a aquisição de serviço de transporte</option>
+          <option value="6.207">6.207 - Anulação de valor relativo à compra de energia elétrica</option>
+          <option value="6.208">6.208 - Devolução de mercadoria recebida em transferência para industrialização ou produção rural</option>
+          <option value="6.209">6.209 - Devolução de mercadoria recebida em transferência para comercialização</option>
+          <option value="6.210">6.210 - Devolução de compra para utilização na prestação de serviço </option>
+        </optgroup>
+
+        <optgroup label="6.250 - VENDAS DE ENERGIA ELÉTRICA">
+          <option value="6.251">6.251 - Venda de energia elétrica para distribuição ou comercialização</option>
+          <option value="6.252">6.252 - Venda de energia elétrica para estabelecimento industrial</option>
+          <option value="6.253">6.253 - Venda de energia elétrica para estabelecimento comercial</option>
+          <option value="6.254">6.254 - Venda de energia elétrica para estabelecimento prestador de serviço de transporte</option>
+          <option value="6.255">6.255 - Venda de energia elétrica para estabelecimento prestador de serviço de comunicação</option>
+          <option value="6.256">6.256 - Venda de energia elétrica para estabelecimento de produtor rural</option>
+          <option value="6.257">6.257 - Venda de energia elétrica para consumo por demanda contratada</option>
+          <option value="6.258">6.258 - Venda de energia elétrica a não contribuinte</option>
+        </optgroup>
+
+        <optgroup label="6.300 - PRESTAÇÕES DE SERVIÇOS DE COMUNICAÇÃO">
+          <option value="6.301">6.301 - Prestação de serviço de comunicação para execução de serviço da mesma natureza</option>
+          <option value="6.302">6.302 - Prestação de serviço de comunicação a estabelecimento industrial</option>
+          <option value="6.303">6.303 - Prestação de serviço de comunicação a estabelecimento comercial</option>
+          <option value="6.304">6.304 - Prestação de serviço de comunicação a estabelecimento de prestador de serviço de transporte</option>
+          <option value="6.305">6.305 - Prestação de serviço de comunicação a estabelecimento de geradora ou de distribuidora de energia elétrica</option>
+          <option value="6.306">6.306 - Prestação de serviço de comunicação a estabelecimento de produtor rural</option>
+          <option value="6.307">6.307 - Prestação de serviço de comunicação a não contribuinte</option>
+        </optgroup>
+
+        <optgroup label="6.350 - PRESTAÇÕES DE SERVIÇOS DE TRANSPORTE ">
+          <option value="6.351">6.351 - Prestação de serviço de transporte para execução de serviço da mesma natureza</option>
+          <option value="6.352">6.352 - Prestação de serviço de transporte a estabelecimento industrial</option>
+          <option value="6.353">6.353 - Prestação de serviço de transporte a estabelecimento comercial</option>
+          <option value="6.354">6.354 - Prestação de serviço de transporte a estabelecimento de prestador de serviço de comunicação</option>
+          <option value="6.355">6.355 - Prestação de serviço de transporte a estabelecimento de geradora ou de distribuidora de energia elétrica</option>
+          <option value="6.356">6.356 - Prestação de serviço de transporte a estabelecimento de produtor rural</option>
+          <option value="6.357">6.357 - Prestação de serviço de transporte a não contribuinte</option>
+          <option value="6.359">6.359 - Prestação de serviço de transporte a contribuinte ou a não contribuinte quando a mercadoria transportada está dispensada de emissão de nota fiscal</option>
+        </optgroup>
+
+   
+        <optgroup label="6.550 - OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO">
+          <option value="6.551">6.551 - Venda de bem do ativo imobilizado</option>
+          <option value="6.552">6.552 - Transferência de bem do ativo imobilizado</option>
+          <option value="6.553">6.553 - Devolução de compra de bem para o ativo imobilizado</option>
+          <option value="6.554">6.554 - Remessa de bem do ativo imobilizado para uso fora do estabelecimento</option>
+          <option value="6.555">6.555 - Devolução de bem do ativo imobilizado de terceiro, recebido para uso no estabelecimento</option>
+          <option value="6.556">6.556 - Devolução de compra de material de uso ou consumo</option>
+          <option value="6.557">6.557 - Transferência de material de uso ou consumo</option>
+        </optgroup>
+
+        <optgroup label="6.500 - REMESSAS COM FIM ESPECÍFICO DE EXPORTAÇÃO E EVENTUAIS DEVOLUÇÕES">
+          <option value="6.501">6.501 - Remessa de produção do estabelecimento, com fim específico de exportação</option>
+          <option value="6.502">6.502 - Remessa de mercadoria adquirida ou recebida de terceiros, com fim específico de exportação</option>
+          <option value="6.503">6.503 - Devolução de mercadoria recebida com fim específico de exportação</option>
+          <option value="6.504">6.504 - Remessa de mercadorias para formação de lote de exportação, de produtos industrializados ou produzidos pelo próprio estabelecimento</option>
+          <option value="6.505">6.505 - Remessa de mercadorias, adquiridas ou recebidas de terceiros, para formação de lote de exportação</option>
+        </optgroup>
+
+
+        <optgroup label="6.500 - REMESSAS COM FIM ESPECÍFICO DE EXPORTAÇÃO E EVENTUAIS DEVOLUÇÕES">
+          <option value="6.501">6.501 - Remessa de produção do estabelecimento, com fim específico de exportação</option>
+          <option value="6.502">6.502 - Remessa de mercadoria adquirida ou recebida de terceiros, com fim específico de exportação</option>
+          <option value="6.503">6.503 - Devolução de mercadoria recebida com fim específico de exportação</option>
+          <option value="6.504">6.504 - Remessa de mercadorias para formação de lote de exportação, de produtos industrializados ou produzidos pelo próprio estabelecimento</option>
+          <option value="6.505">6.505 - Remessa de mercadorias, adquiridas ou recebidas de terceiros, para formação de lote de exportação</option>
+        </optgroup>
+
+        <optgroup label="6.550 - OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO">
+          <option value="6.551">6.551 - Venda de bem do ativo imobilizado</option>
+          <option value="6.552">6.552 - Transferência de bem do ativo imobilizado</option>
+          <option value="6.553">6.553 - Devolução de compra de bem para o ativo imobilizado</option>
+          <option value="6.554">6.554 - Remessa de bem do ativo imobilizado para uso fora do estabelecimento</option>
+          <option value="6.555">6.555 - Devolução de bem do ativo imobilizado de terceiro, recebido para uso no estabelecimento</option>
+          <option value="6.556">6.556 - Devolução de compra de material de uso ou consumo</option>
+          <option value="6.557">6.557 - Transferência de material de uso ou consumo</option>
+        </optgroup>
+
+        <optgroup label="6.600 - CRÉDITOS E RESSARCIMENTOS DE ICMS">
+          <option value="6.603">6.603 - Ressarcimento de ICMS retido por substituição tributária</option>
+          <option value="6.651">6.651 - Venda de combustível ou lubrificante de produção do estabelecimento destinado à industrialização subseqüente</option>
+          <option value="6.652">6.652 - Venda de combustível ou lubrificante de produção do estabelecimento destinado à comercialização</option>
+          <option value="6.653">6.653 - Venda de combustível ou lubrificante de produção do estabelecimento destinado a consumidor ou usuário final</option>
+          <option value="6.654">6.654 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado à industrialização subseqüente</option>
+          <option value="6.655">6.655 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado à comercialização</option>
+          <option value="6.656">6.656 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros destinado a consumidor ou usuário final</option>
+          <option value="6.657">6.657 - Remessa de combustível ou lubrificante adquirido ou recebido de terceiros para venda fora do estabelecimento</option>
+          <option value="6.658">6.658 - Transferência de combustível ou lubrificante de produção do estabelecimento</option>
+          <option value="6.659">6.659 - Transferência de combustível ou lubrificante adquirido ou recebido de terceiro</option>
+          <option value="6.660">6.660 - Devolução de compra de combustível ou lubrificante adquirido para industrialização subseqüente</option>
+          <option value="6.661">6.661 - Devolução de compra de combustível ou lubrificante adquirido para comercialização</option>
+          <option value="6.662">6.662 - Devolução de compra de combustível ou lubrificante adquirido por consumidor ou usuário final</option>
+          <option value="6.663">6.663 - Remessa para armazenagem de combustível ou lubrificante</option>
+          <option value="6.664">6.664 - Retorno de combustível ou lubrificante recebido para armazenagem</option>
+          <option value="6.665">6.665 - Retorno simbólico de combustível ou lubrificante recebido para armazenagem</option>
+          <option value="6.666">6.666 - Remessa por conta e ordem de terceiros de combustível ou lubrificante recebido para armazenagem</option>
+        </optgroup>
+
+        <optgroup label="6.900 - OUTRAS SAÍDAS DE MERCADORIAS OU PRESTAÇÕES DE SERVIÇOS ">
+          <option value="6.901">6.901 - Remessa para industrialização por encomenda</option>
+          <option value="6.902">6.902 - Retorno de mercadoria utilizada na industrialização por encomenda</option>
+          <option value="6.903">6.903 - Retorno de mercadoria recebida para industrialização e não aplicada no referido processo</option>
+          <option value="6.904">6.904 - Remessa para venda fora do estabelecimento</option>
+          <option value="6.905">6.905 - Remessa para depósito fechado ou armazém geral</option>
+          <option value="6.906">6.906 - Retorno de mercadoria depositada em depósito fechado ou armazém geral</option>
+          <option value="6.907">6.907 - Retorno simbólico de mercadoria depositada em depósito fechado ou armazém geral</option>
+          <option value="6.908">6.908 - Remessa de bem por conta de contrato de comodato</option>
+          <option value="6.909">6.909 - Retorno de bem recebido por conta de contrato de comodato</option>
+          <option value="6.910">6.910 - Remessa em bonificação, doação ou brinde</option>
+          <option value="6.911">6.911 - Remessa de amostra grátis</option>
+          <option value="6.912">6.912 - Remessa de mercadoria ou bem para demonstração</option>
+          <option value="6.913">6.913 - Retorno de mercadoria ou bem recebido para demonstração</option>
+          <option value="6.914">6.914 - Remessa de mercadoria ou bem para exposição ou feira</option>
+          <option value="6.915">6.915 - Remessa de mercadoria ou bem para conserto ou reparo</option>
+          <option value="6.916">6.916 - Retorno de mercadoria ou bem recebido para conserto ou reparo</option>
+          <option value="6.917">6.917 - Remessa de mercadoria em consignação mercantil ou industrial</option>
+          <option value="6.918">6.918 - Devolução de mercadoria recebida em consignação mercantil ou industrial</option>
+          <option value="6.919">6.919 - Devolução simbólica de mercadoria vendida ou utilizada em processo industrial, recebida anteriormente em consignação mercantil ou industrial</option>
+          <option value="6.920">6.920 - Remessa de vasilhame ou sacaria</option>
+          <option value="6.921">6.921 - Devolução de vasilhame ou sacaria</option>
+          <option value="6.922">6.922 - Lançamento efetuado a título de simples faturamento decorrente de venda para entrega futura</option>
+          <option value="6.923">6.923 - Remessa de mercadoria por conta e ordem de terceiros, em venda à ordem</option>
+          <option value="6.924">6.924 - Remessa para industrialização por conta e ordem do adquirente da mercadoria, quando esta não transitar pelo estabelecimento do adquirente</option>
+          <option value="6.925">6.925 - Retorno de mercadoria recebida para industrialização por conta e ordem do adquirente da mercadoria, quando aquela não transitar pelo estabelecimento do adquirente</option>
+          <option value="6.929">6.929 - Lançamento efetuado em decorrência de emissão de documento fiscal relativo a operação ou prestação também registrada em equipamento Emissor de Cupom Fiscal - ECF</option>
+          <option value="6.931">6.931 - Lançamento efetuado em decorrência da responsabilidade de retenção do imposto por substituição tributária, atribuída ao remetente ou alienante da mercadoria, pelo serviço de transporte realizado por transportador autônomo ou por transportador não inscrito na unidade da Federação onde iniciado o serviço</option>
+          <option value="6.932">6.932 - Prestação de serviço de transporte iniciada em unidade da Federação diversa daquela onde inscrito o prestador</option>
+          <option value="6.933">6.933 - Prestação de serviço tributado pelo ISSQN</option>
+          <option value="6.949">6.949 - Outra saída de mercadoria ou prestação de serviço não especificado </option>
+        </optgroup>
+
+        <optgroup label="7.100 - VENDAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS">
+          <!-- <option value="7.000">7.000 - SAÍDAS OU PRESTAÇÕES DE SERVIÇOS PARA O EXTERIOR</option>
+
+          <option value="7.100">7.100 - VENDAS DE PRODUÇÃO PRÓPRIA OU DE TERCEIROS</option> -->
+          <option value="7.101">7.101 - Venda de produção do estabelecimento</option>
+          <option value="7.102">7.102 - Venda de mercadoria adquirida ou recebida de terceiros</option>
+          <option value="7.105">7.105 - Venda de produção do estabelecimento, que não deva por ele transitar</option>
+          <option value="7.106">7.106 - Venda de mercadoria adquirida ou recebida de terceiros, que não deva por ele transitar</option>
+          <option value="7.127">7.127 - Venda de produção do estabelecimento sob o regime de "drawback" </option>
+        </optgroup>
+
+        <optgroup label="7.200 - DEVOLUÇÕES DE COMPRAS PARA INDUSTRIALIZAÇÃO, COMERCIALIZAÇÃO OU ANULAÇÕES DE VALORES">
+          <option value="7.201">7.201 - Devolução de compra para industrialização ou produção rural</option>
+          <option value="7.202">7.202 - Devolução de compra para comercialização</option>
+          <option value="7.205">7.205 - Anulação de valor relativo à aquisição de serviço de comunicação</option>
+          <option value="7.206">7.206 - Anulação de valor relativo a aquisição de serviço de transporte</option>
+          <option value="7.207">7.207 - Anulação de valor relativo à compra de energia elétrica</option>
+          <option value="7.210">7.210 - Devolução de compra para utilização na prestação de serviço</option>
+          <option value="7.211">7.211 - Devolução de compras para industrialização sob o regime de drawback" </option>
+        </optgroup>
+
+        <optgroup label="7.250 - VENDAS DE ENERGIA ELÉTRICA">
+          <option value="7.251">7.251 - Venda de energia elétrica para o exterior</option>
+        </optgroup>
+
+        <optgroup label="7.300 - PRESTAÇÕES DE SERVIÇOS DE COMUNICAÇÃO">
+          <option value="7.301">7.301 - Prestação de serviço de comunicação para execução de serviço da mesma natureza</option>
+        </optgroup>
+
+        <optgroup label="7.500 - EXPORTAÇÃO DE MERCADORIAS RECEBIDAS COM FIM ESPECÍFICO DE EXPORTAÇÃO">
+          <option value="7.501">7.501 - Exportação de mercadorias recebidas com fim específico de exportação</option>
+        </optgroup>
+
+        <optgroup label="7.550 - OPERAÇÕES COM BENS DE ATIVO IMOBILIZADO E MATERIAIS PARA USO OU CONSUMO">
+          <option value="7.551">7.551 - Venda de bem do ativo imobilizado</option>
+          <option value="7.553">7.553 - Devolução de compra de bem para o ativo imobilizado</option>
+          <option value="7.556">7.556 - Devolução de compra de material de uso ou consumo</option>
+          <option value="7.651">7.651 - Venda de combustível ou lubrificante de produção do estabelecimento</option>
+          <option value="7.654">7.654 - Venda de combustível ou lubrificante adquirido ou recebido de terceiros</option>
+        </optgroup>
+
+        <optgroup label="7.900 - OUTRAS SAÍDAS DE MERCADORIAS OU PRESTAÇÕES DE SERVIÇOS">
+          <option value="7.900">7.900 - OUTRAS SAÍDAS DE MERCADORIAS OU PRESTAÇÕES DE SERVIÇOS</option>
+          <option value="7.930">7.930 - Lançamento efetuado atítulo de devolução de bem cuja entrada tenha ocorrido sob amparo de regimeespecial aduaneiro de admissão temporária</option>
+          <option value="7.949">7.949 - Outra saída de mercadoria ou prestação de serviço não especificado</option>
+        </optgroup>
+
+      </select>
+    </div>
+  </div>
+
+</div>

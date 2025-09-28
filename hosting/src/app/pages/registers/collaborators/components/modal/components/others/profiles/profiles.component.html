@@ -1,0 +1,76 @@
+<modal (callback)="onModalResponse($event)">
+  
+  <div slot="content">
+    <div class="container-view">
+      <div class="container-external">
+        <div class="container-info">
+          <div class="wrapper">
+
+            <div class="container-main">
+              <header *ngIf="!loading">
+                <div class="container-search">
+                  <button class="btnFilter" title="Filtro Avançado" (click)="onFilter()">
+                    <button class="badge" *ngIf="filtersBadge > 0">{{ filtersBadge }}</button>
+                    <icon name="funnel-outline" pack="eva"></icon>          
+                  </button>
+          
+                  <div class="search-bar">
+                    <form (submit)="onSearch($event)">
+                      <button type="submit"><icon name="search" pack="fa"></icon></button>
+                      <input type="text" name="search" placeholder="{{ translate.titles.search }}" autocomplete="off" />
+                    </form>
+                  </div>        
+                </div>
+          
+                <div class="container-buttons">
+                  <button class="btnAdd" *ngIf="permissions.actions.add" (click)="onCreate()"><icon name="plus-outline" pack="eva"></icon></button>    
+                </div>   
+              </header>
+          
+              <main *ngIf="!loading && (profilesData && profilesData.length > 0)">
+                <div class="table-responsive">
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <th>{{ translate.profilesModal.code }}</th>
+                        <th>{{ translate.profilesModal.name }}</th>
+                        <th *ngIf="permissions.actions.edit || permissions.actions.delete">{{ translate.profilesModal.actions }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of (filtersData.length ? filtersData : profilesData)" (click)="onRead(item)">
+                        <td>{{ prefixCode(item.code) }}</td>      
+                        <td>
+                          {{ item.name }}
+                          <small class="owner">{{ translate.profilesModal.owner }} {{ item.owner }} </small>
+                        </td>
+                        <td *ngIf="permissions.actions.edit || permissions.actions.delete">
+                          <button class="btnAction btnEdit" [disabled]="item.onlyRead" (click)="onUpdate($event, item)" *ngIf="permissions.actions.edit"><icon name="pencil-alt" pack="fa"></icon></button>
+                          <button class="btnAction btnDelete" [disabled]="item.onlyRead" (click)="onDelete($event, item)" *ngIf="permissions.actions.delete"><icon name="trash" pack="fa"></icon></button>              
+                        </td>
+                      </tr>         
+                    </tbody>
+                    <tfoot *ngIf="profilesData.length > 10">
+                      <tr>
+                        <th>{{ translate.profilesModal.code }}</th>
+                        <th>{{ translate.profilesModal.name }}</th>
+                        <th *ngIf="permissions.actions.edit || permissions.actions.delete">{{ translate.profilesModal.actions }}</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </main>
+              <placeholder [loading]="loading" [hasData]="profilesData && profilesData.length > 0" [verticalAlign]="true"></placeholder>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div slot="components">
+    <collaborator-profiles-layer (callback)="onProfilesLayerResponse($event)"></collaborator-profiles-layer>
+  </div>
+
+</modal>

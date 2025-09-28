@@ -1,0 +1,92 @@
+
+<div id="customers-selector">
+
+  <header>
+    <div class="container-search" [style.display]="(!loading && (recordsData?.length > 0)) ? 'block': 'none'">
+      <div #searchBar class="search-bar">
+
+        <input type="text" name="search" [placeholder]="translate.searchBar.placeholder" autocomplete="off" (keydown.enter)="onSearch()" (input)="onCheckSearchBar(input.value)" #input />
+
+        <!-- <button class="btnReset" *ngIf="input.value != ''" (click)="onResetSearchBar()"><icon name="close" pack="eva"></icon></button> -->
+        <!-- <button class="btnSearch" (click)="onSearch()"><icon name="search-outline" pack="eva"></icon></button> -->
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container-content" *ngIf="!loading && (recordsData?.length > 0)">
+      <div class="table-responsive">
+        <table class="table table-borderless">
+          <tbody>
+            <tr *ngFor="let item of (searchData.length > 0 ? searchData : recordsData)">
+              <td (click)="onSelectItem(item)">
+                <button class="btnCheck {{ item.selected ? 'active' : '' }}"><icon name="checkmark-outline" pack="eva"></icon></button>
+              </td>
+              <td>
+                <p>{{ item.name }}</p>
+                <p><span class="label">{{ translate.table.label.code + ':' }} </span> <span class="value">{{ item.code }}</span></p>
+              </td>
+              <td>
+                <button class="btnAction btnEdit" [title]="translate.table.actions.update.title" (click)="onOpenToast($event, 'update', item)"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [title]="translate.table.actions.delete.title" (click)="onOpenToast($event, 'delete', item)"><icon name="trash" pack="fa"></icon></button>
+              </td>
+            </tr>         
+          </tbody>                      
+        </table>
+      </div>
+    </div>
+
+    <div class="container-placeholder" *ngIf="loading || (recordsData?.length == 0)">
+      <div class="wrapper">
+        <placeholder [loading]="loading" [hasData]="!(recordsData?.length == 0)" [verticalAlign]="true"></placeholder>
+      </div>
+    </div>
+
+    <div class="container-buttons" *ngIf="!loading">
+      <button class="btnRegister" (click)="onOpenToast($event, 'register', null)"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+    <div class="container-toast">
+      <toast (callback)="onToastResponse($event)">
+        <div class="toast-register" *ngIf="(toastSettings.action == 'register') || (toastSettings.action == 'update')">
+          <form class="form" [formGroup]="formRegister">
+            <div class="row container-fields">
+              <div class="col-3 form-group" *ngIf="toastSettings.action == 'update'">
+                <label>{{ translate.toast.register.form.label.code }}</label>
+                <fieldset disabled>
+                  <input type="text" class="form-control" formControlName="code" />
+                </fieldset>
+              </div>
+              
+              <div class="{{ toastSettings.action == 'register' ? 'col-12' : 'col-9' }} form-group">
+                <label>{{ translate.toast.register.form.label.name }}</label>
+                <input type="text" class="form-control" formControlName="name" />
+              </div>
+            </div>
+
+            <div class="container-buttons">
+              <button type="button" class="btnCancel" (click)="onCloseToast()">{{ translate.toast.register.form.button.cancel }}</button>
+              <button type="button" class="btnConfirm" (click)="onRegister()" [disabled]="formRegister.invalid">{{ translate.toast.register.form.button.confirm }}</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="toast-delete clearfix" *ngIf="toastSettings.action == 'delete'">
+          <div class="container-question">
+            <h5>{{ translate.toast.delete.type[type].notice }}</h5>
+            <div class="info">
+              <p><span class="label">{{ translate.toast.delete.type[type].label.code + ':' }}</span> <span class="value">{{ toastSettings.data.code }}</span></p>      
+              <p><span class="label">{{ translate.toast.delete.type[type].label.name + ':' }}</span> <span class="value">{{ toastSettings.data.name }}</span></p>
+            </div>
+          </div>
+    
+          <div class="container-buttons">
+            <button type="button" class="btnCancel" (click)="onCloseToast()">{{ translate.toast.delete.option.cancel }}</button>
+            <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.toast.delete.option.confirm }}</button>
+          </div>
+        </div>
+      </toast>
+    </div>
+  </main>
+
+</div>

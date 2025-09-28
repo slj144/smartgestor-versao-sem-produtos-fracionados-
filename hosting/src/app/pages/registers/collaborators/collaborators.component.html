@@ -1,0 +1,104 @@
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  >
+    <ng-container slot="buttons-of-header">
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li *ngIf="hasCollaboratorProfiles" (click)="onShowCollaboratorsProfilesModal($event)"><span class="dropdown-item"><icon name="user-shield" pack="fa"></icon> Perfis de Usuários</span></li>
+          <!-- <li (click)="onDataExport()"><span class="dropdown-item"><icon name="code-outline" pack="eva" *ngIf="isAdmin"></icon> Exportação de Dados</span></li> -->
+        </ul>
+      </div>
+    </ng-container>
+  </custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.mainModal.code }}</div>
+            <div class="col-3">{{ translate.mainModal.name }}</div>
+            <div class="col-2">{{ translate.mainModal.user }}</div>
+            <div class="col-2 text-center">{{ translate.mainModal.contacts.email }}</div>
+            <div class="col-1 text-center">{{ translate.mainModal.usertype }}</div>
+            <div class="col-2 text-center">{{ translate.mainModal.systemAccess }}</div>
+            <div class="col-1 text-center">{{ translate.mainModal.actions }}</div>
+          </div>
+        </div>
+  
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+  
+            <div class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.mainModal.code }}:</span>
+              <span class="value fw-bold">{{ prefixCode(item.code) }}</span>
+            </div>
+            
+            <div class="col-7 col-md-3 hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.mainModal.name }}:</span>
+              <span class="value">{{ item.name }}</span>
+            </div>        
+            
+            <div class="col-5 col-md-2 hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.mainModal.user }}:</span>
+              <span class="value">{{ item.username }}</span>
+            </div>
+
+            <div class="col-12 d-block d-md-none m-0 p-0"></div>
+
+            <div class="col-7 col-md-2 text-left text-md-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.mainModal.contacts.email }}:</span>
+              <span class="value">{{ item.email }}</span>
+            </div>
+            
+            <div class="col-5 col-md-1 text-left text-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.mainModal.usertype }}:</span>
+              <span class="value">{{ item.usertype == 'admin' ? 'Administrador' : item.permissions.name }}</span>
+            </div>
+
+            <div class="col-12 d-block d-md-none m-0 p-0"></div>
+  
+            <div class="col col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.mainModal.systemAccess }}:</span>
+              <span class="value">{{ item.allowAccess ? 'Sim' : 'Não' }}</span>
+            </div>  
+  
+            <div class="col-auto col-md-1 text-center p-1">
+              <div class="value">
+                <button class="btnAction btnRead" (click)="onShowModal($event, item,'read')"><icon name="eye" pack="fa"></icon></button>
+                <button *ngIf="isEdit" class="btnAction btnEdit" (click)="onShowModal($event, item,'edit')"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button *ngIf="isDelete && currentUsername != item.username" class="btnAction btnDelete" (click)="onShowModal($event, item,'delete')"><icon name="trash" pack="fa"></icon></button>
+              </div>
+            </div>  
+  
+          </div>
+        </div>
+  
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onShowModal($event,null,'add')" *ngIf="isAdd"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>    
+  
+  <placeholder [loading]="loading" [hasData]="recordsData?.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<collaborators-modal (callback)="onModalResponse($event)"></collaborators-modal>
+<collaborator-profiles (callback)="onModalResponse($event)"></collaborator-profiles>
+  

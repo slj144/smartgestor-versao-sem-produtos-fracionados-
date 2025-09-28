@@ -1,0 +1,224 @@
+
+<modal (callback)="onModalResponse($event)">
+  
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Transfers/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+    
+    <div id="container-view" *ngIf="(settings.activeComponent === 'Transfers/Read') || (settings.activeComponent === 'Transfers/Cancel') || (settings.activeComponent === 'Transfers/Delete')  || (settings.activeComponent === 'Transfers/Accept')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+
+            <div class="container-data">
+              <section class="info">
+                <h5>{{ translate.action.read.section.info.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.code + ':' }}</span> <span class="value">{{ settings.data.code }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.transferDate + ':' }}</span> <span class="value">{{ settings.data.transferDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.receiptDate">
+                    <span class="label">{{ translate.action.read.section.info.label.receiptDate + ':' }}</span> <span class="value">{{ settings.data.receiptDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.transferStatus.title + ':' }}</span> <span class="value">{{ translate.action.read.section.info.label.transferStatus.enum[settings.data.transferStatus] }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.paymentStatus.title + ':' }}</span> <span class="value">{{ translate.action.read.section.info.label.transferStatus.enum[settings.data.paymentStatus] }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="origin">
+                <h5>{{ translate.action.read.section.origin.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.origin.label.name + ':' }}</span> <span class="value">{{ settings.data.origin.name }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.origin?.address">
+                    <span class="label">{{ translate.action.read.section.origin.label.address + ':' }}</span> <span class="value">{{ settings.data.origin.address }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.origin?.phone">
+                    <span class="label">{{ translate.action.read.section.origin.label.phone + ':' }}</span> <span class="value">{{ settings.data.origin.phone }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.origin?.email">
+                    <span class="label">{{ translate.action.read.section.origin.label.email + ':' }}</span> <span class="value">{{ settings.data.origin.email }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="destination">
+                <h5>{{ translate.action.read.section.destination.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.destination.label.name + ':' }}</span> <span class="value">{{ settings.data.destination.name }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.destination?.address">
+                    <span class="label">{{ translate.action.read.section.destination.label.address + ':' }}</span> <span class="value">{{ settings.data.destination.address }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.destination?.phone">
+                    <span class="label">{{ translate.action.read.section.destination.label.phone + ':' }}</span> <span class="value">{{ settings.data.destination.phone }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.destination?.email">
+                    <span class="label">{{ translate.action.read.section.destination.label.email + ':' }}</span> <span class="value">{{ settings.data.destination.email }}</span>
+                  </p>
+                </div>
+              </section>
+
+              <section class="products">
+                <h5>{{ translate.action.read.section.products.title }}</h5>
+
+                <div class="content" *ngIf="settings.data.products?.length > 0">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>                    
+                        <tr>
+                          <th>{{ translate.action.read.section.products.label.code }}</th>
+                          <th>{{ translate.action.read.section.products.label.name }}</th>
+                          <th>{{ translate.action.read.section.products.label.quantity }}</th>
+                          <th class="col-small">{{ translate.action.read.section.products.label.costPrice }}</th>
+                          <th class="col-small">{{ translate.action.read.section.products.label.salePrice }}</th>
+                          <th class="col-small">{{ translate.action.read.section.products.label.total }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of settings.data.products">
+                          <td><span>{{ item.code }}</span></td>
+                          <td><span>{{ item.name }}</span></td>
+                          <td><span class="value">{{ item.quantity }}</span></td>
+                          <td>
+                            <span class="price">{{ (settings.permissions?.fields?.costPrice ? (item.costPrice | currency:'') : '*****') }}</span>
+                          </td>
+                          <td><span class="price">{{ item.salePrice | currency:'' }}</span></td>
+                          <td>
+                            <span class="price">{{  (settings.permissions?.fields?.costPrice ? ((item.costPrice * item.quantity) | currency:'') : '*****') }}</span>
+                          </td>
+                        </tr>                                                             
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+
+              <section class="balance">
+                <h5>{{ translate.action.read.section.balance.title }}</h5>
+
+                <div class="content">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.quantity }}</span></td>
+                          <td><span class="value">{{ (settings.data.balance?.quantity || 0) }}</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.total }}</span></td>
+                          <td><span class="price">{{ (settings.permissions?.fields?.costPrice ? ((settings.data.balance?.total || 0) | currency) : '*****') }}</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>               
+              </section>
+
+              <section class="note" *ngIf="settings.data.note">
+                <h5>{{ translate.action.read.section.note.title }}</h5>
+                <div class="content">{{ settings.data.note }}</div>
+              </section>
+
+              <section class="attachment" *ngIf="(settings.activeComponent === 'Transfers/Read') && settings.data.attachment">
+                <div class="container-file">                  
+                  <table>
+                    <tr>
+                      <td><icon name="file-outline" pack="eva"></icon></td>
+                      <td>
+                        <span class="info">{{ settings.data.attachment?.name + ' (' + settings.data.attachment?.size + ' MB)' }}</span>
+                      </td>
+                      <td (click)="onDownloadAttachment(anchor)">
+                        <button type="button"><icon name="download-outline" pack="eva"></icon></button>
+                        <a [href]="settings.data.attachment?.url" target="_blank" [download]="settings.data.attachment?.name" #anchor></a>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </section>
+
+              <button class="btnPrint" *ngIf="settings.activeComponent === 'Transfers/Read'" (click)="onOpenPrinter()"><icon name="printer-outline" pack="eva"></icon> {{ translate.action.read.section.button.print }}</button>
+            </div>
+
+            <div class="container-accept" *ngIf="settings.activeComponent === 'Transfers/Accept'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.accept.notice }}</p>
+                  <small>{{ translate.action.accept.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.accept.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onAccept()">{{ translate.action.accept.option.confirm }}</button>
+                </div>
+              </div>            
+            </div>
+
+            <div class="container-cancel" *ngIf="settings.activeComponent === 'Transfers/Cancel'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.cancel.notice }}</p>
+                  <small>{{ translate.action.cancel.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.cancel.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onCancel()">{{ translate.action.cancel.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+        
+            <div class="container-delete" *ngIf="settings.activeComponent === 'Transfers/Delete'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>   
+
+    <div id="container-update" *ngIf="(settings.activeComponent === 'Transfers/Create') || (settings.activeComponent === 'Transfers/Update')">
+      <transfers-register (callback)="onRegisterResponse($event)"></transfers-register>
+    </div>
+
+  </div>
+
+  <div slot="components">
+    <transfers-print (callback)="onPrintResponse($event)"></transfers-print>
+  </div>
+  
+</modal>

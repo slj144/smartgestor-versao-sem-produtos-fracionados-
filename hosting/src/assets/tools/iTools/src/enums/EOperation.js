@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EOperationDB = void 0;
+var EOperationDB;
+(function (EOperationDB) {
+    EOperationDB["TRANSACTION"] = "TRANSACTION";
+    EOperationDB["READ"] = "READ";
+    EOperationDB["UPSERT"] = "UPSERT";
+    EOperationDB["DELETE"] = "DELETE";
+    EOperationDB["SYSTEMLOGS"] = "SYSTEMLOGS";
+    EOperationDB["INDEXES"] = "INDEXES";
+    EOperationDB["DELETECOLLECTION"] = "DELETECOLLECTION";
+    EOperationDB["RENAMECOLLECTION"] = "RENAMECOLLECTION";
+    EOperationDB["LISTCOLLECTIONS"] = "LISTCOLLECTIONS";
+    EOperationDB["SETUPCOLLECTIONSCHEME"] = "SETUPCOLLECTIONSCHEME";
+    EOperationDB["BACKUP"] = "BACKUP";
+    EOperationDB["LISTDATABASES"] = "LISTDATABASES";
+    EOperationDB["DELETEDATABASE"] = "DELETEDATABASE";
+    EOperationDB["RELEASEINFO"] = "RELEASEINFO";
+})(EOperationDB || (exports.EOperationDB = EOperationDB = {}));

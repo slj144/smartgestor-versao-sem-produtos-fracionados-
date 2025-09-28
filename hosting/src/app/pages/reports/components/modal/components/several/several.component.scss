@@ -1,0 +1,73 @@
+
+#stock {
+  height: 100%;
+  position: relative;
+  .container-main {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    .wrapper {
+      width: 100%;
+      height: 100%;
+      display: table;
+      .container-settings {
+        display: table-cell;
+        vertical-align: middle;
+        .container-form {
+          width: 600px;
+          max-width: 100%;
+          padding: 10px 15px;
+          margin: 20px auto;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          box-shadow: 0 2px 4px #ccc;
+          background-color: #fff;
+          h6 {
+            text-align: center;
+            padding: 10px 10px 5px;
+          }         
+          label {
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 4px;
+          }
+          select, input {
+            font-size: 13px;
+          }
+          button {
+            width: 100%;
+            display: block;
+            font-size: 14px;
+            padding: 10px;
+          }        
+          .form-group {
+            margin-bottom: 8px;
+          }
+          .container-period {
+            padding: 5px 0;
+            margin: 0;
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+          }
+          .container-types,
+          .container-options {
+            margin: 0;
+            padding: 0;
+            .option {
+              display: inline-block;
+              padding: 2px 5px 1px 15px;
+              span {
+                margin-left: 5px;
+                font-size: 13px;
+                position: relative;
+                top: -3px;
+                color: #888;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

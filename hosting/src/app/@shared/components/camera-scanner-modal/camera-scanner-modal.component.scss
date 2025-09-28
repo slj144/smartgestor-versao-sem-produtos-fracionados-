@@ -1,0 +1,224 @@
+// Arquivo: camera-scanner-modal.component.scss
+// Localização: src/app/shared/components/camera-scanner-modal/camera-scanner-modal.component.scss
+// Estilos do modal da câmera
+
+.camera-scanner-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+
+    // Cabeçalho do modal
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+
+        h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            icon {
+                font-size: 24px;
+                color: #007bff;
+            }
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+
+            icon {
+                font-size: 24px;
+                color: #6c757d;
+            }
+
+            &:hover icon {
+                color: #000;
+            }
+        }
+    }
+
+    // Corpo do modal
+    .modal-body {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        overflow: hidden;
+
+        // Área da câmera
+        .camera-viewport {
+            flex: 1;
+            position: relative;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            min-height: 300px;
+
+            // O vídeo da câmera
+            video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            // Canvas do Quagga (onde desenha as detecções)
+            canvas {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            // Container de loading
+            .loading-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                color: white;
+
+                .spinner {
+                    width: 50px;
+                    height: 50px;
+                    border: 3px solid rgba(255, 255, 255, 0.3);
+                    border-top-color: white;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                    margin: 0 auto 20px;
+                }
+
+                p {
+                    margin: 0;
+                    font-size: 16px;
+                }
+            }
+
+            // Container de erro
+            .error-container {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                text-align: center;
+                color: white;
+                padding: 20px;
+
+                icon {
+                    font-size: 48px;
+                    color: #dc3545;
+                    margin-bottom: 15px;
+                }
+
+                p {
+                    margin: 0 0 20px;
+                    font-size: 16px;
+                }
+
+                .btn {
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #0056b3;
+                    }
+                }
+            }
+
+            // Guia visual para ajudar o usuário
+            .scanner-guide {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                pointer-events: none;
+
+                .guide-line {
+                    position: absolute;
+                    top: 50%;
+                    left: 10%;
+                    right: 10%;
+                    height: 2px;
+                    background: rgba(255, 0, 0, 0.7);
+                    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+
+                    // Animação de pulso
+                    animation: pulse 2s ease-in-out infinite;
+                }
+
+                .guide-text {
+                    position: absolute;
+                    bottom: 20px;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    color: white;
+                    font-size: 14px;
+                    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+                    margin: 0;
+                }
+            }
+        }
+
+        // Instruções
+        .instructions {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+
+            p {
+                margin: 0;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: #495057;
+
+                icon {
+                    font-size: 20px;
+                    color: #17a2b8;
+                }
+            }
+        }
+    }
+}
+
+// Animações
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.7;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}

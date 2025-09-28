@@ -1,0 +1,16 @@
+# dependências e caches
+node_modules/
+dist/
+build/
+.angular/
+.angular/cache/
+.cache/
+
+# SO / IDE
+.DS_Store
+.vscode/
+.idea/
+
+# logs e env
+*.log
+.env

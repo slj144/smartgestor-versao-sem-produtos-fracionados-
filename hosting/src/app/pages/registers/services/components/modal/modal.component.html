@@ -1,0 +1,76 @@
+
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Services/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" *ngIf="(settings.activeComponent === 'Services/Read') || (settings.activeComponent === 'Services/Delete')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+
+            <div class="container-data">
+
+              <section class="container-informations">
+                <h5>{{ translate.action.read.section.informations.title }}</h5>
+
+                <div class="content">
+                  <p><span class="label">{{ translate.action.read.section.informations.label.code + ':'}}</span> <span class="value">{{ settings.data.code }}</span></p>
+                  <p><span class="label">{{ translate.action.read.section.informations.label.name + ':'}}</span> <span class="value">{{ settings.data.name }}</span></p>
+                  <p><span class="label">{{ translate.action.read.section.informations.label.costPrice + ':'}}</span> <span class="value negative">{{ settings.data.costPrice | currency:'' }}</span></p>
+                  <p><span class="label">{{ translate.action.read.section.informations.label.executionPrice + ':'}}</span> <span class="value positive">{{ settings.data.executionPrice | currency:'' }}</span></p>
+                </div>               
+              </section>
+
+              <section class="container-description" *ngIf="settings.data.description">
+                <h5>{{ translate.action.read.section.description.title }}</h5>
+                <div class="content" [innerHTML]="settings.data.description"></div>
+              </section>
+
+            </div>
+
+            <div class="container-delete" *ngIf="settings.activeComponent === 'Services/Delete'">
+              <div class="container-confirmation">
+
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="container-register" *ngIf="(settings.activeComponent === 'Services/Create') || (settings.activeComponent === 'Services/Update')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <services-register (callback)="onRegisterResponse($event)"></services-register>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="container-data-export" *ngIf="settings.activeComponent === 'Services/DataExport'">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <services-data-export (callback)="onDataExportResponse($event)"></services-data-export>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</modal>

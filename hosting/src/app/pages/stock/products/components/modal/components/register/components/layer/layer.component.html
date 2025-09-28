@@ -1,0 +1,14 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits')">
+      <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
+    <div class="container-provoders" *ngIf="(settings.activeComponent == 'providers')">
+      <providers-selector (callback)="onProvidersResponse($event)"></providers-selector>
+    </div>
+
+  </ng-container>
+</layer>

@@ -1,0 +1,298 @@
+<!-- Arquivo: customer-detail-modal.component.html -->
+<!-- Localização: src/app/pages/crm/components/customer-detail-modal/customer-detail-modal.component.html -->
+<!-- Função: Template do modal de detalhes do cliente com DETALHES COMPLETOS DAS VENDAS -->
+<!-- VERSÃO: Corrigida - Sem duplicações e com novo design -->
+
+<div class="modal-overlay" (click)="close()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="modal-header">
+            <h2>
+                <i class="eva eva-person-outline"></i>
+                Detalhes do Cliente
+            </h2>
+            <button class="close-btn" (click)="close()">
+                <i class="eva eva-close-outline"></i>
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" *ngIf="loading">
+            <i class="eva eva-loader-outline spinning"></i>
+            <p>Carregando dados...</p>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="modal-body" *ngIf="!loading">
+            <!-- Informações do Cliente -->
+            <div class="customer-info">
+                <h3>{{ customer?.customerName }}</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <label>ID do Cliente:</label>
+                        <span class="mono">{{ customer?.customerId }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Email:</label>
+                        <span>{{ customer?.email || 'Não informado' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Telefone:</label>
+                        <span>{{ customer?.phone || 'Não informado' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>CPF/CNPJ:</label>
+                        <span>{{ customer?.cpfCnpj || 'Não informado' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Total Gasto:</label>
+                        <span class="value">{{ formatCurrency(customer?.totalSpent) }}</span>
+                    </div>
+                    <div class="info-item">
+                        <label>Total de Compras:</label>
+                        <span>{{ customer?.totalPurchases || allOrders.length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumo por Coleção (Cards de Collections) -->
+            <div class="collections-summary">
+                <h3>📊 Resumo por Tipo de Venda</h3>
+                <div class="collection-cards">
+                    <div class="collection-card" *ngFor="let collection of ordersByCollection">
+                        <div class="collection-header">
+                            <i [class]="getCollectionIcon(collection.name)"></i>
+                            <span>{{ getCollectionLabel(collection.name) }}</span>
+                            <span class="badge">{{ collection.orders.length }}</span>
+                        </div>
+                        <div class="collection-stats">
+                            <p><strong>Total:</strong> {{ formatCurrency(collection.total) }}</p>
+                            <p><strong>Primeira:</strong> {{ formatDate(collection.firstDate) }}</p>
+                            <p><strong>Última:</strong> {{ formatDate(collection.lastDate) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Detalhes das Vendas -->
+            <div class="orders-details">
+                <!-- Filtros -->
+                <div class="filters-section">
+                    <div class="filter-group">
+                        <label>Filtrar por tipo:</label>
+                        <select [(ngModel)]="selectedCollection" (change)="filterOrders()" class="form-control">
+                            <option value="">Todas as Coleções</option>
+                            <option *ngFor="let coll of ordersByCollection" [value]="coll.name">
+                                {{ getCollectionLabel(coll.name) }} ({{ coll.orders.length }})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Buscar:</label>
+                        <input type="text" placeholder="Buscar produto, código..." [(ngModel)]="searchTerm"
+                            (input)="filterOrders()" class="form-control">
+                    </div>
+                </div>
+
+                <!-- Resumo das Vendas Filtradas -->
+                <div class="sales-summary">
+                    <h3>Resumo das Vendas</h3>
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="card-label">Total de Vendas</div>
+                            <div class="card-value">{{ filteredOrders.length }}</div>
+                            <div class="card-detail">vendas encontradas</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-label">Valor Total</div>
+                            <div class="card-value currency">{{ formatCurrency(getTotalValue()) }}</div>
+                            <div class="card-detail">em vendas</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-label">Primeira Venda</div>
+                            <div class="card-value">{{ formatDate(getFirstSaleDate()) }}</div>
+                            <div class="card-detail">data inicial</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-label">Última Venda</div>
+                            <div class="card-value">{{ formatDate(getLastSaleDate()) }}</div>
+                            <div class="card-detail">data final</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cabeçalho do Histórico Detalhado -->
+                <div class="detailed-history-header">
+                    <h3>Histórico Detalhado de Vendas</h3>
+                    <p class="history-description">
+                        Clique em qualquer venda para ver os detalhes completos dos produtos, pagamentos e informações
+                        adicionais.
+                    </p>
+                </div>
+
+                <!-- Lista de Vendas Detalhadas -->
+                <div class="orders-list">
+                    <div class="order-card" *ngFor="let order of filteredOrders; let i = index">
+                        <!-- Cabeçalho da Venda com Novo Design -->
+                        <div class="order-header" (click)="toggleOrderDetails(i)">
+                            <div class="order-info">
+                                <span class="order-number">#{{ order.code || order._docId?.substring(0, 8) }}</span>
+                                <span class="order-date">{{ formatDate(order.date) }}</span>
+                                <span class="order-collection">{{ getCollectionLabel(order._collection) }}</span>
+                            </div>
+
+                            <div class="order-actions">
+                                <!-- Total da Venda -->
+                                <div class="order-total">
+                                    <div class="total-label">Total</div>
+                                    <div class="total-value">{{ formatCurrency(order.value) }}</div>
+                                </div>
+
+                                <!-- Botão de Expandir/Colapsar -->
+                                <button class="expand-button" [class.expanded]="order.showDetails"
+                                    (click)="$event.stopPropagation(); toggleOrderDetails(i)">
+                                    <i class="eva eva-chevron-down-outline"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Detalhes Expandidos da Venda -->
+                        <div class="order-details" *ngIf="order.showDetails">
+                            <!-- Informações do Cliente na Venda -->
+                            <div class="detail-section">
+                                <h4>👤 Cliente na Venda</h4>
+                                <div class="detail-grid">
+                                    <div>
+                                        <label>ID:</label>
+                                        <span class="mono">{{ order.customerInOrder?._id || 'N/A' }}</span>
+                                    </div>
+                                    <div>
+                                        <label>Nome:</label>
+                                        <span>{{ order.customerInOrder?.name || 'N/A' }}</span>
+                                    </div>
+                                    <div>
+                                        <label>Código:</label>
+                                        <span>{{ order.customerInOrder?.code || 'N/A' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produtos da Venda -->
+                            <div class="detail-section" *ngIf="order.products && order.products.length > 0">
+                                <h4>📦 Produtos</h4>
+                                <div class="items-list">
+                                    <div class="item" *ngFor="let product of order.products">
+                                        <div class="item-info">
+                                            <span class="item-name">{{ product.name || product.description || 'Produto
+                                                sem nome' }}</span>
+                                            <span class="item-code" *ngIf="product.code">Cód: {{ product.code }}</span>
+                                        </div>
+                                        <div class="item-values">
+                                            <span class="item-qty">{{ product.quantity || 1 }}x</span>
+                                            <span class="item-price">{{ formatCurrency(product.unitPrice ||
+                                                product.price) }}</span>
+                                            <span class="item-total">{{ formatCurrency(product.total ||
+                                                (product.quantity * product.price)) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Serviços da Venda -->
+                            <div class="detail-section" *ngIf="order.services && order.services.length > 0">
+                                <h4>🔧 Serviços</h4>
+                                <div class="items-list">
+                                    <div class="item" *ngFor="let service of order.services">
+                                        <div class="item-info">
+                                            <span class="item-name">{{ service.name || service.description || 'Serviço
+                                                sem nome' }}</span>
+                                        </div>
+                                        <div class="item-values">
+                                            <span class="item-total">{{ formatCurrency(service.value || service.price)
+                                                }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Pagamentos -->
+                            <div class="detail-section" *ngIf="order.paymentMethods && order.paymentMethods.length > 0">
+                                <h4>💳 Formas de Pagamento</h4>
+                                <div class="payment-info">
+                                    <div class="payment-item" *ngFor="let payment of order.paymentMethods">
+                                        <label>{{ payment.name || payment.method || 'Pagamento' }}:</label>
+                                        <span>{{ formatCurrency(payment.value || payment.amount) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Informações Adicionais -->
+                            <div class="detail-section">
+                                <h4>ℹ️ Informações Adicionais</h4>
+                                <div class="detail-grid">
+                                    <div *ngIf="order.discount">
+                                        <label>Desconto:</label>
+                                        <span>{{ formatCurrency(order.discount) }}</span>
+                                    </div>
+                                    <div *ngIf="order.fee">
+                                        <label>Taxa:</label>
+                                        <span>{{ formatCurrency(order.fee) }}</span>
+                                    </div>
+                                    <div *ngIf="order.status">
+                                        <label>Status:</label>
+                                        <span>{{ order.status }}</span>
+                                    </div>
+                                    <div *ngIf="order.collaborator">
+                                        <label>Vendedor:</label>
+                                        <span>{{ order.collaborator.name || order.collaborator }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mensagem quando não há vendas -->
+                <div class="no-orders" *ngIf="filteredOrders.length === 0">
+                    <i class="eva eva-inbox-outline"></i>
+                    <p>Nenhuma venda encontrada com os filtros aplicados.</p>
+                </div>
+            </div>
+
+            <!-- Análise de Problemas -->
+            <div class="analysis-section">
+                <h3>🔍 Análise de Problemas</h3>
+
+                <div class="problem-card" *ngIf="analysisResults.multipleIds">
+                    <h5>⚠️ Múltiplos IDs Encontrados</h5>
+                    <p>Este cliente possui {{ analysisResults.uniqueIds.length }} IDs diferentes nas vendas:</p>
+                    <ul>
+                        <li *ngFor="let id of analysisResults.uniqueIds" class="mono">{{ id }}</li>
+                    </ul>
+                </div>
+
+                <div class="problem-card" *ngIf="analysisResults.multipleCodes">
+                    <h5>⚠️ Múltiplos Códigos Encontrados</h5>
+                    <p>Este cliente possui {{ analysisResults.uniqueCodes.length }} códigos diferentes nas vendas:</p>
+                    <ul>
+                        <li *ngFor="let code of analysisResults.uniqueCodes">Código: {{ code }}</li>
+                    </ul>
+                </div>
+
+                <div class="problem-card success" *ngIf="!analysisResults.hasProblems">
+                    <h5>✅ Nenhum Problema Detectado</h5>
+                    <p>Os dados deste cliente parecem estar consistentes em todas as vendas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+            <button class="btn btn-secondary" (click)="close()">Fechar</button>
+            <button class="btn btn-primary" (click)="exportData()">
+                <i class="eva eva-download-outline"></i>
+                Exportar Dados
+            </button>
+        </div>
+    </div>
+</div>

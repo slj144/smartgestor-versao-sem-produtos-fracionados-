@@ -1,0 +1,1281 @@
+// Arquivo: customer-import.component.scss
+// Localização: src/app/pages/crm/components/customer-import/customer-import.component.scss
+// Versão: CORRIGIDA E OTIMIZADA
+
+// ===========================
+// VARIÁVEIS
+// ===========================
+$primary-color: #667eea;
+$primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+$secondary-color: #6c757d;
+
+$success-color: #10b981;
+$danger-color: #ef4444;
+$warning-color: #f59e0b;
+$info-color: #3b82f6;
+
+$text-primary: #2c3e50;
+$text-secondary: #6c757d;
+$text-muted: #adb5bd;
+
+$bg-primary: #f8f9fa;
+$bg-secondary: white;
+$bg-tertiary: #fafafa;
+
+$border-color: #e9ecef;
+$border-color-light: #dee2e6;
+
+$shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 2px 8px rgba(0, 0, 0, 0.08);
+$shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 12px;
+
+$spacing-xs: 5px;
+$spacing-sm: 10px;
+$spacing-md: 20px;
+$spacing-lg: 30px;
+$spacing-xl: 40px;
+
+$transition-fast: 0.2s ease;
+$transition-normal: 0.3s ease;
+
+// ===========================
+// MIXINS
+// ===========================
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin card-style($hover: true) {
+    background: $bg-secondary;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-md;
+
+    @if $hover {
+        transition: all $transition-fast;
+        cursor: pointer;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: $shadow-lg;
+        }
+    }
+}
+
+@mixin button-base {
+    border: none;
+    border-radius: $radius-md;
+    cursor: pointer;
+    transition: all $transition-fast;
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-sm;
+    font-weight: 500;
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+@mixin icon-size($size) {
+    font-size: $size;
+    width: $size;
+    height: $size;
+
+}
+
+@mixin text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// ===========================
+// COMPONENTE PRINCIPAL
+// ===========================
+.customer-import-container {
+    position: fixed;
+    inset: 0;
+    background: $bg-primary;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+// ===========================
+// HEADER
+// ===========================
+.import-header {
+    background: $bg-secondary;
+    padding: $spacing-md $spacing-lg;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: $shadow-sm;
+
+    h2 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: 24px;
+        color: $text-primary;
+
+        i {
+            color: $primary-color;
+            @include icon-size(28px);
+        }
+    }
+
+    .close-btn {
+        @include button-base;
+        background: none;
+        padding: $spacing-xs;
+        font-size: 24px;
+        color: $secondary-color;
+
+        &:hover {
+            background: $bg-primary;
+            color: $text-primary;
+        }
+    }
+}
+
+// ===========================
+// CONTENT
+// ===========================
+.import-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: $spacing-lg;
+}
+
+// ===========================
+// WELCOME SECTION
+// ===========================
+.welcome-section {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    padding: $spacing-xl 0;
+
+    .welcome-icon {
+        @include icon-size(80px);
+        color: $primary-color;
+        margin-bottom: $spacing-lg;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    h3 {
+        font-size: 32px;
+        margin-bottom: $spacing-md;
+        color: $text-primary;
+    }
+
+    p {
+        font-size: 18px;
+        color: $text-secondary;
+        margin-bottom: $spacing-xl;
+        line-height: 1.6;
+    }
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+    margin-bottom: $spacing-xl;
+
+    .feature-card {
+        @include card-style(true);
+        padding: $spacing-lg $spacing-md;
+
+        i {
+            @include icon-size(48px);
+            color: $primary-color;
+            margin-bottom: 15px;
+        }
+
+        h4 {
+            font-size: 18px;
+            margin-bottom: $spacing-sm;
+            color: $text-primary;
+        }
+
+        p {
+            font-size: 14px;
+            color: $text-secondary;
+            margin: 0;
+        }
+    }
+}
+
+// ===========================
+// PROGRESS SECTIONS
+// ===========================
+.analyzing-section,
+.importing-section {
+    max-width: 600px;
+    margin: 60px auto;
+    text-align: center;
+
+    h3 {
+        font-size: 28px;
+        margin-bottom: $spacing-lg;
+        color: $text-primary;
+    }
+}
+
+.progress-animation {
+    @include flex-center;
+    margin-bottom: $spacing-xl;
+
+    .spinner {
+        @include icon-size(80px);
+        color: $primary-color;
+        animation: spin 1.5s linear infinite;
+
+        i {
+            font-size: inherit;
+        }
+    }
+}
+
+.progress-bar {
+    height: 8px;
+    background: $border-color;
+    border-radius: $radius-sm;
+    overflow: hidden;
+    margin-bottom: $spacing-sm;
+
+    .progress-fill {
+        height: 100%;
+        background: $primary-gradient;
+        transition: width $transition-normal;
+    }
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: $text-secondary;
+}
+
+// ===========================
+// STATS CARDS
+// ===========================
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: $spacing-md;
+    margin-bottom: $spacing-lg;
+}
+
+.stat-card {
+    @include card-style(true);
+    padding: $spacing-md;
+    display: flex;
+    align-items: center;
+    gap: $spacing-md;
+
+    .stat-icon {
+        @include flex-center;
+        @include icon-size(48px);
+        border-radius: $radius-lg;
+        padding: $spacing-sm;
+
+        &.hot {
+            background: rgba($danger-color, 0.1);
+            color: $danger-color;
+        }
+
+        &.warm {
+            background: rgba($warning-color, 0.1);
+            color: $warning-color;
+        }
+
+        &.cold {
+            background: rgba($info-color, 0.1);
+            color: $info-color;
+        }
+
+        &.new {
+            background: rgba($success-color, 0.1);
+            color: $success-color;
+        }
+    }
+
+    .stat-info {
+        h4 {
+            margin: 0;
+            font-size: 24px;
+            color: $text-primary;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
+            color: $text-secondary;
+        }
+    }
+}
+
+// ===========================
+// FILTERS
+// ===========================
+.filters-section {
+    @include card-style(false);
+    padding: $spacing-md;
+    margin-bottom: $spacing-md;
+    display: flex;
+    gap: $spacing-md;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .filter-group {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+
+        label {
+            font-size: 14px;
+            color: $text-secondary;
+            white-space: nowrap;
+        }
+
+        select,
+        input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid $border-color-light;
+            border-radius: $radius-sm;
+            font-size: 14px;
+            transition: border-color $transition-fast;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-color;
+            }
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    }
+}
+
+// ===========================
+// RESULTS TABLE
+// ===========================
+.results-section {
+    background: $bg-secondary;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-md;
+}
+
+.results-header {
+    padding: $spacing-md;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+        margin: 0;
+        font-size: 18px;
+        color: $text-primary;
+
+        span {
+            font-size: 14px;
+            color: $text-secondary;
+        }
+    }
+
+    .bulk-actions {
+        display: flex;
+        gap: $spacing-sm;
+    }
+}
+
+.results-table {
+    overflow-x: auto;
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+
+        thead {
+            background: $bg-primary;
+
+            th {
+                padding: 12px;
+                text-align: left;
+                font-size: 12px;
+                font-weight: 600;
+                color: $text-secondary;
+                text-transform: uppercase;
+                white-space: nowrap;
+
+                &.text-right {
+                    text-align: right;
+                }
+
+                &.text-center {
+                    text-align: center;
+                }
+            }
+        }
+
+        tbody {
+            tr {
+                border-bottom: 1px solid $border-color;
+                transition: background $transition-fast;
+
+                &:hover {
+                    background: $bg-primary;
+                }
+
+                td {
+                    padding: 12px;
+                    font-size: 14px;
+
+                    &.text-right {
+                        text-align: right;
+                    }
+
+                    &.text-center {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+
+    input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+}
+
+.customer-info {
+    .customer-name {
+        font-weight: 500;
+        color: $text-primary;
+    }
+
+    .customer-email {
+        font-size: 12px;
+        color: $text-secondary;
+    }
+}
+
+.category-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: $radius-sm;
+    font-size: 12px;
+    font-weight: 500;
+
+    &[data-category="hot"] {
+        background: rgba($danger-color, 0.1);
+        color: $danger-color;
+    }
+
+    &[data-category="warm"] {
+        background: rgba($warning-color, 0.1);
+        color: $warning-color;
+    }
+
+    &[data-category="cold"] {
+        background: rgba($info-color, 0.1);
+        color: $info-color;
+    }
+
+    &[data-category="new"] {
+        background: rgba($success-color, 0.1);
+        color: $success-color;
+    }
+}
+
+.score-container {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+
+    .score-bar {
+        flex: 1;
+        height: 4px;
+        background: $border-color;
+        border-radius: 2px;
+        overflow: hidden;
+        min-width: 60px;
+
+        .score-fill {
+            height: 100%;
+            background: $primary-gradient;
+            transition: width $transition-normal;
+        }
+    }
+
+    .score-text {
+        font-size: 12px;
+        font-weight: 600;
+        color: $text-primary;
+        min-width: 25px;
+    }
+}
+
+.actions-cell {
+    .action-btn {
+        @include button-base;
+        padding: 6px;
+        background: none;
+        color: $text-secondary;
+        font-size: 18px;
+
+        &:hover {
+            color: $primary-color;
+            background: $bg-primary;
+        }
+    }
+}
+
+.empty-state {
+    padding: 60px $spacing-md;
+    text-align: center;
+    color: $text-secondary;
+
+    i {
+        @include icon-size(60px);
+        margin-bottom: $spacing-md;
+        opacity: 0.3;
+    }
+
+    p {
+        font-size: 16px;
+    }
+}
+
+// ===========================
+// COMPLETE SECTION
+// ===========================
+.complete-section {
+    max-width: 600px;
+    margin: 60px auto;
+    text-align: center;
+
+    .success-icon {
+        @include icon-size(100px);
+        color: $success-color;
+        margin-bottom: $spacing-lg;
+        animation: success-bounce 0.6s ease-out;
+    }
+
+    h3 {
+        font-size: 32px;
+        margin-bottom: $spacing-md;
+        color: $text-primary;
+    }
+
+    p {
+        font-size: 18px;
+        color: $text-secondary;
+        margin-bottom: $spacing-xl;
+    }
+}
+
+.summary-stats {
+    @include card-style(false);
+    padding: $spacing-lg;
+    margin-bottom: $spacing-xl;
+
+    .summary-item {
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        font-size: 16px;
+        color: $text-primary;
+
+        i {
+            @include icon-size(24px);
+            color: $primary-color;
+        }
+    }
+}
+
+// ===========================
+// FOOTER
+// ===========================
+.actions-footer {
+    position: sticky;
+    bottom: 0;
+    background: $bg-secondary;
+    padding: $spacing-md $spacing-lg;
+    border-top: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-md;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+}
+
+// ===========================
+// BUTTONS
+// ===========================
+.btn {
+    @include button-base;
+    padding: 12px 24px;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background: $primary-gradient;
+    color: white;
+
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.4);
+    }
+
+    &.btn-large {
+        padding: 16px 32px;
+        font-size: 18px;
+    }
+}
+
+.btn-secondary {
+    background: $bg-secondary;
+    color: $secondary-color;
+    border: 1px solid $border-color-light;
+
+    &:hover:not(:disabled) {
+        background: $bg-primary;
+        border-color: $text-muted;
+    }
+}
+
+// ===========================
+// ANIMATIONS
+// ===========================
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes success-bounce {
+    0% {
+        transform: scale(0);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+// ===========================
+// RESPONSIVE
+// ===========================
+@media (max-width: 768px) {
+    .import-content {
+        padding: $spacing-md;
+    }
+
+    .filters-section {
+        flex-direction: column;
+        align-items: stretch;
+
+        .filter-group {
+            width: 100%;
+
+            select,
+            input[type="text"] {
+                width: 100%;
+            }
+        }
+    }
+
+    .stats-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .results-header {
+        flex-direction: column;
+        gap: $spacing-sm;
+        align-items: flex-start;
+
+        .bulk-actions {
+            width: 100%;
+            justify-content: flex-end;
+        }
+    }
+
+    .results-table {
+        font-size: 12px;
+
+        table {
+
+            th,
+            td {
+                padding: 8px;
+            }
+        }
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .actions-footer {
+        flex-direction: column;
+
+        .btn {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 480px) {
+    .import-header {
+        padding: $spacing-sm $spacing-md;
+
+        h2 {
+            font-size: 20px;
+        }
+    }
+
+    .stats-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-section {
+        h3 {
+            font-size: 24px;
+        }
+
+        p {
+            font-size: 16px;
+        }
+    }
+}
+
+// ===========================
+// MELHORIAS DE UX - ÍCONES
+// ===========================
+
+// Labels com ícones
+.filter-group {
+    label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        i {
+            font-size: 16px;
+            color: $primary-color;
+            opacity: 0.7;
+        }
+    }
+
+    // Checkbox customizado
+    &.checkbox-label {
+        label {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: $radius-sm;
+            transition: all $transition-fast;
+
+            &:hover {
+                background: $bg-primary;
+            }
+
+            input[type="checkbox"] {
+                margin-right: 8px;
+            }
+        }
+    }
+}
+
+// Melhorias nos botões de ação em massa
+.bulk-actions {
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        i {
+            font-size: 18px;
+        }
+    }
+}
+
+// Header da tabela com ícones
+.results-table {
+    th {
+        i {
+            margin-right: 6px;
+            font-size: 16px;
+            opacity: 0.7;
+            vertical-align: middle;
+        }
+    }
+}
+
+// Informações do cliente com ícones
+.customer-info {
+
+    .customer-name,
+    .customer-email,
+    .customer-phone {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 2px 0;
+
+        i {
+            font-size: 14px;
+            opacity: 0.6;
+            color: $text-secondary;
+        }
+    }
+}
+
+// Células com ícones
+td {
+    &.text-right {
+        i {
+            margin-right: 4px;
+            font-size: 14px;
+            opacity: 0.6;
+        }
+    }
+
+    .purchase-count {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+
+        i {
+            font-size: 16px;
+            opacity: 0.6;
+        }
+    }
+
+    .last-purchase-date {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        i {
+            font-size: 14px;
+            opacity: 0.6;
+        }
+    }
+}
+
+// Botão de detalhes melhorado
+.action-btn {
+    &.view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        border-radius: $radius-sm;
+        background: $primary-color;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: all $transition-fast;
+
+        &:hover {
+            background: darken($primary-color, 10%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba($primary-color, 0.3);
+        }
+
+        i {
+            font-size: 16px;
+        }
+    }
+}
+
+// Header de resultados melhorado
+.results-header {
+    h3 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        i {
+            font-size: 20px;
+            color: $primary-color;
+        }
+    }
+}
+
+// Estado vazio melhorado
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+
+    i {
+        font-size: 64px;
+        color: $text-muted;
+        opacity: 0.3;
+        margin-bottom: 16px;
+    }
+
+    h3 {
+        font-size: 20px;
+        color: $text-primary;
+        margin: 0 0 8px 0;
+    }
+
+    p {
+        color: $text-secondary;
+        font-size: 16px;
+    }
+}
+
+// Melhorias na seção de progresso
+.progress-info {
+    span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+
+        i {
+            font-size: 18px;
+            opacity: 0.8;
+        }
+    }
+}
+
+// Summary items com ícones
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+
+    i {
+        font-size: 24px;
+        color: $primary-color;
+    }
+
+    span {
+        flex: 1;
+        font-size: 16px;
+        color: $text-primary;
+    }
+}
+
+// Animação para ícones de loading
+@keyframes pulse-icon {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.6;
+        transform: scale(0.95);
+    }
+}
+
+.importing-section {
+    h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+
+        i {
+            font-size: 24px;
+            animation: pulse-icon 2s ease-in-out infinite;
+        }
+    }
+}
+
+// Melhorias gerais nos botões
+.btn {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+
+    i {
+        font-size: 18px;
+        transition: transform $transition-fast;
+    }
+
+    &:hover:not(:disabled) {
+        i {
+            transform: scale(1.1);
+        }
+    }
+}
+
+// Select com visual melhorado
+select {
+    padding-left: 12px !important;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath fill='%23666' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px !important;
+}
+
+// Linha selecionada na tabela
+tr.selected {
+    background: rgba($primary-color, 0.05);
+
+    td {
+        font-weight: 500;
+    }
+}
+
+// Score melhorado
+.score-text {
+    font-weight: 600;
+    color: $primary-color;
+    margin-left: 8px;
+}
+
+// Responsivo
+@media (max-width: 768px) {
+
+    // Esconder texto dos botões, manter apenas ícones
+    .btn {
+        span.btn-text {
+            display: none;
+        }
+
+        i {
+            margin: 0;
+        }
+    }
+
+    // Ajustar tabela
+    .results-table {
+
+        th,
+        td {
+            i {
+                display: none; // Esconder ícones em mobile para economizar espaço
+            }
+        }
+    }
+
+    // Botão de detalhes apenas com ícone
+    .action-btn.view-btn {
+        padding: 8px;
+
+        // Esconder texto em mobile
+        font-size: 0;
+
+        i {
+            font-size: 18px;
+            margin: 0;
+        }
+    }
+}
+
+// Stats cards melhorados
+.stats-cards {
+    .stat-card {
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        &.hot-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+        }
+
+        &.warm-card {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: white;
+        }
+
+        &.cold-card {
+            background: linear-gradient(135deg, #5f9ea0 0%, #48dbfb 100%);
+            color: white;
+        }
+
+        &.new-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .stat-info {
+            position: relative;
+            z-index: 1;
+
+            h4 {
+                font-size: 32px;
+                font-weight: 700;
+                margin: 0;
+                text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            p {
+                font-size: 16px;
+                font-weight: 600;
+                margin: 4px 0;
+                opacity: 0.95;
+            }
+
+            small {
+                font-size: 12px;
+                opacity: 0.8;
+                display: block;
+                margin-top: 4px;
+            }
+        }
+
+        .stat-icon {
+            background: rgba(255, 255, 255, 0.2);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: $spacing-md;
+            backdrop-filter: blur(10px);
+
+            i {
+                font-size: 32px;
+                color: white;
+            }
+        }
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: scale(1.1);
+    }
+}
+
+// Configuração de análise
+.analysis-config {
+    background: $bg-secondary;
+    border-radius: $radius-lg;
+    padding: $spacing-lg;
+    margin: $spacing-lg 0;
+    border: 1px solid $border-color;
+
+    h4 {
+        margin: 0 0 $spacing-md 0;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        gap: $spacing-sm;
+        color: $text-primary;
+    }
+
+    .config-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: $spacing-md;
+        margin-bottom: $spacing-md;
+    }
+
+    .config-item {
+        display: flex;
+        flex-direction: column;
+        gap: $spacing-sm;
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: $spacing-xs;
+            color: $text-secondary;
+        }
+
+        select,
+        input {
+            padding: $spacing-sm $spacing-md;
+            border: 1px solid $border-color-light;
+            border-radius: $radius-sm;
+            font-size: 14px;
+            background: white;
+
+            &:focus {
+                outline: none;
+                border-color: $primary-color;
+            }
+        }
+    }
+
+    .config-note {
+        display: flex;
+        align-items: flex-start;
+        gap: $spacing-sm;
+        padding: $spacing-sm;
+        background: $bg-primary;
+        border-radius: $radius-sm;
+
+        i {
+            color: $info-color;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        small {
+            color: $text-secondary;
+            line-height: 1.4;
+        }
+    }
+}

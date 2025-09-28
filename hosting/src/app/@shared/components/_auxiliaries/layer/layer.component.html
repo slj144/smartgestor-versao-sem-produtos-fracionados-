@@ -1,0 +1,27 @@
+
+<div #layer id="layer-wrapper">
+  <div class="drawer">
+
+    <div class="layer-header" *ngIf="!settings.hideHeader">
+
+      <button class="btnClose" (click)="onClose()">
+        <icon name="arrow-ios-back-outline" pack="eva"></icon>
+      </button>
+      
+      <div class="titles-container">
+        <h2 class="title">{{ settings.title }}</h2>
+        <h6 class="subtitle" *ngIf="settings.subtitle">{{ settings.subtitle }}</h6>
+      </div>
+
+      <div class="buttons-container">
+        <ng-content select="[slot=buttons]"></ng-content>
+      </div>
+      
+    </div>
+
+    <div class="layer-body">
+      <ng-content select="[slot=content]"></ng-content>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,480 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="buttons">
+    <button class="btnPrint" (click)="onReportPrint('PrintAll')"><icon name="printer-outline" pack="eva"></icon></button>
+  </div>
+
+  <div slot="content">
+    <tabs (callback)="onTabsResponse($event)">
+      <div slot="tab-items">
+
+        <div target="general">
+          <div class="container-general" *ngIf="!loading">
+            <div class="operations-balance">
+              <h6>{{ translate.tabs.segment.general.synthetic_report.result.title }}</h6>   
+
+              <div class="table-responsive">
+                <table id="report" class="table">
+                  <thead>
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.result.label.opening }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.result.label.current }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="positive">{{ (data.resume?.dailyBalance?.total?.openingValue || 0) | currency:'' }}</td>
+                      <td class="positive">{{ (data.resume?.dailyBalance?.total?.currentValue || 0) | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="operations-report">
+              <h6>{{ translate.tabs.segment.general.synthetic_report.operations.title }}</h6>
+
+              <div class="table-responsive">
+                <table id="report" class="table">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.general.synthetic_report.operations.label.date }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.opening }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.sales }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.inflow }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.outflow }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.total }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.overallBalance?.records">
+                      <td class="markColumn">{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td class="positive">{{ (item.openingValue || 0) | currency:'' }}</td>
+                      <td class="positive">{{ (item.sales || 0) | currency:'' }}</td>
+                      <td class="positive">{{ (item.inflows || 0) | currency:'' }}</td>
+                      <td class="negative">{{ (item.outflows || 0) | currency:'' }}</td>
+                      <td class="positive">{{ (item.currentValue || 0) | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot *ngIf="data.resume?.overallBalance?.records?.length > 1">
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.operations.label.result }}</th>
+                      <th class="positive">{{ data.resume?.overallBalance?.total?.openingValue | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.overallBalance?.total?.sales | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.overallBalance?.total?.inflows | currency:'' }}</th>
+                      <th class="negative">{{ data.resume?.overallBalance?.total?.outflows | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.overallBalance?.total?.currentValue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="payment-methods-report-invoiced">
+              <h6>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.resume?.paymentMethods?.balance?.invoiced?.records?.length > 0">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.code }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.method }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.cost }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.value }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.revenue }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.paymentMethods?.balance?.invoiced?.records; let i = index">
+                      <td class="markColumn">{{ item.code }}</td>
+                      <td class="text-left">
+                        <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name }}</span>
+                        <span *ngIf="item.code > 3000 && item.code < 4000">{{ translate._common.payment.debitCard.label + ' - ' + item.name }}</span>
+                        <span *ngIf="item.code > 4000 && item.code < 5000">{{ translate._common.payment.creditCard.label + ' - ' + item.name }}</span>
+                      </td>
+                      <td class="negative">{{ item.cost | currency:'' }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                      <td class="positive">{{ item.revenue | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.label.result }}</th>
+                      <th></th>
+                      <th class="negative">{{ data.resume?.paymentMethods?.balance?.invoiced?.total?.cost | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.paymentMethods?.balance?.invoiced?.total?.value | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.paymentMethods?.balance?.invoiced?.total?.revenue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.resume?.paymentMethods?.balance?.invoiced?.records?.length == 0">
+                <p>{{ translate.tabs.segment.general.synthetic_report.billed_payment_methods.notice.message }}</p>
+              </div>
+            </div>
+
+            <div class="payment-methods-report-uninvoiced">
+              <h6>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.resume?.paymentMethods?.balance?.uninvoiced?.records?.length > 0">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.code }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.method }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.cost }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.value }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.revenue }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.paymentMethods?.balance?.uninvoiced?.records; let i = index">
+                      <td class="markColumn">{{ item.code }}</td>
+                      <td class="text-left">
+                        <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name }}</span>
+                        <span *ngIf="item.code > 3000 && item.code < 4000">{{ translate._common.payment.debitCard.label + ' - ' + item.name }}</span>
+                        <span *ngIf="item.code > 4000 && item.code < 5000">{{ translate._common.payment.creditCard.label + ' - ' + item.name }}</span>
+                      </td>
+                      <td class="negative">{{ item.cost | currency:'' }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                      <td class="positive">{{ item.revenue | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.label.result }}</th>
+                      <th></th>
+                      <th class="negative">{{ data.resume?.paymentMethods?.balance?.uninvoiced?.total?.cost | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.paymentMethods?.balance?.uninvoiced?.total?.value | currency:'' }}</th>
+                      <th class="positive">{{ data.resume?.paymentMethods?.balance?.uninvoiced?.total?.revenue | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.resume?.paymentMethods?.balance?.uninvoiced?.records?.length == 0">
+                <p>{{ translate.tabs.segment.general.synthetic_report.unbilled_payment_methods.notice.message }}</p>
+              </div>
+            </div>
+
+            <div class="sales-per-user-report">
+              <h6>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.resume?.salesPerUser?.records?.length > 0">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.label.name }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.label.quantity }}</th>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.label.value }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.salesPerUser?.records">
+                      <td class="text-left markColumn">{{ item.name }}</td>
+                      <td>{{ item.quantity }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.label.result }}</th>
+                      <th>{{ data.resume?.salesPerUser?.total?.quantity }}</th>
+                      <th class="positive">{{ data.resume?.salesPerUser?.total?.value | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.resume?.salesPerUser?.records?.length == 0">
+                <p>{{ translate.tabs.segment.general.synthetic_report.sales_by_employee.notice.message }}</p>
+              </div>
+            </div>
+
+            <button class="btnPrint" (click)="onReportPrint('General')">
+              <icon name="printer-outline" pack="eva"></icon> <span>{{ translate._common.button.print.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div target="sales">
+          <div class="container-sales" *ngIf="!loading">
+            <div class="sales-report">
+              <h6>{{ translate.tabs.segment.sales.analytical_report.main.title }}</h6>
+              
+              <div class="table-responsive" *ngIf="data.sales?.records?.length > 0">
+                <table id="report" class="table">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.main.label.date }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.main.label.saleCode }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.main.label.serviceCode }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.customer }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.collaborator }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.products }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.paymentMethods }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.discount }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.fee }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.value }}</th>
+                    </tr>       
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.sales?.records">                  
+                      <td class="markColumn">{{ item.date | date:'dd/MM/yyyy' }}</td>
+                      <td>{{ item.code }}</td>
+                      <td>{{ (item.serviceCode || '----') }}</td>
+                      <td class="text-left">{{ item.customer.name }}</td>
+                      <td class="text-left">{{ item.operator.name }}</td>
+                      <td>
+                        <table>
+                          <tr *ngFor="let item of item.products">
+                            <td class="text-left">{{ item.code + ' - ' + item.name }}</td>
+                          </tr>
+                        </table>
+                      </td>
+                      <td>
+                        <table>
+                          <tr *ngFor="let item of item.paymentMethods">
+                            <td class="text-left">
+                              <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.code + ' - ' + item.name }}</span>
+                              <span *ngIf="item.code > 3000 && item.code < 4000">{{ item.code + ' - ' + translate._common.payment.debitCard.label + ' - ' + item.name }}</span>
+                              <span *ngIf="item.code > 4000 && item.code < 5000">{{ item.code + ' - ' + translate._common.payment.creditCard.label + ' - ' + item.name + ' (' + item.parcel + 'X)' }}</span>
+                            </td>  
+                          </tr>
+                        </table>
+                      </td>
+                      <td class="negative">{{ (item.balance?.subtotal?.discount || 0) | currency:'' }}</td>
+                      <td class="positive">{{ (item.balance?.subtotal?.fee?.total || 0) | currency:'' }}</td>                      
+                      <td class="positive">{{ (item.balance?.total || 0) | currency:'' }}</td>
+                    </tr>              
+                  </tbody>              
+                  <tfoot>
+                    <tr class="internal-body">
+                      <th>{{ translate.tabs.segment.sales.analytical_report.main.label.total }}</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th class="negative">{{ data.sales?.balance.discount | currency:'' }}</th>
+                      <th class="positive">{{ data.sales?.balance.fee | currency:'' }}</th>                      
+                      <th class="positive">{{ data.sales?.balance.value | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.sales?.records?.length == 0">
+                <p>{{ translate.tabs.segment.sales.analytical_report.main.notice.message }}</p>
+              </div>
+            </div>
+
+            <div class="payment-methods-report-invoiced">
+              <h6>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.resume?.paymentMethods?.sales?.invoiced?.records?.length > 0">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.methodCode }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.saleCode }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.method }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.cost }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.value }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.revenue }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.paymentMethods?.sales?.invoiced?.records">
+                      <td class="markColumn">{{ item.code }}</td>
+                      <td>{{ item.saleCode }}</td>
+                      <td class="text-left">
+                        <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name }}</span>
+                        <span *ngIf="item.code > 3000 && item.code < 4000">{{ 'C. Débito - ' + item.name }}</span>
+                        <span *ngIf="item.code > 4000 && item.code < 5000">{{ 'C. Crédito - ' + item.name + ' (' + item.parcel + 'X)' }}</span>
+                      </td>
+                      <td class="negative">{{ item.cost | currency:'' }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                      <td class="positive">{{ item.value - item.cost | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.label.total }}</th>
+                      <th></th>
+                      <th></th>
+                      <th class="negative">{{ (data.resume?.paymentMethods?.sales?.invoiced?.total?.cost || 0) | currency:'' }}</th>
+                      <th class="positive">{{ (data.resume?.paymentMethods?.sales?.invoiced?.total?.value || 0) | currency:'' }}</th>
+                      <th class="positive">{{ (data.resume?.paymentMethods?.sales?.invoiced?.total?.revenue || 0) | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.resume?.paymentMethods?.sales?.invoiced?.records?.length == 0">
+                <p>{{ translate.tabs.segment.sales.analytical_report.billed_payment_methods.notice.message }}</p>
+              </div>
+            </div>
+
+            <div class="payment-methods-report-uninvoiced">
+              <h6>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.resume?.paymentMethods?.sales?.uninvoiced?.records?.length > 0">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.methodCode }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.saleCode }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.method }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.cost }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.value }}</th>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.revenue }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.resume?.paymentMethods?.sales?.uninvoiced?.records">
+                      <td class="markColumn">{{ item.code }}</td>
+                      <td>{{ item.saleCode }}</td>
+                      <td class="text-left">
+                        <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name }}</span>
+                        <span *ngIf="item.code > 3000 && item.code < 4000">{{ translate._common.payment.debitCard.label + ' - ' + item.name }}</span>
+                        <span *ngIf="item.code > 4000 && item.code < 5000">{{ translate._common.payment.creditCard.label + ' - ' + item.name + ' (' + item.parcel + 'X)' }}</span>
+                      </td>
+                      <td class="negative">{{ item.cost | currency:'' }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                      <td class="positive">{{ item.value - item.cost | currency:'' }}</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.label.total }}</th>
+                      <th></th>
+                      <th></th>
+                      <th class="negative">{{ (data.resume?.paymentMethods?.sales?.uninvoiced?.total?.cost || 0) | currency:'' }}</th>
+                      <th class="positive">{{ (data.resume?.paymentMethods?.sales?.uninvoiced?.total?.value || 0) | currency:'' }}</th>
+                      <th class="positive">{{ (data.resume?.paymentMethods?.sales?.uninvoiced?.total?.revenue || 0) | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.resume?.paymentMethods?.sales?.uninvoiced?.records?.length == 0">
+                <p>{{ translate.tabs.segment.sales.analytical_report.unbilled_payment_methods.notice.message }}</p>
+              </div>
+            </div>
+
+            <button class="btnPrint" (click)="onReportPrint('Sales')" *ngIf="(data.sales?.records?.length > 0)">
+              <icon name="printer-outline" pack="eva"></icon> <span>{{ translate._common.button.print.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div target="inflows">
+          <div class="container-inflows" *ngIf="!loading">
+            <div class="inputs-report">
+              <h6>{{ translate.tabs.segment.inflows.analytical_report.main.title }}</h6>
+
+              <div class="table-responsive" *ngIf="data.inflows?.records?.length > 0">
+                <table id="report" class="table">
+                  <thead>  
+                    <tr>
+                      <th class="col-medium">{{ translate.tabs.segment.inflows.analytical_report.main.label.date }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.inflows.analytical_report.main.label.reference }}</th>
+                      <th>{{ translate.tabs.segment.inflows.analytical_report.main.label.category }}</th>
+                      <th>{{ translate.tabs.segment.inflows.analytical_report.main.label.note }}</th>
+                      <th>{{ translate.tabs.segment.inflows.analytical_report.main.label.value }}</th>
+                    </tr>       
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.inflows?.records">
+                      <td class="markColumn">{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ item.code }}</td>
+                      <td>{{ item.category?.name }}</td>
+                      <td class="text-left">{{ item.note }}</td>
+                      <td class="positive">{{ item.value | currency:'' }}</td>
+                    </tr>
+                  </tbody>             
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.inflows.analytical_report.main.label.total }}</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th class="positive">{{ data.inflows?.balance?.value | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.inflows?.records?.length == 0">
+                <p>{{ translate.tabs.segment.inflows.analytical_report.main.notice.message }}</p>
+              </div>
+            </div>
+
+            <button class="btnPrint" (click)="onReportPrint('Inflows')" *ngIf="data.inflows?.records?.length > 0">
+              <icon name="printer-outline" pack="eva"></icon> <span>{{ translate._common.button.print.label }}</span>
+            </button>
+          </div>
+        </div>
+
+        <div target="outflows">
+          <div class="container-outflows" *ngIf="!loading">
+            <div class="outflows-report">
+              <h6>{{ translate.tabs.segment.outflows.analytical_report.main.title }}</h6>
+            
+              <div class="table-responsive" *ngIf="data.outflows?.records?.length > 0">
+                <table id="report" class="table">
+                  <thead>  
+                    <tr>
+                      <th class="col-medium">{{ translate.tabs.segment.outflows.analytical_report.main.label.date }}</th>
+                      <th class="col-small">{{ translate.tabs.segment.outflows.analytical_report.main.label.reference }}</th>
+                      <th>{{ translate.tabs.segment.outflows.analytical_report.main.label.category }}</th>
+                      <th>{{ translate.tabs.segment.outflows.analytical_report.main.label.note }}</th>
+                      <th>{{ translate.tabs.segment.outflows.analytical_report.main.label.value }}</th>
+                    </tr>       
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of data.outflows?.records">
+                      <td class="markColumn">{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                      <td>{{ item.code }}</td>
+                      <td>{{ item.category?.name }}</td>
+                      <td class="text-left">{{ item.note }}</td>
+                      <td class="negative">{{ item.value | currency:'' }}</td>
+                    </tr>
+                  </tbody>             
+                  <tfoot>
+                    <tr>
+                      <th>{{ translate.tabs.segment.outflows.analytical_report.main.label.total }}</th>
+                      <th></th>
+                      <th></th>
+                      <th></th>
+                      <th class="negative">{{ data.outflows?.balance?.value | currency:'' }}</th>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="info-no-data" *ngIf="data.outflows?.records?.length == 0">
+                <p>{{ translate.tabs.segment.outflows.analytical_report.main.notice.message }}</p>
+              </div>
+            </div>
+
+            <button class="btnPrint" (click)="onReportPrint('Outflows')" *ngIf="data.outflows?.records?.length > 0">
+              <icon name="printer-outline" pack="eva"></icon> <span>{{ translate._common.button.print.label }}</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </tabs>
+  </div>
+
+  <div slot="components">
+    <div class="loader"[nbSpinner]="loading" [nbSpinnerStatus]="'success'" [nbSpinnerSize]="'large'" *ngIf="loading"></div>
+    <cashier-reports-print (callback)="onReportPrintResponse($event)"></cashier-reports-print>
+  </div>
+
+</modal>

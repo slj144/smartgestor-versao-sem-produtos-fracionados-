@@ -1,0 +1,175 @@
+<!-- 
+  Arquivo: src/app/pages/reports/financial/financial.component.html
+  Funcionalidade: Template HTML para os relatórios financeiros
+  Módulos: Fluxo de Caixa, Contas a Pagar, Contas a Receber, Transações Bancárias e Comissões
+  
+  Alterações:
+  - Adicionado campo de seleção de colaborador para o relatório de comissões (linha 52-64)
+  - O campo só aparece quando o usuário tem permissão para filterPerCollaborator
+-->
+
+<main id="finances">
+
+  <div *ngIf="!loading && this.formControls">
+    <div class="container-main">
+      <div class="wrapper">
+        <div class="container-settings">
+          <div class="container-form">
+            <h6>{{ settings.model.name }}</h6>
+
+            <form [formGroup]="formFilters" (submit)="onGenerateReport()" class="form">
+              <!-- Campo de seleção de loja (apenas para matriz) -->
+              <div class="row" *ngIf="isMatrix && (settings.stores.length > 0)">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.store.title }}</label>
+
+                  <select class="form-control" formControlName="store">
+                    <option *ngFor="let item of settings.stores" value="{{ item._id }}">{{ item.name }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Campo de seleção de período -->
+              <div class="row">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.period.title }}</label>
+
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <select class="form-control" formControlName="period" #selectPeriod>
+                        <option value="today">{{ translate._general.form.period.label.option.today }}</option>
+                        <option value="currentWeek" *ngIf="settings.model.filter.weekly">{{
+                          translate._general.form.period.label.option.currentWeek }}</option>
+                        <option value="currentMonth" *ngIf="settings.model.filter.monthly">{{
+                          translate._general.form.period.label.option.currentMonth }}</option>
+                        <option value="lastMonth" *ngIf="settings.model.filter.lastMonth">{{
+                          translate._general.form.period.label.option.lastMonth }}</option>
+                        <option value="custom" *ngIf="settings.model.filter.custom">{{
+                          translate._general.form.period.label.option.custom }}</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 🎯 CAMPO: Seleção de colaborador (apenas para relatório de comissões) -->
+              <div class="row" *ngIf="settings.model.id == 'commissions' && settings.model.filter.perCollaborator">
+                <div class="col-12 form-group">
+                  <label>Colaborador</label>
+
+                  <select class="form-control" formControlName="collaborator">
+                    <option value="##all##">Todos os colaboradores</option>
+                    <option *ngFor="let item of collaborators" [value]="item.code">
+                      {{ item.name }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Campos de data personalizada (quando período = custom) -->
+              <div class="row" *ngIf="(formFilters.value.period == 'custom')">
+                <div class="col-6 form-group">
+                  <label>{{ translate._general.form.period.label.startDate }}</label>
+                  <input type="date" formControlName="startDate" class="form-control" />
+                </div>
+
+                <div class="col-6 form-group">
+                  <label>{{ translate._general.form.period.label.endDate }}</label>
+                  <input type="date" formControlName="endDate" class="form-control" />
+                </div>
+              </div>
+
+              <!-- Campo de categoria para Contas a Pagar -->
+              <div class="row" *ngIf="settings.model.id == 'billsToPay'">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.categories.title }}</label>
+
+                  <select class="form-control" formControlName="billCategory">
+                    <option value="##all##">{{ translate._general.form.categories.list.all }}</option>
+                    <option *ngFor="let item of billsToPayCategories" value="{{ item.code }}">{{ item.name }}</option>
+                  </select>
+                </div>
+
+                <div class="col-12 form-group"
+                  *ngIf="typeActived == 'pendingAccounts' || typeActived == 'overdueAccounts'">
+                  <label>{{ translate._general.form.filterDateType.title }}</label>
+
+                  <select class="form-control" formControlName="filterDateType">
+                    <option value="registerDate">Data de Registro</option>
+                    <option value="expireDate">Data de Expiração</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Campo de categoria para Contas a Receber -->
+              <div class="row" *ngIf="settings.model.id == 'billsToReceive'">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.categories.title }}</label>
+
+                  <select class="form-control" formControlName="billCategory">
+                    <option value="##all##">{{ translate._general.form.categories.list.all }}</option>
+                    <option *ngFor="let item of billsToReceiveCategories" value="{{ item.code }}">{{ item.name }}
+                    </option>
+                  </select>
+                </div>
+
+                <div class="col-12 form-group"
+                  *ngIf="typeActived == 'pendingAccounts' || typeActived == 'overdueAccounts'">
+                  <label>{{ translate._general.form.filterDateType.title }}</label>
+
+                  <select class="form-control" formControlName="filterDateType">
+                    <option value="registerDate">Data de Registro</option>
+                    <option value="expireDate">Data de Expiração</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Seleção de tipo de relatório (quando há múltiplos tipos) -->
+              <div class="row" *ngIf="this.settings.types && (this.settings.types).length > 0">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportType.title }}</label>
+
+                  <div class="row container-types">
+                    <label class="option col-12" *ngFor="let item of this.settings.types">
+                      <input type="radio" [value]="item.id" formControlName="types" (change)="onTypesChange(item.id)" />
+                      <span>{{ item.label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Seleção de campos do relatório -->
+              <div class="row"
+                *ngIf="(this.settings.fields[typeActived] && (this.settings.fields[typeActived]).length > 0) && typeActived">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportFields.title }}</label>
+
+                  <div class="row container-options">
+                    <label class="option col-12 col-sm-6 col-md-4"
+                      *ngFor="let control of formControls.fields.controls; let i = index">
+                      <input type="checkbox" [formControl]="control" />
+                      <span>{{ this.settings.fields[this.typeActived][i].label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Botão de gerar relatório -->
+              <button type="submit" class="btn btn-primary" [disabled]="formFilters.invalid">
+                {{ translate._general.form.button.generate }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Placeholder de carregamento -->
+  <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+
+</main>
+
+<!-- Componente de layer para exibição do relatório -->
+<financial-layer (callback)="onLayerResponse($event)"></financial-layer>

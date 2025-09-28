@@ -1,0 +1,83 @@
+<div id="side-drawer" [class]="[ status ]" #sideDrawer>
+
+  <div class="drawer">
+
+    <ng-container *ngIf="isMobile">
+      <div class="header">
+        <ng-container *ngTemplateOutlet="userTemplate; context: { position: 'header' }"></ng-container>
+      </div>
+    </ng-container>
+
+    <div class="body">
+
+      <ul>
+        <li *ngFor="let item of menuOptions">
+          <ng-container *ngIf="!item.hidden">
+
+            <div *ngIf="!item.subItems">
+              <ng-container *ngTemplateOutlet="optionTemplate; context: { data: item }"></ng-container>
+            </div>
+
+            <div *ngIf="item.subItems" class="subItems">
+
+              <span class="label sectionTitle">{{ item.title }}</span>
+
+              <ng-container *ngFor="let item of item.subItems">
+                <ng-container *ngTemplateOutlet="optionTemplate; context: { data: item }"></ng-container>
+              </ng-container>
+
+              <div class="divider"></div>
+
+            </div>
+
+          </ng-container>
+        </li>
+      </ul>
+
+      <ng-template #optionTemplate let-data="data">
+        <a [routerLink]="data.route" [class.active]="data.active" [tooltip]="data.title" placement="right"
+          [isDisable]="this.status == 'open'">
+          <span class="icon"><i class="eva eva-{{ data.icon }}"></i></span>
+          <span class="label">{{ data.title }}</span>
+        </a>
+      </ng-template>
+
+    </div>
+
+    <ng-container *ngIf="!isMobile">
+      <div class="footer">
+        <ng-container *ngTemplateOutlet="userTemplate; context: { position: 'footer' }"></ng-container>
+      </div>
+    </ng-container>
+
+    <ng-template #userTemplate let-position="position">
+      <div class="user-info">
+        <div class="avatar">
+          <img [src]="user?.picture" />
+        </div>
+
+        <div class="info">
+          <p class="name">{{ user?.name }}</p>
+          <span class="store">{{ store?.name + ' - ' + (store?._id == 'matrix' ? 'Matriz' : 'Filial') }}</span>
+        </div>
+
+        <div *ngIf="position" class="buttons">
+          <ng-container *ngIf="position == 'header'">
+            <button class="btn btn-close" (click)="onClose()"></button>
+          </ng-container>
+        </div>
+      </div>
+    </ng-template>
+
+  </div>
+
+</div>
+
+<div id="side-drawer-action" [class]="[ status ]" *ngIf="!isMobile">
+  <button class="btn btnToggle" (click)="onToggle()">
+    <icon [name]="status != 'closed' ? 'chevron-left' : 'chevron-right'" pack="fa"></icon>
+  </button>
+</div>
+
+<div id="side-drawer-backdrop" [style.display]="isMobile && (status == 'open') ? 'block' : 'none'" (click)="onClose()">
+</div>

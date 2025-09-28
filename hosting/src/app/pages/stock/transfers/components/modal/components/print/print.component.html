@@ -1,0 +1,119 @@
+
+<iframe id="printingFrame" name="printingFrame" style="display: none;">
+  <body>
+
+    <div id="containerTransferReceiptPrint" *ngIf="settings.activeComponent == 'Transfer/Receipt'">
+      <header *ngIf="settings.storeInfo">
+        <img src="{{ settings.storeInfo.image }}"/>
+        <span class="name">{{ settings.storeInfo.billingName }}</span>
+        <span>{{ settings.storeInfo.address.addressLine + ', ' + settings.storeInfo.address.city + ' - ' + settings.storeInfo.address.state }}</span>
+        <span>Telefone: {{ settings.storeInfo.contacts.phone }}</span>
+      </header>
+
+      <section class="container-info">
+        <span class="label">Informações</span>
+        <div class="content">
+
+          <span><span class="label">Data de Envio:</span> <span class="value">{{ settings.data.sendDate | date:'dd/MM/yyyy HH:mm' }}</span></span>
+          <span *ngIf="settings.data.receiptDate"><span class="label">Data de Recebimento:</span> <span class="value">{{ settings.data.receiptDate | date:'dd/MM/yyyy HH:mm' }}</span></span>
+          <span><span class="label">Status da Transferência:</span> <span class="value">{{ settings.data.transferStatus }}</span></span>
+          <span><span class="label">Status do Pagamento:</span> <span class="value">{{ settings.data.paymentStatus }}</span></span>
+
+          <table>
+            <tr>
+              <td>
+                <span><span class="label">De:</span></span>
+                <div class="container-store-info">
+                  <span><span class="name">{{ settings.data.origin.name }}</span></span>
+                  <span *ngIf="settings.data.origin?.address">
+                    <span class="value">{{ 'Endereço: ' + settings.data.origin.address }}</span>
+                  </span>
+                  <span *ngIf="settings.data.origin?.email">
+                    <span class="value">{{ 'Email: ' + settings.data.origin.email }}</span>
+                  </span>
+                  <span *ngIf="settings.data.origin?.phone">
+                    <span class="value">{{ 'Telefone: ' + settings.data.origin.phone }}</span>
+                  </span>
+                </div> 
+              </td>
+              <td>
+                <span><span class="label">Para:</span></span>
+                <div class="container-store-info">
+                  <span><span class="name">{{ settings.data.destination.name }}</span></span>
+                  <span *ngIf="settings.data.destination?.address">
+                    <span class="value">{{ 'Endereço: ' + settings.data.destination.address }}</span>
+                  </span>
+                  <span *ngIf="settings.data.destination?.email">
+                    <span class="value">{{ 'Email: ' + settings.data.destination.email }}</span>
+                  </span>
+                  <span *ngIf="settings.data.destination?.phone">
+                    <span class="value">{{ 'Telefone: ' + settings.data.destination.phone }}</span>
+                  </span>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </section>
+
+      <section class="container-products">
+        <span class="label">Produtos</span>
+        <div class="content" *ngIf="settings.data.products && (settings.data.products).length > 0">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>                    
+                <tr>
+                  <th>#</th>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Quantidade</th>
+                  <th>Preço de Custo (R$)</th>
+                  <th>Preço de Venda (R$)</th>
+                  <th>Subtotal (R$)</th>
+                </tr>               
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of settings.data.products; let i = index">
+                  <td><span>{{ (i + 1) }}</span></td>
+                  <td><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td><span>{{ item.quantity }}</span></td>
+                  <td><span>{{ item.costPrice | currency:'' }}</span></td>
+                  <td><span>{{ item.salePrice | currency:'' }}</span></td>
+                  <td><span class="price">{{ (item.costPrice * item.quantity) | currency:'' }}</span></td>                     
+                </tr>                                        
+              </tbody>
+            </table>
+          </div>          
+        </div>
+      </section>
+
+      <section class="container-balance">
+        <span class="label">Balanço</span>
+        <div class="table-responsive content">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><span class="label">Quantidade</span></td>
+                <td><span class="value" *ngIf="settings.data && settings.data.balance">{{ settings.data.balance.quantity + ' Item(ns)' }}</span></td>
+              </tr>
+              <tr>
+                <td><span class="label">{{ isMatrix ? 'Total a Receber' : 'Total a Pagar' }}</span></td>
+                <td><span class="price" *ngIf="settings.data && settings.data.balance">{{ settings.data.balance.total | currency }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="container-note" *ngIf="settings.data.note">
+        <span class="label">Observações</span>
+        <div class="content">{{ settings.data.note }}</div>            
+      </section>
+
+    </div>    
+
+    <link href="/assets/css/transfer-receipt/transfer-receipt.css" rel="stylesheet">
+    
+  </body>
+</iframe>

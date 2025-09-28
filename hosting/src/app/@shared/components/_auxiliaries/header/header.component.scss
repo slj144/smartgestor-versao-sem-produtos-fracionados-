@@ -1,0 +1,157 @@
+
+#custom-header {
+  margin: 0;
+  .container-header {
+    display: flex;
+    .container-search {
+      flex: 1;
+      .btnFilter {
+        width: 35px;
+        height: 35px;
+        position: relative;
+        background-color: #aaa;
+        border-color: #aaa;
+        float: left;
+        .badge {
+          width: 16px;
+          height: 16px;
+          border: none;
+          border-radius: 8px;
+          box-shadow: none;
+          background-color: chocolate;
+          font-size: 8px;
+          font-weight: 600;
+          position: absolute;
+          top: -5px;
+          right: -5px;
+        }
+      }
+      .searchBar {
+        width: 250px;
+        height: 35px;
+        max-width: calc(100% - 72px);
+        border: 1px solid #ddd;
+        background-color: #fff;
+        overflow: hidden;
+        position: relative;
+        border-radius: 17px;   
+        float: left;
+        input {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          padding: 10px 30px 10px 12px;
+          background-color: transparent;
+          border: none;
+          outline: none;
+          z-index: 0;
+          font-size: 13px;
+          vertical-align: middle;
+          &::placeholder {
+            color: #999;
+          }
+        }
+        button {
+          width: 33px;
+          height: 33px;      
+          border: none;
+          outline: none;
+          border-radius: 17px;
+          color: #aaa;
+          background-color: #fff;
+          box-shadow: none;
+          position: absolute;
+          margin-top: 0;
+          margin-left: 0;
+          z-index: 2;
+          top: 0;
+          right: 0;
+          transition: all 0.5s ease-in-out;
+          cursor: pointer;
+          icon {
+            position: relative;
+            top: -1px;
+            font-size: 13px;
+          }
+          &:hover {
+            opacity: 0.8;
+          }
+        }
+      }
+    }
+    .container-buttons {
+      width: auto;
+    }
+    .container-search,
+    .container-buttons {
+      button, ::ng-deep button {
+        width: 35px;
+        height: 35px;        
+        outline: none;
+        border: none;
+        border-radius: 17px;
+        color: #fff;
+        background-color: #fff;
+        box-shadow: 0 2px 4px #ccc;
+        padding: 0;
+        margin: 0 2px;        
+        transition: all 0.5s ease-in-out;
+        icon {
+          font-size: 15px;
+        }
+        &.btnGroup {
+          color: #555;
+          icon {
+            font-size: 20px;
+            top: 3px;
+          }
+        }
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }   
+  }
+  .container-tools {
+    height: 30px;
+    margin-top: 5px;
+    position: relative;
+    background-color: #fff;
+    .container-info {
+      padding-left: 5px;
+      float: left;
+      small {
+        color: #999;
+        font-size: 11px;
+      }
+      .btn-view-mode{
+        float: right;
+      }
+    }
+    .container-buttons {
+      width: auto;
+      float: right;
+      ::ng-deep button {
+        width: 22px;
+        height: 22px;            
+        border-radius: 4px;
+        color: #999;
+        background-color: #fff;
+        border: none;
+        outline: none;
+        padding: 0;
+        margin: 0 2px;
+        transition: all 0.3s ease-in-out;   
+        icon {
+          font-size: 15px;
+        }    
+        &.active {
+          color: rgba(102, 102, 255, 0.75);
+        }
+        &:hover {
+          color: rgba(153, 153, 153, 0.85);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,497 @@
+<!--
+  📁 ARQUIVO: modal.component.html
+  📍 LOCALIZAÇÃO: src/app/pages/services/serviceOrders/components/modal/modal.component.html
+  
+  🎯 FUNCIONALIDADE:
+  - Modal principal para gerenciar ordens de serviço
+  - Visualização de detalhes da ordem (Read)
+  - Criação e edição de ordens (Create/Update)
+  - Atualização de status com fotos (UpdateStatus)
+  - Modal de câmera integrado para captura de fotos
+  
+  ✅ CORREÇÕES APLICADAS:
+  - Removida duplicação de seção de fotos
+  - Modal da câmera movido para posição correta
+  - Integração completa com botões de câmera e galeria
+-->
+
+<modal (callback)="onModalResponse($event)">
+
+  <ng-container slot="content">
+
+    <div id="container-filters"
+      [style.display]="settings.activeComponent === 'ServiceOrders/Filters' ? 'block' : 'none'">
+      <filters #filtersComponent (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" class="centralizer"
+      *ngIf="(settings.activeComponent === 'ServiceOrders/Read') || (settings.activeComponent === 'ServiceOrders/Cancel') || (settings.activeComponent === 'ServiceOrders/UpdateStatus')">
+      <div class="wrapper">
+
+        <!-- SEÇÃO DE VISUALIZAÇÃO (READ) -->
+        <div class="container-data" *ngIf="(settings.activeComponent === 'ServiceOrders/Read')">
+
+          <section class="info">
+            <h5>{{ translate.action.read.section.informations.title }}</h5>
+
+            <div class="content">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <tr>
+                    <td>
+                      <p><span class="label">{{ translate.action.read.section.informations.label.serviceCode + ':'
+                          }}</span> <span class="value">{{ settings.data.code }}</span></p>
+                    </td>
+                    <td class="date">
+                      <p><span class="label">{{ translate.action.read.section.informations.label.date + ':' }}</span>
+                        <span class="value">{{ settings.data.registerDate | date:'dd/MM/yyyy HH:mm' }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr *ngIf="settings.data.saleCode">
+                    <td>
+                      <p><span class="label">{{ translate.action.read.section.informations.label.saleCode + ':'
+                          }}</span> <span class="value">{{ settings.data.saleCode }}</span></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>
+                        <span class="label">{{ translate.action.read.section.informations.label.execution.title + ':'
+                          }}</span>
+                        <span class="value">{{
+                          translate.action.read.section.informations.label.execution.type[settings.data.execution?.type]
+                          +
+                          (settings.data.execution?.type == 'EXTERNAL' && settings.data.execution?.provider?.name ? ('
+                          (' + settings.data.execution?.provider?.name + ')') : '')
+                          }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p><span class="label">{{ translate.action.read.section.informations.label.operator + ':'
+                          }}</span> <span class="value">{{ settings.data.operator?.name }}</span></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p><span class="label">{{
+                          translate.action.read.section.informations.label.serviceOrderStatus.title + ':' }}</span>
+                        <span class="value">{{
+                          translate.action.read.section.informations.label.serviceOrderStatus.enum[settings.data.serviceStatus]
+                          }}</span>
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan="2">
+                      <p><span class="label">{{ translate.action.read.section.informations.label.paymentStatus.title +
+                          ':' }}</span> <span class="value">{{
+                          translate.action.read.section.informations.label.paymentStatus.enum[settings.data.paymentStatus]
+                          }}</span></p>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="customer" *ngIf="settings.data.customer">
+            <h5>{{ translate.action.read.section.customer.title }}</h5>
+
+            <div class="content">
+              <p>
+                <span class="label">{{ translate.action.read.section.customer.label.name + ':' }}</span> <span
+                  class="value">{{ settings.data.customer?.name }}</span>
+              </p>
+
+              <p *ngIf="settings.data.customer?.address">
+                <span class="label">{{ translate.action.read.section.customer.label.address + ':' }}</span> <span
+                  class="value">{{ settings.data.customer?.address }}</span>
+              </p>
+
+              <p *ngIf="settings.data.customer?.personalDocument">
+                <span class="label">{{ settings.data.customer?.personalDocument.type + ':' }}</span> <span
+                  class="value">{{ settings.data.customer?.personalDocument.value }}</span>
+              </p>
+
+              <p *ngIf="settings.data.customer?.businessDocument">
+                <span class="label">{{ settings.data.customer?.businessDocument.type + ':' }}</span> <span
+                  class="value">{{ settings.data.customer?.businessDocument.value }}</span>
+              </p>
+
+              <p *ngIf="settings.data.customer?.phone">
+                <span class="label">{{ translate.action.read.section.customer.label.phone + ':' }}</span> <span
+                  class="value">{{ settings.data.customer?.phone }}</span>
+              </p>
+            </div>
+          </section>
+
+          <section class="executor" *ngIf="settings.data.executor">
+            <h5>{{ translate.action.read.section.executor.title }}</h5>
+
+            <div class="content">
+              <p>
+                <span class="label">{{ translate.action.read.section.customer.label.name + ':' }}</span> <span
+                  class="value">{{ settings.data.executor?.name }}</span>
+              </p>
+            </div>
+          </section>
+
+          <section class="vehicle" *ngIf="settings.data.vehicle">
+            <h5>{{ translate.action.read.section.vehicle.title }}</h5>
+
+            <div class="content">
+              <p>
+                <span class="label">{{ translate.action.read.section.vehicle.label.plate }}:</span> <span
+                  class="value">{{ settings.data.vehicle?.plate }}</span>
+              </p>
+              <p>
+                <span class="label">{{ translate.action.read.section.vehicle.label.model }}:</span> <span
+                  class="value">{{ settings.data.vehicle?.model }}</span>
+              </p>
+              <p>
+                <span class="label">{{ translate.action.read.section.vehicle.label.mileage }}:</span> <span
+                  class="value">{{ settings.data.vehicle?.mileage }}</span>
+              </p>
+            </div>
+          </section>
+
+          <section class="equipment" *ngIf="settings.data.equipment">
+            <h5>{{ translate.action.read.section.equipment.title }}</h5>
+
+            <div class="content">
+              <p *ngIf="settings.data.equipment?.model">
+                <span class="label">{{ translate.action.read.section.equipment.label.model + ':' }}</span> <span
+                  class="value">{{ settings.data.equipment?.model }}</span>
+              </p>
+
+              <p *ngIf="settings.data.equipment?.brand">
+                <span class="label">{{ translate.action.read.section.equipment.label.brand + ':' }}</span> <span
+                  class="value">{{ settings.data.equipment?.brand }}</span>
+              </p>
+
+              <p *ngIf="settings.data.equipment?.name">
+                <span class="label">{{ translate.action.read.section.equipment.label.name + ':' }}</span> <span
+                  class="value">{{ settings.data.equipment?.name }}</span>
+              </p>
+
+              <p *ngIf="settings.data.equipment?.password">
+                <span class="label">{{ translate.action.read.section.equipment.label.password + ':' }}</span> <span
+                  class="value">{{ settings.data.equipment?.password }}</span>
+              </p>
+
+              <p *ngIf="settings.data.equipment?.serialNumber">
+                <span class="label">{{ translate.action.read.section.equipment.label.serialNumber + ':' }}</span> <span
+                  class="value">{{ settings.data.equipment?.serialNumber }}</span>
+              </p>
+            </div>
+          </section>
+
+          <section class="photos" *ngIf="settings.data.photosBefore?.length || settings.data.photosAfter?.length">
+            <h5>{{ translate.action.read.section.photos.title }}</h5>
+            <div class="content">
+              <div class="photos-group" *ngIf="settings.data.photosBefore?.length">
+                <p class="label">{{ translate.action.read.section.photos.before }}</p>
+                <div class="photos-list">
+                  <img *ngFor="let photo of settings.data.photosBefore" [src]="photo" />
+                </div>
+              </div>
+              <div class="photos-group" *ngIf="settings.data.photosAfter?.length">
+                <p class="label">{{ translate.action.read.section.photos.after }}</p>
+                <div class="photos-list">
+                  <img *ngFor="let photo of settings.data.photosAfter" [src]="photo" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="checklist" *ngIf="settings.data.checklist && settings.data.hasChecklist">
+            <h5>{{ translate.action.read.section.checklist.title }}</h5>
+
+            <div class="content">
+              <fieldset [disabled]="true">
+                <ul>
+                  <li *ngFor="let item of settings.data.checklist">
+                    <label>
+                      <input type="checkbox" name="checklist" [value]="item.name" [checked]="item.checked"
+                        [disabled]="item.disabled" /> <span>{{ item.name }}</span>
+                    </label>
+
+                    <div class="sub" *ngIf="item.subchecklist?.length > 0">
+                      <label *ngFor="let subItem of item.subchecklist">
+                        <input type="checkbox" name="subchecklist" [value]="subItem.name" [checked]="subItem.checked" />
+                        <span>{{ subItem.name }}</span>
+                      </label>
+                    </div>
+                  </li>
+                </ul>
+              </fieldset>
+            </div>
+          </section>
+
+          <section class="description" *ngIf="settings.data?.description">
+            <h5>{{ translate.action.read.section.description.title }}</h5>
+            <div class="content" [innerHTML]="settings.data?.description"></div>
+          </section>
+
+          <section class="services" *ngIf="settings.data?.services?.length > 0">
+            <h5>{{ translate.action.read.section.services.title }}</h5>
+
+            <div class="content">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th>{{ translate.action.read.section.services.label.code }}</th>
+                      <th>{{ translate.action.read.section.services.label.description }}</th>
+                      <th>{{ translate.action.read.section.services.label.price }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.services">
+                      <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                      <td><span>{{ item.name }}</span></td>
+                      <td class="col-small"><span class="price">{{ item.executionPrice | currency:'' }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="products" *ngIf="settings.data?.products?.length > 0">
+            <h5>{{ translate.action.read.section.products.title }}</h5>
+
+            <div class="content">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th>{{ translate.action.read.section.products.label.code }}</th>
+                      <th>{{ translate.action.read.section.products.label.name }}</th>
+                      <th>{{ translate.action.read.section.products.label.quantity }}</th>
+                      <th>{{ translate.action.read.section.products.label.price }}</th>
+                      <th>{{ translate.action.read.section.products.label.total }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let item of settings.data.products">
+                      <td class="col-xsmall"><span>{{ item.code }}</span></td>
+                      <td><span>{{ item.name }}</span></td>
+                      <td class="col-small"><span>{{ item.quantity }}</span></td>
+                      <td class="col-small"><span class="price">{{ item.unitaryPrice | currency:'' }}</span></td>
+                      <td class="col-small"><span class="price">{{ (item.quantity * item.unitaryPrice) | currency:''
+                          }}</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <section class="balance">
+            <h5>{{ translate.action.read.section.balance.title }}</h5>
+
+            <div class="content">
+              <div class="table-responsive">
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <th colspan="2">{{ translate.action.read.section.balance.label.subtotal.title + ':' }}</th>
+                    </tr>
+                    <tr>
+                      <td class="removePadding" colspan="2">
+                        <table class="table table-borderless table-internal">
+                          <tr class="info" *ngIf="settings.data.balance?.subtotal?.products">
+                            <td class="label">{{ translate.action.read.section.balance.label.subtotal.integrant.products
+                              }}</td>
+                            <td class="col-small value">{{ settings.data.balance.subtotal.products | currency }}</td>
+                          </tr>
+                          <tr class="info" *ngIf="settings.data.balance?.subtotal?.services">
+                            <td class="label">{{ translate.action.read.section.balance.label.subtotal.integrant.services
+                              }}</td>
+                            <td class="col-small value">{{ settings.data.balance.subtotal.services | currency }}</td>
+                          </tr>
+                          <tr class="info" *ngIf="settings.data.balance?.subtotal?.discount">
+                            <td class="label">{{ translate.action.read.section.balance.label.subtotal.integrant.discount
+                              }}</td>
+                            <td class="col-small value">{{ settings.data.balance.subtotal.discount | currency }}</td>
+                          </tr>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr class="markLine">
+                      <th>{{ translate.action.read.section.balance.label.total + ':' }}</th>
+                      <td class="col-small total">{{ settings.data.balance?.total | currency }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <div class="container-button">
+            <button class="btnPrint {{ checkNf() ? '' : 'center' }}"
+              *ngIf="settings.activeComponent === 'ServiceOrders/Read'" (click)="onOpenPrinter()">
+              <icon name="printer-outline" pack="eva"></icon> {{ translate.action.read.button.print }}
+            </button>
+            <button class="btnNf" *ngIf="settings.activeComponent === 'ServiceOrders/Read' && checkNf()"
+              (click)="onEmitNf()">
+              <icon name="settings-outline" pack="eva"></icon>Emitir Nota Fiscal
+            </button>
+          </div>
+
+        </div>
+
+        <!-- SEÇÃO DE CANCELAMENTO -->
+        <div class="container-cancel" *ngIf="settings.activeComponent === 'ServiceOrders/Cancel'">
+          <div class="container-confirmation">
+            <div class="container-info">
+              <p>{{ translate.action.cancel.notice }}</p>
+              <small>{{ translate.action.cancel.warning }}</small>
+            </div>
+
+            <div class="container-buttons">
+              <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.cancel.option.cancel
+                }}</button>
+              <button type="button" class="btnConfirm" (click)="onCancel()">{{ translate.action.cancel.option.confirm
+                }}</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO DE EXCLUSÃO -->
+        <div class="container-delete" *ngIf="settings.activeComponent === 'ServiceOrders/Delete'">
+          <div class="container-confirmation">
+            <div class="container-info">
+              <p>{{ translate.action.delete.notice }}</p>
+              <small>{{ translate.action.delete.warning }}</small>
+            </div>
+
+            <div class="container-buttons">
+              <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel
+                }}</button>
+              <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm
+                }}</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEÇÃO DE ATUALIZAÇÃO DE STATUS (CONCLUÍDO) -->
+        <div class="container-update-status" *ngIf="settings.activeComponent === 'ServiceOrders/UpdateStatus'">
+          <div class="container-confirmation">
+
+            <div class="container-info">
+              <p class="title">{{ translate.action.updateStatus.status[0] }} <small>( {{
+                  translate.action.updateStatus.scheme[settings?.data?.data?.scheme.data.type][settings?.data?.data?.scheme.status]
+                  }} )</small> {{ translate.action.updateStatus.status[1] }} {{ settings?.data?.isAllocProductsThisStep
+                ? translate.action.updateStatus.status[2] : '' }} ?</p>
+            </div>
+
+            <div class="container-body clearfix">
+              <h6 class="title name">{{ settings.data.data?.customer.name }}</h6>
+              <p class="label">{{ settings?.data?.data?.customer?.personalDocument ?
+                settings?.data?.data?.customer?.personalDocument.value
+                :(settings?.data?.data?.customer?.businessDocument) ?
+                settings?.data?.data?.customer?.businessDocument.value : ''}}</p>
+              <p class="description">{{ settings.data.data?.description }}</p>
+            </div>
+
+            <!-- 🆕 SEÇÃO DE FOTOS MODERNIZADA (APENAS QUANDO FOR CONCLUÍDO) -->
+            <div class="container-photos-modal" *ngIf="settings?.data?.data?.scheme?.status === 'CONCLUDED'">
+              <h6>
+                <span class="photo-counter">
+                  Fotos do Serviço Concluído
+                  <span class="badge" *ngIf="modalPhotosAfter?.length > 0">
+                    {{ modalPhotosAfter.length }}/4
+                  </span>
+                </span>
+
+                <!-- Botões de ação -->
+                <div class="photo-actions">
+                  <!-- Botão de anexar arquivo -->
+                  <button type="button" class="btn-file" data-tooltip="Escolher da galeria"
+                    (click)="modalAfterInput.click()" [disabled]="modalPhotosAfter?.length >= 4">
+                    <icon name="image-outline" pack="eva"></icon>
+                  </button>
+
+                  <!-- Botão de câmera -->
+                  <button type="button" class="btn-camera" data-tooltip="Tirar foto" (click)="onOpenModalCamera()"
+                    [disabled]="modalPhotosAfter?.length >= 4">
+                    <icon name="camera" pack="eva"></icon>
+                  </button>
+                </div>
+              </h6>
+
+              <!-- Input de arquivo oculto -->
+              <input type="file" accept="image/*" capture="environment" multiple (change)="onSelectModalPhotos($event)"
+                #modalAfterInput hidden>
+
+              <!-- Grid de fotos se houver -->
+              <div class="photos" *ngIf="modalPhotosAfter?.length > 0">
+                <div class="photo" *ngFor="let photo of modalPhotosAfter; let i = index">
+                  <img [src]="photo" [alt]="'Foto ' + (i + 1)" />
+                  <div class="photo-name">Foto {{ i + 1 }}</div>
+                  <button type="button" (click)="onRemoveModalPhoto(i)" [attr.aria-label]="'Remover foto ' + (i + 1)">
+                    <icon name="close" pack="eva"></icon>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Área de drop quando não há fotos -->
+              <div class="drop-zone" *ngIf="modalPhotosAfter?.length === 0">
+                <div class="drop-icon">📷</div>
+                <p>Clique nos botões acima para adicionar fotos do serviço concluído</p>
+              </div>
+            </div>
+
+            <div class="container-buttons">
+              <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.updateStatus.option.cancel
+                }}</button>
+              <button type="button" class="btnConfirm" (click)="onUpdateStatus()">{{
+                translate.action.updateStatus.option.confirm }}</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SEÇÃO DE REGISTRO/EDIÇÃO -->
+    <div id="container-register"
+      *ngIf="(settings.activeComponent === 'ServiceOrders/Create') || (settings.activeComponent === 'ServiceOrders/Update')">
+      <service-orders-register #registerComponent (callback)="onRegisterResponse($event)"></service-orders-register>
+    </div>
+
+    <!-- SEÇÃO DE NOTA FISCAL -->
+    <register-nf embed="serviceOrders" [data]="settings.data"
+      *ngIf="(settings.activeComponent == 'ServiceOrders/EmitNf') && checkNf()"
+      (callback)="onResponseRegisterNf($event)"></register-nf>
+
+    <!-- 📷 MODAL DA CÂMERA (POSIÇÃO CORRETA - DENTRO DO ng-container) -->
+    <div class="camera-modal" *ngIf="modalCamera.active">
+      <video #modalVideo autoplay playsinline muted></video>
+      <div class="controls">
+        <button type="button" (click)="onCaptureModalPhoto()">
+          <icon name="camera" pack="eva"></icon>
+          Capturar Foto
+        </button>
+        <button type="button" (click)="onToggleModalCameraFacing()">
+          <icon name="flip-2" pack="eva"></icon>
+          Trocar Câmera
+        </button>
+        <button type="button" (click)="onCloseModalCamera()">
+          <icon name="close" pack="eva"></icon>
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <ng-container slot="components">
+    <service-order-receipts #printComponent (callback)="onPrintResponse($event)"></service-order-receipts>
+  </ng-container>
+
+</modal>

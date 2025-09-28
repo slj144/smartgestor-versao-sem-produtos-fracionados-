@@ -1,0 +1,92 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  ></custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.date }}</div>
+            <div class="col-4">{{ translate.table.label.provider }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.purchaseStatus }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.paymentStatus }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.value }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+  
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+  
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+            
+            <div class="col-auto col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.date }}:</span>
+              <span class="value">{{ item.registerDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+    
+            <div class="col-12 col-md-4 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.provider }}:</span>
+              <span class="value">{{ item.provider?.name }}</span>
+            </div>  
+  
+            <div class="col-6 col-md-2 text-left text-md-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.purchaseStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.purchaseStatus | lowercase)">{{ translate.table.enum.status[item.purchaseStatus] }}</span>
+              </div>
+            </div>  
+  
+            <div class="col-6 col-md-2 text-left text-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.paymentStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.paymentStatus | lowercase)">{{ translate.table.enum.status[item.paymentStatus] }}</span>
+              </div>
+            </div>  
+  
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.value }}</span>
+              <span class="value fw-bold costPrice">{{ item.balance?.total | currency }}</span>
+            </div>  
+  
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead"   [tooltip]="translate.table.action.read.title" (click)="onRead(item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnAccept" [tooltip]="translate.table.action.accept.title" (click)="onAccept(item)" *ngIf="permissions.actions.accept && (item.purchaseStatus == 'PENDENT')"><icon name="checkmark-outline" pack="eva"></icon></button>
+                <button class="btnAction btnEdit"   [tooltip]="translate.table.action.update.title" (click)="onUpdate(item)" *ngIf="permissions.actions.edit && (item.purchaseStatus == 'PENDENT') || (item.purchaseStatus != 'CANCELED' && isAdmin && (item.registerDate >= period?.start && item.registerDate <= period?.end))"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnCancel" [tooltip]="translate.table.action.cancel.title" (click)="onCancel(item)" *ngIf="permissions.actions.cancel && (item.purchaseStatus != 'CANCELED')"><icon name="close" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title" (click)="onDelete(item)" *ngIf="permissions.actions.delete && (item.purchaseStatus == 'CANCELED')"><icon name="trash" pack="fa"></icon></button>
+              </div>
+            </div>  
+  
+          </div>
+        </div>
+  
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate()" ><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>
+    
+  <placeholder [loading]="loading" [hasData]="recordsData?.length" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<purchases-modal (callback)="onModalResponse($event)"></purchases-modal>

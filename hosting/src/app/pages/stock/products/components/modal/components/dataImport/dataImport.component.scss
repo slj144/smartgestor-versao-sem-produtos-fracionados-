@@ -1,0 +1,140 @@
+
+main {
+  padding: 0 10px;
+  section {
+    margin: 0 0 15px;
+    .title {
+      color: #555;        
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      display: block;
+    }
+    input, select {
+      font-size: 13px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;
+    }
+    &.container-instructions {
+      .container-description {
+        p {
+          color: #666;
+          font-size: 13px;
+          line-height: 15px;
+        }        
+      }
+      .container-steps {
+        ol {
+          padding-left: 25px;
+          li {
+            color: #777;
+            font-size: 13px;
+            & > span {
+              line-height: 14px;
+            }          
+            & > small {
+              color: red;
+              font-size: 12px;            
+              line-height: 14px;
+            }
+            & > span, & > small {
+              display: block;
+            }
+            div {
+              &.table-responsive {
+                margin: 10px 5px 3px;
+                table {
+                  margin: 3px;
+                  margin: 0;
+                  thead {
+                    tr {      
+                      font-size: 12px;
+                      th {
+                        color: #777;
+                        font-weight: 500;
+                        padding: 2px 10px;
+                        text-align: center;
+                      }
+                    }
+                  }
+                  tbody {
+                    tr {
+                      td {
+                        font-size: 12px;
+                        padding: 2px 10px;
+                        &:first-child {
+                          font-size: 11px;
+                          font-weight: 600;
+                        }
+                        &:last-child {
+                          text-align: center;
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            a {
+              &.btnDownload {
+                margin: 10px 5px 2px;
+                padding: 5px 15px;
+                color: #fff;
+                span {
+                  position: relative;
+                  top: 0;
+                }
+                icon {                
+                  position: relative;
+                  bottom: -2px;                
+                  margin-right: 5px;
+                  font-size: 15px;
+                }
+              }
+            }          
+          }
+          & > li {
+            margin-bottom: 5px;
+          }
+        }
+      }
+    }
+    &.container-file {
+      input {
+        margin-bottom: 5px;
+        padding: 4px 5px;
+      }
+    }
+    &.container-errors {
+      .wrapper {
+        max-height: 350px;
+        overflow: auto;
+        ol {
+          li {
+            color: indianred;
+            font-size: 12px;
+            margin-bottom: -6px;
+          }
+        }
+      }
+    }    
+  }
+  button {
+    margin: 10px auto 0;
+    display: block;
+    padding: 5px 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: rgb(102, 102, 255);
+    color: #fff;
+    &.btnGreen {
+      background-color: green;
+    }
+    &.btnBlue {
+      background-color: rgb(102, 102, 255);
+    }
+    &.btnRed {
+      background-color: indianred;
+    }
+  }
+}

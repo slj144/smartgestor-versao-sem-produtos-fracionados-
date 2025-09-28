@@ -1,0 +1,207 @@
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+
+    <!--  FILTERS  -->
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Collaborator/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>        
+    </div>
+
+    <div class="container-view" *ngIf="(settings.activeComponent === 'Collaborator/View') && formControls || (settings.activeComponent === 'Collaborator/Add') && formControls || (settings.activeComponent === 'Collaborator/Edit') && formControls || (settings.activeComponent === 'Collaborator/Delete') && formControls">
+      <div class="container-external">
+        <div class="container-info">
+          <div class="wrapper">
+                    
+            <div *ngIf="settings.activeComponent === 'Collaborator/View'">
+              <article *ngIf="settings.data.selectedData" class="view">
+          
+                <div class="header clearfix">
+                  <div class="image-container">
+                    <img src="{{ settings.data.selectedData.image ? settings.data.selectedData.image : '/assets/images/profile.png' }}"/>
+                    <input type="file" accept="image/*" name="image" class="inpfile hide"/>
+                  </div>
+                  <ul class="admin-account">
+                    <li>{{ settings.data.selectedData.username }}</li>
+                    <li>{{ settings.data.selectedData.name }}</li>
+                    <li>{{ settings.data.selectedData.email }}</li>
+                    <li>({{ settings.data.selectedData.usertype === 'admin' ? 'Administrador' : settings.data.selectedData.permissions.name }} - {{ settings.data.selectedData.allowAccess ? 'Com acceso ao sistema' : 'Sem acesso ao sistema' }})</li>
+                  </ul>
+                </div>
+          
+                <div class="content" *ngIf="settings.data.selectedData != null">
+                  <div class="viewData">
+          
+                    <!-- START PERMISSIONS  -->
+                  
+                    <div style="margin: 0;" class="box no-wrapper" *ngIf="settings.data.selectedData.usertype != 'admin' && permissionSettings">
+                      <collaborators-permissions [settings]="permissionSettings"></collaborators-permissions>
+                    </div>
+          
+          
+                    <!-- END PERMISSIONS  -->
+          
+                    <div *ngIf="settings.data.selectedData.address.postalCode">
+                      <p class="box-header {{ settings.data.selectedData.usertype != 'admin' ? '' : 'no-margin' }}">{{ translate.mainModal.address.title }}</p>
+          
+                      <ul class="address box view">
+                        <li><i class="fas fa-map-marker-alt"></i>{{ settings.data.selectedData.address.addressLine }}<span>, {{ settings.data.selectedData.address.city }} - {{ settings.data.selectedData.address.state }}</span></li>
+                        <li>{{ settings.data.selectedData.address.postalCode }}</li>
+                      </ul>
+                    </div>
+                    
+                    <div *ngIf="settings.data.selectedData.contacts.phone || settings.data.selectedData.contacts.whatsapp">
+                      <p class="box-header">{{ translate.mainModal.contacts.title }}</p>
+          
+                      <ul class="contacts box view">
+                        <li><i class="fas fa-phone"></i>{{ settings.data.selectedData.contacts.phone }}</li>
+                        <li *ngIf="settings.data.selectedData.contacts.whatsapp"><i class="fab fa-whatsapp"></i>{{ settings.data.selectedData.contacts.whatsapp }}</li>
+                      </ul>
+                    </div>              
+                    
+                  </div>
+                </div> 
+              </article>
+          
+            </div>
+          
+            <div *ngIf="settings.activeComponent === 'Collaborator/Add' || settings.activeComponent === 'Collaborator/Edit'">
+              <form class="form create page" id="UserForm" [formGroup]="model" #form (submit)="onConfirmSubmit($event)">
+                <div class="branche-header">
+                <button type="button" *ngIf="settings.data.action !==  'add'" class="form-control requestPassword" (click)="requestNewPassword($event)">{{ translate.mainModal.requestNewPassword }}</button>
+                <div class="image-container" (click)="choiceImage($event)">
+                  <img src="{{ settings.data.action ===  'add' ? 'assets/images/profile.png' :(settings.data.selectedData.image) ?  settings.data.selectedData.image :  '/assets/images/profile.png' }}"/>
+                  <input type="file" accept="image/*" name="image" class="inpfile hide"/>
+                </div>
+              </div>
+          
+              <div class="content">
+          
+                  <p class="box-header">{{ translate.mainModal.userAccount }}</p>
+          
+                  <div class="admin-account box row form-group">
+          
+                    <div class="form-group col-12">
+                      <label>{{ translate.mainModal.contacts.email }}</label>
+                      <input type="text" class="" name="email" placeholder="Email" formControlName="email"  class="form-control {{ formControls.email.errors ? 'required' : '' }}"  placeholder="usuário@dominio.com" />
+                    </div>
+
+                    <div class="box form-group row user-type-box">
+                      <div class="col-12 fieldLeft col-md-6 form-group">
+                        <label>{{ translate.mainModal.name }}</label>
+                        <input type="text" name="name" placeholder="Nome" formControlName="name"  class="form-control {{ formControls.name.errors ? 'required' : '' }}"/>
+                      </div>
+            
+                      <div class="col-12 fieldRight col-md-6 form-group">
+                        <label class="userTypeLabel">{{ translate.mainModal.isSendEmailToStore }}</label>
+                        <select class="form-control {{ formControls.isSendEmailToStore.errors ? 'required' : '' }}" formControlName="isSendEmailToStore">
+                          <option value="true">{{ translate.mainModal.decision.yes }}</option>
+                          <option value="false">{{ translate.mainModal.decision.no }}</option>
+                        </select>
+                      </div>
+                    </div>
+          
+                  <!-- START PERMISSIONS  -->
+                    
+                  <div class="box form-group row user-type-box" *ngIf="settings.data.action == 'edit' && currentUsername != settings.data.selectedData.username && currentUserType == 'admin' || settings.data.action == 'add' && currentUserType == 'admin' ">
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label class="userTypeLabel">{{ translate.mainModal.allowAccess }}</label>
+                      <select class="form-control {{ formControls.allowAccess.errors ? 'required' : '' }}" formControlName="allowAccess">
+                        <option value="true">{{ translate.mainModal.decision.yes }}</option>
+                        <option value="false">{{ translate.mainModal.decision.no }}</option>
+                      </select>
+                    </div>
+          
+          
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label class="userTypeLabel">{{ translate.mainModal.usertype }}</label>
+                      <div class="manager-profiles-permissions clearfix">
+                        <select class="form-control {{ formControls.usertype.errors ? 'required' : '' }} {{ !isMatrix ? 'paddingFull' : ''}}" formControlName="usertype" *ngIf="settings.data.action == 'edit' && currentUsername != settings.data.selectedData.username && currentUserType == 'admin' || settings.data.action == 'add' && currentUserType == 'admin' ">
+                          <option value="admin">{{ translate.mainModal.admin }}</option>
+                          <option *ngFor="let profile of collaboratorProfiles" value="{{ profile.code }}">{{ profile.name }}</option>
+                        </select>
+                        <button type="button" *ngIf="isMatrix" (click)="onOpenLayer('collaboratorProfiles')"><icon name="pencil-alt" pack="fa"></icon></button>
+                      </div>
+                      
+                    </div>
+                  </div>
+                </div>
+          
+                  <p class="box-header">{{ translate.mainModal.address.title }}</p>
+                  
+                  <div class="address box row" formGroupName="address">
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                        <label>{{ translate.mainModal.address.addressLine }}</label>
+                        <input type="text" placeholder="Endereço completo" formControlName="addressLine" class="form-control"/>
+                      </div>
+                      <div class="col-12 col-md-6 fieldRight form-group">
+                        <label>{{ translate.mainModal.address.postalCode }}</label>
+                        <input type="text"  placeholder="____-___"  formControlName="postalCode" class="form-control"/>
+                      </div>
+          
+                      <div class="col-12 col-md-6 fieldLeft form-group">
+                        <label>{{ translate.mainModal.address.city }}</label>
+                        <input type="text"  placeholder="Cidade" formControlName="city" class="form-control"/>
+                      </div>
+                      <div class="col-12 col-md-6 fieldRight form-group">
+                        <label>{{ translate.mainModal.address.state }}</label>
+                        <select class="form-control" formControlName="state">
+                          <option *ngFor="let state of states" value="{{ state }}">{{ state }}</option>
+                        </select>
+                      </div>
+                  </div>
+          
+                  <p class="box-header">{{ translate.mainModal.contacts.title }}</p>
+                
+                  <div class="contacts box row" formGroupName="contacts">
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.contacts.phone }}</label>
+                      <input type="text" placeholder="(_) _____-____" formControlName="phone" class="form-control"/>
+                    </div>
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label>{{ translate.mainModal.contacts.whatsapp }}</label>
+                      <input type="text" class="form-control" placeholder="(_) _____-____" formControlName="whatsapp"/>
+                    </div>
+                  </div>
+          
+                  <p>{{ modal | json }}</p>
+          
+                  <small *ngIf="model.invalid">{{ translate.mainModal.mandatoryFields }}</small>   
+          
+                  <button type="submit" class="bottomSC col-12" [disabled]="checkEnableButton()">{{ translate.mainModal.confirm }}</button>
+                </div> 
+              </form>
+            </div>      
+          
+            <div *ngIf="settings.activeComponent === 'Collaborator/Delete'" id="containerUserDelete">
+              <div class="form-group page">
+                <div class="container-user clearfix">
+                  <div class="container-image">
+                    <img [src]="settings.data.selectedData && settings.data.selectedData.image? settings.data.selectedData.image : 'assets/images/profile.png'" />
+                  </div>
+          
+                <div class="container-info">
+                  <span class="name">{{ settings.data.selectedData.name }}</span>
+                  <span class="label">{{ settings.data.selectedData.username }}</span>
+                  <span class="label">{{ settings.data.selectedData.email }}</span>
+                </div>
+              </div>
+          
+                <div class="container-buttons clearfix">
+                  <button class="btn btnRed" (click)="onConfirmSubmit()">{{ translate.mainModal.confirm }}</button>
+                  <button class="btn btnBlue" (click)="onClose()">{{ translate.mainModal.cancel }}</button>
+                </div>   
+              </div>           
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div slot="components">
+    <collaborators-modal-layer (callback)="onLayerReponse($event)"></collaborators-modal-layer>
+  </div>
+
+</modal>

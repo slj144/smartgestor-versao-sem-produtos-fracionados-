@@ -1,0 +1,148 @@
+<div id="products-selector">
+
+  <header>
+    <div class="container-search">
+      <div #searchBar class="search-bar">
+
+        <button class="btnFilter" (click)="onFilter()" [attr.aria-label]="'Filtrar produtos'">
+          <span class="badge" *ngIf="filtersBadge > 0">{{ filtersBadge }}</span>
+          <icon name="funnel-outline" pack="eva"></icon>
+        </button>
+
+        <input type="text" name="search" [placeholder]="translate.searchBar.placeholder" autocomplete="off"
+          (input)="onSearchInput($event)" (keydown.enter)="onSearch()" #input />
+
+        <button class="btnReset" *ngIf="input.value != ''" (click)="onResetSearchBar()"
+          [attr.aria-label]="'Limpar busca'">
+          <icon name="close" pack="eva"></icon>
+        </button>
+
+        <button class="btnSearch" (click)="onSearch()" [attr.aria-label]="'Buscar produtos'">
+          <icon name="search-outline" pack="eva"></icon>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="container-search" *ngIf="recordsData?.length > 0">
+      <div class="search-results-header">
+        <h5>
+          <icon name="layers-outline" pack="eva" class="result-icon"></icon>
+          {{ recordsData?.length }} {{ translate.search.info[!settings.alt?.parts ? 1 : 2] }}
+          <span class="separator">•</span>
+          <span class="search-term">{{ searchText }}</span>
+        </h5>
+      </div>
+
+      <div class="container">
+        <div class="products-grid">
+          <div class="product-card" *ngFor="let item of recordsData; trackBy: trackByProductCard" [class.out-of-stock]="item.quantity <= 0"
+            [class.selected]="item.selected">
+
+            <div class="product-image">
+              <img [src]="item.thumbnail?.url ?? 'assets/images/Stock/Products/image-placeholder.jpg'" [alt]="item.name"
+                (error)="$event.target.src='assets/images/Stock/Products/image-placeholder.jpg'" />
+              <div class="stock-indicator" [class.in-stock]="item.quantity > 0" [class.no-stock]="item.quantity <= 0">
+                <icon [name]="item.quantity > 0 ? 'checkmark-circle' : 'close-circle'" pack="eva"></icon>
+              </div>
+            </div>
+
+            <div class="product-content">
+              <h3 class="product-name">{{ item.name }}</h3>
+
+              <div class="product-info">
+                <div class="info-row">
+                  <span class="label">{{ translate.search.item.label.code }}:</span>
+                  <span class="value code">{{ item.code }}</span>
+                </div>
+
+                <div class="info-row" *ngIf="item.internalCode">
+                  <span class="label">Código Interno:</span>
+                  <span class="value">{{ item.internalCode }}</span>
+                </div>
+
+                <div class="info-row" *ngIf="item.serialNumber">
+                  <span class="label">{{ translate.search.item.label.serialNumber }}:</span>
+                  <span class="value">{{ item.serialNumber }}</span>
+                </div>
+              </div>
+
+              <div class="product-availability" *ngIf="item.quantity > 0">
+                <div class="availability-info">
+                  <div class="stock-info">
+                    <icon name="cube-outline" pack="eva"></icon>
+                    <span>{{ item.quantity }} {{ item.commercialUnit.name }}</span>
+                  </div>
+                  <div class="price-info">
+                    <span class="currency">R$</span>
+                    <span class="price">{{ item.salePrice | number:'1.2-2' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="product-unavailable" *ngIf="item.quantity <= 0">
+                <icon name="alert-triangle-outline" pack="eva"></icon>
+                <span>{{ translate.search.item.label.outOfStock }}</span>
+              </div>
+
+              <div class="product-actions" *ngIf="item.quantity > 0 || settings.selectAll">
+                <button class="btn-action btn-select" *ngIf="!item.selected" (click)="onSelectProduct(item)"
+                  [attr.aria-label]="'Selecionar ' + item.name">
+                  <icon name="plus-circle-outline" pack="eva"></icon>
+                  <span>Selecionar</span>
+                </button>
+
+                <button class="btn-action btn-remove" *ngIf="item.selected" (click)="onDeselectProduct(item)"
+                  [attr.aria-label]="'Remover ' + item.name">
+                  <icon name="minus-circle-outline" pack="eva"></icon>
+                  <span>Remover</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-placeholder" *ngIf="productsSelected?.length == 0">
+      <div class="wrapper">
+        <div *ngIf="!loading" class="placeholder-content">
+
+          <div *ngIf="searchText == ''" class="empty-state">
+            <div class="illustration">
+              <icon name="search" pack="eva" class="search-icon"></icon>
+            </div>
+            <div class="info">
+              <h3>{{ translate.placeholder.beforeSearch.label[!settings.alt?.parts ? 0 : 1] }}</h3>
+              <p>{{ translate.placeholder.beforeSearch.instruction }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="searchText != ''" class="no-results">
+            <div class="illustration">
+              <icon name="inbox-outline" pack="eva" class="empty-icon"></icon>
+            </div>
+            <div class="info">
+              <h3>{{ translate.placeholder.afterSearch.label }}</h3>
+              <p>Tente buscar por outro termo</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="loading-state" *ngIf="loading">
+          <div class="spinner">
+            <div class="bounce1"></div>
+            <div class="bounce2"></div>
+            <div class="bounce3"></div>
+          </div>
+          <p>Buscando produtos...</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+</div>

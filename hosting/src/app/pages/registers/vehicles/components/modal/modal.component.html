@@ -1,0 +1,128 @@
+
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Vehicles/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" *ngIf="(settings.activeComponent === 'Vehicles/Read') || (settings.activeComponent === 'Vehicles/Delete')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+
+            <div class="container-data">
+
+              <section class="container-informations">
+                <h5>{{ translate.action.read.section.informations.title }}</h5>
+
+                <div class="content row">
+                  <p class="col-6"><span class="label">{{ translate.action.read.section.informations.label.code }}:</span> <span class="value">{{ settings.data.code }}</span></p>
+                  <p class="col-6"><span class="label">{{ translate.action.read.section.informations.label.plate }}:</span> <span class="value">{{ settings.data.plate }}</span></p>
+                  <p class="col-6"><span class="label">{{ translate.action.read.section.informations.label.model }}:</span> <span class="value negative">{{ settings.data.model }}</span></p>
+                  <p class="col-6"><span class="label">{{ translate.action.read.section.informations.label.color }}:</span> <span class="value negative">{{ settings.data.color }}</span></p>
+                  <p class="col-6"><span class="label">{{ translate.action.read.section.informations.label.mileage }}:</span> <span class="value positive">{{ settings.data.mileage }}</span></p>
+                </div>               
+              </section>
+
+              <section class="container-proprietary">
+                <h5>{{ translate.action.read.section.proprietary?.title }}</h5>
+
+                <div class="content row">
+                  <p [ngClass]="{
+                    'col-12': !(settings.data.proprietary.personalDocument || settings.data.proprietary.businessDocument), 
+                    'col-6': (settings.data.proprietary.personalDocument || settings.data.proprietary.businessDocument)
+                  }">
+                    <span class="label">{{ translate.action.read.section.proprietary?.label?.name }}:</span> <span class="value">{{ settings.data.proprietary?.name }}</span>
+                  </p>
+                  <p class="col-6" *ngIf="settings.data.proprietary.personalDocument">
+                    <span class="label">{{ settings.data.proprietary.personalDocument.type }}:</span> <span class="value">{{ settings.data.proprietary.personalDocument.value }}</span>
+                  </p>          
+                  <p class="col-6" *ngIf="settings.data.proprietary.businessDocument">
+                    <span class="label">{{ settings.data.proprietary.businessDocument.type }}:</span> <span class="value">{{ settings.data.proprietary.businessDocument.value }}</span>
+                  </p>
+                  <p class="col-6" *ngIf="settings.data.proprietary?.contacts?.phone"><span class="label">{{ translate.action.read.section.proprietary?.label?.phone }}:</span> <span class="value">{{ settings.data.proprietary?.contacts?.phone }}</span></p>
+                  <p class="col-6" *ngIf="settings.data.proprietary?.contacts?.email"><span class="label">{{ translate.action.read.section.proprietary?.label?.email }}:</span> <span class="value">{{ settings.data.proprietary?.contacts?.email }}</span></p>
+                  <p class="col-12" *ngIf="settings.data.proprietary?.address"><span class="label">{{ translate.action.read.section.proprietary?.label?.address }}:</span> <span class="value">{{ settings.data.proprietary?.address }}</span></p>
+                </div>               
+              </section>
+
+              <section class="container-historic" *ngIf="settings.activeComponent === 'Vehicles/Read'">
+                <h5>{{ translate.action.read.section.historic.title }}</h5>
+
+                <div class="content">
+
+                  <ng-container *ngIf="!loadingHistoric && historic?.length > 0">                    
+                    <div class="table-responsive">
+                      <table class="table table-borderless">
+                        <thead>
+                          <tr>
+                            <th>{{ translate.action.read.section.historic.label.code }}</th>
+                            <th class="text-start">{{ translate.action.read.section.historic.label.service }}</th>
+                            <th>{{ translate.action.read.section.historic.label.mileage }}</th>
+                            <th>{{ translate.action.read.section.historic.label.date }}</th>
+                          </tr>                 
+                        </thead>
+                        <tbody>
+                          <tr *ngFor="let item of historic">
+                            <td><span>{{ item.code }}</span></td>
+                            <td><span>{{ item.service }}</span></td>
+                            <td><span>{{ item.mileage }}</span></td>
+                            <td><span>{{ item.date | date:'dd/MM/yyyy' }}</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </ng-container>
+
+                  <p class="loading" *ngIf="loadingHistoric">Carregando...</p>
+                  <p class="noData" *ngIf="!loadingHistoric && historic?.length == 0">Não há histórico deste veículo até o momento!</p>
+
+                </div>
+              </section>
+
+            </div>
+
+            <div class="container-delete" *ngIf="settings.activeComponent === 'Vehicles/Delete'">
+              <div class="container-confirmation">
+
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div id="container-register" *ngIf="(settings.activeComponent === 'Vehicles/Create') || (settings.activeComponent === 'Vehicles/Update')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <vehicles-register (callback)="onRegisterResponse($event)"></vehicles-register>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div id="container-data-export" *ngIf="settings.activeComponent === 'Vehicles/DataExport'">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <vehicles-data-export (callback)="onDataExportResponse($event)"></vehicles-data-export>
+          </div>
+        </div>
+      </div>
+    </div> -->
+
+  </div>
+</modal>

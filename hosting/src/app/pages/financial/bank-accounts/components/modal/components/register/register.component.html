@@ -1,0 +1,43 @@
+
+<div id="containerFormRegister" *ngIf="checkBootstrap">
+  
+  <form class="form" [formGroup]="formBankAccount" (submit)="onSubmit()" autocomplete="off">
+
+    <div class="row">
+      <div class="col-12 form-group">
+        <label>{{ translate.form.name.label }}</label>
+        <input type="text" formControlName="name" class="form-control {{ formControls.name.errors ? 'required' : '' }}" />
+      </div>
+    </div>
+
+    <div class="row">            
+      <div class="col-6 form-group">
+        <label>{{ translate.form.account.label }}</label>  
+        <input type="text" formControlName="account" class="form-control {{ formControls.account.errors ? 'required' : '' }}" (input)="onNumberFieldMask($event, formControls.account)" />
+      </div>
+
+      <div class="col-6 form-group">
+        <label>{{ translate.form.agency.label }}</label>
+        <input type="text" formControlName="agency" class="form-control {{ formControls.agency.errors ? 'required' : '' }}" (input)="onNumberFieldMask($event, formControls.agency)" />
+      </div>
+    </div>
+  
+    <div class="row" *ngIf="settings.activeComponent != 'BankAccount/Update'">
+      <div class="col-12 form-group">
+        <label>{{ translate.form.balance.label }}</label>
+        <input type="text" formControlName="balance" class="form-control {{ formControls.balance.errors ? 'required' : '' }}" (input)="onPriceFieldMask($event, formControls.balance)" />
+      </div>     
+    </div>
+
+    <div class="row" *ngIf="settings.activeComponent == 'BankAccount/Update'">
+      <div class="col-12 form-group">
+        <label>{{ translate.form.balance.label + ': ' + (formControls.balance.value | currency) }}</label>
+      </div>
+    </div>
+    
+    <small *ngIf="formBankAccount.invalid">{{ translate.form.messages.notice }}</small>
+
+    <button type="submit" class="btn btnBlue" [disabled]="formBankAccount.invalid">{{ translate.form.button.submit }}</button>
+  </form>
+
+</div>

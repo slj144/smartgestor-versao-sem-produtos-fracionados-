@@ -1,0 +1,41 @@
+.updates-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #E5E7EB;
+  background: #FFF7ED; /* warm */
+  color: #7C2D12;
+}
+.updates-banner .title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.updates-banner .title .version {
+  background: #FED7AA;
+  color: #7C2D12;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+.updates-banner .message {
+  margin-top: 2px;
+  font-size: 12px;
+}
+.updates-banner .actions {
+  display: flex;
+  gap: 8px;
+}
+.updates-banner .btn-clear,
+.updates-banner .btn-dismiss {
+  padding: 6px 10px;
+  border: 1px solid #FCD34D;
+  background: #fff;
+  color: #7C2D12;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.updates-banner .btn-clear { font-weight: 600; }
+

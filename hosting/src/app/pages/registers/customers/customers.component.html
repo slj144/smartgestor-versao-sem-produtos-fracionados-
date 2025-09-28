@@ -1,0 +1,124 @@
+<div id="container-main">
+
+  <custom-header [orderSettings]="{enabled: true, order: order}" [loading]="loading" [filtersBadge]="filtersBadge"
+    [countData]="countData" (filter)="onFilter($event)" (search)="onSearch($event)"
+    (changeOrder)="onChangeOrderBy($event)">
+    <ng-container slot="buttons-of-header">
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li *ngIf="isAdmin" (click)="onDataImport()"><span class="dropdown-item">
+              <icon name="code-outline" pack="eva"></icon> {{ translate.modal.action.others.dataImport.title }}
+            </span></li>
+          <li *ngIf="isAdmin" (click)="onDataExport()"><span class="dropdown-item">
+              <icon name="code-outline" pack="eva"></icon> {{ translate.modal.action.others.dataExport.title }}
+            </span></li>
+        </ul>
+      </div>
+    </ng-container>
+  </custom-header>
+
+  <main>
+
+    <ng-contianer *ngIf="!loading && recordsData.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-md-5 col-xl-6">{{ translate.table.label.name }}</div>
+            <div class="col-2 text-center" *ngIf="isBrazil">{{ translate.table.label.country.brazil.personalDocument +
+              '/' + translate.table.label.country.brazil.businessDocument }}</div>
+            <div class="col-2 text-center" *ngIf="!isBrazil">{{ translate.table.label.country.others.document }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.phone }}</div>
+            <div class="col-md-2 col-xl-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+
+            <div
+              class="col-12 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+
+            <div
+              class="col-12 col-md-5 col-xl-6 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.name }}:</span>
+              <span class="value">{{ item.name }}</span>
+            </div>
+
+            <div
+              class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom"
+              *ngIf="isBrazil">
+              <span class="label d-block d-md-none">{{ translate.table.label.country.others.document }}:</span>
+              <div class="value">
+                <span *ngIf="item.personalDocument && item.personalDocument?.value">{{ (item.personalDocument?.value ?
+                  (item.personalDocument?.type + ': ' + item.personalDocument?.value) : '----') }}</span>
+                <span *ngIf="item.businessDocument && item.businessDocument?.value">{{ (item.businessDocument?.value ?
+                  item.businessDocument?.type + ': ' + item.businessDocument?.value : '----') }}</span>
+                <span
+                  *ngIf="(!item.personalDocument?.value || item.businessDocument?.value) && (!item.businessDocument?.value || item.personalDocument?.value)">----</span>
+              </div>
+            </div>
+
+            <div
+              class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom"
+              *ngIf="!isBrazil">
+              <span class="label d-block d-md-none">{{ translate.table.label.country.others.document }}:</span>
+              <div class="value">
+                <span *ngIf="item.personalDocument && item.personalDocument?.value">{{ (item.personalDocument?.value ?
+                  (item.personalDocument?.type + ': ' + item.personalDocument?.value) : '----') }}</span>
+                <span *ngIf="item.businessDocument && item.businessDocument?.value">{{ (item.businessDocument?.value ?
+                  item.businessDocument?.type + ': ' + item.businessDocument?.value : '----') }}</span>
+                <span
+                  *ngIf="(!item.personalDocument?.value || item.businessDocument?.value) && (!item.businessDocument?.value || item.personalDocument?.value)">----</span>
+              </div>
+            </div>
+
+            <div
+              class="col col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.phone }}:</span>
+              <span class="value">{{ item.contacts?.phone ?? '----' }}</span>
+            </div>
+
+            <div class="col-auto col-md-2 col-xl-1 text-center p-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onRead(item)">
+                  <icon name="eye" pack="fa"></icon>
+                </button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title"
+                  (click)="onUpdate(item)" *ngIf="permissions.actions.edit">
+                  <icon name="pencil-alt" pack="fa"></icon>
+                </button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title"
+                  (click)="onDelete(item)" *ngIf="permissions.actions.delete">
+                  <icon name="trash" pack="fa"></icon>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </ng-contianer>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate()">
+        <icon name="plus-outline" pack="eva"></icon>
+      </button>
+    </div>
+
+  </main>
+
+  <placeholder [loading]="loading" [hasData]="recordsData.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<customers-modal (callback)="onModalResponse($event)"></customers-modal>

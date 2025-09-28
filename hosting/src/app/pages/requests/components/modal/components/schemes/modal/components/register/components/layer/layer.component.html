@@ -1,0 +1,10 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container-owners" [style.display]="(settings.activeComponent == 'products' ? 'block' : 'none')">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+  </ng-container>
+</layer>

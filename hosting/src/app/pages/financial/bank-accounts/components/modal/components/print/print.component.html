@@ -1,0 +1,67 @@
+
+<iframe id="printingFrame" name="printingFrame" style="display: none;">
+  <body>  
+
+    <div id="containerAccountExtractPrint" *ngIf="settings.activeComponent == 'BankAccounts/Extract'">
+      <header *ngIf="settings.storeInfo">
+        <img src="{{ settings.storeInfo.image }}"/>
+        <span class="name">{{ settings.storeInfo.billingName }}</span>
+        <span>{{ settings.storeInfo.address.addressLine + ', ' + settings.storeInfo.address.city + ' - ' + settings.storeInfo.address.state }}</span>
+        <span>Telefone: {{ settings.storeInfo.contacts?.phone }}</span>   
+      </header>
+
+      <section class="container-info">
+        <div class="content">
+          <p><span class="label">{{ 'Código:' }}</span> <span class="value">{{ settings.data.informations.code }}</span></p>
+          <p><span class="label">{{ 'Banco:' }}</span> <span class="value">{{ settings.data.informations.name }}</span></p>
+          <p><span class="label">{{ 'Agência / Conta:' }}</span> <span class="value">{{ settings.data.informations.agency + ' / ' + settings.data.informations.account }}</span></p>
+          <p><span class="label">{{ 'Saldo:' }}</span> <span class="value">{{ settings.data.informations.balance | currency }}</span></p>
+        </div>          
+      </section>
+
+      <section class="container-transactions">
+        <span class="label">Movimentações Bancárias</span>
+
+        <div class="content">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Descrição</th>
+                  <th>Operação</th>
+                  <th>Valor (R$)</th>
+                </tr>                 
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of settings.data.transactions">
+                  <td><span>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</span></td>
+                  <td><span>{{ (item.description || '----') }}</span></td>
+                  <td><span>{{ item.type?.parsed }}</span></td>
+                  <td><span class="value {{ (item.type.value == 'DEPOSIT' ? 'positive' : 'negative') }}">{{ item.value | currency:'' }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- <section class="container-balance">
+        <span class="label">Balanço</span>
+        <div class="table-responsive content">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><span class="label">Saldo</span></td>
+                <td><span class="price">{{ settings.data.balance.total | currency }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section> -->
+    </div>    
+
+    <link href="/assets/css/bank-account/account-extract.css" rel="stylesheet">
+    
+  </body>
+</iframe>

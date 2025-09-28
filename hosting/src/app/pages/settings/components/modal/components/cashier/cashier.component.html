@@ -1,0 +1,51 @@
+
+<div id="cashierSettings">
+  
+  <div class="container-view">
+    <div class="container-external">
+      <div class="container-info">
+        <div class="wrapper">
+
+          <div class="container-operational-mode" *ngIf="settings.activeComponent == 'Cashier/OperationalMode'">
+            <header>
+              <h6>{{ settings.translate.section.cashier.option.operationalMode.label }}</h6>
+              <small>{{ settings.translate.section.cashier.option.operationalMode.description }}</small>
+            </header>
+
+            <form class="form" [formGroup]="formOperationalMode" (submit)="onSubmitOperationalMode()">
+
+              <div class="form-group">
+                <div class="table-responsive container-options">
+                  <table class="table">
+                    <tr *ngFor="let item of operationalModes; let i = index">
+                      <td><input id="{{ 'option-' + i }}" type="radio" formControlName="mode" [value]="item.value" /></td>
+                      <td><label for="{{ 'option-' + i }}" class="description">{{ item.label }}</label></td>
+                    </tr>
+                  </table>
+                </div>                       
+              </div>
+
+              <button class="btn btnConfirmation btnBlue">{{ settings.translate.modal.section.cashier.button.submit }}</button>
+            </form>
+          </div>
+
+          <div class="container-warranty-term" *ngIf="settings.activeComponent == 'Cashier/WarrantyTerm'">
+            <header>
+              <h6>{{ settings.translate.section.cashier.option.warrantyTerm.label }}</h6>
+              <small>{{ settings.translate.section.cashier.option.warrantyTerm.description }}</small>
+            </header>
+
+            <section>
+              <angular-editor [config]="editorConfig" [(ngModel)]="warrantyTerm" class="te-basic-tools"></angular-editor>
+            </section>
+
+            <button class="btn btnConfirmation btnBlue" (click)="onSubmitWarrantyTerm()" [disabled]="false">{{ settings.translate.modal.section.cashier.button.submit }}</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  

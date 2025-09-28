@@ -1,0 +1,135 @@
+
+#containerFormRegister {
+  padding: 0 10px;
+  form {
+    p {
+      font-size: 13px;
+      color: gray;
+      font-weight: 600;
+      margin: 0 12px 10px;
+      padding: 5px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    label {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }    
+    fieldset {
+      padding: 0;
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+    input {
+      &.nameField {
+        text-transform: uppercase;
+      }
+      &.emailField {
+        text-transform: lowercase;
+      }
+    }
+    input, textarea, select {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;    
+      resize: none;
+    }    
+    button[type=submit] {
+      margin: 10px auto 0;
+      display: block;
+      padding: 5px 40px;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: rgb(102, 102, 255);
+      color: #fff;
+      &.btnBlue {
+        background-color: rgb(102, 102, 255);
+      }
+      &.btnRed {
+        background-color: indianred;
+      }
+    }
+    .container-contacts {
+      margin-bottom: 10px;
+    }
+    .container-contacts,
+    .container-address {
+      .container-header {
+        padding: 6px 0;
+        position: relative;
+        user-select: none;
+        cursor: pointer;
+        p {
+          margin: 0;         
+        }
+        button {
+          width: 30px;
+          height: 28px;
+          padding: 0;
+          outline: none;
+          border: none;
+          border-radius: 5px;
+          color: #888;
+          background-color: #fff;
+          position: absolute;
+          top: 6px;
+          right: 0;
+          transition: all 0.3s ease-in-out;
+          icon {
+            font-size: 18px;
+            margin-top: 2px;
+          }
+          &.active {
+            icon {
+              transform: rotate(180deg);
+            }
+          }
+        }
+      }
+      .container-content {
+        // display: none;
+        &.active {
+          display: block;
+        }
+      }
+    }
+    .container-cep {
+      input {
+        width: calc(100% - 40px);
+        margin-right: 5px;
+        float: left;
+      }
+      button {
+        width: 35px !important;
+        height: 35px !important;
+        padding: 0;
+        margin: 0;
+        float: left;
+        position: relative;
+        top: 0;
+        color: #fff;
+        background-color: rgb(102, 102, 255);
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        transition: all 0.3s ease-in-out;
+        icon {
+          font-size: 15px;
+        }
+        &:disabled {
+          opacity: 0.5;
+        }
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }
+    .required {
+      border-color: indianred;
+      &:focus {
+        border-color: rgba(205, 92, 92, 0.75);
+      }
+    }
+  }  
+}

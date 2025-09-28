@@ -1,0 +1,69 @@
+
+<div id="payments-component">
+  <div #paymentsComponent class="row" [formGroup]="form" *ngIf="!loading">
+    <div class="form-group col-12">
+      <!-- <h6>
+        <span>Pagamentos</span>
+      </h6> -->
+
+
+      <div class="data" *ngIf="data.paymentMethods?.length > 0" >
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <tbody>
+              <tr *ngFor="let item of data.paymentMethods; let i = index">
+                <td class="action">
+                  <button class="btnClose" (click)="onDeletePaymentItem(i)"><icon name="close" pack="eva"></icon></button>
+                </td>
+                <td>
+                  <div class="container-header">
+                    <span class="name">{{ (item.alternateName || item.name) }}</span>
+                  </div>
+
+                  <div class="container-fields">
+                    <div class="primary-line row">
+
+
+                      <div class="container-value wrapper col-xs-12 col-md-6">
+                        <label>Avista</label>
+                        <select (change)="onAvista(item, $event.target)" class="form-control item-{{ i }}">
+                          <option value="true">SIM</option>
+                          <option value="false" *ngIf="item.code != '04'">NÃO</option>
+                        </select>
+                      </div>
+
+                      <!-- [value]="item.aVista" -->
+                      <!-- [value]="isAvista(item)" -->
+
+                      <div class="container-value wrapper col-xs-12 col-md-6">
+                        <label>Valor</label>
+                        <input type="text" class="form-control value" placeholder="0,00" autocomplete="off" [value]="(item.value || 0) | currency:''" (input)="onPaymentValue(item, paymentValueField)" #paymentValueField />
+                      </div>
+
+                      {{ onloadPaymentMethod(item,'.item-'+i) }}
+
+                      <!-- <div class="container-parcels wrapper col-xs-12 col-md-6" *ngIf="item.code == '03'">
+                        <label>Parcelas</label>
+                        <select class="form-control" (change)="onPaymentParcel(item, paymentParcelField)" [value]="(item.parcelChecked ? item.parcelChecked : 1)" #paymentParcelField>
+                          <option *ngFor="let item of maxParcels" [value]="item.parcel">{{ item }}</option>
+                        </select>
+                      </div> -->
+                     
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="received-payment {{ getReceivedPaymentClass() }}" >
+          <span class="label">
+            Valor Recebido <span class="price">{{ getReceivedPayment() | currency }}</span>
+          </span>
+        </div>
+      </div>
+     
+    </div>
+  </div>
+
+</div>

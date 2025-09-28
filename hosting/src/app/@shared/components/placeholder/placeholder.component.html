@@ -1,0 +1,28 @@
+
+<div id="placeholder" *ngIf="loading || !hasData" class="{{ transparent ? 'transparent' : '' }}">
+
+  <div class="loading {{ verticalAlign ? 'center' : '' }}" *ngIf="loading">
+
+    <div class="spinner spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+
+    <p>{{ translate.loading }}</p>
+
+  </div>
+
+  <div class="no-data {{ verticalAlign ? 'center' : '' }}" *ngIf="!loading && !hasData">
+
+    <div class="container-image" *ngIf="!icon">
+      <img src="assets/images/list.png" />
+    </div>
+
+    <div class="container-icon" *ngIf="icon">
+      <icon [name]="icon" pack="eva"></icon>
+    </div>
+
+    <p>{{ label || translate.noData }}</p>
+
+  </div>
+  
+</div>

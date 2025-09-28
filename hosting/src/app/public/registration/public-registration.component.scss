@@ -1,0 +1,847 @@
+/* 
+Arquivo: public-registration.component.scss
+Caminho: src/app/public/registration/public-registration.component.scss
+O que faz: Estilos modernos e responsivos para o formulário público
+*/
+
+// Variáveis de cores
+$primary-color: #667eea;
+$primary-hover: #5a67d8;
+$success-color: #48bb78;
+$error-color: #f56565;
+$text-color: #2d3748;
+$text-muted: #718096;
+$border-color: #e2e8f0;
+$background-light: #f7fafc;
+$white: #ffffff;
+
+// Mixins para reutilização
+@mixin card-shadow {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+@mixin transition {
+    transition: all 0.3s ease;
+}
+
+// Container principal
+.public-registration-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+// Estados de carregamento e erro
+.loading-container,
+.error-container,
+.success-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.loading-spinner {
+    text-align: center;
+    background: $white;
+    padding: 60px;
+    border-radius: 20px;
+    @include card-shadow;
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid $border-color;
+        border-top: 4px solid $primary-color;
+        border-radius: 50%;
+        margin: 0 auto 20px;
+        animation: spin 1s linear infinite;
+    }
+
+    p {
+        color: $text-muted;
+        font-size: 16px;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+// Card de erro
+.error-card {
+    background: $white;
+    padding: 60px 40px;
+    border-radius: 20px;
+    text-align: center;
+    @include card-shadow;
+
+    .error-icon {
+        font-size: 60px;
+        margin-bottom: 20px;
+    }
+
+    h2 {
+        color: $text-color;
+        margin-bottom: 15px;
+        font-size: 24px;
+    }
+
+    p {
+        color: $text-muted;
+        margin-bottom: 30px;
+        font-size: 16px;
+    }
+}
+
+// Container do formulário
+.registration-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+// Cabeçalho da empresa (fora do card)
+.company-header {
+    text-align: center;
+    margin-bottom: 30px;
+    animation: fadeIn 0.8s ease-out;
+
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Card principal
+.registration-card {
+    background: $white;
+    border-radius: 24px;
+    overflow: hidden;
+    @include card-shadow;
+    animation: slideUp 0.5s ease-out;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        background: linear-gradient(45deg, #ff6b6b, #ffa500, #32cd32, #1e90ff, #9370db, #ff6b6b);
+        background-size: 400% 400%;
+        border-radius: 24px;
+        animation: gradientShift 4s ease infinite;
+        opacity: 0.8;
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    25% {
+        background-position: 100% 0%;
+    }
+    50% {
+        background-position: 100% 100%;
+    }
+    75% {
+        background-position: 0% 100%;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Cabeçalho do card
+.card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: $white;
+    padding: 50px 40px 40px 40px;
+    text-align: center;
+    border-radius: 24px 24px 0 0;
+
+
+    .company-name {
+        font-size: 36px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        letter-spacing: -0.5px;
+        color: $white;
+    }
+
+    .form-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        opacity: 0.95;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        animation: fadeInDown 0.8s ease-out;
+    }
+
+    .form-subtitle {
+        font-size: 17px;
+        opacity: 0.9;
+        margin-bottom: 30px;
+        line-height: 1.6;
+        max-width: 450px;
+        margin-left: auto;
+        margin-right: auto;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        animation: fadeInUp 1s ease-out;
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 0.95;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 0.9;
+            transform: translateY(0);
+        }
+    }
+
+    .discount-badge {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px 20px;
+        border-radius: 50px;
+        backdrop-filter: blur(10px);
+        animation: pulse 2s infinite;
+
+        .badge-icon {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+
+        .badge-text {
+            font-weight: 600;
+        }
+    }
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+// Formulário
+.registration-form {
+    padding: 40px;
+}
+
+// Informação de campos obrigatórios
+.required-info {
+    background: $background-light;
+    padding: 12px 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    font-size: 14px;
+    color: $text-muted;
+
+    .required-star {
+        color: $error-color;
+        font-weight: bold;
+    }
+}
+
+// Grupos de formulário
+.form-group {
+    margin-bottom: 25px;
+
+    &.phone-field {
+        background: lighten($primary-color, 45%);
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid lighten($primary-color, 30%);
+    }
+
+    &.address-section {
+        background: $background-light;
+        padding: 20px;
+        border-radius: 12px;
+        margin-top: 30px;
+    }
+}
+
+// Labels
+.form-label {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: $text-color;
+    margin-bottom: 8px;
+    font-size: 15px;
+
+    .label-icon {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .required {
+        color: $error-color;
+        margin-left: 4px;
+    }
+
+    .optional-badge {
+        background: $border-color;
+        color: $text-muted;
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 12px;
+        margin-left: auto;
+        font-weight: normal;
+    }
+
+    .field-hint {
+        font-size: 12px;
+        color: $text-muted;
+        font-weight: normal;
+        margin-left: 8px;
+    }
+}
+
+// Inputs
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid $border-color;
+    border-radius: 10px;
+    font-size: 16px;
+    color: $text-color;
+    background: $white;
+    @include transition;
+
+    &:focus {
+        outline: none;
+        border-color: $primary-color;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    &::placeholder {
+        color: lighten($text-muted, 10%);
+    }
+}
+
+// Grupo de endereço
+.address-group {
+    .address-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+
+        .flex-grow {
+            flex: 1;
+        }
+
+        .address-number {
+            width: 100px;
+        }
+
+        .address-state {
+            width: 80px;
+            text-transform: uppercase;
+        }
+    }
+
+    .cep-field {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+
+        .form-control {
+            flex: 1;
+        }
+    }
+
+    .btn-search-cep {
+        padding: 14px 20px;
+        background: $primary-color;
+        color: $white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        @include transition;
+
+        &:hover:not(:disabled) {
+            background: $primary-hover;
+        }
+
+        &:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// Mini spinner
+.mini-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: $white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+// Checkbox de termos
+.terms-group {
+    margin-top: 30px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    cursor: pointer;
+
+    .checkbox-input {
+        margin-right: 10px;
+        margin-top: 3px;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+    }
+
+    .checkbox-text {
+        font-size: 14px;
+        color: $text-muted;
+        line-height: 1.5;
+    }
+
+    .terms-link {
+        color: $primary-color;
+        text-decoration: none;
+        font-weight: 600;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+// Botão de envio
+.btn-submit {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 25%, #32cd32 50%, #1e90ff 75%, #9370db 100%);
+    background-size: 300% 300%;
+    color: $white;
+    border: none;
+    border-radius: 16px;
+    font-size: 19px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 35px;
+    @include transition;
+    box-shadow: 0 10px 30px rgba(255, 107, 107, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    animation: rainbow 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s;
+    }
+
+    &:hover:not(:disabled) {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 20px 50px rgba(255, 107, 107, 0.5);
+
+        &::before {
+            left: 100%;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+        animation: none;
+    }
+
+    &.loading {
+        pointer-events: none;
+        animation: pulse 1.5s infinite;
+    }
+
+    .btn-icon {
+        font-size: 22px;
+        animation: bounce 2s infinite;
+    }
+}
+
+@keyframes rainbow {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-5px);
+    }
+    60% {
+        transform: translateY(-3px);
+    }
+}
+
+// Aviso de segurança
+.security-notice {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    .lock-icon {
+        font-size: 16px;
+    }
+}
+
+// Footer
+.registration-footer {
+    text-align: center;
+    margin-top: 30px;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 14px;
+
+    p {
+        margin-bottom: 8px;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    .footer-security {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        opacity: 0.9;
+
+        .lock-icon {
+            font-size: 16px;
+        }
+    }
+}
+
+// Card de sucesso
+.success-card {
+    background: $white;
+    padding: 60px 40px;
+    border-radius: 20px;
+    text-align: center;
+    @include card-shadow;
+
+    .success-animation {
+        position: relative;
+        margin-bottom: 30px;
+
+        .success-icon {
+            font-size: 80px;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .confetti {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 40px;
+            animation: rotate 2s linear infinite;
+        }
+    }
+
+    h2 {
+        color: $success-color;
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+    .success-message {
+        font-size: 18px;
+        color: $text-color;
+        margin-bottom: 30px;
+    }
+
+    .success-info {
+        background: $background-light;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+
+        p {
+            color: $text-muted;
+            margin-bottom: 10px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        .discount-info {
+            color: $primary-color;
+            font-size: 16px;
+        }
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0);
+    }
+
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+// Botões gerais
+.btn {
+    padding: 14px 28px;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    @include transition;
+
+    &.btn-primary {
+        background: $primary-color;
+        color: $white;
+
+        &:hover {
+            background: $primary-hover;
+            transform: translateY(-2px);
+        }
+    }
+}
+
+// Responsividade
+@media (max-width: 640px) {
+    .registration-container {
+        max-width: 100%;
+    }
+
+    .card-header {
+        padding: 30px 20px;
+
+        .company-name {
+            font-size: 28px;
+        }
+
+        .company-tagline {
+            font-size: 16px;
+        }
+
+        .form-title {
+            font-size: 24px;
+        }
+
+        .form-subtitle {
+            font-size: 16px;
+        }
+    }
+
+    .registration-form {
+        padding: 30px 20px;
+    }
+
+    .address-row {
+        flex-direction: column;
+
+        &:has(.address-number),
+        &:has(.address-state) {
+            flex-direction: row;
+        }
+    }
+
+    .form-control {
+        font-size: 16px; // Evita zoom no iOS
+    }
+}
+
+// Estilos para campos com erro de duplicação
+.form-control {
+    &.ng-invalid.ng-touched {
+        border-color: $error-color;
+
+        &:focus {
+            border-color: $error-color;
+            box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
+        }
+    }
+}
+
+
+
+// Destaque especial para erros de duplicação
+.form-group {
+    &.has-error {
+        .form-control {
+            border-color: $error-color;
+            background-color: rgba(245, 101, 101, 0.05);
+        }
+
+        label {
+            color: $error-color;
+        }
+    }
+}
+
+// Mensagens de erro - ÚNICA DEFINIÇÃO
+.error-message {
+    color: $error-color;
+    font-size: 13px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background-color: rgba(245, 101, 101, 0.1);
+    border-left: 3px solid $error-color;
+    border-radius: 4px;
+    animation: slideInError 0.3s ease;
+
+    span {
+        display: block;
+
+        &:not(:last-child) {
+            margin-bottom: 5px;
+        }
+
+        &::before {
+            content: '⚠️ ';
+            margin-right: 5px;
+        }
+    }
+}
+
+// Animação para mensagens de erro
+@keyframes slideInError {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// Campo com erro
+.form-control.error {
+    border-color: $error-color !important;
+    background-color: rgba(245, 101, 101, 0.05);
+
+    &:focus {
+        border-color: $error-color;
+        box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.2);
+    }
+}
+
+// Animação de shake para campos com erro
+.form-control.error:not(:focus) {
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-5px);
+    }
+
+    75% {
+        transform: translateX(5px);
+    }
+}

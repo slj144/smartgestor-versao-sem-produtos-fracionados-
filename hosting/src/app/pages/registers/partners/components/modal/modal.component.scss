@@ -1,0 +1,171 @@
+
+modal {
+  #container-view {
+    .container-data {
+      section {
+        &.container-header {
+          margin: 15px 0;
+          .name {
+            color: #666; 
+            font-size: 20px;
+            text-align: center;                         
+          }
+          .personalDocument,
+          .businessDocument {
+            color: #888;
+            display: block;
+            text-align: center;
+            font-size: 13px;
+          }
+        }
+        &.container-description {
+          .content {        
+            width: 100%;
+            padding: 10px;
+            color: #898989;
+            border: 1px solid #dfdfdf;
+            border-radius: 5px;
+            white-space: pre-line;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 13px;
+          }
+        }
+        &.container-informations {
+          .table-responsive {
+            border-radius: 5px;
+            border: 1px solid #dfdfdf;
+            padding: 5px 10px;
+            table {
+              margin: 0;
+              tr {
+                border-bottom: 1px solid #ddd;
+                td {
+                  vertical-align: middle;
+                  span {
+                    display: block;
+                    font-size: 14px;
+                    &.icon {
+                      font-size: 16px;
+                      color: rgb(102, 102, 255);
+                    }
+                    &.label {                    
+                      display: inline;
+                      color: #777;
+                      margin-right: 5px;
+                    }
+                    &.value {          
+                      color: #898989;
+                      position: relative;
+                      top: -2px;
+                      font-size: 13px;          
+                      display: inline;
+                    }
+                  }
+                  &:first-child {
+                    width: 20px;
+                    text-align: center;
+                  }
+                }
+                &:last-child {
+                  border-bottom: none;
+                }
+              }
+            } 
+          }
+        }
+        &.container-description,
+        &.container-informations {
+          small {
+            position: relative;
+            bottom: -8px;
+            left: -4px;
+            background-color: #fff;
+            padding: 4px;
+            color: #999;
+          }
+        }
+      }
+    }
+    .container-delete {
+      .container-confirmation {
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+        .container-info {
+          padding: 20px 10px;
+          p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            color: gray;
+          }
+          small {
+            width: 75%;
+            margin: 0 auto;
+            color: rgba(255, 0, 0, 0.75);
+            text-align: center;
+            display: block;
+          }
+        }
+        .container-buttons {
+          width: 100%;
+          height: 30px;
+          padding: 10px 0 0;
+          text-align: right;
+          display: table;
+          border-top: 1px dotted #ddd;
+          button {
+            height: 30px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            display: inline-table;
+            transition: all 0.3s ease;
+            &.btnCancel {
+              color: rgba(234, 20, 20, 0.8) !important;
+              background-color: #fff !important;
+              font-size: 12px;
+              margin-right: 5px;
+            }
+            &.btnConfirm {
+              color: #fff !important;
+              background-color: rgb(100, 100, 234) !important;
+              font-size: 13px;
+            }
+            &:disabled {
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+  }
+  #container-view,
+  #container-register,
+  #container-data-export {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;   
+    table-layout: fixed;
+    .container-external {
+      display: table-row;
+      .container-internal {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          width: 900px;
+          max-width: 100%;
+          padding: 20px 15px 20px;
+          border: 1px solid #eee;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 5px;
+          margin: 0 auto;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}

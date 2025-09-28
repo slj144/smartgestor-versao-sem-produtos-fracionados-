@@ -1,0 +1,14 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container-owners" [style.display]="(settings.activeComponent == 'owners' ? 'block' : 'none')">
+      <customers-selector (callback)="onOwnerResponse($event)"></customers-selector>
+    </div>
+
+    <div class="container-models" [style.display]="(settings.activeComponent == 'models' ? 'block' : 'none')">
+      <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
+  </ng-container>
+</layer>

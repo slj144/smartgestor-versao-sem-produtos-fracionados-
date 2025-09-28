@@ -1,0 +1,10 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container-categories" *ngIf="settings.activeComponent == 'categories'">
+      <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
+  </ng-container>
+</layer>

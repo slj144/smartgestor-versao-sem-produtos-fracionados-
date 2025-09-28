@@ -1,0 +1,308 @@
+// Arquivo: notifications.component.scss
+// Componente: NotificationsComponent
+// Localização: src/app/@theme/components/notifications/notifications.component.scss
+
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 420px;
+  pointer-events: none;
+
+  .toast {
+    width: 100%;
+    min-width: 350px;
+    margin-bottom: 16px;
+    padding: 0;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    pointer-events: all;
+    animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    // Animação de entrada
+    @keyframes slideInRight {
+      from {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    // Efeito hover
+    &:hover {
+      transform: translateX(-5px);
+      box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    }
+
+    // Barra de progresso
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      animation: progress 10s linear forwards;
+      transform-origin: left;
+    }
+
+    @keyframes progress {
+      from {
+        transform: scaleX(1);
+      }
+
+      to {
+        transform: scaleX(0);
+      }
+    }
+
+    .wrapper {
+      display: flex;
+      align-items: flex-start;
+      padding: 16px;
+      cursor: pointer;
+      position: relative;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+
+      .icon-container {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        margin-right: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+
+        // Efeito de pulso no ícone
+        &::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+          animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+          0%,
+          100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+
+          50% {
+            transform: scale(1.1);
+            opacity: 0.7;
+          }
+        }
+
+        icon {
+          font-size: 22px;
+          color: white;
+          position: relative;
+          z-index: 1;
+        }
+      }
+
+      .info-container {
+        flex: 1;
+        margin-right: 8px;
+
+        span {
+          display: block;
+
+          &.title {
+            font-size: 15px;
+            font-weight: 600;
+            line-height: 20px;
+            color: #1f2937;
+            margin-bottom: 4px;
+          }
+
+          &.description {
+            font-size: 13px;
+            line-height: 18px;
+            color: #6b7280;
+          }
+        }
+      }
+
+      // Botão de fechar invisível
+      &::after {
+        content: '×';
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: #9ca3af;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      &:hover::after {
+        opacity: 1;
+      }
+    }
+
+    // Estilos por status
+    &.bg-success {
+      .wrapper {
+        border-left: 4px solid #10b981;
+
+        .icon-container {
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+      }
+
+      &::after {
+        background: #10b981;
+      }
+    }
+
+    &.bg-info {
+      .wrapper {
+        border-left: 4px solid #3b82f6;
+
+        .icon-container {
+          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+      }
+
+      &::after {
+        background: #3b82f6;
+      }
+    }
+
+    &.bg-warning {
+      .wrapper {
+        border-left: 4px solid #f59e0b;
+
+        .icon-container {
+          background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+      }
+
+      &::after {
+        background: #f59e0b;
+      }
+    }
+
+    &.bg-danger {
+      .wrapper {
+        border-left: 4px solid #ef4444;
+
+        .icon-container {
+          background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+          box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+      }
+
+      &::after {
+        background: #ef4444;
+      }
+    }
+  }
+
+  // Animação de saída
+  .toast.hide {
+    animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+
+    to {
+      transform: translateX(120%);
+      opacity: 0;
+    }
+  }
+
+  // Responsivo
+  @media (max-width: 480px) {
+    top: 70px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+
+    .toast {
+      min-width: unset;
+      width: 100%;
+    }
+  }
+}
+
+// Tema escuro (preparado para futuro)
+@media (prefers-color-scheme: dark) {
+  .toast-container {
+    .toast {
+      .wrapper {
+        background: rgba(30, 30, 30, 0.95);
+
+        .info-container {
+          span.title {
+            color: #f3f4f6;
+          }
+
+          span.description {
+            color: #9ca3af;
+          }
+        }
+
+        &::after {
+          color: #e5e7eb;
+        }
+      }
+    }
+  }
+}
+
+// Animação suave para múltiplas notificações
+.toast-container {
+  .toast {
+    &:not(:last-child) {
+      margin-bottom: 12px;
+    }
+
+    // Quando uma nova notificação aparece, as outras sobem suavemente
+    &:not(:first-child) {
+      animation: moveUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @keyframes moveUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0.8;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+  }
+}

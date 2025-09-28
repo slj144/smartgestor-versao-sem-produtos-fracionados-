@@ -1,0 +1,327 @@
+<div id="container-register" *ngIf="checkBootstrap">
+  <form [formGroup]="formCustomer" class="form" autocomplete="off" (submit)="onSubmit()">
+
+    <div class="container-info">
+      <div class="row">
+        <div class="col-12 form-group">
+          <label>{{ translate.form.field.type.label }}</label>
+
+          <select formControlName="type" class="form-control {{ formControls.type.errors ? 'required' : '' }}"
+            (change)="onCheckType()">
+            <option value="naturalPerson">{{ translate.form.field.type.option.naturalPerson }}</option>
+            <option value="legalPerson">{{ translate.form.field.type.option.legalPerson }}</option>
+          </select>
+        </div>
+
+        <div class="col-12 form-group">
+          <label>{{ translate.form.field.name.label }}</label>
+          <input type="text" formControlName="name"
+            class="form-control nameField {{ formControls.name.errors ? 'required' : '' }}" />
+        </div>
+
+        <div class="col-12 form-group">
+          <label>{{ translate.form.field.foreigner.label }}</label>
+          <select formControlName="foreigner" class="form-control {{ formControls.foreigner.errors ? 'required' : '' }}"
+            (change)="onCheckType();onChangeType($event, formControls.foreigner)">
+            <option value="true">SIM</option>
+            <option value="false">NÃO</option>
+          </select>
+        </div>
+
+        <div class="col-12" *ngIf="isBrazil">
+          <div class="row mx-0">
+            <div class="col-12 px-0 form-group container-document"
+              *ngIf="formControls.type.value == 'naturalPerson' && formControls.foreigner.value == false">
+              <label>{{ formControls.foreigner.value ? translate.form.field.document.brazil.foreignerDocument.label :
+                translate.form.field.document.brazil.personalDocument.label }}</label>
+
+              <fieldset>
+                <input type="text" formControlName="personalDocument" placeholder="___.___.___-__"
+                  class="form-control {{ formControls.personalDocument.errors || ((formControls.personalDocument?.value?.length > 0) && !documentValidator.valid) ? 'required' : '' }}"
+                  (input)="onApplyCpfMask($event, formControls.personalDocument); onCheckDocument($event, 'personalDocument')" />
+
+                <button type="button" [class]="documentValidator.valid ? 'valid' : 'invalid'"
+                  [nbSpinner]="documentValidator.loading" nbSpinnerSize="tiny" nbSpinnerStatus="primary">
+                  <icon
+                    *ngIf="!documentValidator.loading && (formControls.personalDocument?.value?.length > 0) && formControls.personalDocument.valid"
+                    [icon]="documentValidator.valid ? 'checkmark-circle-2-outline' : 'close-circle-outline'" pack="eva">
+                  </icon>
+                </button>
+
+                <small class="warning" *ngIf="
+                  ((formControls.personalDocument?.value?.length > 0) && (formControls.personalDocument?.valid) && !documentValidator.loading && !documentValidator.valid)
+                ">{{ translate.form.field.document.brazil.personalDocument.warning }}</small>
+              </fieldset>
+            </div>
+
+            <div class="col-12 px-0 form-group container-document"
+              *ngIf="formControls.type.value == 'legalPerson' && formControls.foreigner.value == false">
+              <label>{{ translate.form.field.document.brazil.businessDocument.label }}</label>
+
+              <fieldset>
+                <input type="text" formControlName="businessDocument" placeholder="__.___.___/____-__"
+                  class="form-control {{ formControls.businessDocument.errors || ((formControls.businessDocument?.value?.length > 0) && !documentValidator.valid) ? 'required' : '' }}"
+                  (input)="onApplyCnpjMask($event, formControls.businessDocument); onCheckDocument($event, 'businessDocument')" />
+
+                <button type="button" [class]="documentValidator.valid ? 'valid' : 'invalid'"
+                  [nbSpinner]="documentValidator.loading" nbSpinnerSize="tiny" nbSpinnerStatus="primary">
+                  <icon
+                    *ngIf="!documentValidator.loading && (formControls.businessDocument?.value?.length > 0) && formControls.businessDocument.valid"
+                    [icon]="documentValidator.valid ? 'checkmark-circle-2-outline' : 'close-circle-outline'" pack="eva">
+                  </icon>
+                </button>
+
+                <small class="warning" *ngIf="
+                  ((formControls.businessDocument?.value?.length > 0) && (formControls.businessDocument?.valid) && !documentValidator.loading && !documentValidator.valid)
+                ">{{ translate.form.field.document.brazil.businessDocument.warning }}</small>
+              </fieldset>
+            </div>
+
+
+            <div class="col-12 px-0 form-group container-document" *ngIf="formControls.foreigner.value">
+              <label>{{ translate.form.field.document.brazil.foreignerDocument.label }}</label>
+
+              <fieldset>
+                <input type="text" formControlName="foreignerDocument" placeholder="__.___.___.____-__"
+                  class="form-control {{ formControls.foreignerDocument.errors || ((formControls.foreignerDocument?.value?.length > 0) && !documentValidator.valid) ? 'required' : '' }}"
+                  (change)="onCheckType()" />
+
+                <button type="button" [class]="documentValidator.valid ? 'valid' : 'invalid'"
+                  [nbSpinner]="documentValidator.loading" nbSpinnerSize="tiny" nbSpinnerStatus="primary">
+                  <icon
+                    *ngIf="!documentValidator.loading && (formControls.foreignerDocument?.value?.length > 0) && formControls.foreignerDocument.valid"
+                    [icon]="documentValidator.valid ? 'checkmark-circle-2-outline' : 'close-circle-outline'" pack="eva">
+                  </icon>
+                </button>
+
+                <small class="warning" *ngIf="
+                  ((formControls.foreignerDocument?.value?.length > 0) && (formControls.foreignerDocument?.valid) && !documentValidator.loading && !documentValidator.valid)
+                ">{{ translate.form.field.document.brazil.foreignerDocument.warning }}</small>
+              </fieldset>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-12" *ngIf="isBrazil && formControls.type.value == 'legalPerson'">
+          <div class="row">
+            <!--  -->
+
+            <div class="col-12 col-lg-6 form-group">
+              <label>{{ translate.form.field.municipalInscription.label }}</label>
+              <input formControlName="municipalInscription" placeholder=""
+                class="form-control {{ formControls.municipalInscription.errors ? 'required' : '' }}"
+                (input)="onApplyNumberMask($event, formControls.municipalInscription)" />
+            </div>
+
+            <div class="col-12 col-lg-6 form-group">
+              <label>{{ translate.form.field.stateInscription.label }}</label>
+              <input formControlName="stateInscription" placeholder=""
+                class="form-control {{ formControls.stateInscription.errors ? 'required' : '' }}"
+                (input)="onApplyNumberMask($event, formControls.stateInscription)" />
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col-12 form-group" *ngIf="formControls.type.value == 'naturalPerson'">
+          <label>{{ translate.form.field.birthDate.label }}</label>
+          <input type="text" formControlName="birthDate" placeholder="__/__/____"
+            class="form-control {{ formControls.birthDate.errors ? 'required' : '' }}"
+            (input)="onApplyDateMask($event, formControls.birthDate)" />
+        </div>
+      </div>
+    </div>
+
+    <div class="container-contacts" formGroupName="contacts">
+      <div class="container-header">
+        <p>{{ translate.form.field.contact.label }}</p>
+      </div>
+
+      <div class="container-content">
+        <div class="row">
+          <div class="col-12 col-lg-6" *ngIf="isBrazil">
+            <div class="row">
+              <div class="col-12 form-group">
+                <label>{{ translate.form.field.contact.sub.phone.label }}</label>
+                <input type="tel" formControlName="phone" placeholder="(_) _____-____"
+                  class="form-control {{ formContactsControls.phone.errors ? 'required' : '' }}"
+                  (input)="onApplyPhoneMask($event, formContactsControls.phone)" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6" *ngIf="!isBrazil">
+            <div class="row">
+              <div class="col-12 form-group">
+                <label>{{ translate.form.field.contact.sub.phone.label }}</label>
+                <input type="tel" formControlName="phone"
+                  class="form-control {{ formContactsControls.phone.errors ? 'required' : '' }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6 form-group">
+            <label>{{ translate.form.field.contact.sub.email.label }}</label>
+            <input type="email" formControlName="email"
+              class="form-control emailField {{ formContactsControls.email.errors ? 'required' : '' }}"
+              placeholder="exemplo@dominio.com" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-address" formGroupName="address" *ngIf="isBrazil">
+      <div class="container-header">
+        <p>{{ translate.form.field.address.label }}</p>
+      </div>
+
+      <div class="container-content">
+        <div class="row">
+          <div class="col-12 form-group container-cep">
+            <label>{{ translate.form.field.address.sub.postalCode.label }}</label>
+
+            <fieldset>
+              <input type="text" formControlName="postalCode" placeholder="____-___"
+                class="form-control {{ formAddressControls.postalCode.errors || ((formAddressControls.postalCode?.value?.length > 0) && !postalCodeValidator.valid) ? 'required' : '' }}"
+                (input)="onApplyPostalCodeMask($event, formAddressControls.postalCode); onCheckCEP($event)" />
+
+              <button type="button" [class]="postalCodeValidator.valid ? 'valid' : 'invalid'"
+                [nbSpinner]="postalCodeValidator.loading" nbSpinnerSize="tiny" nbSpinnerStatus="primary">
+                <icon
+                  *ngIf="!postalCodeValidator.loading && (formAddressControls.postalCode?.value?.length > 0) && formAddressControls?.postalCode?.valid"
+                  [icon]="postalCodeValidator.valid ? 'checkmark-circle-2-outline' : 'close-circle-outline'" pack="eva">
+                </icon>
+              </button>
+
+              <small class="warning" *ngIf="
+                ((formAddressControls.postalCode?.value?.length > 0) && (formAddressControls.postalCode?.valid) && !postalCodeValidator.loading && !postalCodeValidator.valid)
+              ">{{ translate.form.field.address.sub.postalCode.warning }}</small>
+            </fieldset>
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.field.address.sub.local.label }}</label>
+            <input type="text" formControlName="local" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.field.address.sub.number.label }}</label>
+            <input type="text" formControlName="number" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.field.address.sub.complement.label }}</label>
+            <input type="text" formControlName="complement" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.field.address.sub.neighborhood.label }}</label>
+            <input type="text" formControlName="neighborhood" class="form-control" />
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.field.address.sub.city.label }}</label>
+            <input type="text" formControlName="city" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.field.address.sub.state.label }}</label>
+            <select formControlName="state" class="form-control" *ngIf="settings.states">
+              <option *ngFor="let item of settings.states" value="{{ item }}">{{ item }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-address" formGroupName="address" *ngIf="!isBrazil">
+      <div class="container-header">
+        <p>{{ translate.form.field.address.label }}</p>
+      </div>
+
+      <div class="container-content">
+        <div class="row">
+          <div class="col-12 form-group container-cep">
+            <label>{{ translate.form.field.address.sub.postalCode.label }}</label>
+
+            <fieldset>
+              <input type="text" formControlName="postalCode" placeholder="____-___"
+                class="form-control {{ formAddressControls.postalCode.errors ? 'required' : '' }}" />
+
+              <!-- <button type="button" [class]="postalCodeValidator.valid ? 'valid' : 'invalid'" [nbSpinner]="postalCodeValidator.loading" nbSpinnerSize="tiny" nbSpinnerStatus="primary">
+                <icon *ngIf="!postalCodeValidator.loading && (formAddressControls.postalCode?.value?.length > 0) && formAddressControls?.postalCode?.valid" [icon]="postalCodeValidator.valid ? 'checkmark-circle-2-outline' : 'close-circle-outline'" pack="eva"></icon>
+              </button> -->
+
+              <!-- <small class="warning" *ngIf="
+                ((formAddressControls.postalCode?.value?.length > 0) && (formAddressControls.postalCode?.valid) && !postalCodeValidator.loading && !postalCodeValidator.valid)
+              ">{{ translate.form.field.address.sub.postalCode.warning }}</small> -->
+            </fieldset>
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.field.address.sub.local.label }}</label>
+            <input type="text" formControlName="local" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.field.address.sub.number.label }}</label>
+            <input type="text" formControlName="number" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.field.address.sub.complement.label }}</label>
+            <input type="text" formControlName="complement" class="form-control" />
+          </div>
+
+          <div class="col-12 form-group">
+            <label>{{ translate.form.field.address.sub.neighborhood.label }}</label>
+            <input type="text" formControlName="neighborhood" class="form-control" />
+          </div>
+
+          <div class="col-8 form-group">
+            <label>{{ translate.form.field.address.sub.city.label }}</label>
+            <input type="text" formControlName="city" class="form-control" />
+          </div>
+
+          <div class="col-4 form-group">
+            <label>{{ translate.form.field.address.sub.state.label }}</label>
+            <select formControlName="state" class="form-control" *ngIf="settings.states">
+              <option *ngFor="let item of settings.states" value="{{ item }}">{{ item }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-address">
+      <div class="col-12 form-group" [class.required]="formControls.description.errors">
+        <label>Observação</label>
+        <textarea formControlName="description" class="form-control" placeholder="Descrição">
+
+        </textarea>
+      </div>
+    </div>
+
+    <div class="issues" *ngIf="formCustomer.invalid">
+      <label>{{ translate.form.issues.label }}</label>
+
+      <ul>
+        <li *ngIf="
+          (formControls.personalDocument?.errors || ((formControls.personalDocument?.value?.length > 0) && !documentValidator.valid)) ||
+          (formControls.businessDocument?.errors || ((formControls.businessDocument?.value?.length > 0) && !documentValidator.valid))
+        ">{{ translate.form.issues.message.invalidDocument }}</li>
+        <li *ngIf="
+          formAddressControls.postalCode.errors || ((formAddressControls.postalCode?.value?.length > 0) && !postalCodeValidator.valid)
+        ">{{ translate.form.issues.message.invalidPostalCode }}</li>
+        <li *ngIf="formCustomer.invalid">{{ translate.form.issues.message.requiredFields }}</li>
+      </ul>
+    </div>
+
+    <button type="submit" class="btn btnBlue" [disabled]="
+      ((!formCustomer.invalid || !documentValidator.blockSubmit) && (!(!documentValidator.blockSubmit) || formCustomer.invalid)) && 
+      ((!formCustomer.invalid || !postalCodeValidator.blockSubmit) && (!(!postalCodeValidator.blockSubmit) || formCustomer.invalid))
+    ">{{ translate.form.button.submit }}</button>
+
+  </form>
+</div>

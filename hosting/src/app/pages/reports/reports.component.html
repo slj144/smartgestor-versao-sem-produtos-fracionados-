@@ -1,0 +1,261 @@
+<div id="container-main">
+
+  <div *ngIf="!loading">
+
+    <section class="cashier" *ngIf="companyProfile?.cashier?.active && permissions.cashier?.active">
+      <div class="wrapper">
+        <div class="header">
+          <icon name="layout-outline" pack="eva"></icon>
+          <span>{{ translate.section.cashier.title }}</span>
+        </div>
+
+        <div class="body">
+          <ul>
+            <li *ngIf="permissions.cashier?.sections?.resume?.active" (click)="onOpenModal('Cashier', 'resume')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.resume }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.cashier?.sections?.sales?.active" (click)="onOpenModal('Cashier', 'sales')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.sales }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.cashier?.sections?.inflows?.active" (click)="onOpenModal('Cashier', 'inflows')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.inflows }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.cashier?.sections?.outflows?.active" (click)="onOpenModal('Cashier', 'outflows')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.outflows }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.cashier?.sections?.afterSales?.active"
+              (click)="onOpenModal('Cashier', 'afterSales')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.afterSales }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.cashier?.sections?.historic?.active" (click)="onOpenModal('Cashier', 'historic')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.historic }}</span>
+                </div>
+              </div>
+            </li>
+            <li *ngIf="permissions.cashier?.sections?.commissions?.active"
+              (click)="onOpenModal('Financial', 'commissions')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.cashier.option.commissions }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="serviceOrders" *ngIf="companyProfile?.serviceOrders?.active && permissions.serviceOrders?.active">
+      <div class="wrapper">
+        <div class="header">
+          <icon name="layers-outline" pack="eva"></icon>
+          <span>{{ translate.section.serviceOrders.title }}</span>
+        </div>
+
+        <div class="body">
+          <ul>
+            <li *ngIf="permissions.serviceOrders?.sections?.resume?.active"
+              (click)="onOpenModal('ServiceOrders', 'resume')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.serviceOrders.option.resume }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.serviceOrders?.sections?.internal?.active"
+              (click)="onOpenModal('ServiceOrders', 'internal')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.serviceOrders.option.internal }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.serviceOrders?.sections?.external?.active"
+              (click)="onOpenModal('ServiceOrders', 'external')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.serviceOrders.option.external }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.serviceOrders?.sections?.curveABC?.active"
+              (click)="onOpenModal('ServiceOrders', 'curveABC')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.serviceOrders.option.curveABC }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="stock" *ngIf="companyProfile?.stock?.active && permissions.stock?.active">
+      <div class="wrapper">
+        <div class="header">
+          <icon name="grid-outline" pack="eva"></icon>
+          <span>{{ translate.section.stock.title }}</span>
+        </div>
+
+        <div class="body">
+          <ul>
+            <li *ngIf="permissions.stock?.sections?.products?.active" (click)="onOpenModal('Stock', 'products')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.products }}</span>
+                </div>
+              </div>
+            </li>
+            <li *ngIf="permissions.stock?.sections?.validity?.active" (click)="onOpenModal('Stock', 'validity')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.validity }}</span>
+                </div>
+              </div>
+            </li>
+            <li *ngIf="permissions.stock?.sections?.purchases?.active" (click)="onOpenModal('Stock', 'purchases')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.purchases }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.stock?.sections?.transfers?.active" (click)="onOpenModal('Stock', 'transfers')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.transfers }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.stock?.sections?.stockLogs?.active" (click)="onOpenModal('Stock', 'stockLogs')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.stockLogs }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.stock?.sections?.curveABC?.active" (click)="onOpenModal('Stock', 'curveABC')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.stock.option.curveABC }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="financial" *ngIf="companyProfile?.financial?.active && permissions.financial?.active">
+      <div class="wrapper">
+        <div class="header">
+          <icon name="bar-chart-outline" pack="eva"></icon>
+          <span>{{ translate.section.financial.title }}</span>
+        </div>
+
+        <div class="body">
+          <ul>
+            <li *ngIf="companyProfile?.cashier?.active && permissions.financial?.sections?.cashFlow?.active"
+              (click)="onOpenModal('Financial', 'cashFlow')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.financial.option.cashFlow }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.financial?.sections?.billsToPay?.active"
+              (click)="onOpenModal('Financial', 'billsToPay')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.financial.option.billsToPay }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.financial?.sections?.billsToReceive?.active"
+              (click)="onOpenModal('Financial', 'billsToReceive')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.financial.option.billsToReceive }}</span>
+                </div>
+              </div>
+            </li>
+
+            <li *ngIf="permissions.financial?.sections?.bankTransactions?.active"
+              (click)="onOpenModal('Financial', 'bankTransactions')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.financial.option.bankTransactions }}</span>
+                </div>
+              </div>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="several" *ngIf="permissions.several?.active">
+      <div class="wrapper">
+        <div class="header">
+          <icon name="copy-outline" pack="eva"></icon>
+          <span>{{ translate.section.others.title }}</span>
+        </div>
+
+        <div class="body">
+          <ul>
+            <li *ngIf="permissions.several?.sections?.systemLogs?.active"
+              (click)="onOpenModal('Several', 'systemLogs')">
+              <div class="container-centralizer">
+                <div class="content">
+                  <span>{{ translate.section.others.option.systemLogs }}</span>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<modal-reports (callback)="onModalResponse($event)"></modal-reports>

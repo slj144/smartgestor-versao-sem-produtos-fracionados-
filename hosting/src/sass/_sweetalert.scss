@@ -1,0 +1,87 @@
+@import 'variables';
+
+.swal {
+
+  &.swal-popup {
+    padding-top: 25px !important;
+  }
+
+  &.swal-title {
+    margin-bottom: 0;
+    line-height: 32px;
+    white-space: pre-wrap;
+  }
+
+  &.swal-icon {
+    margin: 10px auto;
+
+    img {
+      max-width: 100px;
+    }
+  }
+
+  &.swal-actions {
+    margin: 30px 20px 0 auto;
+
+    button {
+      padding: 8px 25px;
+      font-size: 16px;
+      border-radius: 2rem;
+    }
+  }
+
+  &.swal-cancel-button {
+    border: none;
+    color: #555 !important;
+    background-color: #efefef !important;
+    transition: all 0.3s ease-in-out;
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &:hover {
+      background-color: #e8e8e8 !important;
+      background-image: none !important;
+    }
+  }
+
+  &.swal-confirm-button {
+    background-color: $light-blue !important;
+  }
+
+  &.swal-html-container {
+    &>* {
+      margin-bottom: 0 !important;
+    }
+  }
+
+  &.swal-footer {
+    text-align: right !important;
+  }
+
+  &[class*="swal-custom-button-"] {
+    margin: 5px;
+    color: #fff;
+    font-size: 15px !important;
+    box-shadow: 0 2px 4px #aaa;
+    transition: all 0.25s ease-in-out;
+
+    .icon {
+      margin-right: 4px;
+    }
+
+    &.btn-custom-blue {
+      background-color: $light-blue !important;
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+}

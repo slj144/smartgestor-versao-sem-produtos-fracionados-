@@ -1,0 +1,136 @@
+
+#container-purchases-register {
+  width: 100%;
+  height: 100%;
+  padding: 2px;
+  overflow-y: auto;
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  .openProductsLayer {
+    width: 30px;
+    height: 30px;
+    color: gray;
+    border-radius: 100%;
+    background-color: #fff;
+    border: none;
+    outline: none;
+    display: inline;
+    right: 0;
+    float: left;
+    transition: all 0.5s ease-in-out;
+    icon {
+      font-size: 15px;
+      margin: 1px 0 0;
+    }
+    &:hover {
+      opacity: 0.85;
+    }
+    &:disabled {
+      opacity: 0.7;
+    }
+  }
+
+  .unitary-quick-search-container{
+    width: 150px;
+
+    .unitary-quick-search {
+      width: calc(100% - 35px);
+      height: 28px;
+      margin: 0 auto;
+      display: table;
+      float: left;
+      border: 1px solid #928c8c;
+      background-color: #ffffff;
+      position: relative;
+      border-radius: 17px !important;
+      button {
+        width: 30px;
+        height: 30px;
+        color: gray;
+        border-radius: 100%;
+        background-color: #fff;
+        border: none;
+        outline: none;
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        transition: all 0.5s ease-in-out;
+        icon {
+          font-size: 15px;
+          margin: 1px 0 0;
+        }
+        &:hover {
+          opacity: 0.85;
+        }
+        &:disabled {
+          opacity: 0.7;
+        }
+      }
+      input {
+        width: 100%;
+        height: 100%;
+        color: gray;
+        padding: 10px 25px 10px 10px;
+        background-color: transparent;
+        border: none;
+        outline: none;
+        z-index: 0;
+        font-size: 12px;
+        vertical-align: middle;            
+        &::placeholder {
+          color: #aaa;
+        }
+      }  
+    }
+
+  }
+ 
+
+
+  .manager-commecial-unit,
+  .manager-category {
+    width: 100px;
+    select, fieldset {
+      width: calc(100% - 40px);
+      margin-right: 5px;
+      float: left;
+    }
+
+    fieldset {
+      padding: 0;
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }
+    }
+
+    button {
+      width: 35px !important;
+      height: 35px !important;
+      padding: 0;
+      margin: 0;
+      float: left;
+      position: relative;
+      top: 0;
+      border-radius: 5px;
+      border: none;
+      outline: none;
+      color: #555;
+      border: 1px solid #555;
+      transition: all 0.3s ease;
+      icon {
+        font-size: 18px;
+      }
+      &:hover {
+        opacity: 0.75;
+      }
+    }
+  }
+
+  .selectConciliation, .unitary-quick-search-container{
+    width: 90px !important;
+   
+  }
+}

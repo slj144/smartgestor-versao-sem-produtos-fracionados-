@@ -1,0 +1,899 @@
+// Arquivo: dashboard.component.scss
+// Componente: Dashboard Modernizado (CORRIGIDO)
+// Localização: src/app/pages/dashboard/dashboard.component.scss
+
+// Variáveis modernas para o tema
+:root {
+  --dashboard-bg: #f0f2f5;
+  --card-bg: rgba(255, 255, 255, 0.9);
+  --text-primary: #1a1a2e;
+  --text-secondary: #6c7293;
+  --accent-blue: #667eea;
+  --accent-purple: #764ba2;
+  --accent-green: #10b981;
+  --accent-orange: #f59e0b;
+  --accent-red: #ef4444;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.12);
+  --border-radius: 16px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+// Mixin para glassmorphism (vidro fosco)
+@mixin glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+// Container principal modernizado
+#container-main {
+  padding: 20px !important;
+  background: var(--dashboard-bg);
+  min-height: 100vh;
+  position: relative;
+
+  // Padrão de fundo sutil - REMOVIDO z-index para não sobrepor
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.03) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1; // 🔧 CORREÇÃO: z-index negativo para ficar atrás
+  }
+
+  // Seções com z-index para ficar acima do background
+  section {
+    position: relative;
+    z-index: 1;
+
+    &>div {
+      height: 100%;
+      padding: 0 10px;
+      margin-bottom: 20px;
+      // 🔧 CORREÇÃO: Removida animação que pode causar problemas
+      opacity: 1;
+      transform: translateY(0);
+
+      .container-wrapper {
+        height: 100%;
+        padding: 0;
+        border: none;
+        border-radius: var(--border-radius);
+        @include glass-effect;
+        box-shadow: var(--shadow-md);
+        position: relative !important;
+        overflow: visible; // 🔧 CORREÇÃO: overflow visible para não cortar conteúdo
+        transition: var(--transition);
+
+        // Efeito de brilho no hover
+        &::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+          opacity: 0;
+          transition: opacity 0.3s;
+          pointer-events: none;
+        }
+
+        &:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+
+          &::before {
+            opacity: 1;
+          }
+        }
+
+        .container-header {
+          height: auto;
+          padding: 20px 24px 16px;
+          display: flex;
+          flex-direction: column;
+          border-bottom: 2px solid rgba(0, 0, 0, 0.15) !important; // Linha mais visível
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%);
+
+          h6 {
+            padding: 0;
+            margin: 0 0 4px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+          }
+
+          small {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0.8;
+          }
+        }
+
+        .container-view {
+          width: 100%;
+          height: 100%;
+          padding: 16px;
+        }
+      }
+    }
+
+    // PRIMEIRA SEÇÃO - Cards de contadores (CORRIGIDA)
+    &.first-section {
+      .container-wrapper {
+        @include glass-effect;
+        box-shadow: var(--shadow-sm);
+        transition: var(--transition);
+        min-height: 120px; // 🔧 CORREÇÃO: altura mínima garantida
+
+        &:hover {
+          transform: translateY(-4px) scale(1.02);
+          box-shadow: var(--shadow-md);
+        }
+      }
+
+      .container-view {
+        width: 100%;
+        min-height: 120px;
+        display: flex; // 🔧 CORREÇÃO: flex ao invés de table
+        align-items: center;
+        justify-content: center;
+        padding: 24px 20px;
+
+        .container-content {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          position: relative;
+          z-index: 10; // 🔧 CORREÇÃO: z-index para garantir visibilidade
+
+          .container-icon {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            border: none;
+            outline: none;
+            border-radius: 16px;
+            color: white;
+            background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+            transition: var(--transition);
+            cursor: pointer;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 1;
+
+            icon {
+              font-size: 28px;
+              transition: transform 0.3s;
+              display: block; // 🔧 CORREÇÃO: garantir que o ícone apareça
+              width: 28px;
+              height: 28px;
+            }
+
+            &:hover {
+              transform: rotate(5deg) scale(1.1);
+
+              icon {
+                transform: rotate(-5deg);
+              }
+            }
+          }
+
+          .container-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+
+            span {
+              display: block;
+              user-select: none;
+              transition: var(--transition);
+              opacity: 1; // 🔧 CORREÇÃO: garantir opacidade
+
+              &.label {
+                color: var(--text-secondary);
+                font-size: 14px;
+                font-weight: 600;
+                letter-spacing: -0.2px;
+                margin-top: 4px;
+                display: block !important; // 🔧 CORREÇÃO: forçar display
+                visibility: visible !important; // 🔧 CORREÇÃO: forçar visibilidade
+              }
+
+              &.value {
+                color: #1a1a2e !important; // Cor sólida escura
+                font-size: 32px;
+                font-weight: 800;
+                line-height: 1;
+                // Removido completamente o gradiente
+                display: block !important;
+                visibility: visible !important;
+
+              }
+            }
+          }
+        }
+      }
+
+      // Cores específicas para cada tipo de contador
+      .products .container-icon {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+      }
+
+      .products-alert .container-icon {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
+
+        &:hover {
+          animation: pulse 2s infinite;
+        }
+      }
+
+      .requests .container-icon {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        box-shadow: 0 8px 16px rgba(16, 185, 129, 0.3);
+      }
+
+      .serviceOrders .container-icon {
+        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+      }
+
+      .customers .container-icon {
+        background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+        box-shadow: 0 8px 16px rgba(236, 72, 153, 0.3);
+      }
+    }
+
+    // SEGUNDA SEÇÃO - Cards de conteúdo
+    &.second-section {
+      &>div {
+        .container-wrapper {
+          padding: 0;
+          overflow: visible;
+        }
+
+        .container-view {
+          width: 100%;
+          height: 380px !important;
+          max-height: 480px !important;
+          overflow: hidden auto;
+          padding: 0;
+
+          // Scrollbar customizada
+          &::-webkit-scrollbar {
+            width: 6px;
+          }
+
+          &::-webkit-scrollbar-track {
+            background: transparent;
+          }
+
+          &::-webkit-scrollbar-thumb {
+            background-color: rgba(102, 126, 234, 0.2);
+            border-radius: 10px;
+
+            &:hover {
+              background-color: rgba(102, 126, 234, 0.4);
+            }
+          }
+
+          // Tabelas modernizadas
+          table {
+            margin: 0;
+            width: 100%;
+
+            tr {
+              border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+              transition: var(--transition);
+              cursor: pointer;
+              position: relative;
+
+              &::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 3px;
+                background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+                opacity: 0;
+                transform: scaleY(0);
+                transition: var(--transition);
+              }
+
+              td {
+                vertical-align: middle;
+                padding: 12px 16px;
+
+                span {
+                  font-size: 13px;
+                  display: block;
+                  transition: var(--transition);
+
+                  &.name {
+                    color: var(--text-primary);
+                    font-size: 14px;
+                    font-weight: 600;
+                    margin-bottom: 4px;
+                  }
+
+                  &.label {
+                    color: var(--text-secondary);
+                    font-size: 12px;
+                    margin-bottom: 2px;
+
+                    b {
+                      color: var(--text-secondary);
+                      font-weight: 600;
+                    }
+                  }
+
+                  &.disclosure {
+                    color: var(--accent-blue);
+                    font-size: 16px;
+                    transition: transform 0.3s;
+                  }
+                }
+
+                // Thumbnail para aniversariantes
+                button.thumbnail {
+                  width: 42px;
+                  height: 42px;
+                  border: none;
+                  border-radius: 12px;
+                  background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+                  color: white;
+                  font-size: 18px;
+                  font-weight: 700;
+                  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                  transition: var(--transition);
+                  cursor: pointer;
+
+                  &:hover {
+                    transform: scale(1.1) rotate(5deg);
+                  }
+                }
+              }
+
+              &:hover {
+                background: rgba(102, 126, 234, 0.04);
+                transform: translateX(8px);
+
+                &::before {
+                  opacity: 1;
+                  transform: scaleY(1);
+                }
+
+                .disclosure {
+                  transform: translateX(4px);
+                }
+              }
+
+              &:last-child {
+                border-bottom: none;
+              }
+            }
+          }
+
+          // Container sem dados
+          .container-no-data {
+            width: 100%;
+            height: 100%;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .internal-wrapper {
+              text-align: center;
+
+              .container-icon {
+                width: 80px;
+                height: 80px;
+                padding: 0;
+                margin: 0 auto 16px;
+                border: none;
+                outline: none;
+                border-radius: 20px;
+                background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                overflow: hidden;
+
+                &::before {
+                  content: '';
+                  position: absolute;
+                  top: -50%;
+                  left: -50%;
+                  width: 200%;
+                  height: 200%;
+                  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.5) 50%, transparent 70%);
+                  animation: shimmer 3s infinite;
+                }
+
+                icon {
+                  font-size: 40px;
+                  color: #d1d5db;
+                  z-index: 1;
+                }
+              }
+
+              .container-info {
+                span.info {
+                  color: var(--text-secondary);
+                  font-size: 14px;
+                  font-weight: 500;
+                  line-height: 1.6;
+                }
+              }
+            }
+          }
+        }
+
+        // RESUMO DE CAIXA - Estilos especiais
+        &.cashier {
+          .container-view {
+            padding: 20px !important;
+            display: flex;
+            align-items: center;
+          }
+
+          .container-chart {
+            width: 260px !important;
+            max-width: 100%;
+            height: 100%;
+            position: relative;
+
+            // 🎨 Melhorias visuais para o gráfico
+            ::ng-deep {
+              .ngx-charts {
+                // Animação suave de entrada
+                animation: rotateIn 1s ease-out;
+
+                // Ajusta o tamanho do SVG
+                svg {
+                  overflow: visible !important;
+                }
+
+                // Estiliza os labels
+                .pie-label {
+                  fill: #374151 !important;
+                  font-size: 13px !important;
+                  font-weight: 600 !important;
+                  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
+                  // Adiciona fundo nos labels para melhor legibilidade
+                  &::before {
+                    content: '';
+                    position: absolute;
+                    background: rgba(255, 255, 255, 0.8);
+                    border-radius: 4px;
+                    padding: 2px 6px;
+                    z-index: -1;
+                  }
+                }
+
+                // Melhora o visual das fatias
+                .arc {
+                  cursor: pointer !important;
+                  transition: all 0.3s ease !important;
+
+                  &:hover {
+                    transform: scale(1.05);
+                    filter: brightness(1.1);
+
+                    // Adiciona sombra ao hover
+                    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+                  }
+                }
+
+                // Tooltip customizado
+                .tooltip {
+                  background: rgba(31, 41, 55, 0.95) !important;
+                  backdrop-filter: blur(8px);
+                  border-radius: 8px !important;
+                  padding: 12px 16px !important;
+                  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+
+                  .tooltip-label {
+                    font-size: 13px !important;
+                    font-weight: 600 !important;
+                    margin-bottom: 4px !important;
+                  }
+
+                  .tooltip-val {
+                    font-size: 16px !important;
+                    font-weight: 700 !important;
+                    color: #10b981 !important;
+                  }
+                }
+              }
+            }
+          }
+
+          .container-content {
+            width: calc(100% - 260px) !important;
+            height: 100%;
+            display: flex !important;
+            align-items: center !important;
+            padding-left: 30px;
+
+            .container-wrapper-center {
+              width: 100%;
+
+              .container-periods {
+                text-align: right;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: flex-end;
+                flex-wrap: wrap;
+
+                button {
+                  color: var(--text-secondary);
+                  font-size: 13px;
+                  font-weight: 600;
+                  padding: 8px 16px;
+                  margin-left: 8px;
+                  border: 2px solid transparent;
+                  border-radius: 10px;
+                  background: rgba(102, 126, 234, 0.1);
+                  outline: none;
+                  transition: var(--transition);
+                  cursor: pointer;
+
+                  &:hover {
+                    background: rgba(102, 126, 234, 0.15);
+                    transform: translateY(-2px);
+                  }
+
+                  &.active {
+                    // color: white;
+                    background: linear-gradient(135deg, var(--accent-blue) 0%, var(--accent-purple) 100%);
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                  }
+
+                  &:first-child {
+                    margin-left: 0;
+                  }
+                }
+              }
+
+              .container-revenue {
+                padding: 20px 0;
+                text-align: center;
+
+                span {
+                  display: block;
+
+                  &.value {
+                    color: #1a1a2e !important; // Cor sólida escura
+                    font-size: 42px;
+                    font-weight: 800;
+                    margin-bottom: 8px;
+                    // Removido completamente o gradiente
+                  }
+
+                  &.label {
+                    color: var(--text-secondary);
+                    font-size: 14px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                  }
+                }
+              }
+
+              .container-info {
+                max-width: 100%;
+                position: relative;
+                overflow: visible;
+
+                ul {
+                  width: 100%;
+                  margin: 0;
+                  padding: 0;
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 12px;
+
+                  li {
+                    flex: 1 1 calc(50% - 6px);
+                    min-width: 140px;
+                    padding: 16px;
+                    text-align: left;
+                    display: block;
+                    border-radius: 12px;
+                    border: 1px solid rgba(0, 0, 0, 0.15);
+                    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                    background: rgba(255, 255, 255, 0.5);
+                    border-left: 5px solid;
+                    transition: var(--transition);
+
+                    &:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+                    }
+
+                    span {
+                      display: block;
+
+                      &.label {
+                        color: var(--text-secondary);
+                        font-size: 13px;
+                        font-weight: 600;
+                        margin-bottom: 4px;
+
+                        .percentage {
+                          color: var(--accent-orange);
+                          font-size: 13px;
+                          font-weight: 700;
+                        }
+                      }
+
+                      &.value {
+                        color: var(--text-primary);
+                        font-size: 20px;
+                        font-weight: 700;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        // Cards com listas (produtos, pedidos, etc)
+        &.bestSellers,
+        &.stockAlert,
+        &.serviceOrders,
+        &.requests,
+        &.billsToPay,
+        &.billsToReceive {
+          table tr td {
+            &:first-child {
+              padding-left: 20px;
+            }
+
+            &:last-child {
+              width: 40px;
+              text-align: center;
+              padding-right: 20px;
+            }
+          }
+        }
+
+        // Best sellers - numeração especial
+        &.bestSellers {
+          table tr td {
+            &:first-child {
+              width: 50px;
+              text-align: center;
+              font-weight: 700;
+              font-size: 16px;
+              color: var(--accent-blue);
+              background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            }
+          }
+        }
+
+        // Aniversariantes - estilos especiais
+        &.birthdayCustomers {
+          table tr td {
+            span {
+              &.date {
+                color: var(--accent-orange);
+                font-size: 12px;
+                font-weight: 600;
+              }
+
+              &.phone {
+                color: var(--text-secondary);
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // Animações
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes rotateIn {
+    from {
+      opacity: 0;
+      transform: rotate(-180deg) scale(0.5);
+    }
+
+    to {
+      opacity: 1;
+      transform: rotate(0) scale(1);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    100% {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  @keyframes pulse {
+
+    0%,
+    100% {
+      transform: scale(1);
+      box-shadow: 0 8px 16px rgba(245, 158, 11, 0.3);
+    }
+
+    50% {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+    }
+  }
+
+  // Responsividade melhorada
+  @media only screen and (max-width: 1400px) {
+    section {
+      &.second-section {
+        &>div {
+          &.cashier {
+            .container-chart {
+              width: 220px !important;
+            }
+
+            .container-content {
+              width: calc(100% - 220px) !important;
+              padding-left: 20px;
+
+              .container-revenue span.value {
+                font-size: 36px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 991px) {
+    padding: 16px !important;
+
+    section {
+      &>div {
+        padding: 0 8px;
+        margin-bottom: 16px;
+      }
+
+      &.second-section {
+        &>div {
+          &.cashier {
+            .container-view {
+              flex-direction: column;
+              height: auto !important;
+              max-height: none !important;
+            }
+
+            .container-chart {
+              width: 100% !important;
+              height: 240px;
+              margin-bottom: 20px;
+            }
+
+            .container-content {
+              width: 100% !important;
+              padding-left: 0;
+
+              .container-periods {
+                text-align: center;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media only screen and (max-width: 768px) {
+    padding: 12px !important;
+
+    section {
+      &.first-section {
+        .container-view {
+          min-height: 100px;
+          padding: 20px 16px;
+
+          .container-content {
+            .container-icon {
+              width: 56px;
+              height: 56px;
+              margin-right: 16px;
+
+              icon {
+                font-size: 24px;
+              }
+            }
+
+            .container-info {
+              span {
+                &.value {
+                  font-size: 28px;
+                }
+
+                &.label {
+                  font-size: 13px;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      &.second-section {
+        &>div {
+          .container-header {
+            padding: 16px 20px 12px;
+
+            h6 {
+              font-size: 15px;
+            }
+
+            small {
+              font-size: 12px;
+            }
+          }
+
+          &.cashier {
+            .container-content {
+              .container-revenue span.value {
+                font-size: 32px;
+              }
+
+              .container-info ul li {
+                flex: 1 1 100%;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,236 @@
+
+<main id="container-transfers-register">
+
+  <div class="panel">
+
+    <div class="container-components-one">
+
+      <div class="container-store">
+
+        <h6>
+          <span>{{ translate.store.title }}</span>
+          <button (click)="onOpenLayer('stores')"><icon name="search-outline" pack="eva"></icon></button>
+        </h6>
+
+        <div class="data" *ngIf="data.destination">
+          <div class="container-table table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.store.label.name + ':' }}</span> <span class="value">{{ data.destination.name }}</span></span>
+                  </td>
+
+                  <td *ngIf="data.destination.businessDocument">
+                    <span><span class="label">{{ data.destination.businessDocument.type + ':' }}</span> <span class="value">{{ data.destination.businessDocument.value }}</span></span>
+                  </td>
+                </tr>
+
+                <tr *ngIf="data.destination?.address || data.destination?.contacts?.phone">
+                  <td *ngIf="data.destination?.address">
+                    <span><span class="label">{{ translate.store.label.address + ':' }}</span> <span class="value">{{ data.destination?.address }}</span></span>
+                  </td>
+
+                  <td *ngIf="data.destination?.contacts?.phone">
+                    <span><span class="label">{{ translate.store.label.phone + ':' }}</span> <span class="value">{{ data.destination?.contacts?.phone }}</span></span>
+                  </td>
+                </tr>              
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-products">
+
+        <h6>
+          <span>{{ translate.products.title }}</span>
+
+          <div class="quick-search">
+            <input type="text" [placeholder]="translate.products.quickSearch.placeholder" autocomplete="off" (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)" #inputQuickSearch />
+            <button (click)="onQuickSearch(inputQuickSearch)"><icon name="search-outline" pack="eva"></icon></button>
+          </div>
+
+          <button (click)="onOpenLayer('products')"><icon name="funnel-outline" pack="eva"></icon></button>
+        </h6>
+
+        <div class="data">
+
+          <div *ngIf="data.products?.length > 0">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>                
+                    <th></th>
+                    <th>{{ translate.products.label.code }}</th>
+                    <th class="text-left">{{ translate.products.label.name }}</th>                
+                    <th>{{ translate.products.label.quantity }}</th>
+                    <th>{{ translate.products.label.costPrice }}</th>
+                    <th>{{ translate.products.label.salePrice }}</th>
+                    <th>{{ translate.products.label.averageCost }}</th>
+                    <th>{{ translate.products.label.total }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of data.products; let i = index">
+                    <td class="action">
+                      <button class="btnClose" (click)="onDeleteProductItem(i)"><icon name="close" pack="eva"></icon></button>
+                    </td>
+                    <td class="code">{{ item.code }}</td>
+                    <td class="name">{{ item.name }}</td>
+                    <td class="quantity">
+                      <input [value]="item.selectedItems" autocomplete="off" (input)="onApplyQuantity(item, quantityField)" (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                    </td>
+                    <td class="price">
+                      <input [value]="item.costPrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, costPriceField, 'costPrice')" #costPriceField />
+                    </td>
+                    <td class="price">
+                      <input [value]="item.salePrice | currency:''" autocomplete="off" (input)="onApplyPrice(item, salePriceField, 'salePrice')" #salePriceField />
+                    </td>
+                    <td class="average">
+                      <input [value]="item.averageCost | currency:''" [disabled]="true" />
+                    </td>
+                    <td class="total">
+                      <input [value]="(item.costPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="!data.products || (data.products?.length == 0)" class="placeholder-container">
+            <div class="wrapper">
+              <div class="icon-container">
+                <icon name="shopping-bag-outline" pack="eva"></icon>
+              </div>
+              <button class="btn btn-primary btn-add" (click)="onOpenLayer('products')">Adicionar produtos</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="container-components-two">
+
+      <div class="container-settings">
+
+        <h6>
+          <span>{{ translate.settings.title }}</span>
+        </h6>     
+
+        <div class="data">
+          
+          <div class="form-group">
+            <label>{{ translate.settings.label.note }}</label>
+            <textarea class="form-control" [value]="(data.note || '')" (input)="onCaptureNote(inputNote)" #inputNote></textarea>          
+          </div>
+      
+          <div class="form-group">
+            <label>{{ translate.settings.label.attachment.title }}</label>
+    
+            <div class="container-attachment">
+              
+              <table>
+                <tr>
+                  <td><icon name="file-outline" pack="eva"></icon></td>
+                  <td>
+                    <span class="info" *ngIf="data.attachment">{{ data.attachment?.name + ' (' + data.attachment?.size + ' MB)' }}</span>
+                    <span class="no-file" *ngIf="!data.attachment">{{ translate.settings.label.attachment.message.noFile }}</span>
+                  </td>
+                  <td (click)="onCaptureAttachment(attachment)">
+                    <button type="button"><icon name="edit-outline" pack="eva"></icon></button>
+                  </td>
+                </tr>
+              </table>
+    
+              <input type="file" #attachment />
+            </div>        
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-financial">
+        
+        <h6>
+          <span>{{ translate.financial?.title }}</span>
+        </h6>
+  
+        <div class="data row p-0 m-0">
+          <div class="col-6 form-group ps-0">
+            <label>{{ translate.financial?.label?.installments }}</label>
+            <select class="form-control" value="1" [value]="data.billToReceive?.installments || ''" (input)="onCaptureFinancialInstallments(inputFinancialInstallments)" #inputFinancialInstallments>
+              <option *ngFor="let item of installments" [value]="item">{{ item }}</option>
+            </select>
+          </div>
+  
+          <div class="col-6 form-group pe-0">
+            <label>{{ translate.financial?.label?.expirationDay }}</label>
+            <select class="form-control" value="15" [value]="data.billToReceive?.expirationDay || ''" (input)="onCaptureFinancialExpirationDay(inputFinancialExpirationDay)" #inputFinancialExpirationDay>
+              <option *ngFor="let item of expirationDays" [value]="item">{{ item }}</option>
+            </select>
+          </div>
+
+          <div class="col-12 mt-1 mt-md-0 p-0">
+            <p class="account-summary">Serão <strong>{{ data.billToReceive?.installments }}</strong> parcelas de <strong>{{ (data.billToReceive?.installmentValue || 0) | currency }}</strong></p>
+          </div>
+        </div>
+  
+      </div>
+
+      <div class="container-balance">
+        <div class="data">
+          <div class="container-subtotal">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th colspan="2">{{ translate.balance.label.subtotal.title }}</th>
+                  </tr>
+                </thead>
+                <tbody>                
+                  <tr>
+                    <td><span class="label">{{ translate.balance.label.subtotal.integrant.items }}</span> <span class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalItems || 0) }}</span></td>
+                  </tr>
+                  <tr>
+                    <td><span class="label">{{ translate.balance.label.subtotal.integrant.cost }}</span> <span class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalCost || 0) | currency }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>       
+
+          <div class="container-total">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <th>{{ translate.balance.label.total }}</th>
+                    <td>{{ (data.balance?.totalTransfer || 0) | currency }}</td>
+                  </tr>
+                </tbody>              
+              </table>
+            </div>
+          </div>        
+        </div>
+
+      </div>
+      
+      <div class="container-button">
+        <button class="btn btn-confirm" (click)="onRegister()" [disabled]="!(!sending && data.destination && (data.products?.length > 0))">Registrar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <transfers-register-layer (callback)="onLayerResponse($event)"></transfers-register-layer>
+  
+</main>

@@ -1,0 +1,61 @@
+<div>
+  <div class="wrapper">
+    
+    <nb-alert *ngIf="showMessages.error && errors?.length && !submitted" outline="danger" role="alert" class="danger">
+      <p class="alert-title"><b>{{ translate.register.title.error }}</b></p>
+      <ul class="alert-message-list">
+        <li *ngFor="let error of errors" class="alert-message">{{ error }}</li>
+      </ul>
+    </nb-alert>
+    
+    <nb-alert *ngIf="showMessages.success && messages?.length && !submitted" outline="success" role="alert" class="success">
+      <p class="alert-title"><b>{{ translate.register.title.success }}</b></p>
+      <ul class="alert-message-list" >
+        <li *ngFor="let message of messages" class="alert-message">{{ message }}</li>
+      </ul>
+    </nb-alert>
+    
+    <form (submit)="submit()" [formGroup]="form" aria-labelledby="title">
+
+
+      <div class="form-group">
+        <label>{{ translate.register.form.donorName }}</label>
+        <input class="form-control {{ formControls.donorName.errors ? 'required' : '' }}" type="text" formControlName="donorName"/>
+      </div>
+
+      
+      <div class="form-group">
+        <label>{{ translate.register.form.donationType.label }}</label>
+        <select class="form-control {{ formControls.type.errors ? 'required' : '' }}" formControlName="type">
+          <option></option>
+          <option value="MONEY">{{ translate.register.form.donationType.data.money }}</option>
+          <option value="OTHERS">{{ translate.register.form.donationType.data.others }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>{{ translate.register.form.deliveryMode.label }}</label>
+        <select class="form-control {{ formControls.deliveryMode.errors ? 'required' : '' }}" formControlName="deliveryMode">
+          <option></option>
+          <option value="ONLINE">{{ translate.register.form.deliveryMode.data.online }}</option>
+          <option value="PRESENTIAL">{{ translate.register.form.deliveryMode.data.presential }}</option>
+        </select>
+      </div>
+
+      <!-- exibir se for online e dinheiro  -->
+
+      <div class="form-group" *ngIf="formControls.deliveryMode.value == 'ONLINE' && formControls.type.value == 'MONEY'">
+        <label>{{ translate.register.form.value }}</label>
+        <input class="form-control {{ formControls.amount.errors ? 'required' : '' }}" formControlName="amount" value="{{ 0 | currency:'' }}" (input)="onApplyPriceMask($event, formControls.amount)" />
+      </div>
+
+      <div class="form-group">
+        <label>{{ translate.register.form.description }}</label>
+        <textarea class="form-control {{ formControls.description.errors ? 'required' : '' }}" formControlName="description" ></textarea>
+      </div>
+
+      <button [disabled]="form.invalid" class="form-group">{{ translate.register.form.button.submit }}</button>
+
+    </form>
+  </div>
+</div>

@@ -1,0 +1,152 @@
+
+div {
+  div {
+    .content {
+      width: 800px;
+      max-width: 100%;
+      margin: 0 auto 30px;
+      header {
+        text-align: center;
+        margin: 10px 0 15px;
+        position: relative;
+        padding: 30px 0;
+        img {
+          width: 200px;
+          max-width: 100%;
+        }        
+        span {
+          display: block;
+          font-size: 14px;
+          &.name {
+            margin: 5px 0 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 21px;
+            text-transform: uppercase;           
+          }
+        }
+        button {
+          width: 30px;
+          height: 30px;
+          border: none;
+          outline: none;
+          border-radius: 17px;
+          color: #fff;     
+          transition: all 0.5s ease-in-out;
+          position: absolute;
+          top: 0;
+          right: 0;
+          background-color: green;
+          icon {
+            font-size: 16px;
+          }
+          &:hover {
+            opacity: 0.8;
+            box-shadow: 0 2px 4px #ccc !important;
+          }
+        }
+
+        .requestPassword{
+          position: absolute;
+          right: 40px;
+          top: 0px;
+          width: auto !important;
+          font-size: 13px;
+          background-color: rgb(195, 115, 45);
+          padding: 6px 15px !important;
+          opacity: 0.8;
+        }
+      }
+      section {
+        margin-bottom: 20px;
+        h5 {
+          text-align: left;
+          padding: 5px 0;
+          color: #666;
+          font-size: 14px;
+          text-transform: uppercase;
+          border-bottom: 1px solid rgb(165, 165, 165);
+        }
+        table {
+          width: 100%;
+          th, td {
+            vertical-align: middle;
+          }
+        }      
+        &.address {
+          table {         
+            tbody {
+              tr {
+                td {
+                  span {
+                    font-size: 15px;
+                    display: block;                 
+                  }
+                  icon {
+                    font-size: 20px;
+                    color: #555;
+                  }
+                  &:first-child{
+                    width: 50px;
+                    text-align: center;
+                  }                
+                }
+              }
+            }
+          }
+        }
+        &.contacts {
+          table {
+            tbody {
+              tr {
+                td {
+                  padding: 5px 12px;
+                  i {
+                    font-size: 18px;
+                  }
+                  icon {
+                    font-size: 17px;                 
+                  }
+                  i, icon {
+                    color: #555;
+                    margin-top: 2px;
+                  }              
+                  &:first-child {
+                    width: 50px;
+                    text-align: center;
+                  }                
+                }
+              }
+            }
+          }
+        }
+        &.admin {
+          img {
+            width: 70px;
+            height: 70px;
+            border-radius: 100%;
+            display: table;
+            margin: auto;
+            border: 1px solid lightgray;
+          }
+          table {
+            tbody {
+              tr {
+                td {
+                  padding: 5px 10px;                
+                  color: #555;
+                  span {
+                    font-size: 14px !important;
+                    color: #555;
+                  }
+                  &:first-child{
+                    width: 85px;
+                  }                
+                }
+              }
+            }
+          }
+        }
+      }
+    }    
+  }
+}

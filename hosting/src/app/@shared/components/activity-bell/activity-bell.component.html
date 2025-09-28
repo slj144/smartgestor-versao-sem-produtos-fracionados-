@@ -1,0 +1,19 @@
+<div class="activity-bell">
+    <button (click)="toggleList()">
+        <icon name="bell-outline" pack="eva"></icon>
+        <span class="badge" *ngIf="pendingActivities.length > 0">{{ pendingActivities.length }}</span>
+    </button>
+    <div class="list" *ngIf="showList">
+        <div class="item" *ngFor="let act of pendingActivities">
+            <div class="info">
+                <span class="title">{{ act.title }}</span>
+                <small class="date">{{ act.scheduledDate | date:'shortDate' }} {{ act.scheduledDate | date:'shortTime'
+                    }}</small>
+            </div>
+            <button class="btn-view" (click)="view(act._id)">
+                <icon name="eye-outline" pack="eva"></icon>
+            </button>
+        </div>
+        <p class="empty" *ngIf="pendingActivities.length === 0">Sem pendências</p>
+    </div>
+</div>

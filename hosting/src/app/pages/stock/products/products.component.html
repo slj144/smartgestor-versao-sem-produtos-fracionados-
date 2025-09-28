@@ -1,0 +1,155 @@
+<div id="container-main">
+
+  <custom-header [orderSettings]="{enabled: true, order: order}" [loading]="loading" [filtersBadge]="filtersBadge"
+    [countData]="countData" (filter)="onFilter($event)" (search)="onSearch($event)"
+    (changeOrder)="onChangeOrderBy($event)">
+    <ng-container slot="buttons-of-header">
+      <div class="dropdown">
+        <button class="btnGroup" data-bs-toggle="dropdown">
+          <icon name="list-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li *ngIf="permissions.sections.stockAdjustment" (click)="onStockAdjustment()">
+            <span class="dropdown-item">
+              <icon name="edit-2-outline" pack="eva" class="px-1"></icon> {{
+              translate.modal.action.others.stockAdjustment.title }}
+            </span>
+          </li>
+          <li *ngIf="permissions.sections.generateTickets" (click)="onGenerateTickets()">
+            <span class="dropdown-item">
+              <icon name="pricetags-outline" pack="eva" class="px-1"></icon> {{
+              translate.modal.action.others.generateTickets.title }}
+            </span>
+          </li>
+          <li *ngIf="permissions.sections.dataImport && fiscalConfigured && isFiscal" (click)="onXmlImport()">
+            <span class="dropdown-item">
+              <icon name="code-outline" pack="eva" class="px-1"></icon> {{ translate.modal.action.others.xmlImport.title
+              }}
+            </span>
+          </li>
+          <li *ngIf="permissions.sections.dataImport" (click)="onDataImport()">
+            <span class="dropdown-item">
+              <icon name="code-outline" pack="eva" class="px-1"></icon> {{
+              translate.modal.action.others.dataImport.title }}
+            </span>
+          </li>
+          <li *ngIf="permissions.sections.dataExport" (click)="onDataExport()">
+            <span class="dropdown-item">
+              <icon name="code-outline" pack="eva" class="px-1"></icon> {{
+              translate.modal.action.others.dataExport.title }}
+            </span>
+          </li>
+        </ul>
+      </div>
+    </ng-container>
+  </custom-header>
+
+  <main>
+
+    <ng-container *ngIf="!loading && (recordsData?.length > 0)">
+      <div class="custom-grid-table responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-5">{{ translate.table.label.name }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.category }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.costPrice }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.salePrice }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.quantity }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+
+            <div
+              class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold" [class.disabled]="item._isDisabled">{{ item.code }}</span>
+            </div>
+
+            <div
+              class="col-12 col-md-5 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.name }}:</span>
+              <span class="value" [class.disabled]="item._isDisabled">{{ item.name }}</span>
+            </div>
+
+            <div
+              class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.category }}:</span>
+              <span class="value" [class.disabled]="item._isDisabled">{{ item.category?.name }}</span>
+            </div>
+
+            <div
+              class="col-6 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.costPrice }}:</span>
+              <span class="value fw-bold costPrice" [class.disabled]="item._isDisabled">{{ (permissions.fields.costPrice
+                ? (item.costPrice | currency:'') : '*****') }}</span>
+            </div>
+
+            <div
+              class="col-6 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.salePrice }}:</span>
+              <span class="value fw-bold salePrice" [class.disabled]="item._isDisabled">{{ item.salePrice | currency:''
+                }}</span>
+            </div>
+
+            <div
+              class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.quantity }}:</span>
+              <span class="value" [class.disabled]="item._isDisabled">{{ item.quantity }}</span>
+            </div>
+
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead" [tooltip]="translate.table.action.read.title" (click)="onRead(item)">
+                  <icon name="eye-outline" pack="eva"></icon>
+                </button>
+                <button class="btnAction btnEdit" [tooltip]="translate.table.action.update.title"
+                  *ngIf="permissions.actions.edit" (click)="onUpdate(item)">
+                  <icon name="edit-outline" pack="eva"></icon>
+                </button>
+
+                <div class="dropdown">
+                  <button class="btnAction btnOthers" data-bs-toggle="dropdown">
+                    <icon name="more-vertical-outline" pack="eva"></icon>
+                  </button>
+
+                  <ul class="dropdown-menu dropdown-menu-right p-0">
+                    <li *ngIf="isMatrix && isAdmin" (click)="onDuplicate(item)">
+                      <span class="dropdown-item">
+                        <icon name="copy-outline" pack="eva" class="px-1"></icon> Duplicar
+                      </span>
+                    </li>
+                    <li *ngIf="isMatrix && permissions.actions.delete" (click)="onDelete(item)">
+                      <span class="dropdown-item">
+                        <icon name="trash-2-outline" pack="eva" class="px-1"></icon> Deletar
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate()" *ngIf="isMatrix && permissions.actions?.add">
+        <icon name="plus-outline" pack="eva"></icon>
+      </button>
+    </div>
+
+  </main>
+
+  <placeholder [loading]="loading" [hasData]="recordsData?.length > 0" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<products-modal (callback)="onModalResponse($event)"></products-modal>

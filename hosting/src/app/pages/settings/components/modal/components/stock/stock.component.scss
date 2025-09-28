@@ -1,0 +1,128 @@
+
+#generalSettings {
+  height: 100%;
+  .container-view {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;
+    .container-external {
+      display: table-row;
+      .container-info {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          width: 700px;
+          max-width: 100%;
+          padding: 15px;
+          border: 1px solid #ddd;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 5px;
+          margin: 0 auto;
+          background-color: #fff;
+          .container-average-cost {
+            header {
+              padding-bottom: 5px;
+              margin-top: 10px;
+              margin-bottom: 10px;
+              position: relative;
+              border-bottom: 1px solid rgb(213, 213, 213);
+              h6 {
+                padding: 0;
+                margin-bottom: -5px;                
+                font-size: 17px;
+                font-weight: 600;
+              }
+              small {
+                color: #888;
+                font-size: 12px;
+              }
+            }
+            form {
+              width: 700px;
+              max-width: 100%;
+              margin: 0 auto;          
+              label {
+                font-size: 12px;
+                margin-bottom: 1px;
+              }       
+              input, select, textarea {
+                font-size: 14px;
+                border-left: 4px solid rgb(102, 102, 255);
+                box-shadow: none;
+                resize: none;        
+              }
+              textarea {
+                height: 95px;
+                max-height: 95px;
+              }
+              fieldset {
+                padding: 0;
+                &[disabled] {
+                  opacity: 0.65;
+                  background-color: #eee;
+                }
+              }
+              input[type=file] {
+                display: none;
+              } 
+              button[type=submit] {
+                margin: 10px auto;
+                display: block;
+                padding: 5px 40px;
+                border-radius: 8px;
+                font-size: 14px;
+                background-color: rgb(102, 102, 255);
+                color: #fff;
+                &.btnBlue {
+                  background-color: rgb(102, 102, 255);
+                }
+                &.btnRed {
+                  background-color: indianred;
+                }
+              }
+              .required {
+                border-color: indianred;
+                &:focus {
+                  border-color: rgba(205, 92, 92, 0.75);
+                }
+              }
+            }            
+            .container-checkboxes {
+              padding: 5px 10px;
+              table {
+                margin: 10px 0;
+                tr {
+                  td {
+                    border: none;
+                    padding: 10px 5px !important;
+                    vertical-align: middle;
+                    span {
+                      color: #333;
+                      font-size: 14px;
+                      font-weight: 600;
+                    }
+                    small {
+                      color: #999;
+                      font-size: 11px;
+                    }
+                    span, small {              
+                      line-height: 13px;
+                      display: block;
+                    }
+                    &:first-child {
+                      width: 15px;
+                      padding-left: 10px !important;
+                      text-align: right;
+                    }
+                  }
+                }
+              }              
+            }
+          } 
+        }
+      }
+    }
+  }
+}
+  

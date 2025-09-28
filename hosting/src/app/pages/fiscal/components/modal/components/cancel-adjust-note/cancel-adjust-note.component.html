@@ -1,0 +1,47 @@
+
+<main id="container-request-register" [formGroup]="form" *ngIf="form">
+  <div class="container-components-one">
+
+    <div class="container-description">
+
+      <h6 *ngIf="this.settings.activeComponent == 'Fiscal/Cancel'">
+        <span>Tipo</span>
+      </h6>
+  
+      <h6 *ngIf="this.settings.activeComponent == 'Fiscal/Cancel' && this.form.contains('type')">
+        <select class="form-control" formControlName="type">
+          <option>NFE</option>
+          <option>NFCE</option>
+          <option>NFSE</option>
+        </select>
+      </h6>
+
+      <h6>
+        <span>Id da Nota</span>
+      </h6>
+
+      <input type="text" class="form-control" formControlName="idNota" placeholder="Insira o id da nota aqui.." />
+
+      <h6 *ngIf="this.settings.activeComponent == 'Fiscal/Edit'">
+        <span>Correção</span>
+      </h6>
+
+      <textarea *ngIf="this.settings.activeComponent == 'Fiscal/Edit' && this.form.contains('correcao')" class="form-control" formControlName="correcao" placeholder="Insira a correção aqui.."></textarea>
+
+
+      <h6 *ngIf="this.settings.activeComponent == 'Fiscal/Cancel'">
+        <span>Justificativa</span>
+      </h6>
+      
+
+      <textarea *ngIf="this.settings.activeComponent == 'Fiscal/Cancel' && this.form.contains('justificativa')" class="form-control" formControlName="justificativa" placeholder="Insira a justificativa aqui.."></textarea>
+
+      <div class="container-button">
+        <button class="btn btnConfirm" (click)="onRegister()" [disabled]="form.invalid">Enviar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>

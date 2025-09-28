@@ -1,0 +1,54 @@
+
+<div id="payment-methods-selector">
+
+  <header>
+    <div class="container-search">
+      <div #searchBar class="search-bar">
+
+        <input type="text" name="search" placeholder="Pesquisar.." autocomplete="off" (keydown.enter)="onSearch()" (input)="onCheckSearchBar(input.value)" #input />
+
+        <button class="btnReset" *ngIf="input.value != ''" (click)="onResetSearchBar()"><icon name="close" pack="eva"></icon></button>
+        <button class="btnSearch" (click)="onSearch()"><icon name="search-outline" pack="eva"></icon></button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <div class="container-content">
+      <div class="table-responsive" *ngIf="!loading && (recordsData?.length > 0)">
+        <table class="table table-borderless">
+          <tbody>           
+            <tr *ngFor="let item of (searchData.length > 0 ? searchData : recordsData)">
+              <table class="table table-level-1">
+                <tr *ngIf="!item.providers" (click)="onSelectPaymentMethod($event, item)">
+                  <td>
+                    <button class="btnCheck {{ item.selected ? 'active' : '' }}"><icon name="checkmark-outline" pack="eva"></icon></button>
+                  </td>
+                  <td>
+                    <span>{{ item.name }}</span>
+                  </td>
+                </tr>
+                <tr *ngFor="let provider of item.providers" (click)="onSelectPaymentMethod($event, provider, item)">
+                  <td>
+                    <button class="btnCheck {{ provider.selected ? 'active' : '' }}"><icon name="checkmark-outline" pack="eva"></icon></button>
+                  </td>
+                  <td>
+                    <span>{{ provider.name }}</span>
+                    <small>{{ item.name }}</small>
+                  </td>                   
+                </tr>
+              </table>                
+            </tr>
+          </tbody>
+        </table>         
+      </div>
+    </div>
+  
+    <div class="container-buttons">
+      <button class="btnConfirm" (click)="onConfirmSelect()" *ngIf="methodsSelected?.length > 0"><icon name="checkmark" pack="eva"></icon></button>
+    </div>
+    
+  </main>
+  
+</div>

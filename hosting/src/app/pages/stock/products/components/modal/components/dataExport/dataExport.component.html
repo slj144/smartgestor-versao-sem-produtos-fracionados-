@@ -1,0 +1,88 @@
+
+<main>
+  <div *ngIf="checkBootstrap">
+
+    <h5>{{ translate.label.title }}</h5>
+
+    <section class="container-instructions">
+      <p>{{ translate.label.info[0] }}</p>
+      <p>{{ translate.label.info[1] }}</p>
+    </section>
+
+    <section class="container-content">
+      <table id="exportData" class="table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.code }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.name }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.serialNumber }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.barcode }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.costPrice }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.salePrice }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.quantity }}</th>
+            <th rowspan="2" style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.alert }}</th>
+            <th colspan="2" style="min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.category.title }}</th>
+            <th colspan="2" style="min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.commercialUnit.title }}</th>
+            <th colspan="2" style="min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.provider.title }}</th>
+          </tr>
+          <tr>
+            <!-- Category -->
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.category.sub.code }}</th>
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.category.sub.name }}</th>
+            <!-- Type -->
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.commercialUnit.sub.code }}</th>
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.commercialUnit.sub.name }}</th>
+            <!-- Provider -->
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.provider.sub.code }}</th>
+            <th style="border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.provider.sub.name }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of recordsData">
+            <td style="vertical-align: middle; text-align: center;">{{ ("'" + item.code) }}</td>
+            <td style="vertical-align: middle;">{{ item.name }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ (item.serialNumber ? ("'" + item.serialNumber) : '----') }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ (item.barcode ? ("'" + item.barcode) : '----') }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ (item.costPrice | currency:'') }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ (item.salePrice | currency:'') }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ item.quantity }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ item.alert }}</td>
+            <td colspan="2">
+              <table>
+                <tr>
+                  <td style="vertical-align: middle; text-align: center;">{{ ("'" + item.category?.code) }}</td>
+                  <td style="vertical-align: middle;">{{ (item.category?.name || '----') }}</td>
+                </tr>
+              </table>
+            </td>
+            <td colspan="2">
+              <table>
+                <tr>
+                  <td style="vertical-align: middle; text-align: center;">{{ ("'" + item.commercialUnit?.code) }}</td>
+                  <td style="vertical-align: middle;">{{ (item.commercialUnit?.name || '----') }}</td>
+                </tr>
+              </table>
+            </td>
+            <td colspan="2">
+              <table>
+                <tr>
+                  <td style="vertical-align: middle; text-align: center;">{{ (item.provider?.code ? ("'" + item.provider?.code) : '----') }}</td>
+                  <td style="vertical-align: middle;">{{ (item.provider?.name || '----') }}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <button class="btn btn-primary" (click)="onExport()">{{ translate.label.button }}</button>
+  </div>
+
+  <div *ngIf="!checkBootstrap"
+    [nbSpinner]="!checkBootstrap"
+    [nbSpinnerStatus]="'success'"
+    [nbSpinnerSize]="'large'"
+    style="height: 50vh">
+  </div>
+</main>

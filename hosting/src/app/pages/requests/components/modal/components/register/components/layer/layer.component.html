@@ -1,0 +1,14 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+  
+    <div [style.display]="(settings.activeComponent == 'customers' ? 'block' : 'none')">
+      <customers-selector (callback)="onCustomerResponse($event)"></customers-selector>
+    </div>
+  
+    <div [style.display]="(settings.activeComponent == 'products' ? 'block' : 'none')">
+      <products-selector (callback)="onProductsResponse($event)"></products-selector>
+    </div>
+
+  </ng-container>
+</layer>

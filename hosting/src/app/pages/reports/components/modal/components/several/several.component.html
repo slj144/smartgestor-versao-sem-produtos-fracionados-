@@ -1,0 +1,90 @@
+
+<main id="stock">
+
+  <div *ngIf="!loading && this.formControls">
+    <div class="container-main">
+      <div class="wrapper">
+        <div class="container-settings">
+          <div class="container-form">
+            <h6>{{ settings.model.name }}</h6>
+
+            <form [formGroup]="formFilters" (submit)="onGenerateReport()" class="form">
+              <div class="row" *ngIf="isMatrix && (settings.stores.length > 0)">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.store.title }}</label>
+
+                  <select class="form-control" formControlName="store">
+                    <option *ngFor="let item of settings.stores" value="{{ item._id }}">{{ item.name }}</option>
+                  </select>
+                </div>
+              </div>
+      
+              <div class="row">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.period.title }}</label>
+
+                  <div class="row">
+                    <div class="col-12 form-group">
+                      <select class="form-control" formControlName="period" #selectPeriod>
+                        <option value="today">{{ translate._general.form.period.label.option.today }}</option>
+                        <option value="currentWeek">{{ translate._general.form.period.label.option.currentWeek }}</option>
+                        <option value="currentMonth">{{ translate._general.form.period.label.option.currentMonth }}</option>
+                        <option value="lastMonth">{{ translate._general.form.period.label.option.lastMonth }}</option>
+                        <option value="custom">{{ translate._general.form.period.label.option.custom }}</option>
+                      </select>
+
+                      <div class="row container-period" *ngIf="formControls.period.value == 'custom'">
+                        <div class="col-12 col-sm-6 form-group">
+                          <small>{{ translate._general.form.period.label.start }}</small>
+                          <input type="date" class="form-control" placeholder="dd/mm/aaaa" formControlName="startDate" />
+                        </div>
+
+                        <div class="col-12 col-sm-6 form-group">
+                          <small>{{ translate._general.form.period.label.end }}</small>
+                          <input type="date" class="form-control" placeholder="dd/mm/aaaa" formControlName="endDate" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="this.settings.types && (this.settings.types).length > 0">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportType.title }}</label>
+
+                  <div class="row container-types">
+                    <label class="option col-12" *ngFor="let item of this.settings.types">
+                      <input type="radio" [value]="item.id" formControlName="types" (change)="onTypesChange(item.id)" />
+                      <span>{{ item.label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row" *ngIf="(this.settings.fields[typeActived] && (this.settings.fields[typeActived]).length > 0) && typeActived">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.reportFields.title }}</label>
+
+                  <div class="row container-options">
+                    <label class="option col-12 col-sm-6 col-md-4" *ngFor="let control of formControls.fields.controls; let i = index">
+                      <input type="checkbox" [formControl]="control" />
+                      <span>{{ this.settings.fields[this.typeActived][i].label }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+      
+              <button type="submit" class="btn btn-primary" [disabled]="formFilters.invalid">{{ translate._general.form.button.generate }}</button>
+            </form>
+          </div>
+        </div>
+      </div>         
+    </div>
+  </div>
+
+  <placeholder [loading]="loading" [hasData]="true" [verticalAlign]="true"></placeholder>
+
+</main>
+
+<several-layer (callback)="onLayerResponse($event)"></several-layer>

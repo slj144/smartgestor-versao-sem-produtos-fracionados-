@@ -1,0 +1,18 @@
+
+<layer (callback)="onLayerResponse($event)">
+  <ng-container slot="content">
+
+    <div class="container-beneficiary" [style.display]="(settings.activeComponent == 'beneficiaries' ? 'block' : 'none')">
+      <providers-selector (callback)="onProvidersResponse($event)"></providers-selector>
+    </div>
+
+    <div class="container-categories" [style.display]="(settings.activeComponent == 'categories' ? 'block' : 'none')">
+      <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
+    <div class="container-payment-methods" [style.display]="(settings.activeComponent == 'paymentMethods' ? 'block' : 'none')">
+      <payment-methods-selector (callback)="onPaymentResponse($event)"></payment-methods-selector>
+    </div>
+
+  </ng-container>
+</layer>

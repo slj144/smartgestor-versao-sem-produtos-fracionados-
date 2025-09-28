@@ -1,0 +1,42 @@
+
+<main>
+  <div *ngIf="checkBootstrap">
+    
+    <h5>{{ translate.label.title }}</h5>
+
+    <section class="container-instructions">
+      <p>{{ translate.label.info[0] }}</p>
+      <p>{{ translate.label.info[1] }}</p>
+    </section>
+
+    <section class="container-content">
+      <table id="exportData" class="table">
+        <thead>
+          <tr>
+            <th style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.code }}</th>
+            <th style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.name }}</th>
+            <th style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.costPrice }}</th>
+            <th style="height: 50px; min-width: 250px; border: 1px solid #ddd; text-align: center; background-color: cyan; vertical-align: middle;">{{ translate.label.table.finalPrice }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of recordsData">
+            <td style="vertical-align: middle; text-align: center;">{{ ("'" + item.code) }}</td>
+            <td style="vertical-align: middle;">{{ item.name }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ item.costPrice | currency:'' }}</td>
+            <td style="vertical-align: middle; text-align: center;">{{ item.executionPrice | currency:'' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <button class="btn btn-primary" (click)="onExport()">{{ translate.label.button }}</button>
+  </div>
+
+  <div *ngIf="!checkBootstrap"
+    [nbSpinner]="!checkBootstrap"
+    [nbSpinnerStatus]="'success'"
+    [nbSpinnerSize]="'large'"
+    style="height: 50vh">
+  </div>
+</main>

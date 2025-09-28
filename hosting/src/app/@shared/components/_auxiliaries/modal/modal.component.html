@@ -1,0 +1,28 @@
+
+<div #modal id="modal-wrapper">
+  <div class="modal-container">
+
+    <div class="modal-header" *ngIf="!settings.hideHeader">
+
+      <div class="titles-container">
+        <h2 class="title">{{ settings.title }}</h2>
+        <h6 class="subtitle" *ngIf="settings.subtitle">{{ settings.subtitle }}</h6>
+      </div>
+
+      <div class="buttons-container">
+        <ng-content select="[slot=buttons]"></ng-content>
+
+        <button class="btnClose" (click)="onClose()">
+          <icon name="close" pack="eva"></icon>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="modal-body">
+      <ng-content select="[slot=content]"></ng-content>
+      <ng-content select="[slot=components]"></ng-content>        
+    </div>     
+
+  </div>
+</div>

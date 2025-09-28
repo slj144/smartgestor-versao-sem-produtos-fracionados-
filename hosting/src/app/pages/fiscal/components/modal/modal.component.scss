@@ -1,0 +1,117 @@
+
+modal{
+  .container-data {
+    section {
+      margin-bottom: 10px;
+      h5 {
+        line-height: 22px;
+        font-size: 13px;
+        font-weight: 600;
+        margin: 0;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .container-buttons{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        width: 100%;
+
+        .dropdown{
+          float: right;
+        }
+
+        .buttons{
+          button{
+            margin: 3px;
+            border-radius: 5px;
+            background-color: #888;
+            color: white;
+            display: inline-block !important;
+            span{
+              padding: 0 !important;
+              position: relative;
+            }
+
+            &:hover{
+              background-color: rgb(101, 101, 101);
+            }
+          }
+        }
+      }
+
+
+      &.container-informations {
+        .content {
+          padding: 10px 10px 0;
+          p {
+            margin: 0;
+            line-height: 13px;
+            span {
+              &.label {
+                color: #666;
+                font-size: 11px;
+                font-weight: 600;
+              }
+              &.value {
+                color: #888;
+                font-size: 12px;
+                margin-left: 4px;
+              }
+            }
+          } 
+        }                  
+      }
+      &.container-description {
+        .content {        
+          width: 100%;
+          padding: 10px 10px 0;
+          color: #898989;
+          white-space: pre-line;
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 13px;
+        }
+      }
+      &:last-child {
+        margin-bottom: none;
+      }
+    }
+  }
+
+  .nf-preview{
+    background-color: #898989;
+    width: 100%;
+    height: 600px;
+    iframe{
+      height: 100%;
+      width: 100%;
+    }
+  }
+}
+
+
+
+#container-view {
+  width: 100% !important;
+  height: 100% !important;
+  padding: 15px;
+  display: table !important;
+  table-layout: fixed;
+  .container-external {
+    display: table-row;
+    .container-internal {
+      display: table-cell;
+      vertical-align: middle;
+      .wrapper {
+        width: 900px !important;
+        max-width: 100% !important;
+        padding: 20px 15px 20px;
+        border: 1px solid #eee;
+        box-shadow: 0 2px 4px #ccc;
+        border-radius: 5px;
+        margin: 0 auto;
+        background-color: #fff;
+      }
+    }
+  }
+}

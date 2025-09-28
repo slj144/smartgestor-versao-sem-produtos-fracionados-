@@ -1,0 +1,160 @@
+
+#payments-component {
+  padding: 0;
+  display: block;
+  background-color: #fff;
+  .required {
+    border-color: indianred;
+    &:focus {
+      border-color: rgba(205, 92, 92, 0.75);
+    }
+  }
+
+  h6 {
+    padding: 6px 0;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0;
+    position: relative;
+    button {
+      width: 30px;
+      height: 30px;
+      color: gray;
+      border-radius: 100%;
+      background-color: #fff;
+      border: none;
+      outline: none;
+      position: absolute;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      transition: all 0.5s ease-in-out;
+      icon {
+        font-size: 15px;
+        margin: 1px 0 0;
+      }
+      &:hover {
+        opacity: 0.85;
+      }
+      &:disabled {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .data {
+    overflow: auto;
+    table {
+      width: 100%;
+      margin: 0;
+      thead {
+        th {
+          text-align: center;
+          font-size: 11px;
+          font-weight: 500;
+          color: #888;
+          padding: 0 10px;
+          border-right: 1px solid #fff;
+          border-bottom: 1px solid #eee;
+        }
+      }
+      tbody {
+        tr {
+          border-bottom: 2px solid #eee;
+          td {
+            vertical-align: middle;
+            font-size: 12px;
+            &.action {
+              width: 35px;
+              max-width: 35px;
+              padding: 0;
+              text-align: center;
+              position: relative;
+              cursor: pointer;
+              button {
+                width: 100%;
+                height: 100%;
+                display: block;
+                outline: none;
+                border: none;
+                background-color: transparent;
+                color: rgb(230, 178, 178);
+                position: absolute;
+                left: 0;
+                transition: all 0.3s ease-in-out;
+                &.btnClose {
+                  top: 0;
+                  &:hover {
+                    background-color: rgb(219, 120, 120);
+                    color: #fff;
+                  }
+                }
+                &:disabled {
+                  opacity: 0.8;
+                  cursor: not-allowed;
+                }
+              }
+            }                
+            &.code {
+              width: 70px;
+            }
+            &.price {
+              width: 85px;
+              padding: 0;
+              input {
+                width: 75px;
+                height: 30px;
+                border: 2px solid #e9e9e9;
+                border-radius: 5px;
+                text-align: center;
+                &:focus {
+                  border: 2px solid #d0d0d0 !important;
+                  outline: none;
+                }
+              }
+            }
+            &:not(.name) {
+              text-align: center;
+            }
+
+          
+          }         
+          &:hover {
+            background-color: lightcyan !important;
+          }
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+      }
+
+    }
+  }
+
+
+  .received-payment{
+    display: block;
+    margin-top: 5px;
+    width: 100%;
+    background-color: rgba(250, 100, 100, 1);
+    padding: 5px;
+    border-radius: 5px;
+
+    // background-color: rgba(255, 149, 110, 0.818);
+    &.ok{
+      background-color: rgb(26, 214, 48);
+    }
+
+    &.error{
+      background-color: rgba(250, 100, 100, 1);
+    }
+
+    .label{
+      font-size: 13px;
+      // color: rgb(115, 227, 116) !important;
+      color: white !important;
+    }
+  }
+
+}

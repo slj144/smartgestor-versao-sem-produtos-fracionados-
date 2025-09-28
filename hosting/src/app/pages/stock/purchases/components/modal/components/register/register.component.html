@@ -1,0 +1,390 @@
+<main id="container-purchases-register">
+
+  <div class="panel">
+
+    <div class="container-components-one">
+
+      <div class="container-provider">
+
+        <h6>
+          <span>{{ translate.provider.title }}</span>
+          <button (click)="onOpenLayer('providers')">
+            <icon name="search-outline" pack="eva"></icon>
+          </button>
+        </h6>
+
+        <div class="data" *ngIf="data.provider">
+          <div class="container-table table-responsive">
+            <table class="table table-borderless">
+              <tbody>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.provider.label.name + ':' }}</span> <span class="value">{{
+                        data.provider.name }}</span></span>
+                  </td>
+                  <td *ngIf="data.provider?.personalDocument">
+                    <span><span class="label">{{ data.provider?.personalDocument?.type + ':' }}</span> <span
+                        class="value">{{ data.provider?.personalDocument?.value }}</span></span>
+                  </td>
+                  <td *ngIf="data.provider?.businessDocument">
+                    <span><span class="label">{{ data.provider?.businessDocument?.type + ':' }}</span> <span
+                        class="value">{{ data.provider?.businessDocument?.value }}</span></span>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <span><span class="label">{{ translate.provider.label.address + ':' }}</span> <span class="value">{{
+                        data.provider?.address }}</span></span>
+                  </td>
+                  <td>
+                    <span><span class="label">{{ translate.provider.label.phone + ':' }}</span> <span class="value">{{
+                        data.provider?.contacts?.phone }}</span></span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-products">
+
+        <h6>
+          <span>{{ translate.products.title }}</span>
+
+          <div class="quick-search" *ngIf="!data.configFromXml">
+            <input type="text" [placeholder]="translate.products.quickSearch.placeholder" autocomplete="off"
+              (keydown.enter)="onQuickSearch(inputQuickSearch)" (input)="onApplyNumberMask($event)" #inputQuickSearch />
+            <button (click)="onQuickSearch(inputQuickSearch)">
+              <icon name="search-outline" pack="eva"></icon>
+            </button>
+          </div>
+
+          <button *ngIf="!data.configFromXml" (click)="onOpenLayer('products')">
+            <icon name="funnel-outline" pack="eva"></icon>
+          </button>
+        </h6>
+
+        <div class="data">
+
+          <div *ngIf="data.products?.length > 0">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>{{ translate.products.label.code }}</th>
+                    <th class="text-left">{{ translate.products.label.name }}</th>
+                    <th>
+                      Código Interno
+                    </th>
+                    <th>{{ translate.products.label.quantity }}</th>
+                    <th>{{ translate.products.label.costPrice }}</th>
+                    <th>{{ translate.products.label.salePrice }}</th>
+                    <th>{{ translate.products.label.averageCost }}</th>
+                    <th>{{ translate.products.label.total }}</th>
+                    <th *ngIf="data.configFromXml">Categoria</th>
+                    <th *ngIf="data.configFromXml">Unidade Comercial</th>
+                    <th *ngIf="data.configFromXml">
+                      Conciliação de Estoque
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of data.products; let i = index">
+                    <td class="action">
+                      <button class="btnClose" (click)="onDeleteProductItem(i)">
+                        <icon name="close" pack="eva"></icon>
+                      </button>
+                    </td>
+                    <td class="code">{{ item.code }}</td>
+                    <td class="name">{{ item.name }}</td>
+                    <td class="price">{{ item.internalCode }}</td>
+                    <td class="quantity">
+                      <input [value]="item.selectedItems" autocomplete="off"
+                        (input)="onApplyQuantity(item, quantityField)"
+                        (blur)="onApplyQuantityCorretion(item, quantityField)" #quantityField />
+                    </td>
+                    <td class="price">
+                      <input [value]="item.costPrice | currency:''" autocomplete="off"
+                        (input)="onApplyPrice(item, costPriceField, 'costPrice')" #costPriceField />
+                    </td>
+                    <td class="price">
+                      <input [value]="item.salePrice | currency:''" autocomplete="off"
+                        (input)="onApplyPrice(item, salePriceField, 'salePrice')" #salePriceField />
+                    </td>
+                    <td class="average">
+                      <input [value]="item.averageCost | currency:''" [disabled]="true" />
+                    </td>
+                    <td class="total">
+                      <input [value]="(item.costPrice * item.selectedItems) | currency:''" [disabled]="true" />
+                    </td>
+
+                    <td *ngIf="data.configFromXml">
+                      <div class="form-group">
+                        <div *ngIf="!item.isRegister">
+                          <span>{{ item?.category?.code + ' - ' + item?.category?.name }}</span>
+                        </div>
+                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
+                          <div class="manager-category clearfix"
+                            [formGroup]="productsFormArray.controls[i].controls.category">
+                            <select class="form-control" formControlName="code"
+                              (change)="onChangeCategory($event, item)">
+                              <option value=""></option>
+                              <option *ngFor="let item of categoriesData || []" value="{{ item.code }}">{{ item.code + '
+                                - ' + item.name }}</option>
+                            </select>
+                            <button type="button" (click)="onOpenLayer('categories',  i)">
+                              <icon name="list-outline" pack="eva"></icon>
+                            </button>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </td>
+
+                    <td *ngIf="data.configFromXml">
+                      <div class="form-group">
+                        <div *ngIf="!item.isRegister">
+                          <span>{{ item?.commercialUnit?.code + ' - ' + item?.commercialUnit?.name }}</span>
+                        </div>
+                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
+                          <div class="manager-commecial-unit clearfix"
+                            [formGroup]="productsFormArray.controls[i].controls.commercialUnit">
+                            <select class="form-control" formControlName="code"
+                              (change)="onChangeCommercialunit($event, item)">
+                              <option value=""></option>
+                              <option *ngFor="let item of commercialUnitsData || []" value="{{ item.code }}">{{
+                                item.code + ' - ' + item.name }}</option>
+                            </select>
+                            <button type="button" (click)="onOpenLayer('commercialUnits', i)">
+                              <icon name="list-outline" pack="eva"></icon>
+                            </button>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </td>
+
+                    <td *ngIf="data.configFromXml">
+                      <select class="form-control selectConciliation"
+                        (change)="onChangeStockConciliation($event, item, i)"
+                        [value]="item.isRegister ? 'isRegister' : 'isSearch'">
+                        <option value="isSearch">Selecionar Existente</option>
+                        <option value="isRegister">Registrar Novo Produto</option>
+                      </select>
+
+                      <div *ngIf="!item.isRegister" class="unitary-quick-search-container clearfix">
+                        <div class="unitary-quick-search">
+                          <input type="text" [placeholder]="translate.products.quickSearch.placeholder"
+                            autocomplete="off" (keydown.enter)="onQuickSearch(inputQuickSearch, i)"
+                            (input)="onApplyNumberMask($event)" #inputQuickSearch />
+                          <button (click)="onQuickSearch(inputQuickSearch, i)">
+                            <icon name="search-outline" pack="eva"></icon>
+                          </button>
+                        </div>
+                        <button class="openProductsLayer" (click)="onOpenLayer('products', i)">
+                          <icon name="funnel-outline" pack="eva"></icon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="!data.products || (data.products?.length == 0)" class="placeholder-container">
+            <div class="wrapper">
+              <div class="icon-container">
+                <icon name="shopping-bag-outline" pack="eva"></icon>
+              </div>
+              <button class="btn btn-primary btn-add" (click)="onOpenLayer('products')">Adicionar produtos</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="container-components-two">
+
+      <div class="container-settings">
+
+        <h6>
+          <span>{{ translate.settings.title }}</span>
+        </h6>
+
+        <div class="data">
+
+          <div class="form-group" *ngIf="isFiscal && fiscalSettings">
+            <label>{{ translate.settings.label.configFromXML }}</label>
+            <select class="form-control" [value]="data.configFromXml || 'false'" #selectXml
+              (change)="onSelectXml(selectXml)">
+              <option value="true">SIM</option>
+              <option value="false">NÃO</option>
+            </select>
+          </div>
+
+          <div class="form-group" *ngIf="data.configFromXml">
+            <label>{{ translate.settings.label.xmlImport.title }}</label>
+
+            <div class="container-attachment">
+              <table>
+                <tr>
+                  <td>
+                    <icon name="file-outline" pack="eva"></icon>
+                  </td>
+                  <td>
+                    <span class="info" *ngIf="data.xmlImport">{{ data.xmlImport?.name + ' (' + data.xmlImport?.size + '
+                      MB)' }}</span>
+                    <span class="no-file" *ngIf="!data.xmlImport">{{ translate.settings.label.xmlImport.message.noFile
+                      }}</span>
+                  </td>
+                  <td (click)="onCaptureXmlFile(xmlImport)">
+                    <button type="button">
+                      <icon name="edit-outline" pack="eva"></icon>
+                    </button>
+                  </td>
+                </tr>
+              </table>
+
+              <input type="file" #xmlImport />
+            </div>
+          </div>
+
+
+          <div class="form-group">
+            <label>{{ translate.settings.label.purchaseDate }}</label>
+            <input type="text" class="form-control" [value]="data.purchaseDate || ''"
+              (input)="onCaptureSettingsPurchaseDate(inputPurchaseDate)" #inputPurchaseDate />
+          </div>
+
+          <div class="form-group">
+            <label>{{ translate.settings.label.note }}</label>
+            <textarea class="form-control" [value]="data.note || ''" (input)="onCaptureSettingsNote(inputNote)"
+              #inputNote></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>{{ translate.settings.label.attachment.title }}</label>
+
+            <div class="container-attachment">
+
+              <table>
+                <tr>
+                  <td>
+                    <icon name="file-outline" pack="eva"></icon>
+                  </td>
+                  <td>
+                    <span class="info" *ngIf="data.attachment">{{ data.attachment?.name + ' (' + data.attachment?.size +
+                      ' MB)' }}</span>
+                    <span class="no-file" *ngIf="!data.attachment">{{ translate.settings.label.attachment.message.noFile
+                      }}</span>
+                  </td>
+                  <td (click)="onCaptureSettingsAttachment(attachment)">
+                    <button type="button">
+                      <icon name="edit-outline" pack="eva"></icon>
+                    </button>
+                  </td>
+                </tr>
+              </table>
+
+              <input type="file" #attachment />
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-financial">
+
+        <h6>
+          <span>{{ translate.financial.title }}</span>
+        </h6>
+
+        <div class="data row">
+          <div class="col-6 form-group">
+            <label>{{ translate.financial?.label?.installments }}</label>
+            <select class="form-control" value="1" [value]="data.billToPay?.installments || ''"
+              (input)="onCaptureFinancialInstallments(inputFinancialInstallments)" #inputFinancialInstallments>
+              <option *ngFor="let item of installments" [value]="item">{{ item }}</option>
+            </select>
+          </div>
+
+          <div class="col-6 form-group">
+            <label>{{ translate.financial?.label?.expirationDay }}</label>
+            <select class="form-control" value="15" [value]="data.billToPay?.expirationDay || ''"
+              (input)="onCaptureFinancialExpirationDay(inputFinancialExpirationDay)" #inputFinancialExpirationDay>
+              <option *ngFor="let item of expirationDays" [value]="item">{{ item }}</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <p class="account-summary">Serão <strong>{{ data.billToPay?.installments }}</strong> parcelas de <strong>{{
+                (data.billToPay?.installmentValue || 0) | currency }}</strong></p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-balance">
+
+        <div class="data">
+          <div class="container-subtotal">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th colspan="2">{{ translate.balance.label.subtotal.title }}</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td><span class="label">{{ translate.balance.label.subtotal.integrant.items }}</span> <span
+                        class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalItems || 0) }}</span></td>
+                  </tr>
+
+                  <tr>
+                    <td><span class="label">{{ translate.balance.label.subtotal.integrant.cost }}</span> <span
+                        class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.totalCost || 0) | currency }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="container-total">
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <th>{{ translate.balance.label.total }}</th>
+                    <td>{{ (data.balance?.totalPurchase || 0) | currency }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="container-button">
+        <button type="button" class="btn btn-confirm" (click)="onRegister()" *ngIf="data.configFromXml"
+          [disabled]="!(!sending && data.provider && (data.products?.length > 0) && checkXMLAssoc())">Registrar</button>
+        <button type="button" class="btn btn-confirm" (click)="onRegister()" *ngIf="!data.configFromXml"
+          [disabled]="!(!sending && data.provider && (data.products?.length > 0))">Registrar</button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <purchases-register-layer (callback)="onLayerResponse($event)"></purchases-register-layer>
+
+</main>

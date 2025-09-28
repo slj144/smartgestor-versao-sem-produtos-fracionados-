@@ -1,0 +1,42 @@
+
+#placeholder {
+  position: inherit;
+  height: calc(100vh - 160px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  p {
+    margin-top: 5px;
+    color: #999;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .loading {
+    .spinner {
+      width: 3rem;
+      height: 3rem;
+      color: gray !important;      
+    }
+  }
+  .no-data {
+    p {
+      width: 250px;
+      max-width: 100%;
+      color: #aaa;
+      font-size: 15px;
+    }
+    .container-image {
+      img {
+        width: 110px;
+      }
+    }
+    .container-icon {
+      color: #ccc;
+      icon {
+        font-size: 100px;
+      }
+    }
+  }
+ 
+}

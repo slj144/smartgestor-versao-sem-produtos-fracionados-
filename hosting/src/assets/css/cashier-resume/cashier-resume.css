@@ -1,0 +1,56 @@
+#containerCashierResumePrint header {
+  text-align: center;
+  margin: 10px 0; }
+  #containerCashierResumePrint header img {
+    width: 140px; }
+  #containerCashierResumePrint header span {
+    display: block;
+    font-size: 13px;
+    color: #000; }
+    #containerCashierResumePrint header span.name {
+      margin: 4px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #000; }
+#containerCashierResumePrint h6 {
+  margin: 0;
+  color: #000;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: underline; }
+#containerCashierResumePrint table {
+  width: 100%;
+  margin-bottom: 20px; }
+  #containerCashierResumePrint table thead tr th {
+    color: #000;
+    padding: 3px;
+    font-size: 12px;
+    border-bottom: 1px solid #999; }
+  #containerCashierResumePrint table tbody tr td {
+    padding: 3px;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: center;
+    border-right: 1px solid #000;
+    border-bottom: 1px solid #000; }
+    #containerCashierResumePrint table tbody tr td table {
+      margin: 0; }
+      #containerCashierResumePrint table tbody tr td table td {
+        padding: 0;
+        border: none; }
+    #containerCashierResumePrint table tbody tr td:last-child {
+      border-right: none; }
+  #containerCashierResumePrint table tbody tr:last-child {
+    border: none; }
+  #containerCashierResumePrint table tfoot tr th {
+    color: #000;
+    padding: 3px;
+    font-size: 12px; }
+#containerCashierResumePrint .text-left {
+  text-align: left; }
+
+/*# sourceMappingURL=cashier-resume.css.map */

@@ -1,0 +1,79 @@
+
+<div id="sideLayer">
+  <div class="header">              
+    <button class="btnClose" (click)="onClose()"><icon name="arrow-back-outline" pack="eva"></icon></button>
+
+    <div class="container-titles">
+      <span class='title'>{{ settings.title }}</span>
+      <span class="subtitle">{{ 'Gerado em ' + (settings.date | date:'dd/MM/yyyy') + ' às ' + (settings.date | date:'HH:mm') }}</span>
+    </div>
+
+    <div class="container-buttons" *ngIf="!!settings.download">
+      <div class="dropdown">
+        <button class="btnOthers" title="Outras Opções" data-bs-toggle="dropdown">
+          <icon name="more-vertical-outline" pack="eva"></icon>
+        </button>
+
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li  (click)="onExportXLS()"><span class="dropdown-item"><icon name="code-outline" pack="eva"></icon>  {{ translate._general.layer.titleBar.button.exportXLS }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="container-logs" *ngIf="settings.id == 'systemLogs'">
+      <div class="table-responsive">
+        <table id="report" class="table">
+          <tr class="storeInfo">
+            <td [attr.colspan]="onCheckColspan()">
+              <div style="display: table-cell;">
+                <div class="name" styles="font-size: 22px"><b>{{ settings.store.billingName }}</b></div>
+                <div class="address" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.address.addressLine"><b>{{ translate._general.layer.information.label.address + ': ' }}</b> {{ settings.store.address.addressLine + ', ' + settings.store.address.city + ' - ' + settings.store.address.state }}</div>
+                <div class="phone" style="font-size: 11px; opacity: 0.75;" *ngIf="settings.store.contacts.phone"><b>{{ translate._general.layer.information.label.phone + ': ' }}</b> {{ settings.store.contacts.phone }}</div>
+                <div class="period" style="font-size: 11px; opacity: 0.75;"><b>{{ translate._general.layer.information.label.period[0] + ': ' }}</b> {{ (settings.period.start | date:'dd/MM/yyyy') + ' ' + translate._general.layer.information.label.period[1] + ' ' + (settings.period.end | date:'dd/MM/yyyy') }}</div>
+              </div>
+            </td>
+          </tr>
+          <tr class="spacerXLS">
+            <td [attr.colspan]="onCheckColspan()"></td>
+          </tr>
+          <tr class="reportInfo">
+            <td [attr.colspan]="onCheckColspan()">
+              <table class="table">
+                <thead>
+                  <tr *ngIf="settings.data?.length > 0">
+                    <th>{{ translate.systemLogs.fields.default.date.internal }}</th>
+                    <th *ngIf="onCheckField('code')">{{ translate.systemLogs.fields.default.code.internal }}</th>
+                    <th *ngIf="onCheckField('referenceCode')">{{ translate.systemLogs.fields.default.referenceCode.internal }}</th>
+                    <th *ngIf="onCheckField('collaborator')">{{ translate.systemLogs.fields.default.collaborator.internal }}</th>
+                    <th *ngIf="onCheckField('origin')">{{ translate.systemLogs.fields.default.origin.internal }}</th>
+                    <th *ngIf="onCheckField('description')">{{ translate.systemLogs.fields.default.description.internal }}</th>
+                    <th *ngIf="onCheckField('action')">{{ translate.systemLogs.fields.default.action.internal }}</th>              
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of settings.data">
+                    <td>{{ item.registerDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td *ngIf="onCheckField('code')">{{ item.code }}</td>
+                    <td *ngIf="onCheckField('referenceCode')">{{ item.referenceCode }}</td>
+                    <td *ngIf="onCheckField('collaborator')">{{ item.operator?.name }}</td> 
+                    <td *ngIf="onCheckField('origin')" class="text-left">{{ translate.systemLogs.layer.type[item.type] }}</td>
+                    <td *ngIf="onCheckField('description')" class="text-left">{{ (item.note || '----') }}</td>
+                    <td *ngIf="onCheckField('action')">{{ translate.systemLogs.layer.action[item.action]  }}</td>                           
+                  </tr>
+                  <tr *ngIf="settings.data?.length == 0">
+                    <td [attr.colspan]="onCheckColspan()">
+                    <span class="noRecords">{{ translate._general.layer.warning.noData }}</span>
+                  </td>
+                </tbody>        
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

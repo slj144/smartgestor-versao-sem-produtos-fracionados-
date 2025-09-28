@@ -1,0 +1,100 @@
+
+<div id="container-main">
+
+  <custom-header
+    [loading]="loading"
+    [filtersBadge]="filtersBadge"
+    [countData]="countData"
+    (filter)="onFilter($event)"
+    (search)="onSearch($event)"
+  ></custom-header>
+
+  <main>
+    
+    <ng-container *ngIf="!loading && recordsData?.length">
+      <div class="custom-grid-table reduce-font-size responsive-down-md mt-2 mb-4">
+
+        <div class="thead fixed d-none d-md-block">
+          <div class="row">
+            <div class="col-1 text-center">{{ translate.table.label.code }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.date }}</div>
+            <div class="col-2">{{ translate.table.label.origin }}</div>
+            <div class="col-2">{{ translate.table.label.destination }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.transferStatus }}</div>
+            <div class="col-2 text-center">{{ translate.table.label.paymentStatus }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.value }}</div>
+            <div class="col-1 text-center">{{ translate.table.label.actions }}</div>
+          </div>
+        </div>
+
+        <div class="tbody">
+          <div class="row" *ngFor="let item of recordsData">
+
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.code }}:</span>
+              <span class="value fw-bold">{{ item.code }}</span>
+            </div>
+            
+            <div class="col-auto col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.date }}:</span>
+              <span class="value">{{ item.transferDate | date:'dd/MM/yyyy H:mm' }}</span>
+            </div>
+
+            <div class="col-12 d-block d-md-none m-0 p-0"></div>
+
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.origin }}:</span>
+              <span class="value">{{ item.origin?.name }}</span>
+            </div>  
+
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.destination }}:</span>
+              <span class="value">{{ item.destination?.name }}</span>
+            </div>  
+            
+            <div class="col-6 col-md-2 text-left text-md-center hr-down-md-bottom vr-down-md-right">
+              <span class="label d-block d-md-none">{{ translate.table.label.transferStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.transferStatus | lowercase)">{{ translate.table.enum.status[item.transferStatus] }}</span>
+              </div>
+            </div>  
+
+            <div class="col-6 col-md-2 text-left text-md-center hr-down-md-bottom">
+              <span class="label d-block d-md-none">{{ translate.table.label.paymentStatus }}:</span>
+              <div class="value">
+                <span [class]="'badge badge-' + (item.paymentStatus | lowercase)">{{ translate.table.enum.status[item.paymentStatus] }}</span>
+              </div>
+            </div>  
+
+            <div class="col col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center">
+              <span class="label d-block d-md-none">{{ translate.table.label.value }}</span>
+              <span class="value fw-bold costPrice">{{ item.balance?.total | currency }}</span>
+            </div>
+
+            <div class="col-auto col-md-1 text-center p-0 p-md-1">
+              <div class="value">
+                <button class="btnAction btnRead"   [tooltip]="translate.table.action.read.title" (click)="onRead(item)"><icon name="eye" pack="fa"></icon></button>
+                <button class="btnAction btnEdit"   [tooltip]="translate.table.action.update.title" (click)="onUpdate(item)" *ngIf="permissions.actions.edit && item.origin._id == storeID && (item.transferStatus == 'PENDENT')"><icon name="pencil-alt" pack="fa"></icon></button>
+                <button class="btnAction btnCancel" [tooltip]="translate.table.action.cancel.title" (click)="onCancel(item)" *ngIf="permissions.actions.cancel && item.origin._id == storeID && (item.transferStatus == 'PENDENT')"><icon name="close" pack="fa"></icon></button>
+                <button class="btnAction btnDelete" [tooltip]="translate.table.action.delete.title" (click)="onDelete(item)" *ngIf="permissions.actions.delete && item.origin._id == storeID && (item.transferStatus == 'CANCELED')"><icon name="trash" pack="fa"></icon></button>
+                <button class="btnAction btnAccept" [tooltip]="translate.table.action.accept.title" (click)="onAccept(item)" *ngIf="permissions.actions.accept && item.destination._id == storeID && (item.transferStatus == 'PENDENT')"><icon name="checkmark-outline" pack="eva"></icon></button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <div class="floating-button">
+      <button class="btnAdd" (click)="onCreate()" *ngIf="permissions.actions.add"><icon name="plus-outline" pack="eva"></icon></button>
+    </div>
+
+  </main>
+
+  <placeholder [loading]="loading" [hasData]="recordsData?.length" [verticalAlign]="true"></placeholder>
+
+</div>
+
+<transfers-modal (callback)="onModalResponse($event)"></transfers-modal>

@@ -1,0 +1,664 @@
+<!-- Arquivo: leads.component.html -->
+<!-- Localização: src/app/pages/crm/leads/leads.component.html -->
+<!-- Template: Componente de Leads com Importador e Seleção Múltipla -->
+<!-- VERSÃO CORRIGIDA: Adicionado status cancelado e correção de formatNotesShort -->
+
+<div class="leads-container">
+    <!-- Header -->
+    <div class="page-header">
+        <h2>Leads</h2>
+        <div class="header-actions">
+            <!-- Botão Importar Clientes -->
+            <button class="btn btn-secondary" (click)="openCustomerImport()" *ngIf="permissions.canAdd">
+                <icon name="people-outline"></icon>
+                Importar Clientes
+            </button>
+
+            <!-- Botão Novo Lead -->
+            <button class="btn btn-primary" (click)="openCreateModal()" *ngIf="permissions.canAdd">
+                <icon name="add-outline"></icon>
+                Novo Lead
+            </button>
+        </div>
+    </div>
+
+    <!-- Dashboard de Estatísticas -->
+    <div class="stats-dashboard" *ngIf="!loading">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <icon name="people-outline" pack="eva"></icon>
+            </div>
+            <div class="stat-content">
+                <h4>Total de Leads</h4>
+                <p class="stat-value">{{ getLeadsStats().total }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon pending">
+                <icon name="clock-outline" pack="eva"></icon>
+            </div>
+            <div class="stat-content">
+                <h4>Pendentes</h4>
+                <p class="stat-value">{{ getLeadsStats().pending }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon success">
+                <icon name="checkmark-circle-outline" pack="eva"></icon>
+            </div>
+            <div class="stat-content">
+                <h4>Concluídos</h4>
+                <p class="stat-value">{{ getLeadsStats().concluded }}</p>
+            </div>
+        </div>
+
+        <div class="stat-card" *ngIf="permissions.canViewValue">
+            <div class="stat-icon money">
+                <icon name="trending-up-outline" pack="eva"></icon>
+            </div>
+            <div class="stat-content">
+                <h4>Valor Total</h4>
+                <p class="stat-value">{{ formatCurrency(getLeadsStats().totalValue) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-container" *ngIf="loading">
+        <div class="spinner"></div>
+        <p>Carregando leads...</p>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="leads-content" *ngIf="!loading">
+        <!-- Filtros -->
+        <div class="filters-section">
+            <div class="search-box">
+                <icon name="search-outline"></icon>
+                <input type="text" placeholder="Buscar por nome, email ou telefone..." [(ngModel)]="searchTerm"
+                    (ngModelChange)="applyFilters()">
+            </div>
+
+            <!-- ⭐ AÇÕES EM MASSA -->
+            <div class="bulk-actions" *ngIf="selectedLeads.size > 0">
+                <span class="selected-count">{{ selectedLeads.size }} selecionado(s)</span>
+                <button class="btn btn-danger btn-sm" (click)="deleteSelected()" *ngIf="permissions.canDelete">
+                    <icon name="trash-2-outline" pack="eva"></icon>
+                    Excluir Selecionados
+                </button>
+            </div>
+
+            <div class="filter-group">
+                <label>Status:</label>
+                <!-- CORRIGIDO: Adicionada opção Cancelado -->
+                <select class="form-control" [(ngModel)]="filterStatus" (ngModelChange)="applyFilters()">
+                    <option value="all">Todos</option>
+                    <option value="new">Novo</option>
+                    <option value="contacted">Contactado</option>
+                    <option value="qualified">Qualificado</option>
+                    <option value="negotiation">Em Negociação</option>
+                    <option value="closed">Fechado</option>
+                    <option value="lost">Perdido</option>
+                    <option value="canceled">Cancelado</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Origem:</label>
+                <select class="form-control" [(ngModel)]="filterSource" (ngModelChange)="applyFilters()">
+                    <option value="all">Todas</option>
+                    <option *ngFor="let source of sourceOptions" [value]="source">{{ source }}</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Tipo:</label>
+                <select class="form-control" [(ngModel)]="filterType" (ngModelChange)="applyFilters()">
+                    <option value="all">Todos</option>
+                    <option value="with-products">Com Produtos</option>
+                    <option value="with-services">Com Serviços</option>
+                    <option value="with-order">Com Ordem de Serviço</option>
+                    <option value="pending">Vendas Pendentes</option>
+                    <option value="concluded">Vendas Concluídas</option>
+                </select>
+            </div>
+
+            <!-- ⭐ BOTÃO SELECIONAR TODOS -->
+            <div class="filter-group">
+                <label>&nbsp;</label>
+                <button class="btn btn-outline-primary" (click)="toggleSelectAll()">
+                    <icon name="checkmark-square-outline" pack="eva"></icon>
+                    {{ selectAll ? 'Desmarcar Todos' : 'Selecionar Todos' }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Lista de Leads -->
+        <div class="leads-list">
+            <!-- Cards de Leads -->
+            <div class="lead-card" *ngFor="let lead of filteredLeads" [class.selected]="selectedLeads.has(lead._id)">
+                <!-- ⭐ CHECKBOX DE SELEÇÃO -->
+                <div class="lead-checkbox">
+                    <input type="checkbox" [checked]="selectedLeads.has(lead._id)"
+                        (change)="toggleLeadSelection(lead._id)">
+                </div>
+
+                <!-- HEADER DO LEAD -->
+                <div class="lead-header">
+                    <div class="lead-info">
+                        <h3>{{ lead.name }}</h3>
+                        <div class="lead-details">
+                            <span class="lead-code" *ngIf="lead.code">{{ lead.code }}</span>
+                            <span class="lead-status badge" [class]="'badge-' + lead.status">
+                                {{ getStatusLabel(lead.status) }}
+                            </span>
+                            <!-- INDICADOR DE ORDEM DE SERVIÇO -->
+                            <span class="badge badge-info" *ngIf="hasServiceOrder(lead)">
+                                <icon name="settings-outline" pack="eva"></icon> OS
+                            </span>
+                        </div>
+                    </div>
+                    <div class="lead-score" *ngIf="lead.score">
+                        <div class="score-circle">
+                            <span>{{ lead.score }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INFORMAÇÕES DE CONTATO -->
+                <div class="lead-body">
+                    <div class="contact-info">
+                        <p *ngIf="lead.email">
+                            <icon name="mail-outline"></icon> {{ lead.email }}
+                        </p>
+                        <p *ngIf="lead.phone">
+                            <icon name="call-outline"></icon> {{ lead.phone }}
+                        </p>
+                    </div>
+
+                    <!-- INFORMAÇÕES PRINCIPAIS -->
+                    <div class="lead-meta-grid">
+                        <div class="meta-item">
+                            <span class="meta-label">Origem:</span>
+                            <span class="meta-value">{{ lead.source }}</span>
+                        </div>
+                        <div class="meta-item" *ngIf="permissions.canViewValue">
+                            <span class="meta-label">Valor:</span>
+                            <span class="meta-value value">{{ formatCurrency(lead.value) }}</span>
+                        </div>
+                        <div class="meta-item" *ngIf="lead.registerDate">
+                            <span class="meta-label">Data:</span>
+                            <span class="meta-value">{{ lead.registerDate | date:'dd/MM/yyyy' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- PRODUTOS (se houver) -->
+                    <div class="lead-products" *ngIf="extractProductsFromLead(lead).length > 0">
+                        <div class="section-header">
+                            <icon name="shopping-cart-outline" pack="eva"></icon>
+                            <span>Produtos ({{ extractProductsFromLead(lead).length }})</span>
+                        </div>
+                        <div class="items-list">
+                            <div class="item" *ngFor="let product of extractProductsFromLead(lead).slice(0, 3)">
+                                <span class="item-qty">{{ product.quantity }}x</span>
+                                <span class="item-name">{{ product.name }}</span>
+                                <span class="item-price" *ngIf="permissions.canViewValue">
+                                    {{ formatCurrency(product.total || 0) }}
+                                </span>
+                            </div>
+                            <div class="more-items" *ngIf="extractProductsFromLead(lead).length > 3">
+                                +{{ extractProductsFromLead(lead).length - 3 }} produto(s)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SERVIÇOS (se houver) -->
+                    <div class="lead-services"
+                        *ngIf="extractServicesFromLead(lead).length > 0 || extractServiceOrderData(lead)">
+                        <div class="section-header">
+                            <icon name="settings-2-outline" pack="eva"></icon>
+                            <span>Serviços</span>
+                            <span class="service-code" *ngIf="extractServiceOrderData(lead)?.serviceOrderCode">
+                                OS #{{ extractServiceOrderData(lead).serviceOrderCode }}
+                            </span>
+                        </div>
+
+                        <!-- Se tiver dados de OS -->
+                        <div class="service-order-info" *ngIf="extractServiceOrderData(lead)">
+                            <p *ngIf="extractServiceOrderData(lead).servicesDetails">
+                                <strong>Serviços:</strong> {{ extractServiceOrderData(lead).servicesDetails }}
+                            </p>
+                            <p *ngIf="extractServiceOrderData(lead).equipment">
+                                <strong>Equipamento:</strong> {{ extractServiceOrderData(lead).equipment }}
+                            </p>
+                        </div>
+
+                        <!-- Lista de serviços -->
+                        <div class="items-list" *ngIf="extractServicesFromLead(lead).length > 0">
+                            <div class="item" *ngFor="let service of extractServicesFromLead(lead).slice(0, 2)">
+                                <span class="item-qty">{{ service.quantity }}x</span>
+                                <span class="item-name">{{ service.name }}</span>
+                                <span class="item-price" *ngIf="permissions.canViewValue">
+                                    {{ formatCurrency(service.total || 0) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FORMAS DE PAGAMENTO -->
+                    <div class="lead-payment" *ngIf="extractPaymentMethods(lead) !== 'Não informado'">
+                        <div class="section-header">
+                            <icon name="credit-card-outline" pack="eva"></icon>
+                            <span>Pagamento</span>
+                        </div>
+                        <p class="payment-info">{{ extractPaymentMethods(lead) }}</p>
+                    </div>
+
+                    <!-- OBSERVAÇÕES RESUMIDAS - CORRIGIDO: Agora passa o status -->
+                    <div class="lead-notes" *ngIf="lead.notes && permissions.canViewNotes">
+                        <p>{{ formatNotesShort(lead.notes, lead.status) }}</p>
+                    </div>
+
+                    <!-- TAGS -->
+                    <div class="lead-tags" *ngIf="lead.tags && lead.tags.length > 0">
+                        <span class="tag" *ngFor="let tag of lead.tags.slice(0, 4)">{{ tag }}</span>
+                        <span class="tag more" *ngIf="lead.tags.length > 4">+{{ lead.tags.length - 4 }}</span>
+                    </div>
+                </div>
+
+                <!-- AÇÕES -->
+                <div class="lead-actions">
+                    <button class="btn-icon" (click)="openEditModal(lead)" *ngIf="permissions.canEdit" title="Editar"
+                        [attr.aria-label]="'Editar lead ' + lead.name">
+                        <icon name="edit-outline" pack="eva"></icon>
+                    </button>
+                    <button class="btn-icon" (click)="viewLeadDetails(lead)" title="Ver detalhes"
+                        [attr.aria-label]="'Ver detalhes de ' + lead.name">
+                        <icon name="eye-outline" pack="eva"></icon>
+                    </button>
+                    <button class="btn-icon danger" (click)="deleteLead(lead)" *ngIf="permissions.canDelete"
+                        title="Excluir" [attr.aria-label]="'Excluir lead ' + lead.name">
+                        <icon name="trash-2-outline" pack="eva"></icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sem resultados -->
+            <div class="no-results" *ngIf="filteredLeads.length === 0">
+                <icon name="search-outline"></icon>
+                <p>Nenhum lead encontrado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Criar/Editar Lead -->
+    <div class="modal-overlay" *ngIf="showModal" (click)="showModal = false">
+        <div class="modal-content" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <h3>{{ modalMode === 'create' ? 'Novo Lead' : 'Editar Lead' }}</h3>
+                <button class="close-btn" (click)="showModal = false">
+                    <icon name="close-outline"></icon>
+                </button>
+            </div>
+
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label>Nome *</label>
+                        <input type="text" class="form-control" [(ngModel)]="leadForm.name" name="name"
+                               (ngModelChange)="updateActivityTitle()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" class="form-control" [(ngModel)]="leadForm.email" name="email">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Telefone</label>
+                            <input type="text" class="form-control" [(ngModel)]="leadForm.phone" name="phone">
+                        </div>
+
+                        <div class="form-group col-md-6" *ngIf="permissions.canViewValue">
+                            <label>Valor Potencial</label>
+                            <input type="number" class="form-control" [(ngModel)]="leadForm.value" name="value">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label>Origem</label>
+                            <select class="form-control" [(ngModel)]="leadForm.source" name="source">
+                                <option *ngFor="let source of sourceOptions" [value]="source">{{ source }}</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label>Status</label>
+                            <select class="form-control" [(ngModel)]="leadForm.status" name="status">
+                                <option *ngFor="let status of statusOptions" [value]="status.value">
+                                    {{ status.label }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" *ngIf="permissions.canViewNotes">
+                        <label>Observações</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="leadForm.notes" name="notes"
+                            placeholder="Adicione observações sobre este lead..."></textarea>
+                    </div>
+
+                    <!-- 🆕 SEÇÃO DE CRIAR ATIVIDADE (apenas para modo create) -->
+                    <div class="activity-section" *ngIf="modalMode === 'create'">
+                        <hr class="section-divider">
+
+                        <!-- BOTÃO PARA ATIVAR CRIAÇÃO DE ATIVIDADE -->
+                        <div class="activity-toggle-section">
+                            <h5 class="section-title">
+                                <icon name="calendar-outline" pack="eva"></icon>
+                                Agendar Follow-up
+                            </h5>
+                            <p class="section-description">
+                                Deseja criar uma atividade de acompanhamento para este lead?
+                            </p>
+
+                            <!-- Botão toggle mais visível -->
+                            <button type="button"
+                                    class="btn activity-toggle-btn"
+                                    [class.active]="createActivityWithLead"
+                                    (click)="toggleActivityCreation()">
+                                <icon [name]="createActivityWithLead ? 'checkmark-circle-outline' : 'plus-circle-outline'" pack="eva"></icon>
+                                <span class="btn-text">
+                                    {{ createActivityWithLead ? 'Atividade Agendada!' : 'Sim, criar atividade' }}
+                                </span>
+                                <small class="btn-subtitle">
+                                    {{ createActivityWithLead ? 'Clique para cancelar' : 'Clique para agendar um follow-up' }}
+                                </small>
+                            </button>
+                        </div>
+
+                        <!-- Campos da atividade (visíveis apenas quando createActivityWithLead = true) -->
+                        <div class="activity-fields" *ngIf="createActivityWithLead">
+
+                            <!-- Título da Atividade -->
+                            <div class="form-group">
+                                <label>
+                                    <icon name="text-outline" pack="eva"></icon>
+                                    Título da Atividade *
+                                </label>
+                                <input type="text" class="form-control"
+                                    [(ngModel)]="activityForm.title"
+                                    name="activityTitle"
+                                    placeholder="Ex: Primeiro contato, Enviar proposta, etc...">
+                            </div>
+
+                            <!-- Tipo e Prioridade -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        <icon name="layers-outline" pack="eva"></icon>
+                                        Tipo de Atividade
+                                    </label>
+                                    <select class="form-control" [(ngModel)]="activityForm.type" name="activityType">
+                                        <option *ngFor="let type of activityTypeOptions" [value]="type.value">
+                                            {{ type.label }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        <icon name="flag-outline" pack="eva"></icon>
+                                        Prioridade
+                                    </label>
+                                    <select class="form-control" [(ngModel)]="activityForm.priority" name="activityPriority">
+                                        <option *ngFor="let priority of activityPriorityOptions" [value]="priority.value">
+                                            {{ priority.label }}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Data e Hora -->
+                            <div class="form-row">
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        <icon name="calendar-outline" pack="eva"></icon>
+                                        Data Agendada *
+                                    </label>
+                                    <input type="date" class="form-control"
+                                        [(ngModel)]="activityForm.scheduledDate"
+                                        name="activityDate">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>
+                                        <icon name="clock-outline" pack="eva"></icon>
+                                        Hora
+                                    </label>
+                                    <input type="time" class="form-control"
+                                        [(ngModel)]="activityForm.scheduledTime"
+                                        name="activityTime">
+                                </div>
+                            </div>
+
+                            <!-- Descrição da Atividade -->
+                            <div class="form-group">
+                                <label>
+                                    <icon name="file-text-outline" pack="eva"></icon>
+                                    Descrição da Atividade
+                                </label>
+                                <textarea class="form-control" rows="2"
+                                    [(ngModel)]="activityForm.description"
+                                    name="activityDescription"
+                                    placeholder="Detalhes sobre a atividade..."></textarea>
+                            </div>
+
+                            <!-- Informativo -->
+                            <div class="alert alert-info activity-info">
+                                <icon name="info-outline" pack="eva"></icon>
+                                <small>
+                                    A atividade será criada automaticamente após salvar o lead e ficará
+                                    disponível na tela de Atividades do CRM.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="showModal = false">Cancelar</button>
+                <button class="btn btn-primary" (click)="saveLead()">
+                    {{ modalMode === 'create' ? 'Criar Lead' : 'Salvar Alterações' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Importação de Clientes -->
+    <app-customer-import *ngIf="showImportModal" (onClose)="closeCustomerImport()"
+        (onImportComplete)="onImportComplete($event)">
+    </app-customer-import>
+
+    <!-- 🆕 MODAL DE DETALHES DO LEAD - VERSÃO MODERNA -->
+    <div class="modal-overlay details-modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+        <div class="modal-content details-modal-content" (click)="$event.stopPropagation()">
+            <!-- Header do modal -->
+            <div class="modal-header details-modal-header">
+                <div class="header-info">
+                    <h2>
+                        <icon name="person-outline" pack="eva"></icon>
+                        {{ leadDetails?.basic?.name }}
+                    </h2>
+                    <div class="lead-status-badge" [class]="'status-' + leadDetails?.basic?.status">
+                        {{ leadDetails?.basic?.statusLabel }}
+                    </div>
+                </div>
+                <button class="close-btn" (click)="closeDetailsModal()">
+                    <icon name="close-outline" pack="eva"></icon>
+                </button>
+            </div>
+
+            <!-- Body do modal com scroll -->
+            <div class="modal-body details-modal-body">
+                <!-- Informações Básicas -->
+                <div class="details-section">
+                    <div class="section-header">
+                        <icon name="info-outline" pack="eva"></icon>
+                        <h3>Informações Básicas</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <icon name="email-outline" pack="eva"></icon>
+                            <div>
+                                <label>Email</label>
+                                <span>{{ leadDetails?.basic?.email }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <icon name="phone-outline" pack="eva"></icon>
+                            <div>
+                                <label>Telefone</label>
+                                <span>{{ leadDetails?.basic?.phone }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <icon name="globe-outline" pack="eva"></icon>
+                            <div>
+                                <label>Origem</label>
+                                <span>{{ leadDetails?.basic?.source }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item" *ngIf="leadDetails?.canViewValue">
+                            <icon name="trending-up-outline" pack="eva"></icon>
+                            <div>
+                                <label>Valor Potencial</label>
+                                <span>{{ formatCurrency(leadDetails?.basic?.value) }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <icon name="calendar-outline" pack="eva"></icon>
+                            <div>
+                                <label>Data de Cadastro</label>
+                                <span>{{ leadDetails?.basic?.registerDate }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Produtos -->
+                <div class="details-section" *ngIf="leadDetails?.products?.length > 0">
+                    <div class="section-header">
+                        <icon name="shopping-cart-outline" pack="eva"></icon>
+                        <h3>Produtos</h3>
+                        <span class="item-count">{{ leadDetails.products.length }}</span>
+                    </div>
+                    <div class="items-list">
+                        <div class="item-card" *ngFor="let product of leadDetails.products">
+                            <div class="item-info">
+                                <div class="item-name">{{ product.name }}</div>
+                                <div class="item-quantity">Qtd: {{ product.quantity }}</div>
+                            </div>
+                            <div class="item-price">{{ product.formattedTotal }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Serviços -->
+                <div class="details-section" *ngIf="leadDetails?.services?.length > 0">
+                    <div class="section-header">
+                        <icon name="settings-outline" pack="eva"></icon>
+                        <h3>Serviços</h3>
+                        <span class="item-count">{{ leadDetails.services.length }}</span>
+                    </div>
+                    <div class="items-list">
+                        <div class="item-card" *ngFor="let service of leadDetails.services">
+                            <div class="item-info">
+                                <div class="item-name">{{ service.name }}</div>
+                                <div class="item-quantity">Qtd: {{ service.quantity }}</div>
+                            </div>
+                            <div class="item-price">{{ service.formattedTotal }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordem de Serviço -->
+                <div class="details-section" *ngIf="leadDetails?.serviceOrder">
+                    <div class="section-header">
+                        <icon name="clipboard-outline" pack="eva"></icon>
+                        <h3>Ordem de Serviço</h3>
+                    </div>
+                    <div class="service-order-info">
+                        <div class="info-item" *ngIf="leadDetails.serviceOrder.serviceOrderCode">
+                            <icon name="hash-outline" pack="eva"></icon>
+                            <div>
+                                <label>Código</label>
+                                <span>#{{ leadDetails.serviceOrder.serviceOrderCode }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item" *ngIf="leadDetails.serviceOrder.equipment">
+                            <icon name="monitor-outline" pack="eva"></icon>
+                            <div>
+                                <label>Equipamento</label>
+                                <span>{{ leadDetails.serviceOrder.equipment }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item" *ngIf="leadDetails.serviceOrder.responsible">
+                            <icon name="person-done-outline" pack="eva"></icon>
+                            <div>
+                                <label>Responsável</label>
+                                <span>{{ leadDetails.serviceOrder.responsible }}</span>
+                            </div>
+                        </div>
+                        <div class="service-details" *ngIf="leadDetails.serviceOrder.servicesDetails">
+                            <label>
+                                <icon name="file-text-outline" pack="eva"></icon>
+                                Detalhes dos Serviços
+                            </label>
+                            <p>{{ leadDetails.serviceOrder.servicesDetails }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagamento -->
+                <div class="details-section">
+                    <div class="section-header">
+                        <icon name="credit-card-outline" pack="eva"></icon>
+                        <h3>Forma de Pagamento</h3>
+                    </div>
+                    <div class="payment-info">
+                        <p>{{ leadDetails?.payment }}</p>
+                    </div>
+                </div>
+
+                <!-- Observações -->
+                <div class="details-section" *ngIf="leadDetails?.notes">
+                    <div class="section-header">
+                        <icon name="message-square-outline" pack="eva"></icon>
+                        <h3>Observações</h3>
+                    </div>
+                    <div class="notes-content">
+                        <p>{{ leadDetails.notes }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer do modal -->
+            <div class="modal-footer details-modal-footer">
+                <button class="btn btn-secondary" (click)="closeDetailsModal()">
+                    <icon name="close-outline" pack="eva"></icon>
+                    Fechar
+                </button>
+                <button class="btn btn-primary" (click)="openEditModal(leadDetails?.basic); closeDetailsModal()" *ngIf="permissions.canEdit">
+                    <icon name="edit-outline" pack="eva"></icon>
+                    Editar Lead
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

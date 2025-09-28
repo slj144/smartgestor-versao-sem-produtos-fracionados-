@@ -1,0 +1,347 @@
+  .hiddenOverflow{
+    overflow: hidden !important;
+  }
+
+  layer{
+    .main-container {
+      overflow-y: auto !important;      
+      height: calc(100% - 50px);
+      padding-bottom: 40px;
+      position: relative;
+  
+  
+      &.hideOverflow{
+        overflow: hidden !important;
+      }
+  
+      .display-table{
+        display: table;
+        height: 100%;
+        width: 100%;
+        text-align: center;
+        vertical-align: middle;
+      }
+  
+      .display-table-cell{
+        display: table-cell;
+      }
+  
+      #customer, #products {
+        header {
+          position: relative;
+          margin: 0; 
+          .search {
+            width: 350px;
+            max-width: 100%;
+            height: 35px;      
+            border: 2px solid rgb(102, 102, 255);
+            overflow: hidden;
+            position: relative;
+            border-radius: 17px;
+            margin: 0 auto;
+            button {
+              width: 35px;
+              height: 31px;
+              border: none;
+              outline: none;
+              border-radius: 17px;
+              color: rgb(102, 102, 255);
+              background-color: #fff;
+              position: absolute;
+              z-index: 2;
+              icon {
+                font-size: 14px;
+              }     
+            }
+            input {
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              padding: 10px 10px 10px 38px;
+              border: none;
+              outline: none;
+              z-index: 0;
+              font-size: 13px;
+              vertical-align: middle;
+            }
+          }
+        }
+        main {
+          margin: 15px 0;                     
+        }
+      }   
+     
+      #checklist{
+        height: 100%;
+        overflow-y: auto;
+  
+        .table-responsive {
+          margin: 20px auto 20px auto;
+          min-width: 200px !important;
+          width: 300px !important;
+          border: 1px solid #eee;
+          padding: 20px !important;
+          border-radius: 5px;
+  
+          .title-box{
+            padding: 10px;
+            line-height: 16px;
+            margin: 0;
+            width: 100% !important;
+  
+            &.title-box-header{
+              padding: 0 !important;
+            }
+          }
+  
+          table {
+            margin: 0;    
+            padding: 0;   
+            thead{
+              tr{
+                
+              }
+            }    
+            tbody {
+              padding: 0;
+              tr {
+                font-size: 14px;
+                height: 65px;
+                cursor: pointer;
+                td {
+                  vertical-align: middle;
+                  height: 50px;
+  
+                  &.action-td{
+                    text-align: right;
+                  }
+  
+                  .btnCheck {
+                    width: 35px;
+                    height: 35px;
+                    padding: 0;
+                    border: none;
+                    outline: none;          
+                    margin: 2px;
+                    color: #fff;
+                    background-color: #ddd;
+                    border-radius: 100%;                                      
+                    transition: all 0.3s ease-in-out;
+                    display: inline-table;
+                    cursor: pointer;
+                    icon {
+                      font-size: 16px;
+                    }    
+                    &.active {
+                      color: #fff;
+                      background-color: green;
+                    }                                    
+                    &:hover {
+                      background-color: rgba(0, 128, 0, 0.5);
+                    }                    
+                  }
+                  .btnAction {
+                    width: 35px;
+                    height: 35px;
+                    padding: 0 10px;
+                    border: none;
+                    outline: none;          
+                    margin: 2px;
+                    background-color: #fff;
+                    border: 1px solid lightgray;
+                    border-radius: 5px;
+                    border: 1px solid rgba(0, 128, 0, 0.5);                    
+                    transition: all 0.5s ease-in-out;
+                    display: inline-table;
+                    cursor: pointer;
+                    icon {
+                      font-size: 15px;
+                    }
+                    &:disabled {
+                      opacity: 0.4;
+                    }
+                    &.btnEdit,
+                    &.btnAdd {
+                      color: green;
+                    }
+                    &.btnDelete{
+                      padding-top: 3px;
+                      border: 1px solid rgb(248, 76, 76);
+                      color:  rgb(248, 76, 76);
+                    }
+                    &:hover {
+                      box-shadow: -1px 1px 4px #ddd !important;
+                      border: 1px solid rgb(224, 224, 224) !important;
+                    }
+                  }
+  
+                  .btnAddMethod {
+                    display: block;          
+                    box-shadow: 0 2px 4px #ddd;
+                    border-radius: 4px;
+                    border: 1px solid rgba(0, 128, 0, 0.5);
+                    outline: none;
+                    padding: 10px 25px;
+                    background-color: #fff;
+                    color: green;
+                    font-size: 14px;
+                    margin: 0;
+                    transition: all 0.3s ease-in-out;
+                    icon {
+                      font-size: 15px;
+                      margin-right: 5px;
+                    }
+                    &:hover {
+                      opacity: 0.8;
+                    }
+                  }
+  
+                  &:last-child {
+                    text-align: right;
+                    color: coral;
+                  }
+                  &:first-child, &:last-child {
+                    width: 65px;
+                    max-width: 70px;
+                    text-align: center;
+                  }     
+                }
+                .table-level-1 {
+                  td.container-prodiders {
+                    padding: 0;
+                    text-align: left;
+                  }
+                  &.active {
+                    background-color: cyan;                   
+                  }
+                }                
+                .table-level-2 {
+                  background-color: rgb(213, 246, 246);
+                  tr:hover {
+                    background-color: rgb(207, 238, 238) !important;                    
+                  }
+                  td:first-child {
+                    text-align: left;                    
+                  }
+                }               
+                &:hover {
+                }              
+                &.wrapper > td {
+                  padding: 0;                
+                }
+              }  
+              & > tr {
+                border-bottom: 8px solid #fff;
+              }             
+            }            
+          }
+        }        
+        
+  
+        .btnConfirm {
+          position: absolute;
+          bottom: 20px;
+          right: 20px;
+          width: 50px;
+          height: 50px;        
+          border: none;
+          outline: none;
+          background-color: green;
+          border-radius: 100%;
+          color: #fff;
+          font-size: 15px;
+          box-shadow: 0 2px 5px #bbb;
+          margin: 0 auto;
+          transition: all 0.5s ease-in-out;
+          icon {
+            font-size: 25px;
+          }
+          &:hover {
+            opacity: 0.8;
+          }
+  
+          &:disabled{
+            opacity: 0.4;
+          }
+  
+          &:enabled{
+            opacity: 0.8;
+          }
+        }  
+  
+      }
+        
+      #checklistDelete {
+  
+        margin: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+  
+        .title{
+          font-size: 16px;
+          color: rgb(46, 46, 46);
+          margin: 0;
+          text-align: center;
+        }
+  
+        .label{
+          font-size: 12px;
+          line-height: 12px;
+          margin: 0;
+          text-align: center;
+        }
+        
+  
+        .description{
+  
+          margin-top: 10px;
+          text-align: center;
+        }
+  
+        button {
+          margin: 10px auto;
+          display: block;
+          padding: 5px 40px;
+          border-radius: 8px;
+          font-size: 14px;
+          color: #fff;
+  
+          &:disabled{
+  
+            background-color: rgba(163, 163, 248, 0.809);
+          }
+  
+          &:enabled{
+  
+            background-color: rgb(102, 102, 255);
+          }
+  
+          &.btnBlue {
+            background-color: rgb(102, 102, 255);
+          }
+          &.btnRed {
+            background-color: indianred;
+          }
+        }  
+  
+        .container-buttons {
+          display: block;
+          text-align: center;
+          margin-top: 15px;
+          button {
+            display: inline-table;
+            padding: 5px 20px;
+            &:first-child {
+              margin-right: 5px;
+            }         
+          }
+        }       
+      }
+  
+    } 
+    &.active {
+      right: 0 !important;
+    }
+  }

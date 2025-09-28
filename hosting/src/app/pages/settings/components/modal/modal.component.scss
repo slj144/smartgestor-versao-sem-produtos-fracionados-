@@ -1,0 +1,8 @@
+
+modal { 
+  div[slot=content] {
+    & > div {
+      height: 100%;
+    }
+  }
+}

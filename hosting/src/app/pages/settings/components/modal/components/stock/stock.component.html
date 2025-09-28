@@ -1,0 +1,99 @@
+
+<div id="generalSettings">
+
+  <div class="container-view">
+    <div class="container-external">
+      <div class="container-info">
+        <div class="wrapper">
+          
+          <div class="container-average-cost" *ngIf="settings.activeComponent == 'Stock/AveragePurchaseCost'">
+            <header>
+              <h6>{{ settings.translate.section.stock.option.averagePurchaseCost.label }}</h6>
+              <small>{{ settings.translate.section.stock.option.averagePurchaseCost.description }}</small>
+            </header>
+            
+            <form class="form" [formGroup]="form" (submit)="onSubmit()">
+                
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-enable" type="checkbox" formControlName="enable" /></td>
+                      <td>
+                        <label for="checkbox-enable">
+                          <span class="description">{{ settings.translate.modal.section.stock.averagePurchaseCost.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.stock.averagePurchaseCost.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.stock.button.submit }}</button>
+            </form>
+          </div>
+
+          <div class="container-average-cost" *ngIf="settings.activeComponent == 'Stock/AverageTransfersCost'">
+            <header>
+              <h6>{{ settings.translate.section.stock.option.averageTransfersCost.label }}</h6>
+              <small>{{ settings.translate.section.stock.option.averageTransfersCost.description }}</small>
+            </header>
+            
+            <form class="form" [formGroup]="form" (submit)="onSubmit()">
+                
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-enable" type="checkbox" formControlName="enable" /></td>
+                      <td>
+                        <label for="checkbox-enable">
+                          <span class="description">{{ settings.translate.modal.section.stock.averageTransfersCost.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.stock.averageTransfersCost.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.stock.button.submit }}</button>
+            </form>
+        </div>
+
+          <div class="container-average-cost" *ngIf="settings.activeComponent == 'Stock/AllowNegativeSale'">
+            <header>
+              <h6>{{ settings.translate.section.stock.option.allowNegativeSale.label }}</h6>
+              <small>{{ settings.translate.section.stock.option.allowNegativeSale.description }}</small>
+            </header>
+            
+            <form class="form" [formGroup]="form" (submit)="onSubmit()">
+                
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-enable" type="checkbox" formControlName="enable" /></td>
+                      <td>
+                        <label for="checkbox-enable">
+                          <span class="description">{{ settings.translate.modal.section.stock.allowNegativeSale.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.stock.allowNegativeSale.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+        
+              <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.stock.button.submit }}</button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+  

@@ -1,0 +1,377 @@
+<!-- Arquivo: customer-import.component.html -->
+<!-- Localização: src/app/pages/crm/components/customer-import/customer-import.component.html -->
+<!-- VERSÃO: UX Melhorado com ícones em todos os botões e elementos -->
+
+<div class="customer-import-container">
+    <!-- Header -->
+    <div class="import-header">
+        <h2>
+            <i class="eva eva-people-outline"></i>
+            Importação Inteligente de Clientes
+        </h2>
+        <button class="close-btn" (click)="close()">
+            <i class="eva eva-close-outline"></i>
+        </button>
+    </div>
+
+    <!-- Step: Início -->
+    <div class="import-content" *ngIf="currentStep === 'start'">
+        <div class="welcome-section">
+            <div class="welcome-icon">
+                <i class="eva eva-trending-up-outline"></i>
+            </div>
+            <h3>Análise Inteligente de Clientes</h3>
+            <p>
+                Vamos analisar seu histórico de vendas e identificar os melhores clientes
+                para campanhas de marketing e reativação.
+            </p>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <i class="eva eva-bar-chart-outline"></i>
+                    <h4>Análise RFM</h4>
+                    <p>Recência, Frequência e Valor Monetário</p>
+                </div>
+                <div class="feature-card">
+                    <i class="eva eva-funnel-outline"></i>
+                    <h4>Categorização</h4>
+                    <p>Hot, Warm, Cold e Novos clientes</p>
+                </div>
+                <div class="feature-card">
+                    <i class="eva eva-bulb-outline"></i>
+                    <h4>Recomendações</h4>
+                    <p>Ações personalizadas por perfil</p>
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-large" (click)="startAnalysis()">
+                <i class="eva eva-search-outline"></i>
+                Iniciar Análise
+            </button>
+        </div>
+    </div>
+
+    <!-- Step: Analisando -->
+    <div class="import-content" *ngIf="currentStep === 'analyzing'">
+        <div class="analyzing-section">
+            <div class="progress-animation">
+                <div class="spinner">
+                    <i class="eva eva-loader-outline"></i>
+                </div>
+            </div>
+
+            <h3>{{ importProgress.message }}</h3>
+
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="(importProgress.current / importProgress.total) * 100">
+                </div>
+            </div>
+
+            <div class="progress-info">
+                <span>{{ importProgress.current }} de {{ importProgress.total }}</span>
+                <span>{{ ((importProgress.current / importProgress.total) * 100).toFixed(0) }}%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step: Seleção -->
+    <div class="import-content" *ngIf="currentStep === 'selection'">
+        <!-- Estatísticas -->
+        <div class="stats-cards">
+            <div class="stat-card hot-card">
+                <div class="stat-icon hot">
+                    <i class="eva eva-flame-outline"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ stats.hotCustomers }}</h4>
+                    <p>Clientes Quentes</p>
+                    <small>Compraram recentemente</small>
+                </div>
+            </div>
+
+            <div class="stat-card warm-card">
+                <div class="stat-icon warm">
+                    <i class="eva eva-thermometer-outline"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ stats.warmCustomers }}</h4>
+                    <p>Clientes Mornos</p>
+                    <small>Potencial de reativação</small>
+                </div>
+            </div>
+
+            <div class="stat-card cold-card">
+                <div class="stat-icon cold">
+                    <i class="eva eva-snow-outline"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ stats.coldCustomers }}</h4>
+                    <p>Clientes Frios</p>
+                    <small>Precisam de atenção</small>
+                </div>
+            </div>
+
+            <div class="stat-card new-card">
+                <div class="stat-icon new">
+                    <i class="eva eva-star-outline"></i>
+                </div>
+                <div class="stat-info">
+                    <h4>{{ stats.newCustomers }}</h4>
+                    <p>Novos Clientes</p>
+                    <small>Primeira compra</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filtros Melhorados com Ícones -->
+        <div class="filters-section">
+            <div class="filter-group">
+                <label>
+                    <i class="eva eva-pricetags-outline"></i>
+                    Categoria:
+                </label>
+                <select [(ngModel)]="filterCategory" (change)="applyFilters()">
+                    <option value="all">Todas</option>
+                    <option value="hot">🔥 Hot</option>
+                    <option value="warm">☀️ Warm</option>
+                    <option value="cold">❄️ Cold</option>
+                    <option value="new">🆕 Novos</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>
+                    <i class="eva eva-flag-outline"></i>
+                    Prioridade:
+                </label>
+                <select [(ngModel)]="filterPriority" (change)="applyFilters()">
+                    <option value="all">Todas</option>
+                    <option value="high">🔴 Alta</option>
+                    <option value="medium">🟡 Média</option>
+                    <option value="low">🟢 Baixa</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>
+                    <i class="eva eva-search-outline"></i>
+                    Buscar:
+                </label>
+                <input type="text" [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Nome ou email...">
+            </div>
+            <div class="filter-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" [(ngModel)]="showOnlyNew" (change)="applyFilters()">
+                    <i class="eva eva-person-add-outline"></i>
+                    Apenas novos leads
+                </label>
+            </div>
+        </div>
+
+        <!-- Tabela de Resultados -->
+        <div class="results-section">
+            <div class="results-header">
+                <h3>
+                    <i class="eva eva-list-outline"></i>
+                    {{ getFilteredResults().length }} clientes encontrados
+                    <span *ngIf="selectedCustomers.size > 0">
+                        ({{ selectedCustomers.size }} selecionados)
+                    </span>
+                </h3>
+                <div class="bulk-actions">
+                    <button class="btn btn-secondary" (click)="selectAllVisible()"
+                        [disabled]="getFilteredResults().length === 0">
+                        <i class="eva eva-checkmark-square-outline"></i>
+                        Selecionar Visíveis
+                    </button>
+                    <button class="btn btn-secondary" (click)="clearSelection()"
+                        [disabled]="selectedCustomers.size === 0">
+                        <i class="eva eva-close-square-outline"></i>
+                        Limpar Seleção
+                    </button>
+                </div>
+            </div>
+
+            <div class="results-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" [(ngModel)]="selectAll" (change)="toggleSelectAll()">
+                            </th>
+                            <th>
+                                <i class="eva eva-person-outline"></i>
+                                Cliente
+                            </th>
+                            <th>
+                                <i class="eva eva-pricetags-outline"></i>
+                                Categoria
+                            </th>
+                            <th>
+                                <i class="eva eva-credit-card-outline"></i>
+                                Total Gasto
+                            </th>
+                            <th>
+                                <i class="eva eva-shopping-cart-outline"></i>
+                                Compras
+                            </th>
+                            <th>
+                                <i class="eva eva-calendar-outline"></i>
+                                Última Compra
+                            </th>
+                            <th>
+                                <i class="eva eva-star-outline"></i>
+                                Score
+                            </th>
+                            <th>
+                                <i class="eva eva-settings-2-outline"></i>
+                                Ações
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let analysis of getFilteredResults()"
+                            [class.selected]="selectedCustomers.has(analysis.customerId)">
+                            <td>
+                                <input type="checkbox" [checked]="selectedCustomers.has(analysis.customerId)"
+                                    (change)="toggleCustomerSelection(analysis.customerId)">
+                            </td>
+                            <td>
+                                <div class="customer-info">
+                                    <div class="customer-name">
+                                        <i class="eva eva-person-outline"></i>
+                                        {{ analysis.customerName }}
+                                    </div>
+                                    <div class="customer-email" *ngIf="analysis.email">
+                                        <i class="eva eva-email-outline"></i>
+                                        {{ analysis.email }}
+                                    </div>
+                                    <div class="customer-phone" *ngIf="analysis.phone">
+                                        <i class="eva eva-phone-outline"></i>
+                                        {{ analysis.phone }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="category-badge" [attr.data-category]="analysis.category">
+                                    {{ getCategoryLabel(analysis.category) }}
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                <i class="eva eva-trending-up-outline"></i>
+                                {{ formatCurrency(analysis.totalSpent) }}
+                            </td>
+                            <td class="text-center">
+                                <span class="purchase-count">
+                                    {{ analysis.totalPurchases }}
+                                    <i class="eva eva-shopping-bag-outline"></i>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="last-purchase-date">
+                                    <i class="eva eva-clock-outline"></i>
+                                    {{ formatDate(analysis.lastPurchaseDate) }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="score-container">
+                                    <div class="score-bar">
+                                        <div class="score-fill" [style.width.%]="analysis.score"></div>
+                                    </div>
+                                    <span class="score-text">{{ analysis.score }}%</span>
+                                </div>
+                            </td>
+                            <td class="actions-cell">
+                                <button class="action-btn view-btn" (click)="viewCustomerDetails(analysis)"
+                                    title="Ver detalhes completos do cliente">
+                                    <i class="eva eva-eye-outline"></i>
+                                    Detalhes
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="empty-state" *ngIf="getFilteredResults().length === 0">
+                    <i class="eva eva-search-outline"></i>
+                    <h3>Nenhum cliente encontrado</h3>
+                    <p>Tente ajustar os filtros para ver mais resultados</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ações do Rodapé -->
+        <div class="actions-footer">
+            <button class="btn btn-secondary" (click)="currentStep = 'start'">
+                <i class="eva eva-arrow-back-outline"></i>
+                Voltar
+            </button>
+            <button class="btn btn-primary" (click)="importSelected()" [disabled]="selectedCustomers.size === 0">
+                <i class="eva eva-download-outline"></i>
+                Importar {{ selectedCustomers.size }} Selecionados
+            </button>
+        </div>
+    </div>
+
+    <!-- Step: Importando -->
+    <div class="import-content" *ngIf="currentStep === 'importing'">
+        <div class="importing-section">
+            <div class="progress-animation">
+                <div class="spinner">
+                    <i class="eva eva-sync-outline"></i>
+                </div>
+            </div>
+
+            <h3>
+                <i class="eva eva-download-outline"></i>
+                {{ importProgress.message }}
+            </h3>
+
+            <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="(importProgress.current / importProgress.total) * 100">
+                </div>
+            </div>
+
+            <div class="progress-info">
+                <span>
+                    <i class="eva eva-checkmark-circle-outline"></i>
+                    {{ importProgress.current }} de {{ importProgress.total }}
+                </span>
+                <span>
+                    <i class="eva eva-percent-outline"></i>
+                    {{ ((importProgress.current / importProgress.total) * 100).toFixed(0) }}%
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Step: Completo -->
+    <div class="import-content" *ngIf="currentStep === 'complete'">
+        <div class="complete-section">
+            <div class="success-icon">
+                <i class="eva eva-checkmark-circle-outline"></i>
+            </div>
+            <h3>Importação Concluída!</h3>
+            <p>{{ importProgress.message }}</p>
+
+            <div class="summary-stats">
+                <div class="summary-item">
+                    <i class="eva eva-people-outline"></i>
+                    <span>{{ importProgress.current }} clientes importados com sucesso</span>
+                </div>
+                <div class="summary-item">
+                    <i class="eva eva-time-outline"></i>
+                    <span>Processo finalizado em {{ getElapsedTime() }}</span>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" (click)="close()">
+                <i class="eva eva-checkmark-outline"></i>
+                Concluir
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Detalhes do Cliente -->
+<app-customer-detail-modal *ngIf="selectedCustomerForDetails" [customer]="selectedCustomerForDetails"
+    [rawCustomerData]="selectedCustomerRawData" (onClose)="closeCustomerDetails()">
+</app-customer-detail-modal>

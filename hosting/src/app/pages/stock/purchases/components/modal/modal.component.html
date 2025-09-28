@@ -1,0 +1,282 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Purchases/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" *ngIf="(settings.activeComponent === 'Purchases/Read') || (settings.activeComponent === 'Purchases/Accept') || (settings.activeComponent === 'Purchases/Cancel') || (settings.activeComponent === 'Purchases/Delete')">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+
+            <div class="container-data">
+              <section class="info">
+                <h5>{{ translate.action.read.section.info.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.code + ':' }}</span> <span class="value">{{ settings.data.code }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.billToPayCode">
+                    <span class="label">{{ translate.action.read.section.info.label.billToPayCode + ':' }}</span> <span class="value">{{ settings.data.billToPayCode }}</span>
+                  </p>   
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.purchaseStatus.title + ':' }}</span> <span class="value">{{ translate.action.read.section.info.label.purchaseStatus.enum[settings.data.purchaseStatus] }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.paymentStatus.title + ':' }}</span> <span class="value">{{ translate.action.read.section.info.label.paymentStatus.enum[settings.data.paymentStatus] }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.info.label.purchaseDate + ':' }}</span> <span class="value">{{ settings.data.purchaseDate | date:'dd/MM/yyyy' }}</span>
+                  </p>
+                </div>          
+              </section>
+
+              <section class="supply">
+                <h5>{{ translate.action.read.section.supply.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.supply.label.name + ':' }}</span> <span class="value">{{ settings.data.provider.name }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.provider?.cpf">
+                    <span class="label">{{ translate.action.read.section.supply.label.personalDocument + ':' }}</span> <span class="value">{{ settings.data.provider.cpf }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.provider?.cnpj">
+                    <span class="label">{{ translate.action.read.section.supply.label.businessDocument + ':' }}</span> <span class="value">{{ settings.data.provider.cnpj }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.provider?.address">
+                    <span class="label">{{ translate.action.read.section.supply.label.address + ':' }}</span> <span class="value">{{ settings.data.provider.address }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.provider?.phone">
+                    <span class="label">{{ translate.action.read.section.supply.label.phone + ':' }}</span> <span class="value">{{ settings.data.provider.phone }}</span>
+                  </p>
+
+                  <p *ngIf="settings.data.provider?.email">
+                    <span class="label">{{ translate.action.read.section.supply.label.email + ':' }}</span> <span class="value">{{ settings.data.provider.email }}</span>
+                  </p>        
+                </div>          
+              </section>
+
+              <section class="products">
+                <h5>{{ translate.action.read.section.products.title }}</h5>
+
+                <div class="content" *ngIf="settings.data.products?.length > 0">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th>{{ translate.action.read.section.products.label.code }}</th>
+                          <th>{{ translate.action.read.section.products.label.name }}</th>
+                          <th >
+                            Código Interno
+                          </th> 
+                          <th>{{ translate.action.read.section.products.label.quantity }}</th>
+                          <th>{{ translate.action.read.section.products.label.costPrice }}</th>
+                          <th>{{ translate.action.read.section.products.label.salePrice }}</th>
+                          <th>{{ translate.action.read.section.products.label.total }}</th>
+                        </tr>                 
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of settings.data.products">
+                          <td><span>{{ item.code }}</span></td>
+                          <td><span>{{ item.name }}</span></td>
+                          <td><span class="price">{{ item.internalCode }}</span></td>
+                          <td><span class="value">{{ item.quantity }}</span></td>
+                          <td><span class="price">{{ item.costPrice | currency:'' }}</span></td>
+                          <td><span class="price">{{ item.salePrice | currency:'' }}</span></td>
+                          <td><span class="price">{{ (item.costPrice * item.quantity) | currency:'' }}</span></td>                     
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+
+              <section class="balance">
+                <h5>{{ translate.action.read.section.balance.title }}</h5>
+
+                <div class="content">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <tbody>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.quantity }}</span></td>
+                          <td><span class="value">{{ settings.data.balance?.quantity }}</span></td>
+                        </tr>
+                        <tr>
+                          <td><span class="label">{{ translate.action.read.section.balance.label.total }}</span></td>
+                          <td><span class="price">{{ settings.data.balance?.total | currency }}</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+
+              <section class="installments" *ngIf="settings.data.billToPay">
+                <h5>{{ translate.action.read.section.installments.title }}</h5>
+                 
+                <div class="content">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th>{{ translate.action.read.section.installments.label.parcel }}</th>
+                          <th>{{ translate.action.read.section.installments.label.dueDate }}</th>
+                          <th>{{ translate.action.read.section.installments.label.amount }}</th>
+                          <th>{{ translate.action.read.section.installments.label.paid }}</th>
+                          <th>{{ translate.action.read.section.installments.label.status }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <ng-container *ngFor="let item of settings.data.billToPay?.installments || []">
+                          <tr class="parcel-tr">
+                            <td><span>{{ '#' + item.parcel }}</span></td>
+                            <td><span>{{ item.dueDate | date:'dd/MM/yyyy' }}</span></td>
+                            <td><span class="amount monetary">{{ item.amount | currency:'' }}</span></td>
+                            <td><span class="paid monetary">{{ (item.paidAmount || 0) | currency:'' }}</span></td>
+                            <td>
+                              <span class="status {{ (item.status == 'CONCLUDED' ? 'closed' : 'open') }}">
+                                <icon [name]="item.status == 'CONCLUDED' ? 'checkmark-circle-outline' : 'radio-button-off-outline'" pack="eva"></icon>
+                              </span>
+                            </td>
+  
+                          </tr>
+                          <tr class="payment-methods-tr" *ngIf="item.paymentMethods?.length > 0">
+                            <td colspan="5" class="paymentMethods">
+                              <div class="table-responsive">
+                                <table  class="table table-borderless">
+                                  <tbody>
+                                    <tr *ngFor="let item of item.paymentMethods">
+                                      <table class="table table-borderless">
+                                        <tr>
+                                          <th>
+                                            <span class="method" *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name | uppercase }}</span>
+                                            <span class="method" *ngIf="item.code > 3000 && item.code < 4000">{{ 'Cartão de Débito' | uppercase }}</span>
+                                            <span class="method" *ngIf="item.code > 4000 && item.code < 5000">{{ 'Cartão de Crédito ' + (item.fees.parcel == 1 ? '(À Vista)' : '(Parcelado em ' + item.fees.parcel + 'x)') | uppercase }}</span>
+                                          </th>
+                                          <td class="col-small value"><span>{{ item.value | currency }}</span></td>
+                                        </tr>
+                                        <tr class="payment-history" *ngFor="let item of item.history">
+                                          <td>
+                                            <small>{{ item.date | date:'dd/MM/yyyy HH:mm' }}</small>
+                                          </td>
+                                          <td>
+                                            <small>{{ item.value | currency }}</small>
+                                          </td>
+                                        </tr>
+                                        <tr class="payment-note" *ngIf="item.note">
+                                          <td colspan="2">
+                                            <span class="note" *ngIf="item.note"><b>{{ translate.action.read.sale.section.paymentMethods.label.note + ':' }}</b> {{ item.note }}</span>
+                                          </td>
+                                        </tr>
+                                      </table>
+                                    </tr>                        
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      
+                      </tbody>
+                    </table>
+                  </div>
+                </div>            
+              </section>
+    
+              <section class="note" *ngIf="settings.data.note">
+                <h5>{{ translate.action.read.section.note.title }}</h5>
+                <div class="content">{{ settings.data.note }}</div>
+              </section>
+
+              <section class="attachment" *ngIf="(settings.activeComponent === 'Purchases/Read') && settings.data.attachment">
+                <div class="container-file">                  
+                  <table>
+                    <tr>
+                      <td><icon name="file-outline" pack="eva"></icon></td>
+                      <td>
+                        <span class="info">{{ settings.data.attachment?.name + ' (' + settings.data.attachment?.size + ' MB)' }}</span>
+                      </td>
+                      <td (click)="onDownloadAttachment(anchor)">
+                        <button type="button"><icon name="download-outline" pack="eva"></icon></button>
+                        <a [href]="settings.data.attachment?.url" target="_blank" [download]="settings.data.attachment?.name" #anchor></a>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </section>
+
+              <button class="btnPrint" *ngIf="settings.activeComponent === 'Purchases/Read'" (click)="onOpenPrinter()"><icon name="printer-outline" pack="eva"></icon> {{ translate.action.read.section.button.print }}</button>
+            </div>
+
+            <div class="container-accept" *ngIf="settings.activeComponent === 'Purchases/Accept'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.accept.notice }}</p>
+                  <small>{{ translate.action.accept.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.accept.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onAccept()">{{ translate.action.accept.option.confirm }}</button>
+                </div>
+              </div>            
+            </div>
+
+            <div class="container-cancel" *ngIf="settings.activeComponent === 'Purchases/Cancel'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.cancel.notice }}</p>
+                  <small>{{ translate.action.cancel.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.cancel.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onCancel()">{{ translate.action.cancel.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+        
+            <div class="container-delete" *ngIf="settings.activeComponent === 'Purchases/Delete'">
+              <div class="container-confirmation">
+                <div class="container-info">
+                  <p>{{ translate.action.delete.notice }}</p>
+                  <small>{{ translate.action.delete.warning }}</small>
+                </div>
+
+                <div class="container-buttons">
+                  <button type="button" class="btnCancel" (click)="onClose()">{{ translate.action.delete.option.cancel }}</button>
+                  <button type="button" class="btnConfirm" (click)="onDelete()">{{ translate.action.delete.option.confirm }}</button>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>    
+
+    <div id="container-update" *ngIf="(settings.activeComponent === 'Purchases/Create') || (settings.activeComponent === 'Purchases/Update')">
+      <purchases-register (callback)="onRegisterResponse($event)"></purchases-register>
+    </div>
+
+  </div>
+
+  <div slot="components">
+    <purchases-print (callback)="onPrintResponse($event)"></purchases-print>
+  </div>
+
+</modal>

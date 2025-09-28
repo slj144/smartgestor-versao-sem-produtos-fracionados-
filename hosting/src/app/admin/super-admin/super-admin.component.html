@@ -1,0 +1,771 @@
+<!-- 
+    Arquivo: super-admin.component.html
+    Localização: src/app/main/super-admin/super-admin.component.html
+    
+    Descrição: Template HTML do componente Super Admin
+    
+    Funcionalidades:
+    - Sistema de abas (Instâncias | Monitor do Sistema)
+    - Gerenciamento completo de instâncias do sistema
+    - Criação e edição de instâncias com diferentes módulos
+    - Controle de status (ativo/inativo) e módulos (CRM/Fiscal)
+    - Monitor em tempo real do sistema
+    - Métricas de desempenho por tenant
+    - Detecção de operações lentas
+    - Recomendações automáticas de otimização
+    - Exportação de relatórios
+    
+    Estrutura:
+    1. Header principal com logout
+    2. Sistema de abas para navegação
+    3. Conteúdo da aba Instâncias:
+       - Lista de instâncias com filtros
+       - Modal de criação/edição
+       - Modal de informações de acesso
+    4. Conteúdo da aba Monitor:
+       - Cards de métricas principais
+       - Tabela de atividade por instância
+       - Lista de operações lentas
+       - Recomendações do sistema
+-->
+
+<div class="super-admin-container">
+    <div class="content-wrapper">
+        <!-- Header com logout -->
+        <div class="admin-header">
+            <h1>🏢 Painel Super Admin</h1>
+            <button class="btn-logout" (click)="logout()" title="Sair do sistema">
+                🚪 Logout
+            </button>
+        </div>
+
+        <!-- Mensagens globais do sistema -->
+        <div *ngIf="mensagem" class="alert" [ngClass]="tipoMensagem">
+            {{ mensagem }}
+        </div>
+
+        <!-- ===== SISTEMA DE ABAS ===== -->
+        <!-- Navegação entre as funcionalidades principais -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <button class="tab-button" [class.active]="abaAtiva === 'instancias'" (click)="mudarAba('instancias')">
+                    📋 Instâncias
+                </button>
+                <button class="tab-button" [class.active]="abaAtiva === 'monitor'" (click)="mudarAba('monitor')">
+                    📊 Monitor do Sistema
+                </button>
+                <button class="tab-button" [class.active]="abaAtiva === 'atualizacoes'" (click)="mudarAba('atualizacoes')">
+                    🛠️ Atualizações
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== CONTEÚDO DA ABA MONITOR ===== -->
+        <!-- Monitor em tempo real do sistema -->
+        <div class="monitor-container" *ngIf="abaAtiva === 'monitor'">
+
+            <!-- Header do Monitor -->
+            <div class="monitor-header">
+                <div class="header-info">
+                    <h2>📊 Monitor em Tempo Real</h2>
+                    <p>Monitorando {{ instancias.length }} instâncias ativas</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-action" (click)="limparDadosMonitor()">
+                        🔄 Resetar
+                    </button>
+                    <button class="btn-action btn-export" (click)="exportarRelatorioMonitor()">
+                        📥 Exportar Relatório
+                    </button>
+                </div>
+            </div>
+
+            <!-- Cards de Métricas Principais -->
+            <div class="metrics-grid">
+                <!-- Card: Total de Requisições -->
+                <div class="metric-card" [class.error]="monitorData.errorRate > 10">
+                    <div class="metric-icon">🌐</div>
+                    <div class="metric-content">
+                        <div class="metric-value">{{ monitorData.totalRequests | number }}</div>
+                        <div class="metric-label">Requisições Totais</div>
+                    </div>
+                </div>
+
+                <!-- Card: Erros -->
+                <div class="metric-card" [class.warning]="monitorData.totalErrors > 0">
+                    <div class="metric-icon">❌</div>
+                    <div class="metric-content">
+                        <div class="metric-value">{{ monitorData.totalErrors | number }}</div>
+                        <div class="metric-label">Erros Totais</div>
+                        <div class="metric-subtext">{{ monitorData.errorRate | number:'1.1-1' }}% taxa</div>
+                    </div>
+                </div>
+
+                <!-- Card: WebSockets -->
+                <div class="metric-card">
+                    <div class="metric-icon">🔌</div>
+                    <div class="metric-content">
+                        <div class="metric-value">{{ monitorData.activeWebSockets | number }}</div>
+                        <div class="metric-label">WebSockets Ativos</div>
+                    </div>
+                </div>
+
+                <!-- Card: Saúde do Sistema -->
+                <div class="metric-card" [class.success]="monitorData.systemHealth === 'good'"
+                    [class.warning]="monitorData.systemHealth === 'warning'"
+                    [class.error]="monitorData.systemHealth === 'critical'">
+                    <div class="metric-icon">
+                        <span *ngIf="monitorData.systemHealth === 'good'">✅</span>
+                        <span *ngIf="monitorData.systemHealth === 'warning'">⚠️</span>
+                        <span *ngIf="monitorData.systemHealth === 'critical'">🚨</span>
+                    </div>
+                    <div class="metric-content">
+                        <div class="metric-value">{{ monitorData.systemHealth | uppercase }}</div>
+                        <div class="metric-label">Saúde do Sistema</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Métricas por Tenant/Instância -->
+            <div class="tenant-metrics-section">
+                <h3>📈 Atividade por Instância</h3>
+
+                <div class="tenant-metrics-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Instância</th>
+                                <th>Status</th>
+                                <th>Requisições</th>
+                                <th>Tempo Médio</th>
+                                <th>Erros</th>
+                                <th>Atividade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let tenant of monitorData.tenantsMetrics" [class.inactive]="tenant.inactive">
+                                <td>
+                                    <strong>{{ tenant.companyName }}</strong>
+                                    <br>
+                                    <small>{{ tenant.tenant }}</small>
+                                </td>
+                                <td>
+                                    <span class="status-badge" [class.paid]="tenant.isPaid"
+                                        [class.unpaid]="!tenant.isPaid">
+                                        {{ tenant.isPaid ? 'Ativo' : 'Inativo' }}
+                                    </span>
+                                </td>
+                                <td>{{ tenant.requests | number }}</td>
+                                <td>
+                                    <span [class.slow]="tenant.avgResponseTime > 1000">
+                                        {{ tenant.avgResponseTime | number:'1.0-0' }}ms
+                                    </span>
+                                </td>
+                                <td>
+                                    <span [class.has-errors]="tenant.errors > 0">
+                                        {{ tenant.errors | number }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="activity-indicator">
+                                        <span *ngIf="!tenant.inactive" class="active-dot"></span>
+                                        <span *ngIf="tenant.inactive" class="inactive-dot"></span>
+                                        {{ tenant.inactive ? 'Inativo' : 'Ativo' }}
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="empty-state" *ngIf="monitorData.tenantsMetrics.length === 0">
+                        <p>Nenhuma atividade detectada ainda. Navegue pelas instâncias para coletar dados.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Operações Lentas -->
+            <div class="slow-operations-section" *ngIf="monitorData.slowOperations.length > 0">
+                <h3>🐌 Operações Mais Lentas</h3>
+
+                <div class="operations-list">
+                    <div class="operation-item" *ngFor="let op of monitorData.slowOperations; let i = index">
+                        <div class="operation-rank">#{{ i + 1 }}</div>
+                        <div class="operation-details">
+                            <div class="operation-url">{{ op.url }}</div>
+                            <div class="operation-meta">
+                                <span class="company">{{ op.companyName }}</span>
+                                <span class="separator">•</span>
+                                <span class="duration">{{ op.durationFormatted }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Recomendações Automáticas -->
+            <div class="recommendations-section">
+                <h3>💡 Recomendações</h3>
+
+                <div class="recommendations-list">
+                    <div class="recommendation-item" *ngFor="let rec of gerarRecomendacoes()"
+                        [class.success]="rec.includes('✅')" [class.warning]="rec.includes('⚠️')"
+                        [class.error]="rec.includes('❌') || rec.includes('🚨')">
+                        {{ rec }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CONTEÚDO DA ABA ATUALIZAÇÕES ===== -->
+        <div class="updates-container" *ngIf="abaAtiva === 'atualizacoes'">
+            <h2>🛠️ Publicar Atualizações Globais</h2>
+            <p>Envie uma nota de atualização que aparecerá para todos os tenants. Ideal para avisar sobre mudanças e pedir limpeza de cache.</p>
+
+            <form (ngSubmit)="onPublishUpdate()" class="update-form">
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" [(ngModel)]="updateForm.title" name="title" placeholder="Ex: Nova versão 2.5 liberada" required />
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea [(ngModel)]="updateForm.message" name="message" rows="5" placeholder="Resumo das mudanças e instruções" required></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group small">
+                        <label>Versão (opcional)</label>
+                        <input type="text" [(ngModel)]="updateForm.version" name="version" placeholder="Ex: 2.5.0" />
+                    </div>
+                    <div class="form-group small toggle">
+                        <label class="inline">
+                            <input type="checkbox" [(ngModel)]="updateForm.requireCacheClear" name="requireCacheClear" />
+                            Requer limpar cache
+                        </label>
+                    </div>
+                    <div class="form-group small toggle">
+                        <label class="inline">
+                            <input type="checkbox" [(ngModel)]="updateForm.enabled" name="enabled" />
+                            Ativo
+                        </label>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn-primary" [disabled]="publicando">Publicar</button>
+                    <span *ngIf="publicando">Publicando...</span>
+                </div>
+            </form>
+
+            <h3>📚 Últimas publicações</h3>
+            <div class="updates-list" *ngIf="updatesLista?.length; else emptyUpdates">
+                <div class="update-item" *ngFor="let upd of updatesLista">
+                    <div class="head">
+                        <strong>{{ upd.title }}</strong>
+                        <span class="version" *ngIf="upd.version">v{{ upd.version }}</span>
+                        <span class="date">{{ upd.createdAt?.toDate ? (upd.createdAt.toDate() | date:'dd/MM/y HH:mm') : (upd.createdAt | date:'dd/MM/y HH:mm') }}</span>
+                        <span class="badge" [class.off]="upd.enabled === false">{{ upd.enabled === false ? 'Inativo' : 'Ativo' }}</span>
+                        <button class="btn-delete" title="Excluir atualização" (click)="onDeleteUpdate(upd._id)">🗑️</button>
+                    </div>
+                    <div class="msg">{{ upd.message }}</div>
+                    <div class="flags">
+                        <span *ngIf="upd.requireCacheClear">🚿 Limpar cache sugerido</span>
+                    </div>
+                </div>
+            </div>
+            <ng-template #emptyUpdates>
+                <p>Nenhuma atualização publicada ainda.</p>
+            </ng-template>
+        </div>
+
+        <!-- ===== CONTEÚDO DA ABA INSTÂNCIAS ===== -->
+        <!-- Gerenciamento de instâncias do sistema -->
+        <div *ngIf="abaAtiva === 'instancias'">
+
+            <!-- Card de Sucesso após criar instância -->
+            <div *ngIf="dadosAcesso.mostrar" class="success-card">
+                <h2>✅ Instância Criada!</h2>
+
+                <p><strong>🌐 URL de Acesso:</strong></p>
+                <div class="url-box">
+                    <input type="text" [value]="dadosAcesso.url" readonly>
+                    <button (click)="copiarUrl(dadosAcesso.url)">📋 Copiar</button>
+                </div>
+
+                <div class="login-info">
+                    <h3>📝 Dados de Acesso:</h3>
+                    <div class="login-details">
+                        <p><strong>Usuário:</strong> matrixadmin</p>
+                        <p><strong>Senha:</strong> 21211212</p>
+                    </div>
+                </div>
+
+                <p class="info">
+                    ℹ️ O sistema criou automaticamente um usuário administrador com senha padrão.
+                    O cliente deve alterar a senha no primeiro acesso.
+                </p>
+
+                <div class="actions">
+                    <button (click)="copiarDadosAcesso()" class="btn-copy-all">📋 Copiar Dados de Acesso</button>
+                    <button (click)="voltarParaLista()" class="btn-back">🔙 Voltar para Lista</button>
+                    <button (click)="criarNovaInstancia()" class="btn-new">➕ Criar Nova</button>
+                </div>
+
+                <div class="access-warning">
+                    ⚠️ <strong>Atenção:</strong> Anote os dados de acesso antes de sair desta tela!
+                </div>
+            </div>
+
+            <!-- Lista de Instâncias Ativas -->
+            <div class="instances-list" *ngIf="!dadosAcesso.mostrar && !mostrarFormulario">
+                <div class="list-header">
+                    <h2>📋 Instâncias Ativas</h2>
+                    <div class="header-actions">
+                        <!-- Estatísticas das instâncias -->
+                        <div class="instance-stats" *ngIf="!carregandoInstancias">
+                            <span class="stat-badge stat-total">
+                                📊 Total: {{ instancias.length }}
+                            </span>
+                            <span class="stat-badge stat-active">
+                                ✅ Ativas: {{ contadorAtivas }}
+                            </span>
+                            <span class="stat-badge stat-inactive">
+                                ❌ Inativas: {{ contadorInativas }}
+                            </span>
+                        </div>
+                        <button class="btn-export" (click)="exportarLista()"
+                            [disabled]="carregandoInstancias || instancias.length === 0">
+                            📥 Exportar Lista
+                        </button>
+                        <button class="btn-refresh" (click)="buscarInstancias()" [disabled]="carregandoInstancias">
+                            🔄 Atualizar
+                        </button>
+                        <button class="btn-create" (click)="abrirFormulario()">
+                            ➕ Nova Instância
+                        </button>
+                    </div>
+                    <!-- Botões de Debug (TEMPORÁRIO - REMOVER EM PRODUÇÃO) -->
+                    <button class="btn-refresh" (click)="verificarCRM()" style="background: #ff6b6b;">
+                        🔍 Debug CRM
+                    </button>
+                    <!-- Botão Limpar Cache (TEMPORÁRIO - REMOVER EM PRODUÇÃO) -->
+                    <button class="btn-refresh" (click)="limparCacheCompleto()" style="background: #22c55e;">
+                        🧹 Limpar Cache
+                    </button>
+                </div>
+
+                <!-- Barra de Busca e Filtros -->
+                <div class="search-and-filters" *ngIf="!carregandoInstancias && instancias.length > 0">
+                    <div class="search-bar">
+                        <input type="text" placeholder="🔍 Buscar por empresa, projeto ou CNPJ..."
+                            [(ngModel)]="filtroInstancias" (input)="filtrarInstancias()">
+                    </div>
+                    <div class="filter-buttons">
+                        <button class="filter-btn" [class.active]="filtroStatus === 'todos'"
+                            (click)="filtrarPorStatus('todos')">
+                            Todos ({{ instancias.length }})
+                        </button>
+                        <button class="filter-btn" [class.active]="filtroStatus === 'ativas'"
+                            (click)="filtrarPorStatus('ativas')">
+                            Ativas ({{ contadorAtivas }})
+                        </button>
+                        <button class="filter-btn" [class.active]="filtroStatus === 'inativas'"
+                            (click)="filtrarPorStatus('inativas')">
+                            Inativas ({{ contadorInativas }})
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading -->
+                <div *ngIf="carregandoInstancias" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+
+                <!-- Tabela de Instâncias -->
+                <div *ngIf="!carregandoInstancias && instanciasFiltradas.length > 0" class="table-wrapper">
+                    <table class="instances-table">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Project ID</th>
+                                <th>Tipo</th>
+                                <th>Configurações</th>
+                                <th>Status</th>
+                                <th>Criado em</th>
+                                <th>CRM</th>
+                                <th>Ativo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let instancia of instanciasFiltradas">
+                                <td>{{ instancia.companyName }}</td>
+                                <td>
+                                    <code>{{ instancia.projectId }}</code>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="getBadgeClass(instancia.profile?.name)">
+                                        {{ getTipoDescricao(instancia.profile?.name) }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="config-badges">
+                                        <!-- Badge de Moeda -->
+                                        <span class="config-badge currency"
+                                            [title]="'Moeda: ' + getMoedaLabel(instancia.currency)">
+                                            {{ getMoedaSimbolo(instancia.currency) }}
+                                        </span>
+
+                                        <!-- Badge de Idioma -->
+                                        <span class="config-badge language"
+                                            [title]="'Idioma: ' + getIdiomaLabel(instancia.language)">
+                                            {{ getIdiomaFlag(instancia.language) }}
+                                        </span>
+
+                                        <!-- Badge CRM -->
+                                        <span class="config-badge crm" *ngIf="instancia.hasCRM" title="CRM Ativo">
+                                            🚀 CRM
+                                        </span>
+
+                                        <!-- Badge Fiscal -->
+                                        <span class="config-badge fiscal"
+                                            *ngIf="instancia.profile?.fiscal?.active || instancia.profile?.name?.includes('Fiscal')"
+                                            title="Fiscal Ativo">
+                                            📋 NFe
+                                        </span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="status-badge"
+                                        [ngClass]="instancia.isPaid === false ? 'status-inactive' : 'status-active'">
+                                        {{ instancia.isPaid === false ? '❌ Inativa' : '✅ Ativa' }}
+                                    </span>
+                                </td>
+                                <td class="date-cell">
+                                    {{ formatarData(instancia.createdAt) }}
+                                </td>
+                                <td>
+                                    <!-- Switch para ativar/desativar CRM -->
+                                    <div class="switch-container">
+                                        <label class="switch switch-crm"
+                                            [title]="instancia.hasCRM ? 'CRM Ativo' : 'CRM Inativo'">
+                                            <input type="checkbox" [checked]="instancia.hasCRM"
+                                                (change)="alternarCRM(instancia)" [disabled]="alterandoStatus">
+                                            <span class="slider round" [class.crm-active]="instancia.hasCRM"></span>
+                                        </label>
+                                        <small class="switch-label">CRM</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <!-- Switch para ativar/desativar instância -->
+                                    <div class="switch-container">
+                                        <label class="switch">
+                                            <input type="checkbox" [checked]="instancia.isPaid !== false"
+                                                (change)="alternarStatusInstancia(instancia)"
+                                                [disabled]="alterandoStatus">
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <small class="switch-label">Ativo</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="btn-action" (click)="mostrarInfoAcesso(instancia)">
+                                            🔗 Ver Acesso
+                                        </button>
+                                        <button class="btn-action btn-monitor"
+                                            (click)="acessarInstanciaComMonitor(instancia)"
+                                            title="Abrir instância com monitoramento ativo">
+                                            📊 Monitorar
+                                        </button>
+                                        <button class="btn-action btn-edit" (click)="editarInstancia(instancia)">
+                                            ✏️ Editar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mensagem quando não há instâncias -->
+                <div *ngIf="!carregandoInstancias && instancias.length === 0" class="no-instances">
+                    <p>😕 Nenhuma instância encontrada.</p>
+                    <button class="btn-create" (click)="abrirFormulario()">
+                        ➕ Criar Primeira Instância
+                    </button>
+                </div>
+
+                <!-- Mensagem quando o filtro não retorna resultados -->
+                <div *ngIf="!carregandoInstancias && instancias.length > 0 && instanciasFiltradas.length === 0"
+                    class="no-instances">
+                    <p>🔍 Nenhuma instância encontrada com o filtro "{{ filtroInstancias }}"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL DE FORMULÁRIO (CRIAR/EDITAR INSTÂNCIA) ===== -->
+<!-- Modal em tela cheia para criação e edição de instâncias -->
+<div class="form-modal" *ngIf="mostrarFormulario">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{ editandoInstancia ? '✏️ Editar Instância' : '➕ Criar Nova Instância' }}</h2>
+            <button class="btn-close" (click)="fecharFormulario()">✖</button>
+        </div>
+
+        <div class="modal-body">
+            <!-- Seleção do Tipo de Módulo -->
+            <div class="module-selector">
+                <h3>Selecione o Tipo de Módulo:</h3>
+                <div class="module-options">
+                    <label class="module-option" *ngFor="let modulo of modulosDisponiveis"
+                        [class.active]="tipoModulo === modulo.id">
+                        <input type="radio" name="tipoModulo" [value]="modulo.id" [(ngModel)]="tipoModulo"
+                            (change)="mudarTipoModulo(modulo.id)">
+                        <div class="module-card">
+                            <span class="icon">{{ modulo.icone }}</span>
+                            <span class="title">{{ modulo.nome }}</span>
+                            <span class="desc">{{ modulo.descricao }}</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Checkbox para incluir módulo fiscal -->
+                <div class="fiscal-option" *ngIf="tipoModulo !== 'crm-only'">
+                    <label class="fiscal-checkbox">
+                        <input type="checkbox" [(ngModel)]="incluiFiscal" name="incluiFiscal">
+                        <span>Incluir módulo Fiscal (NFe, NFCe, etc.)</span>
+                    </label>
+                </div>
+
+                <!-- Checkbox para incluir módulo CRM -->
+                <div class="fiscal-option" *ngIf="tipoModulo !== 'crm-only'">
+                    <label class="fiscal-checkbox">
+                        <input type="checkbox" [(ngModel)]="incluiCRM" name="incluiCRM">
+                        <span>🚀 Incluir módulo CRM (Gestão de Relacionamento)</span>
+                    </label>
+                    <small style="display: block; margin-left: 30px; color: #666; margin-top: 5px;">
+                        Módulo vendido separadamente - Leads, Pipeline, Atividades
+                    </small>
+                </div>
+            </div>
+            <!-- Mensagem informativa para CRM Only -->
+            <div class="crm-only-info" *ngIf="tipoModulo === 'crm-only'">
+                <div class="info-box">
+                    <h4>🚀 CRM Standalone - Informações Importantes:</h4>
+                    <ul>
+                        <li>✅ Inclui módulo CRM completo (Leads, Pipeline, Atividades)</li>
+                        <li>✅ Gestão de clientes integrada</li>
+                        <li>✅ Relatórios focados em vendas</li>
+                        <li>✅ Dashboard otimizado para CRM</li>
+                        <li>💰 Preço especial: R$ 199,00/mês</li>
+                        <li>🎁 30 dias grátis para testar!</li>
+                    </ul>
+                    <p class="upgrade-note">
+                        💡 <strong>Dica:</strong> O cliente pode fazer upgrade para o sistema completo a qualquer
+                        momento!
+                    </p>
+                </div>
+            </div>
+            <form (ngSubmit)="criarInstancia()">
+                <div class="form-grid">
+                    <!-- Dados Básicos da Empresa -->
+                    <div class="form-section">
+                        <h3>Informações da Empresa</h3>
+
+                        <div class="form-group">
+                            <label>Nome da Empresa: *</label>
+                            <input type="text" [(ngModel)]="novaInstancia.companyName" name="companyName"
+                                (blur)="gerarProjectId()" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>ID do Projeto:</label>
+                            <input type="text" [(ngModel)]="novaInstancia.projectId" name="projectId"
+                                [readonly]="editandoInstancia">
+                        </div>
+
+                        <div class="form-group">
+                            <label>CNPJ: *</label>
+                            <input type="text" [(ngModel)]="novaInstancia.stores[0].cnpj" name="cnpj" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Qtd. Usuários:</label>
+                            <input type="number" [(ngModel)]="novaInstancia.stores[0].limitUsers" name="limitUsers"
+                                min="0">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Qtd. Dispositivos:</label>
+                            <input type="number" [(ngModel)]="novaInstancia.stores[0].limitDevices" name="limitDevices"
+                                min="0">
+                        </div>
+
+                        <!-- Campos de Configuração Regional -->
+                        <div class="form-group">
+                            <label>Moeda: *</label>
+                            <select [(ngModel)]="novaInstancia.currency" name="currency" required>
+                                <option value="BRL">💵 Real Brasileiro (R$)</option>
+                                <option value="USD">💵 Dólar Americano ($)</option>
+                                <option value="EUR">💶 Euro (€)</option>
+                                <option value="GBP">💷 Libra Esterlina (£)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Idioma: *</label>
+                            <select [(ngModel)]="novaInstancia.language" name="language" required>
+                                <option value="pt_BR">🇧🇷 Português (Brasil)</option>
+                                <option value="en_US">🇺🇸 Inglês (EUA)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Contatos da Empresa -->
+                    <div class="form-section">
+                        <h3>Contatos</h3>
+
+                        <div class="form-group">
+                            <label>Email: *</label>
+                            <input type="email" [(ngModel)]="novaInstancia.stores[0].contacts.email" name="email"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>WhatsApp:</label>
+                            <input type="text" [(ngModel)]="novaInstancia.stores[0].contacts.whatsapp" name="whatsapp">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Telefone:</label>
+                            <input type="text" [(ngModel)]="novaInstancia.stores[0].contacts.phone" name="phone">
+                        </div>
+                    </div>
+
+                    <!-- Endereço da Empresa -->
+                    <div class="form-section">
+                        <h3>Endereço</h3>
+
+                        <div class="form-group">
+                            <label>CEP:</label>
+                            <input type="text" [(ngModel)]="novaInstancia.stores[0].address.postalCode"
+                                name="postalCode">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Cidade:</label>
+                            <input type="text" [(ngModel)]="novaInstancia.stores[0].address.city" name="city">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Estado:</label>
+                            <select [(ngModel)]="novaInstancia.stores[0].address.state" name="state">
+                                <option value="">Selecione...</option>
+                                <option value="AC">AC</option>
+                                <option value="AL">AL</option>
+                                <option value="AP">AP</option>
+                                <option value="AM">AM</option>
+                                <option value="BA">BA</option>
+                                <option value="CE">CE</option>
+                                <option value="DF">DF</option>
+                                <option value="ES">ES</option>
+                                <option value="GO">GO</option>
+                                <option value="MA">MA</option>
+                                <option value="MT">MT</option>
+                                <option value="MS">MS</option>
+                                <option value="MG">MG</option>
+                                <option value="PA">PA</option>
+                                <option value="PB">PB</option>
+                                <option value="PR">PR</option>
+                                <option value="PE">PE</option>
+                                <option value="PI">PI</option>
+                                <option value="RJ">RJ</option>
+                                <option value="RN">RN</option>
+                                <option value="RS">RS</option>
+                                <option value="RO">RO</option>
+                                <option value="RR">RR</option>
+                                <option value="SC">SC</option>
+                                <option value="SP">SP</option>
+                                <option value="SE">SE</option>
+                                <option value="TO">TO</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label>Endereço:</label>
+                            <textarea [(ngModel)]="novaInstancia.stores[0].address.addressLine" name="addressLine"
+                                rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação do Formulário -->
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit" [disabled]="carregando">
+                        {{ carregando ? (editandoInstancia ? 'Atualizando...' : 'Criando...') : (editandoInstancia ?
+                        'Atualizar Instância' : 'Criar Instância') }}
+                    </button>
+                    <button type="button" class="btn-cancel" (click)="fecharFormulario()">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- ===== LOADER GLOBAL ===== -->
+<!-- Loader igual ao do login (usado durante operações pesadas) -->
+<div id="mainLoadingTaskAuth" class="loadingTask">
+    <div class="d-flex w-100 h-100 flex-column justify-content-center align-items-center">
+        <div class="spinner-border text-light" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MODAL DE INFORMAÇÕES DE ACESSO ===== -->
+<!-- Modal para exibir informações de acesso de uma instância -->
+<div class="access-modal" *ngIf="mostrarModalAcesso" (click)="fecharModalAcesso()">
+    <div class="access-modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>🔗 Informações de Acesso</h3>
+            <button class="btn-close" (click)="fecharModalAcesso()">✖</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="info-section">
+                <h4>{{ instanciaSelecionada?.companyName }}</h4>
+                <p class="project-id">Project ID: <code>{{ instanciaSelecionada?.projectId }}</code></p>
+            </div>
+
+            <div class="url-section">
+                <label>URL de Acesso:</label>
+                <div class="url-box">
+                    <input type="text" [value]="urlInstanciaSelecionada" readonly>
+                    <button (click)="copiarUrl(urlInstanciaSelecionada)">📋 Copiar</button>
+                </div>
+            </div>
+
+            <div class="login-info-box">
+                <p><strong>⚠️ Importante:</strong> O cliente precisa ter login e senha para acessar.</p>
+                <p>Login padrão para novas instâncias:</p>
+                <ul>
+                    <li>Usuário: <code>matrixadmin</code></li>
+                    <li>Senha: <code>21211212</code></li>
+                </ul>
+            </div>
+
+            <div class="actions">
+                <button class="btn-copy-info" (click)="copiarInfoCompleta()">📋 Copiar Todas as Informações</button>
+                <button class="btn-monitor" (click)="acessarInstanciaComMonitor(instanciaSelecionada)"
+                    title="Abrir com monitoramento ativo">
+                    📊 Abrir com Monitor
+                </button>
+                <a [href]="urlInstanciaSelecionada" target="_blank" class="btn-access">🚀 Abrir em Nova Aba</a>
+            </div>
+        </div>
+    </div>
+</div>

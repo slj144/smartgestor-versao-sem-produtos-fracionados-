@@ -1,0 +1,67 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "baseUrl": "./",
+    "importHelpers": true,
+    "outDir": "./dist/out-tsc",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2022",
+    "module": "es2020",
+    "lib": [
+      "es2020",
+      "dom"
+    ],
+    "paths": {
+      "@env": [
+        "src/environments/environment"
+      ],
+      "@components/*": [
+        "src/app/components/*"
+      ],
+      "@directives/*": [
+        "src/app/directives/*"
+      ],
+      "@guards/*": [
+        "src/app/@shared/guards/*"
+      ],
+      "@interceptors/*": [
+        "src/app/interceptors/*"
+      ],
+      "@pipes/*": [
+        "src/app/pipes/*"
+      ],
+      "@services/*": [
+        "src/app/services/*"
+      ],
+      "@util/*": [
+        "src/app/util/*"
+      ],
+      "@itools/*": [
+        "src/assets/tools/iTools/src/*"
+      ],
+      "@theme/*": [
+        "src/app/@themes/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@shared/*": [
+        "src/app/@shared/*"
+      ],
+      "@auth/*": [
+        "src/app/auth/*"
+      ],
+      "@pages/*": [
+        "src/app/pages/*"
+      ]
+    },
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "useDefineForClassFields": false
+  }
+}

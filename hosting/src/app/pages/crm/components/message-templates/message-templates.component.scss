@@ -1,0 +1,991 @@
+// ARQUIVO: message-templates.component.scss
+// CAMINHO: src/app/pages/crm/components/message-templates/message-templates.component.scss
+// FUNÇÃO: Estilos do modal de templates WhatsApp com responsividade COMPLETA para mobile
+
+// ===== VARIÁVEIS =====
+$primary: #25D366;
+$secondary: #6c757d;
+$background: #f8f9fa;
+$text: #212529;
+$text-light: #6c757d;
+$border: #dee2e6;
+$white: #ffffff;
+$danger: #dc3545;
+
+// ===== ANIMAÇÕES =====
+@keyframes slideIn {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+// ===== MODAL OVERLAY =====
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1050;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+
+    // No mobile, remove padding para usar tela toda
+    @media (max-width: 768px) {
+        padding: 0;
+        align-items: flex-end; // Modal vem de baixo no mobile
+    }
+}
+
+// ===== CONTAINER DO MODAL =====
+.modal-container {
+    background: $white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    animation: slideIn 0.3s ease;
+    overflow: hidden;
+
+    // Mobile: tela cheia com cantos arredondados apenas no topo
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 95vh;
+        max-height: 100vh;
+        border-radius: 20px 20px 0 0;
+        animation: slideIn 0.3s ease;
+    }
+
+    // Modo garantia
+    &.garantia-mode {
+        border: 3px solid #ff9800;
+    }
+}
+
+// ===== HEADER DO MODAL =====
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid $border;
+    background: $white;
+
+    // Mobile: header mais compacto
+    @media (max-width: 768px) {
+        padding: 15px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+
+        // Barra de arraste no mobile
+        &::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 4px;
+            background: #ccc;
+            border-radius: 2px;
+        }
+    }
+
+    h2 {
+        margin: 0;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        @media (max-width: 768px) {
+            font-size: 18px;
+        }
+
+        icon {
+            font-size: 24px;
+        }
+    }
+
+    .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+
+        @media (max-width: 768px) {
+            font-size: 28px;
+            padding: 8px;
+        }
+
+        &:hover {
+            background: $background;
+            border-radius: 8px;
+        }
+    }
+}
+
+// ===== ÁREA DE CONTEÚDO =====
+.modal-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row; // Layout horizontal no desktop
+    overflow: hidden; // IMPORTANTE: evita scroll no container principal
+
+    // Layout vertical em vez de horizontal
+    @media (max-width: 768px) {
+        flex-direction: column;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; // Smooth scroll no iOS
+    }
+}
+
+// ===== PAINEL LATERAL (Lista de Templates) =====
+.sidebar-panel {
+    width: 380px;
+    background: $white;
+    border-right: 1px solid $border;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0; // IMPORTANTE: não deixa o sidebar encolher
+
+    // Mobile: ocupa largura total e altura reduzida
+    @media (max-width: 768px) {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid $border;
+        max-height: 50vh; // Limita altura para dar espaço ao editor
+        flex-shrink: 0;
+    }
+}
+
+// ===== ABAS DE CATEGORIA =====
+.category-tabs {
+    display: flex;
+    padding: 10px;
+    gap: 8px;
+    border-bottom: 1px solid $border;
+    background: $white;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    flex-shrink: 0; // IMPORTANTE: não deixa as abas encolherem
+
+    // Mobile: scroll horizontal suave
+    @media (max-width: 768px) {
+        padding: 10px 5px;
+        gap: 5px;
+
+        // Remove scrollbar mas mantém funcionalidade
+        &::-webkit-scrollbar {
+            display: none;
+        }
+
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .category-tab {
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: $background;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        white-space: nowrap;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+
+        @media (max-width: 768px) {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        &.active {
+            background: $primary;
+            color: white;
+        }
+
+        &:hover:not(.active) {
+            background: darken($background, 5%);
+        }
+
+        .cat-count {
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 12px;
+
+            @media (max-width: 768px) {
+                display: none; // Esconde contador no mobile para economizar espaço
+            }
+        }
+    }
+}
+
+// ===== BUSCA =====
+.search-container {
+    padding: 10px;
+    background: $white;
+    flex-shrink: 0; // IMPORTANTE: não deixa a busca encolher
+
+    @media (max-width: 768px) {
+        padding: 8px;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+
+        icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: $text-light;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 40px;
+            border: 1px solid $border;
+            border-radius: 25px;
+            font-size: 14px;
+
+            @media (max-width: 768px) {
+                padding: 8px 35px;
+                font-size: 13px;
+            }
+
+            &:focus {
+                outline: none;
+                border-color: $primary;
+            }
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+
+            @media (max-width: 768px) {
+                right: 8px;
+                padding: 8px;
+            }
+        }
+    }
+}
+
+// ===== CONTAINER DE TEMPLATES =====
+.templates-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0; // IMPORTANTE: permite scroll correto
+
+    @media (max-width: 768px) {
+        padding: 8px;
+    }
+
+    // Scrollbar personalizada no desktop
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $background;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #999;
+    }
+}
+
+// ===== CARD DE TEMPLATE =====
+.template-card {
+    background: $white;
+    border: 1px solid $border;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    @media (max-width: 768px) {
+        padding: 12px;
+        margin-bottom: 8px;
+    }
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &.selected {
+        border-color: $primary;
+        background: rgba($primary, 0.05);
+    }
+
+    // Estado de toque no mobile
+    &.active-touch {
+        transform: scale(0.98);
+        background: $background;
+    }
+
+    .template-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+
+        h4 {
+            margin: 0;
+            font-size: 16px;
+
+            @media (max-width: 768px) {
+                font-size: 15px;
+            }
+        }
+    }
+
+    .template-content {
+        color: $text-light;
+        font-size: 14px;
+        line-height: 1.5;
+        max-height: 60px;
+        overflow: hidden;
+        position: relative;
+
+        @media (max-width: 768px) {
+            font-size: 13px;
+            max-height: 50px;
+        }
+
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(transparent, $white);
+        }
+    }
+
+    .template-tags {
+        display: flex;
+        gap: 5px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+
+        .tag {
+            background: $background;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: $text-light;
+        }
+    }
+}
+
+// ===== PAINEL DO EDITOR =====
+.editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: $white;
+    overflow: hidden;
+    min-width: 0; // IMPORTANTE: permite que o flex funcione corretamente
+
+    @media (max-width: 768px) {
+        min-height: 50vh; // Garante espaço mínimo no mobile
+    }
+
+    // CORREÇÃO PRINCIPAL: Remove a lógica problemática
+    // A mensagem de seleção agora é controlada apenas pelo ngIf no HTML
+}
+
+// ===== MENSAGEM SELECIONAR TEMPLATE =====
+.select-template-message {
+    display: flex; // IMPORTANTE: sempre flex quando visível
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    padding: 40px;
+    color: $text-light;
+    height: 100%; // IMPORTANTE: ocupa toda altura disponível
+
+    @media (max-width: 768px) {
+        padding: 20px;
+    }
+
+    icon {
+        font-size: 64px;
+        opacity: 0.2;
+        margin-bottom: 16px;
+
+        @media (max-width: 768px) {
+            font-size: 48px;
+        }
+    }
+
+    h3 {
+        margin: 0 0 8px;
+        font-size: 20px;
+        color: $text;
+
+        @media (max-width: 768px) {
+            font-size: 18px;
+        }
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+
+        @media (max-width: 768px) {
+            font-size: 13px;
+        }
+    }
+}
+
+// ===== CONTEÚDO DO EDITOR =====
+.editor-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: 100%; // IMPORTANTE: garante que ocupa toda altura
+
+    @media (max-width: 768px) {
+        padding: 15px;
+    }
+}
+
+// ===== HEADER DO EDITOR =====
+.editor-header-simple {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid $border;
+    flex-shrink: 0; // IMPORTANTE: não deixa o header encolher
+
+    @media (max-width: 768px) {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        margin: 0;
+        font-size: 18px;
+        color: $text;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        @media (max-width: 768px) {
+            font-size: 16px;
+        }
+    }
+
+    .editor-tools {
+        display: flex;
+        gap: 8px;
+
+        .tool-btn {
+            background: $background;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+
+            @media (max-width: 768px) {
+                width: 40px;
+                height: 40px;
+            }
+
+            &:hover {
+                background: darken($background, 5%);
+            }
+
+            &:active,
+            &.active-touch {
+                transform: scale(0.95);
+            }
+
+            icon {
+                font-size: 20px;
+            }
+        }
+    }
+}
+
+// ===== TEXTAREA DO EDITOR =====
+.editor-textarea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+    min-height: 150px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 10px;
+        min-height: 120px;
+    }
+
+    textarea {
+        flex: 1;
+        width: 100%;
+        min-height: 150px;
+        padding: 15px;
+        border: 2px solid $border;
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.2s;
+        background: $white;
+
+        // Importante para mobile - melhora a experiência de digitação
+        @media (max-width: 768px) {
+            min-height: 120px;
+            padding: 12px;
+            font-size: 16px; // Evita zoom no iOS
+            -webkit-appearance: none; // Remove estilos padrão iOS
+            -webkit-text-size-adjust: 100%; // Previne ajuste automático
+        }
+
+        &:focus {
+            outline: none;
+            border-color: $primary;
+            background: $white;
+        }
+
+        // Placeholder
+        &::placeholder {
+            color: #aaa;
+        }
+    }
+
+    .char-count {
+        text-align: right;
+        margin-top: 5px;
+        font-size: 12px;
+        color: $text-light;
+    }
+}
+
+// ===== PREVIEW DO WHATSAPP =====
+.whatsapp-preview-simple {
+    background: $background;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: auto; // Empurra para baixo
+    flex-shrink: 0; // IMPORTANTE: não deixa o preview encolher
+
+    @media (max-width: 768px) {
+        padding: 12px;
+        margin-bottom: 70px; // Espaço para o footer fixo
+    }
+
+    h4 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: $text-light;
+        font-weight: 600;
+    }
+
+    .preview-phone {
+        background: #e5ddd5;
+        border-radius: 8px;
+        padding: 10px;
+        max-height: 200px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+
+        @media (max-width: 768px) {
+            max-height: 150px;
+        }
+
+        .message-bubble {
+            background: #dcf8c6;
+            padding: 10px 12px;
+            border-radius: 8px;
+            position: relative;
+            margin-left: auto;
+            max-width: 85%;
+            word-wrap: break-word;
+
+            @media (max-width: 768px) {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+
+            pre {
+                margin: 0;
+                font-family: inherit;
+                white-space: pre-wrap;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+
+            .message-time {
+                font-size: 11px;
+                color: #667781;
+                margin-top: 4px;
+                text-align: right;
+            }
+        }
+    }
+}
+
+// ===== RODAPÉ DO MODAL =====
+.modal-footer-simple {
+    display: flex;
+    gap: 10px;
+    padding: 15px 20px;
+    border-top: 1px solid $border;
+    background: $white;
+    flex-shrink: 0; // IMPORTANTE: não deixa o footer encolher
+
+    // Mobile: footer fixo no bottom
+    @media (max-width: 768px) {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 12px 15px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+    }
+
+    button {
+        flex: 1;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 44px; // Altura mínima para toque
+
+        @media (max-width: 768px) {
+            padding: 12px 16px;
+        }
+
+        &:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        icon {
+            font-size: 18px;
+        }
+
+        // Estado de toque
+        &.active-touch {
+            transform: scale(0.98);
+        }
+    }
+
+    .btn-cancel {
+        background: $background;
+        border: 1px solid $border;
+        color: $text;
+
+        &:hover:not(:disabled) {
+            background: darken($background, 5%);
+        }
+    }
+
+    .btn-send {
+        background: $primary;
+        border: none;
+        color: white;
+
+        &:hover:not(:disabled) {
+            background: darken($primary, 5%);
+        }
+
+        &.garantia {
+            background: #ff9800;
+
+            &:hover:not(:disabled) {
+                background: darken(#ff9800, 5%);
+            }
+        }
+    }
+}
+
+// ===== ALERTA DE GARANTIA =====
+.garantia-alert-simple {
+    background: #fff3cd;
+    border-left: 4px solid #ff9800;
+    padding: 12px 15px;
+    margin: 0 15px 15px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: fadeIn 0.5s ease;
+
+    @media (max-width: 768px) {
+        margin: 0 10px 10px;
+        padding: 10px 12px;
+    }
+
+    .alert-content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+
+        .alert-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .alert-text {
+            font-size: 14px;
+            color: #856404;
+            font-weight: 500;
+
+            @media (max-width: 768px) {
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+// ===== BADGE DE GARANTIA =====
+.garantia-badge {
+    background: #ff9800;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    animation: fadeIn 0.5s ease;
+
+    &.animated {
+        animation: pulse 2s infinite;
+    }
+}
+
+// ===== GARANTIA HEADER =====
+.garantia-header {
+    background: linear-gradient(135deg, #fff3cd 0%, #fff 100%);
+    border-bottom-color: #ff9800;
+}
+
+// ===== ANIMAÇÃO PULSE =====
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+// ===== NO TEMPLATES =====
+.no-templates {
+    text-align: center;
+    padding: 40px;
+    color: $text-light;
+
+    icon {
+        font-size: 48px;
+        opacity: 0.3;
+        margin-bottom: 10px;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+    }
+}
+
+// ===== UTILITÁRIOS =====
+// Esconde scrollbar mas mantém funcionalidade
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+// Força hardware acceleration no mobile
+.hardware-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+// ===== CORREÇÕES PARA TOUCH NO MOBILE =====
+// Garante que os elementos sejam "tocáveis" no mobile
+@media (max-width: 768px) {
+
+    // Aumenta a área de toque dos botões
+    .category-tab,
+    .template-card,
+    .tool-btn,
+    .btn-cancel,
+    .btn-send,
+    .close-btn,
+    .clear-btn {
+        // Remove delay do toque no iOS
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+
+        // Área mínima de toque de 44px (recomendação Apple)
+        min-height: 44px;
+        position: relative;
+
+        // Aumenta área clicável sem mudar visual
+        &::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            bottom: -5px;
+            left: -5px;
+        }
+    }
+
+    // Garante que o textarea funcione bem no mobile
+    textarea {
+        touch-action: manipulation;
+        -webkit-appearance: none;
+    }
+
+    // Previne zoom indesejado no iOS
+    input[type="text"],
+    input[type="search"],
+    textarea {
+        font-size: 16px !important;
+    }
+
+    // Melhora resposta visual ao toque
+    .template-card:active,
+    .category-tab:active,
+    .tool-btn:active,
+    .btn-cancel:active,
+    .btn-send:active {
+        opacity: 0.7;
+        transform: scale(0.98);
+    }
+
+    // Remove qualquer pointer-events que possa estar bloqueando
+    * {
+        pointer-events: auto !important;
+    }
+
+    // Garante que o overlay não bloqueie toques acidentalmente
+    .modal-overlay {
+        touch-action: none;
+    }
+
+    .modal-container {
+        touch-action: pan-y;
+    }
+
+    // Templates sugeridos com destaque de garantia
+    .template-card.garantia-suggested {
+        border-left: 3px solid #ff9800;
+        background: rgba(255, 152, 0, 0.05);
+    }
+}
+
+// ===== PREVINE PROBLEMAS DE SOBREPOSIÇÃO =====
+.modal-container {
+    // Garante que o modal fique acima de tudo
+    z-index: 1051;
+
+    // Previne que elementos filhos quebrem o layout
+    * {
+        max-width: 100%;
+    }
+}
+
+// ===== MELHORA PERFORMANCE NO MOBILE =====
+@media (max-width: 768px) {
+
+    // Ativa aceleração de hardware
+    .modal-container,
+    .templates-container,
+    .editor-content {
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+}

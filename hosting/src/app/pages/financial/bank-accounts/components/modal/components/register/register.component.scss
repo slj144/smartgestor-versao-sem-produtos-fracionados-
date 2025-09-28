@@ -1,0 +1,107 @@
+
+#containerFormRegister {
+  form {
+    padding: 0 10px;
+    label {
+      font-size: 12px;
+      margin-bottom: 1px;
+    }        
+    .manager-provider {
+      select {
+        width: calc(100% - 40px);
+        margin-right: 5px;
+        float: left;
+      }
+      button {
+        width: 35px !important;
+        height: 35px !important;
+        padding: 0;
+        margin: 0;
+        float: left;
+        position: relative;
+        top: 0;
+        background-color: lightcoral;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        color: #fff;
+        transition: all 0.3s ease;
+        icon {
+          font-size: 12px;
+        }
+        &:hover {
+          opacity: 0.75;
+        }
+      }
+    }       
+    input, select, textarea {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;
+      resize: none;        
+    }
+    textarea {
+      height: 95px;
+      max-height: 95px;
+    }
+    fieldset {
+      padding: 0;
+      &[disabled] {
+        opacity: 0.65;
+        background-color: #eee;
+      }          
+    }        
+    input[type=file] {
+      height: 40px;
+    }
+    input[disabled] {
+      opacity: 0.65;
+      background-color: #eee;
+    }
+    span {
+      &.value {
+        display: block;
+        color: goldenrod;
+        font-size: 20px;
+        font-weight: 600;
+        margin-right: 10px;
+        small {
+          color: green;
+          font-size: 13px;             
+        }
+      }
+    }
+    small {
+      &.warning {
+        color: coral;
+      }
+      &.error {
+        color: red;
+      }          
+    }
+    .form-group {
+      margin-bottom: 8px;
+    }
+    .required {
+      border-color: indianred !important;
+      &:focus {
+        border-color: rgba(205, 92, 92, 0.75) !important;
+      }
+    }
+    & > button {
+      margin: 10px auto 5px;
+      display: block;
+      padding: 5px 40px;
+      border-radius: 8px;
+      font-size: 14px;
+      background-color: rgb(102, 102, 255);
+      color: #fff;
+      &.btnBlue {
+        background-color: rgb(102, 102, 255);
+      }
+      &.btnRed {
+        background-color: indianred;
+      }
+    }  
+  }
+}

@@ -1,0 +1,210 @@
+
+modal {
+  #container-view {
+    padding: 0 5px;
+    .container-data {
+      section {
+        h5 {
+          line-height: 22px;
+          font-size: 13px;
+          font-weight: 600;
+          margin: 0;
+          border-bottom: 1px solid #ddd;
+        }
+        .content {
+          padding: 8px;
+          p {
+            margin: 0;
+            line-height: 13px;
+            span {
+              display: inline;
+              &.label {
+                color: #666;
+                font-size: 11px;
+                font-weight: 600;
+              }
+              &.value {
+                color: #888;
+                font-size: 12px;
+                margin-left: 4px;
+                &.price {
+                  color: goldenrod;
+                }
+              }
+            }
+          }
+        }
+        &.transactions {
+          table {
+            margin-bottom: 5px;
+            thead {
+              tr {
+                border-bottom: 1px solid #ccc;
+                th {
+                  color: #666;
+                  font-size: 12px;
+                  font-weight: 600;
+                  padding: 5px 10px;
+                  text-align: center;
+                }
+              }
+            }
+            tbody {
+              tr {
+                td {
+                  color: #888;
+                  padding: 2px 10px;
+                  font-size: 12px;   
+                  text-align: center;
+                  &:first-child {
+                    width: 120px;
+                  }
+                  &:nth-child(2) {
+                    text-align: left;
+                  } 
+                  &:nth-child(3) {
+                    width: 110px;
+                    text-align: left;
+                  }              
+                  &:last-child {
+                    width: 100px;
+                    font-weight: 600;
+                    span {
+                      &.positive {
+                        color: coral;
+                      }
+                      &.negative {
+                        color: red;
+                      }
+                    }
+                  }
+                }
+                &:nth-child(odd) {
+                  background-color: lightcyan;
+                }
+              }
+            }
+          }
+        }
+        &.balance {
+          p {  
+            margin: 0;              
+            padding: 15px 10px 0;
+            border-top: 1px solid #ddd;
+            span {
+              font-size: 18px;
+              font-weight: 600;
+              &.label {
+                color: #777;
+                margin-right: 5px;
+              }
+              &.balance {
+                color: coral;
+                float: right;
+                display: inline;
+              }
+            }
+          }
+        }
+        &.extract {
+          padding: 6px 12px 10px;
+          margin-top: 25px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          background-color: lightcyan;
+          h5 {
+            color: #777;
+            border-bottom: none;
+          }
+          .content {
+            padding: 0;
+             select {
+              width: calc(100% - 48px);
+              height: 36px;
+              // padding: 0;
+              margin-right: 12px;
+              font-size: 13px;
+              outline: none;
+              border: none;
+              border-bottom: 2px solid #bbb;
+              border-radius: 0;
+              background-color: lightcyan;              
+              box-shadow: none;
+              float: left;
+            }
+            button {
+              width: 35px;
+              height: 35px;
+              outline: none;
+              border: none;
+              border-radius: 100%;
+              color: #fff;
+              background-color: rgb(102, 102, 255);
+              float: left;
+              transition: all 0.5s ease-in-out;
+              icon {
+                font-size: 16px;
+              }
+            }
+          }
+         
+        }
+      }        
+    } 
+    .container-delete {
+      .container-confirmation {
+        margin-top: 30px;
+        border-top: 1px solid #ccc;
+        .container-info {
+          padding: 20px 10px;
+          p {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            color: gray;
+          }
+          small {
+            width: 75%;
+            margin: 0 auto;
+            color: rgba(255, 0, 0, 0.75);
+            text-align: center;
+            display: block;
+          }
+        }
+        .container-buttons {
+          width: 100%;
+          height: 30px;
+          padding: 10px 0 0;
+          text-align: right;
+          display: table;
+          border-top: 1px dotted #ddd;
+          button {
+            height: 30px;
+            padding-left: 15px;
+            padding-right: 15px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+            display: inline-table;
+            transition: all 0.3s ease;
+            &.btnCancel {
+              color: rgba(234, 20, 20, 0.8) !important;
+              background-color: #fff !important;
+              font-size: 12px;
+              margin-right: 5px;
+            }
+            &.btnConfirm {
+              color: #fff !important;
+              background-color: rgb(100, 100, 234) !important;
+              font-size: 13px;
+            }
+            &:disabled {
+              opacity: 0.8;
+            }
+          }
+        }
+      }
+    }
+  }
+}

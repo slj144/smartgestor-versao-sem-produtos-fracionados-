@@ -1,0 +1,8 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content" id="infiniteScroll" *ngIf="isShow">
+    <cashier-records embed="true" (callback)="onCashierRecordsResponse($event)"></cashier-records>
+  </div>
+
+</modal>

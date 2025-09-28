@@ -1,0 +1,109 @@
+<main>
+  <div *ngIf="checkBootstrap">
+
+    <section class="container-data">
+      <div class="container-selection">
+        <span class="title">Tipo de Impressão:</span>
+
+        <select class="form-control type-select" (change)="onChangePrintFormat($event)">
+          <option *ngFor="let format of formats" [value]="format.code" [selected]="settings.print.code == format.code">
+            {{ format.name }}</option>
+        </select>
+
+        <div class="container-description">
+          <span>Colunas: {{ settings.print.columns }}</span>
+          <span>Linhas: {{ settings.print.rows }}</span>
+          <span>Etiquetas por Página: {{ settings.print.quantityPerSheet }}</span>
+        </div>
+      </div>
+
+      <div class="container-data">
+        <span class="title">Dados da Etiqueta:</span>
+
+        <div class="container-data-items">
+          <label>
+            <input type="checkbox" [checked]="settings.tickets.name" (change)="onToggleTicketData('name')" />
+            <span>Nome</span>
+          </label>
+
+          <label>
+            <input type="checkbox" [checked]="settings.tickets.price" (change)="onToggleTicketData('price')" />
+            <span>Preço</span>
+          </label>
+
+          <label>
+            <input type="checkbox" [checked]="settings.tickets.barcode" (change)="onToggleTicketData('barcode')" />
+            <span>Código de Barras</span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="container-products">
+      <h6>
+        <icon name="grid-outline" pack="eva"></icon>
+        <span>Produtos</span>
+        <button type="button" (click)="onOpenLayer('products')" *ngIf="productsData && productsData.length > 0">
+          <icon name="plus-outline" pack="eva"></icon>
+        </button>
+      </h6>
+
+      <div class="data" *ngIf="productsData && productsData.length > 0">
+        <div class="table-responsive">
+          <table class="table table-borderless">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Informações</th>
+                <th>Quantidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of productsData; let i = index">
+                <td (click)="onRemoveProductItem(i)">
+                  <span>
+                    <icon name="close" pack="eva"></icon>
+                  </span>
+                </td>
+                <td>
+                  <span class="name">{{ item.name }}</span>
+                  <span class="barcode">{{ 'Código de Barras: ' + item.barcode }}</span>
+                </td>
+                <td>
+                  <input type="text" class="form-control" min="1" value="{{ item.ticketsQuantity }}"
+                    (input)="onApplyNumberMask($event, item, 'quantity')" />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="no-data" *ngIf="!productsData || productsData.length == 0">
+        <button type="button" (click)="onOpenLayer('products')">
+          <icon name="plus-outline" pack="eva"></icon>
+        </button>
+        <span>Selecionar Produtos</span>
+      </div>
+    </section>
+
+    <section class="container-float">
+      <span class="info">No total serão <b>{{ settings.statistics.files }} arquivo(s)</b> com <b>{{
+          settings.statistics.pages }} página(s)</b>{{ settings.statistics.files > 1 ? ' cada' : '' }}. Total de <b>{{
+          settings.statistics.tickets }} etiquetas</b>.</span>
+      <button class="btn btn-primary" [disabled]="!(productsData && productsData.length > 0)"
+        (click)="onGenerateTickets()">
+        Gerar Etiquetas
+      </button>
+      <span class="warning">Isso pode levar alguns minutos.</span>
+    </section>
+  </div>
+
+  <div *ngIf="!checkBootstrap" [nbSpinner]="!checkBootstrap" [nbSpinnerStatus]="'success'" [nbSpinnerSize]="'large'"
+    style="height: 100%">
+  </div>
+
+  <generate-tickets-layer (callback)="onLayerResponse($event)"></generate-tickets-layer>
+  <generate-tickets-print (callback)="onPrintResponse($event)"></generate-tickets-print>
+
+</main>

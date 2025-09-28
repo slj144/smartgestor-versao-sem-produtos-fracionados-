@@ -1,0 +1,221 @@
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+
+    <div id="container-filters" [style.display]="settings.activeComponent === 'Products/Filters' ? 'block' : 'none'">
+      <filters (callback)="onFiltersResponse($event)"></filters>
+    </div>
+
+    <div id="container-view" class="centralizer" *ngIf="settings.activeComponent === 'Products/Read'">
+      <div class="wrapper">
+
+        <div class="container-data">
+
+          <div class="container-slideshow" *ngIf="settings.data.thumbnail">
+            <div class="container-image">
+              <img [src]="settings.data.thumbnail?.url" />
+            </div>
+          </div>
+
+          <div class="container-info">
+            <h4 class="name">{{ settings.data.name }}</h4>
+
+            <section class="general">
+              <h5>{{ translate.action.read.section.general.title }}</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label">{{ translate.action.read.section.general.label.code + ':' }}</span> <span
+                    class="value">{{ settings.data.code }}</span>
+                </p>
+
+                <p *ngIf="settings.data.internalCode">
+                  <span class="label">{{ 'Código Interno:' }}</span> <span class="value">{{ settings.data.internalCode
+                    }}</span>
+                </p>
+
+                <p>
+                  <span class="label">{{ translate.action.read.section.general.label.barcode + ':' }}</span> <span
+                    class="value">{{ settings.data.barcode }}</span>
+                </p>
+
+                <p *ngIf="settings.data.serialNumber">
+                  <span class="label">{{ translate.action.read.section.general.label.serialNumber + ':' }}</span> <span
+                    class="value">{{ settings.data.serialNumber }}</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="pricing">
+              <h5>{{ translate.action.read.section.pricing.title }}</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label">{{ translate.action.read.section.pricing.label.salePrice + ':' }}</span> <span
+                    class="value price">{{ settings.data.salePrice | currency:'' }}</span>
+                </p>
+
+                <p>
+                  <span class="label">{{ translate.action.read.section.pricing.label.costPrice + ':' }}</span> <span
+                    class="value price">{{ (settings.permissions?.fields?.costPrice ? (settings.data.costPrice |
+                    currency:'') : '*****') }}</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="stock">
+              <h5>{{ translate.action.read.section.stock.title }}</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label">{{ translate.action.read.section.stock.label.quantity + ':' }}</span> <span
+                    class="value">{{ settings.data.quantity }}</span>
+                </p>
+
+                <p>
+                  <span class="label">{{ translate.action.read.section.stock.label.alert + ':' }}</span> <span
+                    class="value">{{ settings.data.alert }}</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="classification">
+              <h5>{{ translate.action.read.section.classification.title }}</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label">{{ translate.action.read.section.classification.label.category.title + ':'
+                    }}</span> <span class="value">{{ settings.data.category.name }}</span>
+                </p>
+
+                <p>
+                  <span class="label">{{ translate.action.read.section.classification.label.commercialUnit.title + ':'
+                    }}</span> <span class="value">{{ settings.data.commercialUnit.name }}</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="supply" *ngIf="isMatrix && settings.data.provider?.code">
+              <h5>{{ translate.action.read.section.supply.title }}</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label">{{ translate.action.read.section.supply.label.code + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.code }}</span>
+                </p>
+
+                <p>
+                  <span class="label">{{ translate.action.read.section.supply.label.name + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.name }}</span>
+                </p>
+
+                <p *ngIf="settings.data.provider?.address">
+                  <span class="label">{{ translate.action.read.section.supply.label.address + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.address }}</span>
+                </p>
+
+                <p *ngIf="settings.data.provider?.phone">
+                  <span class="label">{{ translate.action.read.section.supply.label.phone + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.phone }}</span>
+                </p>
+
+                <p *ngIf="settings.data.provider?.email">
+                  <span class="label">{{ translate.action.read.section.supply.label.email + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.email }}</span>
+                </p>
+
+                <p *ngIf="settings.data.provider?.lastSupply">
+                  <span class="label">{{ translate.action.read.section.supply.label.lastSupply + ':' }}</span> <span
+                    class="value">{{ settings.data.provider.lastSupply }}</span>
+                </p>
+              </div>
+            </section>
+
+            <section class="classification">
+              <h5>Descrição</h5>
+
+              <div class="content">
+                <p>
+                  <span class="label"></span> <span class="value">{{ settings.data.description }}</span>
+                </p>
+              </div>
+            </section>
+
+
+            <section class="container-historic">
+              <h5>{{ translate.action.read.section.historic.title }}</h5>
+
+              <div class="content">
+
+                <ng-container *ngIf="!loadingHistoric && historic?.length > 0">
+                  <div class="table-responsive">
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th>{{ translate.action.read.section.historic.label.code }}</th>
+                          <th class="text-start">{{ translate.action.read.section.historic.label.customer }}</th>
+                          <th>{{ translate.action.read.section.historic.label.quantity }}</th>
+                          <th>{{ translate.action.read.section.historic.label.price }}</th>
+                          <th>{{ translate.action.read.section.historic.label.date }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let item of historic">
+                          <td><span>{{ item.code }}</span></td>
+                          <td><span>{{ item.customer }}</span></td>
+                          <td><span>{{ item.quantity }}</span></td>
+                          <td><span>{{ item.price }}</span></td>
+                          <td><span>{{ item.date | date:'dd/MM/yyyy' }}</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </ng-container>
+
+                <p class="loading" *ngIf="loadingHistoric">Carregando...</p>
+                <p class="noData" *ngIf="!loadingHistoric && historic?.length == 0">Não há histórico deste produto até o
+                  momento!</p>
+
+              </div>
+            </section>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <div id="container-register"
+      *ngIf="(settings.activeComponent === 'Products/Create') || (settings.activeComponent === 'Products/Update')">
+      <produts-register (callback)="onRegisterResponse($event)"></produts-register>
+    </div>
+
+    <div id="container-stock-adjustment" *ngIf="settings.activeComponent === 'Products/StockAdjustment'">
+      <stock-adjustment (callback)="onStockAdjustmentResponse($event)"></stock-adjustment>
+    </div>
+
+    <div id="container-generate-tickets" class="centralizer"
+      *ngIf="settings.activeComponent === 'Products/GenerateTickets'">
+      <div class="wrapper">
+        <generate-tickets (callback)="onGenerateTicketsResponse($event)"></generate-tickets>
+      </div>
+    </div>
+
+    <div id="container-data-import" class="centralizer" *ngIf="settings.activeComponent === 'Products/DataImport'">
+      <div class="wrapper">
+        <data-import (callback)="onDataImportResponse($event)"></data-import>
+      </div>
+    </div>
+
+    <div id="container-xml-import" *ngIf="settings.activeComponent === 'Products/XMLImport'">
+      <xml-import (callback)="onXMLImportResponse($event)"></xml-import>
+    </div>
+
+    <div id="container-data-export" class="centralizer" *ngIf="settings.activeComponent === 'Products/DataExport'">
+      <div class="wrapper">
+        <data-export (callback)="onDataExportResponse($event)"></data-export>
+      </div>
+    </div>
+
+  </div>
+</modal>

@@ -1,0 +1,187 @@
+
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+    <div class="container-view">
+      <div class="container-external">
+        <div class="container-info">
+          <div class="wrapper">
+            <div *ngIf="settings.activeComponent === 'Branch/View'">
+
+              <article *ngIf="settings.data.selectedData" class="view">
+                <div class="header clearfix">
+                  <div class="image-container">
+                    <img src="{{ settings.data.selectedData.image ? settings.data.selectedData.image : '/assets/images/storeImageLorenIpsun.jpg' }}"/>
+                    <input type="file" accept="image/*" name="image" class="inpfile hide"/>
+                  </div>
+                  <ul class="store-top-info">
+                    <li class="title">{{ settings.data.selectedData.name }}</li>
+                    <li class="label">CNPJ: {{ settings.data.selectedData.cnpj }}</li>
+                  </ul>
+                </div>
+          
+                <div class="content">
+                  <div class="viewData">
+                    <p class="box-header">{{ translate.mainModal.address.title }}</p>
+          
+                    <ul class="address box view">
+                      <li><i class="fas fa-map-marker-alt"></i>{{ settings.data.selectedData.address.addressLine }}<span>, {{ settings.data.selectedData.address.city }} - {{ settings.data.selectedData.address.state }}</span></li>
+                      <li>{{ settings.data.selectedData.address.postalCode }}</li>
+                    </ul>
+          
+                    <p class="box-header">{{ translate.mainModal.contacts.title }}</p>
+          
+                    <ul class="contacts box view">
+                      <li><i class="fas fa-phone"></i>{{ settings.data.selectedData.contacts.phone}}</li>
+                      <li *ngIf="settings.data.selectedData.contacts.email"><i class="far fa-envelope"></i>{{ settings.data.selectedData.contacts.email}}</li>
+                      <li *ngIf="settings.data.selectedData.contacts.whatsapp"><i class="fab fa-whatsapp"></i>{{ settings.data.selectedData.contacts.whatsapp}}</li>
+                    </ul>
+          
+                    <p class="box-header admin-account-title">{{ translate.mainModal.adminAccount }}</p>
+                    <div class="admin-account table-responsive box view">
+                      <table class="info-table">
+                        <tbody>
+                          <tr>
+                            <td><span class="label">{{ translate.mainModal.user }}:</span></td>
+                            <td><span class="value">{{ settings.data.selectedData.rootUser.username }}</span></td>
+                          </tr>
+                          <tr>
+                            <td><span class="label">{{ translate.mainModal.name }}</span></td>
+                            <td><span class="value">{{ settings.data.selectedData.rootUser.name }}</span></td>
+                          </tr>
+                          <tr>
+                            <td><span class="label">{{ translate.mainModal.contacts.email }}</span></td>
+                            <td><span class="value">{{ settings.data.selectedData.rootUser.email }}</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                  </div>
+                </div> 
+              </article>
+          
+            </div>
+          
+            <div *ngIf="settings.activeComponent === 'Branch/Add' || settings.activeComponent === 'Branch/Edit'">
+              <form class="form create" id="branchForm" [formGroup]="model" (submit)="onConfirmSubmit($event)">
+          
+              <div class="branche-header">
+                <div class="image-container" (click)="choiceImage($event)">
+                    <img src="{{ settings.data.action ===  'add' ? 'assets/images/storeImageLorenIpsun.jpg' :(settings.data.selectedData.image) ? settings.data.selectedData.image : '/assets/images/storeImageLorenIpsun.jpg' }}"/>
+                    <input type="file" accept="image/*" name="image" class="inpfile hide"/>
+                </div>
+              </div>
+          
+              <div class="content">
+          
+                  <div class="box row clearfix form-group">
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.storeSystemName }}</label>
+                      <input type="text" name="name" placeholder="" formControlName="name" class="form-control {{ formControls.name.errors ? 'required' : '' }}"/>
+                    </div>
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label>CNPJ</label>
+                      <input type="text" name="cnpj" placeholder="00.000.000/0000-00" formControlName="cnpj" class="form-control {{ formControls.cnpj.errors  ? 'required' : '' }}"/>
+                    </div>
+          
+                    <div class="col-12 clearfix no-padding">
+                      <label>{{ translate.mainModal.storeBillingName }}</label>
+                      <input type="text" name="billingName" placeholder="" formControlName="billingName" class="form-control {{ formControls.billingName.errors ? 'required' : '' }}"/>
+                    </div>
+                    
+                  </div>
+          
+                  
+                  <p class="box-header">{{ translate.mainModal.adminAccount }}</p>
+          
+                  <div class="admin-account box row form-group" formGroupName="rootUser">
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.name }}</label>
+                      <input type="text" formControlName="name"  class="form-control {{ rootUserControls.name.errors ? 'required' : '' }}"/>
+                    </div>
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.contacts.email }}</label>
+                      <input type="text" formControlName="email" class="form-control {{ rootUserControls.email.errors ? 'required' : '' }}"/>
+                    </div>
+                  </div>
+          
+                  <p class="box-header">{{ translate.mainModal.address.title }}</p>
+                  
+                  <div class="address box row" formGroupName="address">
+                
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.address.addressLine }}</label>
+                      <input type="text" name="addressLine" placeholder="" formControlName="addressLine" class="form-control {{ addressControls.addressLine.errors  ? 'required' : '' }}"/>
+                    </div>
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label>{{ translate.mainModal.address.postalCode }}</label>
+                      <input type="text" name="postalCode"  formControlName="postalCode" class="form-control {{ addressControls.postalCode.errors ? 'required' : '' }}" placeholder="____-___"/>
+                    </div>
+          
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.address.city }}</label>
+                      <input type="text" name="city" formControlName="city" class="form-control {{ addressControls.city.errors  ? 'required' : '' }}"/>
+                    </div>
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label>{{ translate.mainModal.address.state }}</label>
+                      <select class="form-control {{ addressControls.state.errors ? 'required' : '' }}" formControlName="state">
+                        <option *ngFor="let state of states" value="{{ state }}">{{ state }}</option>
+                      </select>
+                    </div>
+                    
+                  </div>
+          
+                  <p class="box-header">{{ translate.mainModal.contacts.title }}</p>
+                
+                  <div class="contacts box row form-group" formGroupName="contacts">
+          
+                    <div class="col-12 form-group" style="padding: 0;">
+                      <label>{{ translate.mainModal.contacts.email }}</label>
+                      <input type="email" class="form-control" formControlName="email" class="form-control {{ contactsControls.email.errors  ? 'required' : '' }}"  placeholder="contatofilial@dominio.com" />
+                    </div>
+          
+                    <div class="col-12 col-md-6 fieldLeft form-group">
+                      <label>{{ translate.mainModal.contacts.phone }}</label>
+                      <input type="text"  formControlName="phone" class="form-control {{ contactsControls.phone.errors  ? 'required' : '' }}"  placeholder="(_) _____-____" />
+                    </div>
+                    <div class="col-12 col-md-6 fieldRight form-group">
+                      <label>{{ translate.mainModal.contacts.whatsapp }}</label>
+                      <input type="text" formControlName="whatsapp" class="form-control {{ contactsControls.whatsapp.errors ? 'required' : '' }}"  placeholder="(_) _____-____" />
+                    </div>
+          
+                  </div>
+          
+                              
+                  <small *ngIf="model.invalid">{{ translate.mainModal.mandatoryFields }}</small>   
+          
+                  <button type="submit" [disabled]="model.invalid || submited ? true : false" class="bottomSC col-12">{{ translate.mainModal.confirm }}</button>
+              </div> 
+            </form>
+            </div>      
+          
+            <div *ngIf="settings.activeComponent === 'Branch/Delete'" id="containerBranchDelete">
+              <div class="form-group">
+                <div class="container-branch clearfix">
+                  <div class="container-image">
+                    <img [src]="settings.data && settings.data.selectedData.image ? settings.data.selectedData.image : '/assets/images/storeImageLorenIpsun.jpg'" />
+                  </div>
+          
+                  <div class="container-info">
+                    <span class="name">{{ settings.data.selectedData.name }}</span>
+                    <span class="label">{{ settings.data.selectedData.rootUser.username }}</span>
+                    <span class="label">{{ settings.data.selectedData.rootUser.email }}</span>
+                  </div>
+                </div>
+              </div>
+          
+              <div class="container-buttons clearfix">
+                <button class="btn btnBlue" (click)="onConfirmSubmit($event)">{{ translate.mainModal.confirm }}</button>
+                <button class="btn btnRed" (click)="onClose()">{{ translate.mainModal.cancel }}</button>
+              </div> 
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</modal>

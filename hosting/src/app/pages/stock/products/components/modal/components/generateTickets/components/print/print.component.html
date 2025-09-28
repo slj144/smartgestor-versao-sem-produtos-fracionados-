@@ -1,0 +1,24 @@
+<iframe id="printingFrame" name="printingFrame" allow="web-share" style="display: none;">
+
+  <body>
+    <div id="container">
+      <div class="page after" *ngFor="let page of settings.pages">
+        <ul>
+          <li *ngFor="let item of page">
+            <div class="container-labels">
+              <span class="name" *ngIf="item.name">{{ item.name | ellipsis:85 }}</span>
+              <span class="price" *ngIf="item.price">{{ item.price | currency }}</span>
+            </div>
+            <barcode *ngIf="item.barcode" [value]="item.barcode" [width]="1.3" [height]="26" [margin]="0"
+              [textMargin]="0" [fontSize]="11">
+            </barcode>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <link href="/assets/css/tickets/tickets.css" rel="stylesheet" />
+
+
+  </body>
+</iframe>

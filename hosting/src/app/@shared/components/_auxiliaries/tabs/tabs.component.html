@@ -1,0 +1,12 @@
+
+<div #tabs id="tabs-wrapper">
+  <div *ngIf="settings.items?.length > 0">
+    <div id="container-tab-options">
+      <button class="tab-option {{ item.id }}" *ngFor="let item of settings.items" (click)="onTabItem($event, item.id)">{{ item.name }}</button>
+    </div>
+
+    <div id="container-tab-content">
+      <ng-content select="[slot=tab-items]"></ng-content>  
+    </div>
+  </div>         
+</div>

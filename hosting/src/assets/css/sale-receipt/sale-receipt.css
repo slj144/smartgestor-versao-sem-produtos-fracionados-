@@ -1,0 +1,368 @@
+#containerSaleReceiptA4 header {
+  text-align: center;
+  margin: 10px 0; }
+  #containerSaleReceiptA4 header img {
+    width: 140px; }
+  #containerSaleReceiptA4 header span {
+    display: block;
+    font-size: 13px;
+    color: #000; }
+    #containerSaleReceiptA4 header span.name {
+      margin: 4px 0 0;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      text-transform: uppercase;
+      color: #000; }
+#containerSaleReceiptA4 section {
+  margin-bottom: 12px; }
+  #containerSaleReceiptA4 section h5 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 5px; }
+  #containerSaleReceiptA4 section table th, #containerSaleReceiptA4 section table td {
+    vertical-align: middle; }
+  #containerSaleReceiptA4 section.info, #containerSaleReceiptA4 section.customer {
+    margin: 4px 0 8px; }
+    #containerSaleReceiptA4 section.info table, #containerSaleReceiptA4 section.customer table {
+      width: 100%;
+      margin: 0; }
+      #containerSaleReceiptA4 section.info table tr td, #containerSaleReceiptA4 section.customer table tr td {
+        font-size: 13px;
+        padding: 0 10px 0 0;
+        color: #000; }
+        #containerSaleReceiptA4 section.info table tr td span.label, #containerSaleReceiptA4 section.customer table tr td span.label {
+          color: #000;
+          font-weight: 600; }
+        #containerSaleReceiptA4 section.info table tr td.date, #containerSaleReceiptA4 section.customer table tr td.date {
+          text-align: right; }
+  #containerSaleReceiptA4 section.services h5 {
+    padding-left: 3px; }
+  #containerSaleReceiptA4 section.services table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptA4 section.services table tr td {
+      padding: 0 5px;
+      font-size: 13px;
+      color: #000;
+      vertical-align: middle;
+      text-align: left; }
+  #containerSaleReceiptA4 section.products h5 {
+    padding-left: 3px; }
+  #containerSaleReceiptA4 section.products table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptA4 section.products table tr td {
+      padding: 0 5px;
+      font-size: 13px;
+      color: #000;
+      vertical-align: middle;
+      text-align: left; }
+      #containerSaleReceiptA4 section.products table tr td span {
+        display: block; }
+        #containerSaleReceiptA4 section.products table tr td span.serialNumber {
+          color: #000;
+          font-size: 11px;
+          margin-top: -3px; }
+      #containerSaleReceiptA4 section.products table tr td.total {
+        width: 80px;
+        font-weight: 600;
+        color: #000;
+        text-align: right; }
+    #containerSaleReceiptA4 section.products table.table-internal {
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+      border-bottom: 1px solid #000; }
+  #containerSaleReceiptA4 section.balance table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptA4 section.balance table tr {
+      text-align: left; }
+      #containerSaleReceiptA4 section.balance table tr td {
+        color: #000; }
+        #containerSaleReceiptA4 section.balance table tr td span {
+          margin: 0; }
+          #containerSaleReceiptA4 section.balance table tr td span.total {
+            color: #000;
+            font-weight: 600; }
+        #containerSaleReceiptA4 section.balance table tr td.level-1 {
+          padding: 0; }
+        #containerSaleReceiptA4 section.balance table tr td:last-child {
+          width: 80px;
+          text-align: right; }
+      #containerSaleReceiptA4 section.balance table tr th {
+        width: 100px;
+        max-width: 100px;
+        color: #000;
+        font-weight: 600; }
+      #containerSaleReceiptA4 section.balance table tr th, #containerSaleReceiptA4 section.balance table tr td {
+        vertical-align: middle;
+        padding: 0 5px;
+        font-size: 13px; }
+      #containerSaleReceiptA4 section.balance table tr.info {
+        vertical-align: middle; }
+        #containerSaleReceiptA4 section.balance table tr.info td.label {
+          color: #000; }
+      #containerSaleReceiptA4 section.balance table tr:last-child {
+        border-top: 1px solid #000; }
+  #containerSaleReceiptA4 section.payment h5 {
+    padding-left: 3px; }
+  #containerSaleReceiptA4 section.payment table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptA4 section.payment table tr {
+      text-align: left;
+      border-bottom: 1px solid #000; }
+      #containerSaleReceiptA4 section.payment table tr th {
+        color: #000;
+        font-weight: 600; }
+        #containerSaleReceiptA4 section.payment table tr th span {
+          display: block; }
+          #containerSaleReceiptA4 section.payment table tr th span.note {
+            color: #000;
+            padding-left: 10px;
+            font-size: 12px;
+            line-height: 12px; }
+      #containerSaleReceiptA4 section.payment table tr td {
+        width: 110px;
+        text-align: right; }
+        #containerSaleReceiptA4 section.payment table tr td span {
+          margin: 0; }
+          #containerSaleReceiptA4 section.payment table tr td span.value {
+            color: #000;
+            font-weight: 600; }
+      #containerSaleReceiptA4 section.payment table tr th, #containerSaleReceiptA4 section.payment table tr td {
+        padding: 0 5px;
+        font-size: 13px;
+        vertical-align: middle; }
+      #containerSaleReceiptA4 section.payment table tr:last-child {
+        border-bottom: none; }
+  #containerSaleReceiptA4 section.note h5 {
+    padding-left: 3px; }
+  #containerSaleReceiptA4 section.note .content {
+    width: 100%;
+    padding-left: 10px;
+    color: #000;
+    white-space: pre-line;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px; }
+  #containerSaleReceiptA4 section.terms {
+    padding: 10px;
+    margin: 20px 0;
+    border-radius: 5px;
+    border: 1px solid #000;
+    background-color: #eeeeee; }
+    #containerSaleReceiptA4 section.terms h5 {
+      font-size: 12px;
+      text-align: center; }
+    #containerSaleReceiptA4 section.terms ul {
+      padding-left: 20px;
+      margin: 0; }
+      #containerSaleReceiptA4 section.terms ul li {
+        font-size: 11px; }
+  #containerSaleReceiptA4 section.signatures {
+    margin: 5px 0; }
+    #containerSaleReceiptA4 section.signatures p {
+      border-bottom: 1px solid #000; }
+      #containerSaleReceiptA4 section.signatures p span {
+        position: relative;
+        bottom: -2px;
+        background-color: #fff;
+        padding-right: 5px;
+        color: #555;
+        font-size: 13px;
+        font-weight: 600; }
+
+#containerSaleReceiptThermal header {
+  text-align: center;
+  margin: 10px 0 15px; }
+  #containerSaleReceiptThermal header img {
+    width: 160px;
+    max-width: 100%; }
+  #containerSaleReceiptThermal header span {
+    display: block; }
+    #containerSaleReceiptThermal header span.name {
+      margin: 4px 0 0;
+      color: #000;
+      font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: 600; }
+    #containerSaleReceiptThermal header span.name, #containerSaleReceiptThermal header span.phone {
+      text-transform: uppercase; }
+    #containerSaleReceiptThermal header span.address, #containerSaleReceiptThermal header span.phone {
+      color: #222;
+      font-size: 12px;
+      font-weight: 600; }
+#containerSaleReceiptThermal section {
+  margin-bottom: 12px; }
+  #containerSaleReceiptThermal section h5 {
+    color: #000;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0 0 5px;
+    text-transform: uppercase; }
+  #containerSaleReceiptThermal section table th, #containerSaleReceiptThermal section table td {
+    vertical-align: middle; }
+  #containerSaleReceiptThermal section.info, #containerSaleReceiptThermal section.customer {
+    margin: 0; }
+    #containerSaleReceiptThermal section.info table, #containerSaleReceiptThermal section.customer table {
+      width: 100%;
+      margin: 0; }
+      #containerSaleReceiptThermal section.info table tr td, #containerSaleReceiptThermal section.customer table tr td {
+        font-size: 12px;
+        padding: 0 10px 0 0; }
+        #containerSaleReceiptThermal section.info table tr td span, #containerSaleReceiptThermal section.customer table tr td span {
+          display: inline-block; }
+          #containerSaleReceiptThermal section.info table tr td span.label, #containerSaleReceiptThermal section.customer table tr td span.label {
+            color: #000;
+            font-weight: 600;
+            margin-right: 4px;
+            text-transform: uppercase; }
+          #containerSaleReceiptThermal section.info table tr td span.value, #containerSaleReceiptThermal section.customer table tr td span.value {
+            color: #222;
+            font-weight: 600; }
+        #containerSaleReceiptThermal section.info table tr td.date, #containerSaleReceiptThermal section.customer table tr td.date {
+          text-align: right; }
+  #containerSaleReceiptThermal section.services h5 {
+    padding-left: 3px; }
+  #containerSaleReceiptThermal section.services table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptThermal section.services table tr td {
+      padding: 0 5px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #222;
+      vertical-align: middle;
+      text-align: left; }
+  #containerSaleReceiptThermal section.customer {
+    margin-bottom: 10px; }
+  #containerSaleReceiptThermal section.products table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptThermal section.products table tr td {
+      padding: 0 5px;
+      font-size: 12px;
+      color: #111;
+      vertical-align: middle;
+      text-align: left; }
+      #containerSaleReceiptThermal section.products table tr td span {
+        display: block; }
+        #containerSaleReceiptThermal section.products table tr td span.name {
+          font-weight: 600; }
+        #containerSaleReceiptThermal section.products table tr td span.serialNumber {
+          color: #333;
+          font-size: 11px;
+          font-weight: 600;
+          margin-top: -2px; }
+      #containerSaleReceiptThermal section.products table tr td.calc {
+        color: #222;
+        font-weight: 600; }
+      #containerSaleReceiptThermal section.products table tr td.total {
+        width: 80px;
+        color: #222;
+        font-weight: 600;
+        text-align: right; }
+    #containerSaleReceiptThermal section.products table.table-internal {
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+      border-bottom: 1px solid #000; }
+  #containerSaleReceiptThermal section.balance table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptThermal section.balance table tr {
+      text-align: left; }
+      #containerSaleReceiptThermal section.balance table tr th {
+        width: 50px;
+        max-width: 100px;
+        color: #000;
+        font-weight: 600;
+        text-transform: uppercase;
+        vertical-align: top; }
+      #containerSaleReceiptThermal section.balance table tr td {
+        padding: 0; }
+        #containerSaleReceiptThermal section.balance table tr td span {
+          margin: 0; }
+          #containerSaleReceiptThermal section.balance table tr td span.total {
+            color: #000;
+            font-weight: 600; }
+        #containerSaleReceiptThermal section.balance table tr td .table-internal tr td {
+          padding: 0;
+          font-weight: 9px; }
+          #containerSaleReceiptThermal section.balance table tr td .table-internal tr td.label {
+            color: #333;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding-left: 15px !important; }
+          #containerSaleReceiptThermal section.balance table tr td .table-internal tr td.value {
+            color: #333;
+            font-weight: 600; }
+        #containerSaleReceiptThermal section.balance table tr td:last-child {
+          width: 80px;
+          text-align: right; }
+      #containerSaleReceiptThermal section.balance table tr th, #containerSaleReceiptThermal section.balance table tr td {
+        padding: 0 5px;
+        font-size: 12px; }
+      #containerSaleReceiptThermal section.balance table tr:last-child {
+        border-top: 1px solid #eee; }
+  #containerSaleReceiptThermal section.payment table {
+    width: 100%;
+    margin: 0; }
+    #containerSaleReceiptThermal section.payment table tr {
+      text-align: left;
+      border-bottom: 1px solid #eee; }
+      #containerSaleReceiptThermal section.payment table tr th {
+        color: #444;
+        font-weight: 600; }
+        #containerSaleReceiptThermal section.payment table tr th span {
+          display: block; }
+          #containerSaleReceiptThermal section.payment table tr th span.note {
+            color: #666;
+            padding-left: 10px;
+            font-size: 12px;
+            line-height: 12px; }
+      #containerSaleReceiptThermal section.payment table tr td {
+        width: 100px;
+        text-align: right; }
+        #containerSaleReceiptThermal section.payment table tr td span {
+          margin: 0; }
+          #containerSaleReceiptThermal section.payment table tr td span.value {
+            color: #222;
+            font-weight: 600; }
+      #containerSaleReceiptThermal section.payment table tr th, #containerSaleReceiptThermal section.payment table tr td {
+        padding: 0 5px;
+        font-size: 12px;
+        vertical-align: middle; }
+      #containerSaleReceiptThermal section.payment table tr:last-child {
+        border-bottom: none; }
+  #containerSaleReceiptThermal section.note .content {
+    width: 100%;
+    color: #444;
+    white-space: pre-line;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px; }
+  #containerSaleReceiptThermal section.terms {
+    margin: 20px 0;
+    border-radius: 5px;
+    background-color: #eeeeee; }
+    #containerSaleReceiptThermal section.terms ul {
+      padding-left: 15px;
+      margin: 0; }
+      #containerSaleReceiptThermal section.terms ul li {
+        font-size: 11px; }
+  #containerSaleReceiptThermal section.signatures {
+    padding: 5px 0; }
+    #containerSaleReceiptThermal section.signatures div span {
+      width: 100%;
+      display: block;
+      color: #222;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      text-transform: uppercase; }
+      #containerSaleReceiptThermal section.signatures div span.line {
+        margin-top: 35px;
+        border-bottom: 1px solid #444; }
+      #containerSaleReceiptThermal section.signatures div span.label {
+        margin-top: 4px; }
+
+/*# sourceMappingURL=sale-receipt.css.map */

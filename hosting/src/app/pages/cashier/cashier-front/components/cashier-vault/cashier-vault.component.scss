@@ -1,0 +1,11 @@
+#container-form {
+  .form {
+    .form-group {
+      label { display:block; margin-bottom:4px; }
+      .required { border-color:#ff6b6b; }
+    }
+    small { display:block; margin:6px 0 12px; color:#ff6b6b; }
+    .btnSubmit { margin-top: 8px; }
+  }
+}
+

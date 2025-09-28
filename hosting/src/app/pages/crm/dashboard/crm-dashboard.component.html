@@ -1,0 +1,447 @@
+<!-- crm-dashboard.component.html -->
+<!-- DASHBOARD MELHORADO: Layout moderno sem dependências Ionic -->
+
+<div class="dashboard-container">
+
+    <!-- HEADER COM AÇÕES -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="header-title">
+                <h1>📊 Dashboard CRM</h1>
+                <p class="subtitle">Visão geral do seu negócio em tempo real</p>
+            </div>
+
+            <div class="header-actions">
+                <button class="btn-refresh" [class.loading]="loading" (click)="refreshData()" [disabled]="loading">
+                    <i class="icon-refresh"></i>
+                    Atualizar
+                </button>
+
+                <button class="btn-auto-refresh" [class.active]="autoRefresh" (click)="toggleAutoRefresh()">
+                    <i class="icon-clock"></i>
+                    Auto-refresh
+                </button>
+
+                <div class="last-update">
+                    <small>Última atualização: {{ lastUpdate | date:'short':'pt-BR' }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner">
+            <div class="spinner-ring"></div>
+            <p>Carregando dados...</p>
+        </div>
+    </div>
+
+    <!-- MÉTRICAS PRINCIPAIS -->
+    <div class="metrics-grid">
+
+        <!-- VENDAS HOJE -->
+        <div class="metric-card primary">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="icon-dollar"></i>
+                </div>
+                <div class="metric-growth" [ngClass]="getGrowthClass(metrics.salesToday.growth)">
+                    <i
+                        [class]="'icon-' + (metrics.salesToday.growth > 0 ? 'trending-up' : metrics.salesToday.growth < 0 ? 'trending-down' : 'minus')"></i>
+                    {{ formatPercentage(metrics.salesToday.growth) }}
+                </div>
+            </div>
+            <div class="metric-content">
+                <h3>{{ formatCurrency(metrics.salesToday.value) }}</h3>
+                <p>Vendas Hoje</p>
+                <small>{{ metrics.salesToday.count }} transações</small>
+            </div>
+        </div>
+
+        <!-- VENDAS MÊS -->
+        <div class="metric-card success">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="icon-trending-up"></i>
+                </div>
+                <div class="metric-growth" [ngClass]="getGrowthClass(metrics.salesMonth.growth)">
+                    <i
+                        [class]="'icon-' + (metrics.salesMonth.growth > 0 ? 'trending-up' : metrics.salesMonth.growth < 0 ? 'trending-down' : 'minus')"></i>
+                    {{ formatPercentage(metrics.salesMonth.growth) }}
+                </div>
+            </div>
+            <div class="metric-content">
+                <h3>{{ formatCurrency(metrics.salesMonth.value) }}</h3>
+                <p>Vendas do Mês</p>
+                <small>{{ metrics.salesMonth.count }} transações</small>
+            </div>
+        </div>
+
+        <!-- NOVOS LEADS -->
+        <div class="metric-card info">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="icon-users"></i>
+                </div>
+                <div class="metric-growth" [ngClass]="getGrowthClass(metrics.newLeads.growth)">
+                    <i
+                        [class]="'icon-' + (metrics.newLeads.growth > 0 ? 'trending-up' : metrics.newLeads.growth < 0 ? 'trending-down' : 'minus')"></i>
+                    {{ formatPercentage(metrics.newLeads.growth) }}
+                </div>
+            </div>
+            <div class="metric-content">
+                <h3>{{ metrics.newLeads.count }}</h3>
+                <p>Novos Leads</p>
+                <small>Esta semana</small>
+            </div>
+        </div>
+
+        <!-- TAXA DE CONVERSÃO -->
+        <div class="metric-card warning">
+            <div class="metric-header">
+                <div class="metric-icon">
+                    <i class="icon-chart"></i>
+                </div>
+                <div class="metric-growth" [ngClass]="getGrowthClass(metrics.conversionRate.growth)">
+                    <i
+                        [class]="'icon-' + (metrics.conversionRate.growth > 0 ? 'trending-up' : metrics.conversionRate.growth < 0 ? 'trending-down' : 'minus')"></i>
+                    {{ formatPercentage(metrics.conversionRate.growth) }}
+                </div>
+            </div>
+            <div class="metric-content">
+                <h3>{{ formatPercentage(metrics.conversionRate.value) }}</h3>
+                <p>Taxa de Conversão</p>
+                <small>Leads → Vendas</small>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- METAS E PROGRESS -->
+    <div class="goals-section">
+
+        <!-- META DIÁRIA -->
+        <div class="goal-card">
+            <div class="goal-header">
+                <h4>🎯 Meta Diária</h4>
+                <span class="goal-percentage">{{ formatPercentage(metrics.dailyGoal.percentage) }}</span>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill daily" [style.width.%]="metrics.dailyGoal.percentage">
+                    </div>
+                </div>
+                <div class="goal-values">
+                    <span>{{ formatCurrency(metrics.dailyGoal.current) }}</span>
+                    <span>{{ formatCurrency(metrics.dailyGoal.target) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- META MENSAL -->
+        <div class="goal-card">
+            <div class="goal-header">
+                <h4>📅 Meta Mensal</h4>
+                <span class="goal-percentage">{{ formatPercentage(metrics.monthlyGoal.percentage) }}</span>
+            </div>
+            <div class="goal-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill monthly" [style.width.%]="metrics.monthlyGoal.percentage">
+                    </div>
+                </div>
+                <div class="goal-values">
+                    <span>{{ formatCurrency(metrics.monthlyGoal.current) }}</span>
+                    <span>{{ formatCurrency(metrics.monthlyGoal.target) }}</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- GRÁFICOS CSS (SEM CHART.JS) -->
+    <div class="charts-grid">
+
+        <!-- GRÁFICO DE VENDAS CSS -->
+        <div class="chart-card large">
+            <div class="chart-header">
+                <h4>📈 Vendas dos Últimos 7 Dias</h4>
+                <div class="chart-controls">
+                    <button class="btn-chart-control active">7D</button>
+                    <button class="btn-chart-control">30D</button>
+                    <button class="btn-chart-control">3M</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="css-bar-chart">
+                    <div class="chart-bar" *ngFor="let value of salesChartData; let i = index"
+                        [style.height.%]="getSalesChartBarHeight(value)" [style.animation-delay.ms]="i * 100">
+                        <div class="bar-value">{{ formatCurrency(value) }}</div>
+                        <div class="bar-label">{{ salesChartLabels[i] }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO DE PRODUTOS CSS -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h4>🏆 Top Produtos</h4>
+            </div>
+            <div class="chart-container">
+                <div class="css-donut-chart">
+                    <div class="donut-center">
+                        <span class="donut-total">{{ metrics.topProducts.length }}</span>
+                        <small>Produtos</small>
+                    </div>
+                    <div class="donut-legend">
+                        <div class="legend-item" *ngFor="let product of productsChartData; let i = index"
+                            [style.animation-delay.ms]="i * 150">
+                            <div class="legend-color" [style.background-color]="product.color"></div>
+                            <span class="legend-label">{{ product.name }}</span>
+                            <span class="legend-value">{{ product.value }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FUNIL DE CONVERSÃO CSS -->
+        <div class="chart-card">
+            <div class="chart-header">
+                <h4>🎯 Funil de Conversão</h4>
+            </div>
+            <div class="chart-container">
+                <div class="css-funnel-chart">
+                    <div class="funnel-step" style="width: 100%;">
+                        <span>1000 Visitantes</span>
+                    </div>
+                    <div class="funnel-step" style="width: 80%;">
+                        <span>250 Leads</span>
+                    </div>
+                    <div class="funnel-step" style="width: 60%;">
+                        <span>100 Qualificados</span>
+                    </div>
+                    <div class="funnel-step" style="width: 40%;">
+                        <span>45 Negociação</span>
+                    </div>
+                    <div class="funnel-step" style="width: 20%;">
+                        <span>18 Fechados</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CLIENTES POTENCIAIS E AÇÕES -->
+    <div class="potential-customers-section">
+        <div class="section-header">
+            <h4>🎯 Clientes Potenciais & Ações Necessárias</h4>
+            <div class="section-stats">
+                <span class="stat-item">
+                    <strong>{{ potentialCustomers.length }}</strong> clientes
+                </span>
+                <span class="stat-item">
+                    <strong>{{ pendingActions.length }}</strong> ações
+                </span>
+            </div>
+        </div>
+
+        <div class="customers-actions-grid">
+
+            <!-- CLIENTES POTENCIAIS -->
+            <div class="customers-list">
+                <h5>👥 Clientes com Maior Potencial</h5>
+
+                <div class="customer-card" *ngFor="let customer of potentialCustomers.slice(0, 6); let i = index"
+                    [ngClass]="getCategoryClass(customer.category)" [style.animation-delay.ms]="i * 100">
+
+                    <div class="customer-header">
+                        <div class="customer-info">
+                            <h6>{{ getCategoryIcon(customer.category) }} {{ customer.name }}</h6>
+                            <small>{{ customer.email }}</small>
+                        </div>
+                        <div class="customer-score">
+                            <span class="score-value">{{ customer.score }}</span>
+                            <small>score</small>
+                        </div>
+                    </div>
+
+                    <div class="customer-stats">
+                        <div class="stat">
+                            <span class="value">{{ formatCurrency(customer.totalSpent) }}</span>
+                            <small>total gasto</small>
+                        </div>
+                        <div class="stat">
+                            <span class="value">{{ customer.totalPurchases }}</span>
+                            <small>compras</small>
+                        </div>
+                        <div class="stat">
+                            <span class="value">{{ customer.daysSinceLastPurchase }}d</span>
+                            <small>última compra</small>
+                        </div>
+                    </div>
+
+                    <div class="customer-action">
+                        <p class="action-text">{{ customer.recommendedAction }}</p>
+                        <div class="action-buttons">
+                            <button class="btn-action whatsapp" (click)="sendWhatsApp(customer)"
+                                title="Enviar WhatsApp">
+                                <i class="icon-message"></i>
+                            </button>
+                            <button class="btn-action call" (click)="callCustomer(customer)" title="Ligar">
+                                <i class="icon-phone"></i>
+                            </button>
+                            <button class="btn-action email" (click)="sendEmail(customer)" title="Enviar Email"
+                                *ngIf="customer.email">
+                                <i class="icon-envelope"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="show-more" *ngIf="potentialCustomers.length > 6">
+                    <button class="btn-show-more">
+                        Ver todos os {{ potentialCustomers.length }} clientes
+                    </button>
+                </div>
+            </div>
+
+            <!-- AÇÕES PENDENTES -->
+            <div class="actions-list">
+                <h5>⚡ Ações Pendentes Hoje</h5>
+
+                <div class="action-item" *ngFor="let action of pendingActions.slice(0, 8); let i = index"
+                    [ngClass]="'priority-' + action.priority" [style.animation-delay.ms]="i * 80">
+
+                    <div class="action-icon">
+                        <i
+                            [class]="'icon-' + (action.type === 'whatsapp' ? 'message' : action.type === 'call' ? 'phone' : action.type === 'email' ? 'envelope' : 'clock')"></i>
+                    </div>
+
+                    <div class="action-content">
+                        <h6>{{ action.customer.name }}</h6>
+                        <p>{{ action.description }}</p>
+                        <small>{{ action.customer.phone }} • {{ getCategoryIcon(action.customer.category) }} {{
+                            action.customer.category }}</small>
+                    </div>
+
+                    <div class="action-execute">
+                        <button class="btn-execute" [ngClass]="'btn-' + action.type" (click)="action.type === 'whatsapp' ? sendWhatsApp(action.customer) : 
+                         action.type === 'call' ? callCustomer(action.customer) : 
+                         sendEmail(action.customer)">
+                            <i
+                                [class]="'icon-' + (action.type === 'whatsapp' ? 'message' : action.type === 'call' ? 'phone' : 'envelope')"></i>
+                        </button>
+                    </div>
+
+                </div>
+
+                <div class="show-more" *ngIf="pendingActions.length > 8">
+                    <button class="btn-show-more">
+                        Ver todas as {{ pendingActions.length }} ações
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TOP PRODUTOS LISTA -->
+    <div class="products-section">
+        <div class="section-header">
+            <h4>🏆 Produtos Mais Vendidos</h4>
+            <button class="btn-see-all">Ver todos</button>
+        </div>
+
+        <div class="products-list">
+            <div class="product-item" *ngFor="let product of metrics.topProducts.slice(0, 5); let i = index"
+                [style.animation-delay.ms]="i * 100">
+
+                <div class="product-rank">
+                    #{{ i + 1 }}
+                </div>
+
+                <div class="product-info">
+                    <h5>{{ product.name }}</h5>
+                    <small>{{ product.category }}</small>
+                </div>
+
+                <div class="product-stats">
+                    <div class="stat">
+                        <span class="value">{{ product.sales }}</span>
+                        <span class="label">vendas</span>
+                    </div>
+                    <div class="stat">
+                        <span class="value">{{ formatCurrency(product.value) }}</span>
+                        <span class="label">total</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- AÇÕES RÁPIDAS -->
+    <div class="quick-actions">
+        <h4>⚡ Ações Rápidas</h4>
+
+        <div class="actions-grid">
+            <button class="action-btn primary" (click)="openNewLeadModal()">
+                <i class="icon-user-plus"></i>
+                <span>Novo Lead</span>
+            </button>
+
+            <button class="action-btn success" (click)="openCallModal()">
+                <i class="icon-phone"></i>
+                <span>Ligar Cliente</span>
+            </button>
+
+            <button class="action-btn info" (click)="openWhatsAppModal()">
+                <i class="icon-message"></i>
+                <span>WhatsApp</span>
+            </button>
+
+            <button class="action-btn warning" (click)="openReportsModal()">
+                <i class="icon-file"></i>
+                <span>Relatórios</span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL DE AÇÕES -->
+<div class="modal" [class.show]="showActionModal" [style.display]="showActionModal ? 'block' : 'none'">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ actionModalTitle }}</h5>
+                <button type="button" class="btn-close" (click)="closeActionModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <p>{{ actionModalMessage }}</p>
+                <textarea class="form-control" rows="3" placeholder="Digite sua mensagem..."
+                    *ngIf="actionModalType === 'message'"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" (click)="closeActionModal()">
+                    Cancelar
+                </button>
+                <button type="button" class="btn btn-primary" (click)="confirmAction()">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL BACKDROP -->
+<div class="modal-backdrop fade" [class.show]="showActionModal" *ngIf="showActionModal"></div>
+
+<!-- COMPONENT DE TEMPLATES (se existir) -->
+<app-message-templates [showModal]="showTemplatesModal" [customer]="selectedCustomer"
+    (onClose)="showTemplatesModal = false" (onSelect)="onTemplateSelected($event)">
+</app-message-templates>

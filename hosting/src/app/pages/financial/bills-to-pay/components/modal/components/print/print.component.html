@@ -1,0 +1,101 @@
+
+<iframe id="printingFrame" name="printingFrame" style="display: none;">
+  <body>  
+
+    <div id="containerPurchaseReceiptPrint" *ngIf="settings.activeComponent == 'Purchase/Receipt'">
+      <header *ngIf="settings.storeInfo">
+        <img src="{{ settings.storeInfo.image }}"/>
+        <span class="name">{{ settings.storeInfo.billingName }}</span>
+        <span>{{ settings.storeInfo.address.addressLine + ', ' + settings.storeInfo.address.city + ' - ' + settings.storeInfo.address.state }}</span>
+        <span>Telefone: {{ settings.storeInfo.contacts.phone }}</span>
+      </header>
+
+      <section class="container-info">
+        <span class="label">Informações</span>
+        <div class="content">
+          <span><span class="label">Fornecedor:</span> <span class="value">{{ settings.data.provider.name }}</span></span>
+          <span><span class="label">Status de Compra:</span> <span class="value">{{ (settings.data.receivingStatus == 'PENDENT' ? 'PENDENTE' : 'CONCLUÍDA') }}</span></span>
+          <span><span class="label">Status de Pagamento:</span> <span class="value">{{ (settings.data.paymentStatus == 'PENDENT' ? 'PENDENTE' : 'CONCLUÍDO') }}</span></span>
+          <span><span class="label">Data:</span> <span class="value">{{ settings.data.date | date:'dd/MM/yyyy' }}</span></span>
+          <table>
+            <tr>
+              <td>
+                <span><span class="label">Depósito:</span></span>
+                <div class="container-store-info">
+                  <span><span class="name">{{ settings.data.deposit.billingName }}</span></span>
+                  <span *ngIf="settings.data.deposit.address">
+                    <span class="value">{{ 'Endereço: ' + settings.data.deposit.address.addressLine + ', ' + settings.data.deposit.address.city + ' - ' + settings.data.deposit.address.state + ' / ' + settings.data.deposit.address.postalCode}}</span>
+                  </span>
+                  <span *ngIf="settings.data.deposit.contacts && settings.data.deposit.contacts.email">
+                    <span class="value">{{ 'Email: ' + settings.data.deposit.contacts.email }}</span>
+                  </span>
+                  <span *ngIf="settings.data.deposit.contacts && settings.data.deposit.contacts.phone">
+                    <span class="value">{{ 'Telefone: ' + settings.data.deposit.contacts.phone }}</span>
+                  </span>
+                </div> 
+              </td>
+            </tr>
+          </table>
+        </div>          
+      </section>
+
+      <section class="container-products">
+        <span class="label">Produtos</span>
+        <div class="content" *ngIf="settings.data.products && (settings.data.products).length > 0">
+          <div class="table-responsive">
+            <table class="table table-borderless">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Código</th>
+                  <th>Nome</th>
+                  <th>Quantidade</th>
+                  <th>Preço de Custo</th>
+                  <th>Preço de Venda</th>
+                  <th>Subtotal</th>
+                </tr>               
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of settings.data.products; let i = index">
+                  <td><span>{{ (i + 1) }}</span></td>
+                  <td><span>{{ item.code }}</span></td>
+                  <td><span>{{ item.name }}</span></td>
+                  <td><span>{{ item.itemsOfPurchase }}</span></td>
+                  <td><span>{{ item.costPrice | currency }}</span></td>
+                  <td><span>{{ item.salePrice | currency }}</span></td>
+                  <td><span class="price">{{ item.amount | currency }}</span></td>                     
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="container-balance">
+        <span class="label">Balanço</span>
+        <div class="table-responsive content">
+          <table class="table table-borderless">
+            <tbody>
+              <tr>
+                <td><span class="label">Quantidade</span></td>
+                <td><span class="value">{{ settings.data.balance.quantity + ' Item(ns)' }}</span></td>
+              </tr>
+              <tr>
+                <td><span class="label">Total a Pagar</span></td>
+                <td><span class="price">{{ settings.data.balance.total | currency }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+      <section class="container-note" *ngIf="settings.data.note">
+        <span class="label">Nota</span>
+        <div class="content">{{ settings.data.note }}</div>
+      </section>
+    </div>    
+
+    <link href="/assets/css/purchase-receipt/purchase-receipt.css" rel="stylesheet">
+    
+  </body>
+</iframe>

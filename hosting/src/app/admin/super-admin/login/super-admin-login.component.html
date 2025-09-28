@@ -1,0 +1,100 @@
+<main class="super-admin-login-container">
+    <div class="login-wrapper">
+        <!-- Logo e Título -->
+        <div class="login-header">
+            <div class="security-icon">
+                🔐
+            </div>
+            <h1>Super Admin</h1>
+            <p>Acesso Restrito - Administração Geral</p>
+        </div>
+
+        <!-- Mensagem de erro -->
+        <div *ngIf="error" class="alert alert-danger">
+            <span class="alert-icon">⚠️</span>
+            {{ error }}
+        </div>
+
+        <!-- Formulário -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Campo de usuário -->
+            <div class="form-group">
+                <label for="username">
+                    <span class="label-icon">👤</span>
+                    E-mail do Administrador
+                </label>
+                <input type="email" id="username" formControlName="username" class="form-control"
+                    placeholder="admin@empresa.com"
+                    [class.is-invalid]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                    autocomplete="username" />
+                <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                    class="invalid-feedback">
+                    <span *ngIf="loginForm.get('username')?.errors?.['required']">E-mail é obrigatório</span>
+                    <span *ngIf="loginForm.get('username')?.errors?.['email']">E-mail inválido</span>
+                </div>
+            </div>
+
+            <!-- Campo de senha -->
+            <div class="form-group">
+                <label for="password">
+                    <span class="label-icon">🔑</span>
+                    Senha
+                </label>
+                <div class="password-input-wrapper">
+                    <input [type]="showPassword ? 'text' : 'password'" id="password" formControlName="password"
+                        class="form-control" placeholder="Digite sua senha"
+                        [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                        autocomplete="current-password" />
+                    <button type="button" class="password-toggle" (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'">
+                        {{ showPassword ? '👁️' : '👁️‍🗨️' }}
+                    </button>
+                </div>
+                <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                    class="invalid-feedback">
+                    <span *ngIf="loginForm.get('password')?.errors?.['required']">Senha é obrigatória</span>
+                    <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Senha deve ter no mínimo 8
+                        caracteres</span>
+                </div>
+            </div>
+
+            <!-- Botão de login -->
+            <button type="submit" class="btn-login" [disabled]="loading || loginForm.invalid">
+                <span *ngIf="!loading">
+                    🚀 Acessar Painel
+                </span>
+                <span *ngIf="loading">
+                    <span class="spinner"></span>
+                    Verificando...
+                </span>
+            </button>
+        </form>
+
+        <!-- Informações de segurança -->
+        <div class="security-info">
+            <div class="security-badge">
+                <span class="icon">🛡️</span>
+                <span class="text">Conexão Segura</span>
+            </div>
+            <div class="security-badge">
+                <span class="icon">🔒</span>
+                <span class="text">Dados Criptografados</span>
+            </div>
+        </div>
+
+        <!-- Aviso -->
+        <div class="login-footer">
+            <p>
+                <strong>⚠️ Atenção:</strong> Este painel é de uso exclusivo do administrador geral do sistema.
+                Todas as ações são registradas e monitoradas.
+            </p>
+        </div>
+    </div>
+
+    <!-- Background animado -->
+    <div class="animated-bg">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+    </div>
+</main>

@@ -1,0 +1,644 @@
+modal {
+  position: relative;
+  overflow: auto;
+  .container-view {
+    width: 100%;
+    height: 100%;
+    padding: 15px;
+    display: table;
+    .container-external {
+      display: table-row;
+      .container-info {
+        display: table-cell;
+        vertical-align: middle;
+        .wrapper {
+          position: relative;
+          width: 700px;
+          max-width: 100%;
+          padding: 15px;
+          border: 1px solid #ddd;
+          box-shadow: 0 2px 4px #ccc;
+          border-radius: 5px;
+          margin: 0 auto;
+          background-color: #fff;
+        }
+      }
+    }
+  }
+
+  form {
+    .container-image {
+      width: 90px;
+      height: 90px;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      img {
+        width: 100%;
+        height: 100%;      
+      }
+    }
+    label {
+      display: block;
+      margin-bottom: -3px;
+      font-size: 12px;
+      margin-bottom: 1px;
+    }
+    input, select {
+      font-size: 14px;
+      border-left: 4px solid rgb(102, 102, 255);
+      box-shadow: none;          
+    }
+    input[type=file] {
+      display: none;
+    } 
+     
+  }
+
+  button {
+    margin: 10px auto;
+    display: block;
+    padding: 5px 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #fff;
+
+    &:disabled{
+
+      background-color: rgba(163, 163, 248, 0.809);
+    }
+
+    &:enabled{
+
+      background-color: rgb(102, 102, 255);
+    }
+
+    &.btnBlue {
+      background-color: rgb(102, 102, 255);
+    }
+    &.btnRed {
+      background-color: indianred;
+    }
+  }  
+
+  .page{
+
+    padding: 20px;
+  }
+
+  .close{
+
+    float: right !important;
+    position: absolute !important;
+    right: 10px !important;
+    top: 3px !important;
+    width: 30px !important;
+    height: 30px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    outline: none !important;
+    background-color: rgb(255, 152, 105) !important;
+    color: rgb(235, 232, 232);
+  }
+
+  .hide{
+    display: none !important;
+  }
+
+
+  .required {
+    border-color: indianred !important;
+    &:focus {
+      border-color: rgba(205, 92, 92, 0.75) !important;
+    }
+  }
+  
+
+  div{
+    // box-shadow: 0 1px 3px lightgrey;
+
+    &.required{
+
+      border-width: 1px !important;
+      border-color: indianred !important;
+    }
+  }
+
+
+  div{
+    // background-color: rgba(167, 167, 195, 0.809);
+    color: white;
+    text-align: center;
+    text-transform: uppercase;
+    font: 500 0.90em "Tahoma";
+    letter-spacing: 1px;
+  }
+
+
+
+  // Permissions
+
+  .withoutOverflow{
+    overflow: hidden !important;
+  }
+
+
+  label{
+    margin-bottom: 0;
+    display: block;
+    line-height: 18px;
+  }
+  
+  .box-header{
+    text-align: center;
+    padding: 10px 10px;
+    color: #444 !important;
+    margin: 20px 0 0 0;
+    font-size: 1.5em;
+    text-transform: uppercase;
+    border-bottom: 1px solid gray;
+
+    &.no-margin{
+      margin-top: 0;
+    }
+
+    &.permissionAdmin{
+      margin-top: 0;
+    }
+  }
+
+  .view{
+
+    .hide{
+      display: none !important;
+    }
+
+    position: relative;
+
+
+    .permissionAdmin{
+      padding: 5px 10px;
+      label{
+        font: 16px "Tahoma";
+        width: 100%;
+        display: block;
+        text-align: center;
+        margin-right: 35px;
+        color: rgb(152, 151, 151);
+      }
+    }
+
+
+    .header{
+      position: relative;
+      margin: 0 0 10px 0;
+      padding: 10px;
+
+      .image-container{
+        width: 80px;
+        height: 80px;
+        position: relative;
+        display: table;
+        margin: 0 auto 0  auto;
+        float: left;
+
+        img{
+          width: 100%;
+          height: 100%;
+          border-radius: 10px;
+          border: 2px solid lightgray;
+        }
+      }
+
+      .admin-account{
+        display: table;
+        padding: 10px;
+        float: left;
+        list-style: none;
+        position: relative !important;
+        top: -8px;
+        li{
+          &:first-child{
+
+            font: 400 1.1em "Tahoma";
+            color: rgb(75, 75, 75);
+          }
+
+          color: rgb(137, 136, 136);
+          font: 400 0.8em "Tahoma";
+        }
+      }
+
+      @media (min-width: 0) and (max-width: 480px){
+
+        .image-container,.admin-account{
+           float: none !important;
+        }
+
+        .admin-account{
+          margin: auto !important;
+          top: 0;
+          li{
+            text-align: center;
+          }
+        }
+        
+      }
+    }
+
+
+
+    p{
+      margin: 40px 0 10px 0;
+      font-size: 1.3em;
+      color: rgb(109, 109, 109);
+    }
+
+    .box{
+      list-style: none;
+      margin: 0 0 20px 0;
+      padding: 15px !important;
+      box-shadow: 0 0 3px lightgrey;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+
+      div{
+        text-align: center;
+        background-color: rgba(167, 167, 195, 0.809);
+        color: white;
+        font-size: 1em;
+        text-transform: uppercase;
+      }
+
+
+      &.no-wrapper{
+
+        margin: 10px 0 20px 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
+      }
+
+      button {
+        margin: 10px auto;
+        display: block;
+        padding: 5px 40px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #fff;
+
+        &:disabled{
+
+          background-color: rgba(163, 163, 248, 0.809);
+        }
+
+        &:enabled{
+
+          background-color: rgb(102, 102, 255);
+        }
+
+        &.btnBlue {
+          background-color: rgb(102, 102, 255);
+        }
+        &.btnRed {
+          background-color: indianred;
+        }
+      }   
+
+      .close{
+
+        float: right !important;
+        position: absolute !important;
+        right: 10px !important;
+        top: 5px !important;
+        width: 30px !important;
+        height: 30px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        outline: none !important;
+      }
+      
+
+      li{
+        font: 400 1em "Arial";
+        color: gray;
+        margin-top: 5px;
+        position: relative;
+
+        &:first-child{
+          margin-top: 0;
+        }
+
+        i{
+          margin-right: 10px;
+          position: relative;
+          top: 2px;
+          font-size: 1.3em !important;
+        }
+
+
+        .fa-phone{
+
+          color: rgb(76, 76, 239);
+        }
+
+        .fa-envelope{
+          color: rgb(177, 169, 132);
+          font-size: 0.80em;
+        }
+
+        .fa-whatsapp{
+          color: rgb(61, 141, 61);
+        }
+
+        .fa-user{
+          color: rgb(117, 117, 116);
+        }
+
+        .fa-user-shield{
+          color: rgb(165, 101, 64);
+        }
+        
+      }
+
+      &.address{
+        li{
+          padding-left: 25px;
+          .fa-map-marker-alt{
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: rgb(216, 84, 84);
+          }
+        }
+      }
+
+      &.admin-account{
+        li{
+          padding-left: 0;
+          &.padding{
+            padding-left: 25px;
+          }
+          .fa-user{
+            position: absolute;
+            left: 0;
+            top: 10px;
+            color: black;
+          }
+        }
+      }
+    }
+  }
+
+  .create,.edit{
+
+    .image-container{
+      width: 100px;
+      height: 100px;
+      position: relative;
+      display: table;
+      margin: 0 auto 20px auto;
+
+      img{
+        width: 100%;
+        height: 100%;
+        border-radius: 100%;
+        border: 2px solid lightgray;
+        cursor: pointer;
+      }
+    }
+
+    
+    &#UserForm{
+      position: relative;
+
+      .requestPassword{
+        position: absolute;
+        width: auto !important;
+        right: 10px;
+        top: 20px;
+        padding: 5px 10px !important;
+        opacity: 0.8;
+      }
+
+      p{
+
+        margin: 20px 0 10px 0;
+        @media (min-width: 0) and (max-width: 768px){
+          &{
+            text-align: center;
+          }
+        }
+      } 
+
+      .caption{
+        padding: 0;
+        margin: 0;
+        width: 50%;
+        float: left;
+
+        &.status-danger{
+          padding: 0;
+          margin: 5px 0 10px 0 ;
+        }
+      }
+
+      .row{
+
+        padding: auto 20px !important;
+      }
+
+      .form-group{
+        padding: 0;
+        margin: 0;
+      }
+
+      input{
+        margin: 5px auto;
+        height: 35px;
+        color: rgb(93, 92, 92);
+        padding: 10px !important;
+        &.name{
+
+          text-align: center !important;
+        }
+        &::placeholder{
+          color: rgb(167, 165, 165);
+        }
+      }
+       
+      select{
+        margin: 5px auto;
+        color: rgb(93, 92, 92);
+      }
+
+
+      .usertypeLabel{
+        display: block;
+        margin-top: 20px;;
+        width: 100%;
+        text-align: center;
+      }
+
+      .selectUserType{
+        display: table;
+        margin: auto;
+      }
+
+      nb-select{
+        margin: 5px auto;
+        height: 35px;
+      }
+
+      .bottomSC{
+        height: 35px;
+        background: rgb(62, 130, 199);
+        border: 1px solid transparent;
+        color: white;
+        &:disabled{
+          background: rgb(163, 185, 206);
+        }
+
+        &:hover:enabled{
+          background: rgb(47, 109, 170);
+        }
+      }
+
+      .box{
+        padding: 0;
+        margin: 0 0 10px 0;
+
+        .fieldLeft{
+          padding: 0 5px 0 0;
+          input{
+            width: 100% !important;
+          }
+
+          @media (min-width: 0) and (max-width: 768px){
+            &{
+              padding: 0;
+            }
+          }
+        }
+
+        .fieldRight{
+          padding: 0 0 0 5px;
+          input{
+            width: 100% !important;
+          }
+          @media (min-width: 0) and (max-width: 768px){
+            &{
+              padding: 0;
+            }
+          }
+        }
+
+        &.user-type-box{
+          width: 100%;
+          select{
+            width: 100%;
+          }
+        }
+      }
+
+
+      .manager-profiles-permissions{
+        position: relative;
+        .select,select, .select-container {
+          width: calc(100% - 42px) !important;
+          min-width: calc(100% - 42px) !important;
+          max-width: calc(100% - 42px) !important;
+          margin-right: 5px;
+          float: left;
+    
+          &.paddingFull{
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            margin-right: 0 !important;
+          }
+        }
+        button {
+          width: 37px !important;
+          height: 37px !important;
+          padding: 0;
+          margin: 0;
+          float: left;
+          position: relative;
+          top: 4px;
+          background-color: lightcoral;
+          border-radius: 5px;
+          border: none;
+          outline: none;
+          color: #fff;
+          transition: all 0.3s ease;
+          icon {
+            font-size: 12px;
+          }
+          &:hover {
+            opacity: 0.75;
+          }
+        }
+      }
+
+    }
+
+  }
+
+  #containerUserDelete {
+
+    .container-user {
+      .container-image {
+        width: 90px;
+        height: 90px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        float: left;
+        margin-right: 10px;
+        background-color: cyan;
+        img {
+          width: 100%;
+          height: 100%;      
+        }
+      }
+      .container-info {
+        padding-top: 20px;
+        span {
+          display: block;
+          &.name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+          }
+          &.label {
+            font-size: 13px;
+            display: block;
+            color: #797979;
+            margin-right: 5px;
+          }
+          &.value {
+            font-size: 13px;
+            display: inline;
+            color: #888;
+          }
+        }
+      }         
+    }
+    .container-buttons {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 0;
+      button {
+        display: inline-table;
+        padding: 5px 20px;
+        &:first-child {
+          margin-right: 5px;
+        }         
+      }
+    }       
+  }
+
+}

@@ -1,0 +1,45 @@
+
+<modal (callback)="onModalResponse($event)">
+  
+  <div slot="content">
+
+    <div id="container-form" class="centralizer">
+      <div class="wrapper">
+        <form class="form" [formGroup]="formCashierInflow" autocomplete="off" (submit)="onSubmit()">
+          <div class="row">
+            <div class="col-12 form-group">
+              <label>{{ translate.form.label.category }}</label>
+              <div class="container-categories clearfix">
+                <select formControlName="category" class="form-control {{ formControls.category.errors ? 'required' : '' }}">
+                  <option value=''></option>
+                  <option *ngFor="let item of categories" [value]="item.code">{{ item.name }}</option>
+                </select>
+                <button type="button" (click)="onOpenLayer()"><icon name="list-outline" pack="eva"></icon></button>
+              </div>
+            </div>
+            
+            <div class="col-12 form-group">
+              <label>{{ translate.form.label.value }}</label> 
+              <input type="text" formControlName="value" class="form-control {{ formControls.value.errors ? 'required' : '' }}" value="{{ 0 | currency:'' }}" (input)="onApplyPriceMask($event, formControls.value)" />
+            </div>   
+
+            <div class="col-12 form-group">
+              <label>{{ translate.form.label.note }}</label>
+              <textarea formControlName="note" class="form-control"></textarea>       
+            </div>
+          </div>             
+
+          <small *ngIf="formCashierInflow.invalid">{{ translate.form.notice }}</small>
+
+          <button type="submit" class="btn btnSubmit" [disabled]="formCashierInflow.invalid">{{ translate.form.button.register }}</button>
+        </form>
+      </div>        
+    </div>
+       
+  </div>
+
+  <div slot="components">
+    <cashier-inflow-layer (callback)="onLayerResponse($event)"></cashier-inflow-layer>
+  </div>
+  
+</modal>

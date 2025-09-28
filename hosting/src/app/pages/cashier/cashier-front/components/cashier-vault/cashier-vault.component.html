@@ -1,0 +1,30 @@
+<modal (callback)="onModalResponse($event)">
+  <div slot="content">
+    <div id="container-form" class="centralizer">
+      <div class="wrapper">
+        <form class="form" [formGroup]="form" autocomplete="off" (submit)="onSubmit()">
+          <div class="row">
+            <div class="col-12 form-group">
+              <label>Ação</label>
+              <select class="form-control" formControlName="direction">
+                <option value="TO_VAULT">Retirada p/ Cofre</option>
+                <option value="FROM_VAULT">Repor do Cofre</option>
+              </select>
+            </div>
+            <div class="col-12 form-group">
+              <label>Valor</label>
+              <input type="text" formControlName="amount" class="form-control {{ form.controls.amount.errors ? 'required' : '' }}" (input)="onPriceMask($event)" />
+            </div>
+            <div class="col-12 form-group">
+              <label>Observação (opcional)</label>
+              <input type="text" formControlName="note" class="form-control" />
+            </div>
+          </div>
+          <small *ngIf="form.invalid">* Preencha os campos obrigatórios.</small>
+          <button type="submit" class="btn btnSubmit" [disabled]="form.invalid">Confirmar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</modal>
+

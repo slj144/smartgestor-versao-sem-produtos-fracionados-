@@ -1,0 +1,28 @@
+
+<modal (callback)="onModalResponse($event)">
+
+  <div slot="content">
+
+    <div *ngIf="settings.section === 'General'">
+      <settings-general (callback)="onGeneralResponse($event)"></settings-general>
+    </div>    
+    
+    <div *ngIf="settings.section === 'Cashier'">
+      <settings-cashier (callback)="onCashierResponse($event)"></settings-cashier>
+    </div>
+
+    <div *ngIf="settings.section === 'ServiceOrders'">
+      <settings-service-orders (callback)="onServiceOrdersResponse($event)"></settings-service-orders>
+    </div>
+
+    <div *ngIf="settings.section === 'Stock'">
+      <settings-stock (callback)="onStockResponse($event)"></settings-stock>
+    </div>
+
+    <div *ngIf="settings.section === 'Registers'">
+      <settings-registers (callback)="onRegistersResponse($event)"></settings-registers>
+    </div>
+
+  </div> 
+
+</modal>

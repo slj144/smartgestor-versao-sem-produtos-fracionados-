@@ -1,0 +1,551 @@
+// Arquivo: _default.scss
+// Componente: Estilos Padrão Modernizados
+// Localização: src/sass/_default.scss
+
+// RESET MODERNO
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// LOADER PRINCIPAL MODERNO
+.main-loader {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+
+  .spinner-border {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(102, 126, 234, 0.2);
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+}
+
+// LABELS MODERNOS
+label {
+  color: var(--gray-700, #4b5563);
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: none;
+  display: block;
+  margin-bottom: 6px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: var(--gray-800, #1f2937);
+  }
+}
+
+// CONFIGURAÇÕES GERAIS
+#container-main {
+  padding: 20px;
+  background: var(--gray-50, #f9fafb);
+  min-height: 100vh;
+
+  .dropdown {
+    width: auto;
+    display: inline-block;
+  }
+
+  .dropdown-menu {
+    margin-top: 8px;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 8px;
+    animation: dropdownSlide 0.2s ease-out;
+
+    @keyframes dropdownSlide {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  }
+}
+
+// CONTAINER DE REGISTRO MODERNO
+#container-register {
+  form {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+    p {
+      font-size: 14px;
+      color: var(--gray-600, #6b7280);
+      font-weight: 600;
+      margin: 0 0 16px;
+      padding: 0 0 12px;
+      border-bottom: 2px solid var(--gray-100, #f3f4f6);
+    }
+
+    label {
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--gray-700, #374151);
+    }
+
+    fieldset {
+      padding: 0;
+      border: none;
+
+      &[disabled] {
+        opacity: 0.6;
+        background-color: var(--gray-50, #f9fafb);
+        border-radius: 8px;
+        padding: 12px;
+      }
+    }
+
+    input,
+    select {
+      font-size: 14px;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200, #e5e7eb);
+      border-radius: 10px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      background: white;
+
+      &:hover:not(:focus) {
+        border-color: var(--gray-300, #d1d5db);
+      }
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color, #667eea);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      &.nameField {
+        text-transform: uppercase;
+      }
+
+      &.emailField {
+        text-transform: lowercase;
+      }
+    }
+
+    small.warning {
+      color: var(--danger-color, #ef4444);
+      margin-top: 4px;
+      padding-left: 4px;
+      font-size: 12px;
+      display: block;
+      animation: shake 0.3s ease-in-out;
+
+      @keyframes shake {
+
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+
+        25% {
+          transform: translateX(-4px);
+        }
+
+        75% {
+          transform: translateX(4px);
+        }
+      }
+    }
+
+    button[type=submit] {
+      margin: 24px auto 0;
+      display: block;
+      padding: 12px 48px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      color: white;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+      }
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      &.btnRed {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.35);
+
+        &:hover {
+          box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+        }
+      }
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .container-info,
+    .container-contacts,
+    .container-address {
+      background: var(--gray-50, #f9fafb);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      transition: all 0.3s;
+
+      &:hover {
+        background: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .container-header {
+        padding: 8px 0;
+        position: relative;
+        user-select: none;
+        cursor: pointer;
+
+        p {
+          margin: 0;
+          font-weight: 600;
+          color: var(--gray-800, #1f2937);
+        }
+
+        button {
+          width: 32px;
+          height: 32px;
+          padding: 0;
+          outline: none;
+          border: none;
+          border-radius: 8px;
+          color: var(--gray-500, #6b7280);
+          background-color: white;
+          position: absolute;
+          top: 50%;
+          right: 0;
+          transform: translateY(-50%);
+          transition: all 0.3s;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+          icon {
+            font-size: 18px;
+            transition: transform 0.3s;
+          }
+
+          &:hover {
+            background-color: var(--gray-100, #f3f4f6);
+            color: var(--gray-700, #374151);
+          }
+
+          &.active icon {
+            transform: rotate(180deg);
+          }
+        }
+      }
+
+      .container-content {
+        margin-top: 12px;
+        animation: slideDown 0.3s ease-out;
+
+        @keyframes slideDown {
+          from {
+            opacity: 0;
+            max-height: 0;
+          }
+
+          to {
+            opacity: 1;
+            max-height: 1000px;
+          }
+        }
+      }
+    }
+
+    .issues {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+
+      label {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--danger-color, #dc2626);
+      }
+
+      ul {
+        margin: 0;
+        padding: 0 0 0 20px;
+
+        li {
+          color: var(--gray-700, #374151);
+          font-size: 13px;
+          line-height: 20px;
+          margin-bottom: 4px;
+        }
+      }
+    }
+
+    .required {
+      border-color: var(--danger-color, #ef4444) !important;
+      background: rgba(239, 68, 68, 0.05);
+
+      &:focus {
+        border-color: var(--danger-color, #ef4444) !important;
+        box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1) !important;
+      }
+    }
+  }
+}
+
+// CENTRALIZADOR MODERNO
+.centralizer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: var(--gray-50, #f9fafb);
+
+  .wrapper {
+    width: 100%;
+    max-width: 900px;
+    padding: 32px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    animation: scaleIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  }
+}
+
+// DROPDOWN MENU MODERNO
+.dropdown-menu {
+  border: none;
+  padding: 8px;
+
+  .dropdown-item {
+    color: var(--gray-700, #374151);
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+    transition: all 0.2s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+
+    icon {
+      font-size: 16px;
+      margin-right: 10px;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      background: var(--gray-100, #f3f4f6);
+      color: var(--gray-900, #111827);
+      padding-left: 20px;
+
+      icon {
+        opacity: 1;
+      }
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+// BADGES MODERNOS
+.badge {
+  padding: 4px 12px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 20px !important;
+  border: none !important;
+  transition: all 0.2s !important;
+
+  &-pendent {
+    background: rgba(107, 114, 128, 0.1) !important;
+    color: var(--gray-600, #6b7280) !important;
+  }
+
+  &-concluded,
+  &-approved {
+    background: rgba(16, 185, 129, 0.1) !important;
+    color: var(--success-color, #059669) !important;
+  }
+
+  &-canceled,
+  &-disaproved {
+    background: rgba(239, 68, 68, 0.1) !important;
+    color: var(--danger-color, #dc2626) !important;
+  }
+}
+
+// BOTÃO FLUTUANTE MODERNO
+.floating-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+
+  .btnAdd {
+    width: 64px;
+    height: 64px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    icon {
+      font-size: 28px;
+      transition: transform 0.3s;
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(16, 185, 129, 0.5);
+
+      icon {
+        transform: rotate(90deg);
+      }
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
+}
+
+// SCROLLBAR CUSTOMIZADA
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(102, 126, 234, 0.2);
+  border-radius: 10px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: rgba(102, 126, 234, 0.4);
+  }
+}
+
+// ANIMAÇÕES GLOBAIS
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// ===== CORREÇÃO ESPECÍFICA PARA BOTÕES FANTASMAS =====
+// Apenas para cadastro de clientes, sem afetar outros módulos
+
+#container-register {
+
+  .container-document fieldset button:empty:not([type="submit"]),
+  .container-cep fieldset button:empty:not([type="submit"]) {
+    display: none !important;
+  }
+}

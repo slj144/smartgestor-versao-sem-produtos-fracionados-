@@ -1,0 +1,165 @@
+
+<div id="containerFormRegister">
+
+  <div *ngIf="checkBootstrap">
+    <form [formGroup]="formService" class="form" autocomplete="off" (submit)="onSubmit()">
+      
+      <div class="row">
+
+        <div class="col-12 colapse-container">
+
+          <div class="header">
+            Informações Gerais
+          </div>
+
+          <div id="ContainerInformations" class="row p-2">
+
+            <div class="col-12 form-group">
+              <label>{{ translate.form.label.name }}</label>
+              <input type="text" formControlName="name" class="form-control {{ formControl.name.errors ? 'field-required' : '' }}" />
+            </div>        
+
+            <div class="col-12 col-md-6 form-group">
+              <label>{{ translate.form.label.costPrice }}</label>
+              <input type="text" formControlName="costPrice" class="form-control" (input)="onApplyPriceMask($event, formControl.costPrice)" />   
+            </div>
+            
+            <div class="col-12 col-md-6 form-group">
+              <label>{{ translate.form.label.executionPrice }}</label>
+              <input type="text" formControlName="executionPrice" class="form-control" (input)="onApplyPriceMask($event, formControl.executionPrice)" />            
+            </div>
+            
+            <div class="col-12 form-group">
+              <label>{{ translate.form.label.description }}</label>
+              <textarea formControlName="description" class="form-control"></textarea>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="col-12 colapse-container" *ngIf="isFiscal">
+  
+          <div class="header">
+            Informações Fiscais
+          </div>
+
+          <div id="ContainerInformations" class="row p-2" formGroupName="tributes">
+
+            <div class="row mx-0" [formGroup]="formService" style="width: 100%;">
+
+              <div class="col-12 tribute-name">
+                Serviço
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>CNAE:</label>
+                <input type="text" formControlName="cnae" class="form-control " [class.required]="formControl.cnae?.errors?.required" placeholder="" />    
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Código de Serviço:</label>
+                <input type="text" formControlName="codigo" class="form-control " [class.required]="formControl.codigo?.errors?.required" placeholder="01.07.01" />    
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Código de Tributação de Serviço:</label>
+                <input type="text" formControlName="codigoTributacao" class="form-control " [class.required]="formControl.codigoTributacao?.errors?.required" placeholder="Ex: 140101 (oficina), 140201 (assistência)" (input)="onApplyNumberMask($event, formControl.codigoTributacao)"/>    
+              </div>
+
+            </div>
+
+
+            <div class="row mx-0" formGroupName="iss">
+
+              <div class="col-12 tribute-name">
+                ISS
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>alíquota:</label>
+                <input type="text" formControlName="aliquota" class="form-control" [class.required]="formControl.tributes?.controls?.iss?.controls?.aliquota?.errors?.required" placeholder="" (input)="onApplyPriceMask($event, formControl.tributes.controls.iss.controls.aliquota)"/>    
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Tipo de Tributacao:</label>
+                <select class="form-control" formControlName="tipoTributacao" [class.required]="false" >
+                  <option value="1">1 - Isento de ISS</option>
+                  <option value="2">2 - Imune</option>
+                  <option value="3">3 - Não Incidência no Município</option>
+                  <option value="4">4 - Não Tributável</option>
+                  <option value="5">5 - Retido</option>
+                  <option value="6">6 - Tributável Dentro do Município</option>
+                  <option value="7">7 - Tributável Fora do Município</option>
+                  <option value="8">8 - Tributável Dentro do Município pelo tomador</option>
+                </select>
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Exigibilidade:</label>
+                <select class="form-control" formControlName="exigibilidade" [class.required]="false" >
+                  <option value="1">1 - Exigível</option>
+                  <option value="2">2 - Não Incidência</option>
+                  <option value="3">3 - Isenção</option>
+                  <option value="4">4 - Exportação</option>
+                  <option value="5">5 - Imunidade</option>
+                  <option value="6">6 - Supenso por Ação Judicial</option>
+                  <option value="7">7 - Suspenso por Ação Administrativa</option>
+                </select>
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Processo Suspensao:</label>
+                <input type="text" formControlName="processoSuspensao" class="form-control" [class.required]="false" placeholder="" />    
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Valor:</label>
+                <input type="text" formControlName="valor" class="form-control" [class.required]="false" placeholder="" (input)="onApplyPriceMask($event, formControl.tributes.controls.iss.controls.valor)"/>    
+              </div>
+
+              <div class="col-6 form-group">    
+                <label>Valor Retido:</label>
+                <input type="text" formControlName="valorRetido" class="form-control" [class.required]="false" placeholder="" (input)="onApplyPriceMask($event, formControl.tributes.controls.iss.controls.valorRetido)"/>    
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col-12 form-group" *ngIf="isAdmin && (settings.action == 'Services/Update')">
+          <div class="table-responsive deactivator">
+            <table class="table ">
+              <tr>
+                <td><input id="checkbox-save" type="checkbox" formControlName="isDisabled" /></td>
+                <td>
+                  <label for="checkbox-save">
+                    <span class="description">Deseja desativar esse serviço temporariamente?</span>
+                    <small class="subDescription">Ao marcar essa opção este serviço somente estará visivel nessa rotina.</small>
+                  </label>              
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    
+      <small class="alert-required" *ngIf="formService.invalid">{{ translate.form.notice }}</small>
+      
+      <button type="submit" class="btn btnBlue" [disabled]="formService.invalid">{{ translate.form.button.submit }}</button>
+    </form>
+  </div>
+
+  <div *ngIf="!checkBootstrap"
+    [nbSpinner]="!checkBootstrap"
+    [nbSpinnerStatus]="'success'"
+    [nbSpinnerSize]="'large'"
+    style="min-height: 50vh">
+  </div>
+  
+</div>

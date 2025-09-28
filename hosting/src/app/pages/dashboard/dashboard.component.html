@@ -1,0 +1,470 @@
+<div id="container-main">
+
+  <section class="row first-section">
+
+    <div class="col-12 col-sm-6 col-lg-3 products"
+      *ngIf="companyProfile?.stock?.components?.products?.active && permissions?.counters?.products">
+      <div class="container-wrapper" [nbSpinner]="count.products.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="tiny">
+        <div class="container-view">
+          <div class="container-content">
+            <button class="container-icon">
+              <span style="font-size: 30px;">📦</span>
+            </button>
+            <div class="container-info">
+              <span class="value">{{ count.products.value }}</span>
+              <span class="label">{{ translate.blocks.first_section.products.registered }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3 products-alert"
+      *ngIf="companyProfile?.stock?.components?.products?.active && !companyProfile?.serviceOrders?.active  && !companyProfile?.events?.active">
+      <div class="container-wrapper" [nbSpinner]="count.alertProducts.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="tiny">
+        <div class="container-view">
+          <div class="container-content">
+            <button class="container-icon">
+              <span style="font-size: 30px;">⚠️</span>
+            </button>
+            <div class="container-info">
+              <span class="value">{{ count.alertProducts.value }}</span>
+              <span class="label">{{ translate.blocks.first_section.products.alert }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-12 col-sm-6 {{ !permissions?.counters?.products && !permissions?.counters?.customers ? 'col-lg-6' : 'col-lg-3' }} requests"
+      *ngIf="companyProfile?.requests?.active">
+      <div class="container-wrapper" [nbSpinner]="count.requests.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="tiny">
+        <div class="container-view">
+          <div class="container-content">
+            <button class="container-icon">
+              <span style="font-size: 30px;">🛍️</span>
+            </button>
+            <div class="container-info">
+              <span class="value">{{ count.requests.value }}</span>
+              <span class="label">{{ translate.blocks.first_section.requests.pending }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      class="col-12 col-sm-6 col-lg-3 serviceOrders {{ !permissions?.counters?.products && !permissions?.counters?.customers ? 'col-lg-6' : 'col-lg-3' }}"
+      *ngIf="companyProfile?.serviceOrders?.active">
+      <div class="container-wrapper" [nbSpinner]="count.serviceOrders.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="tiny">
+        <div class="container-view">
+          <div class="container-content">
+            <button class="container-icon">
+              <span style="font-size: 30px;">📋</span>
+            </button>
+            <div class="container-info">
+              <span class="value">{{ count.serviceOrders.value }}</span>
+              <span class="label">{{ translate.blocks.first_section.serviceOrders.pending }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-lg-3 customers"
+      *ngIf="companyProfile?.registers?.components?.customers?.active && permissions?.counters?.customers">
+      <div class="container-wrapper" [nbSpinner]="count.customers.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="tiny">
+        <div class="container-view">
+          <div class="container-content">
+            <button class="container-icon">
+              <span style="font-size: 30px;">👥</span>
+            </button>
+            <div class="container-info">
+              <span class="value">{{ count.customers.value }}</span>
+              <span class="label">{{ translate.blocks.first_section.customers.registered }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="row second-section">
+
+    <div class="col-12 col-lg-8 cashier" *ngIf="companyProfile?.cashier?.active">
+      <div class="container-wrapper" [nbSpinner]="cashier.loading" nbSpinnerStatus="success" nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.cashier.summary.title }}</h6>
+          <small>{{ translate.blocks.second_section.cashier.summary.subtitle }}</small>
+        </div>
+
+        <div class="container-view">
+          <div class="container-chart">
+            <!-- Gráfico de Pizza Melhorado com mais configurações visuais -->
+            <ngx-charts-pie-chart [scheme]="cashier.settings.scheme"
+              [results]="cashier.settings.data[cashier.dataSelected]?.results || []"
+              [gradient]="cashier.settings.gradient" [doughnut]="cashier.settings.isDoughnut" [animations]="true"
+              [tooltipDisabled]="false" [labels]="true" [arcWidth]="0.6" [explodeSlices]="false" [trimLabels]="true"
+              [labelFormatting]="formatLabel" [maxLabelLength]="20">
+            </ngx-charts-pie-chart>
+          </div>
+
+          <div class="container-content">
+            <div class="container-wrapper-center">
+              <div class="container-periods">
+                <button class="btn active" (click)="onCashSumaryPeriod($event, 'currentDay')">{{
+                  translate.blocks.second_section.cashier.summary.buttons.currentDay }}</button>
+                <button class="btn" (click)="onCashSumaryPeriod($event, 'currentWeek')">{{
+                  translate.blocks.second_section.cashier.summary.buttons.currentWeek }}</button>
+                <button class="btn" (click)="onCashSumaryPeriod($event, 'currentMonth')">{{
+                  translate.blocks.second_section.cashier.summary.buttons.currentMonth }}</button>
+              </div>
+
+              <div class="container-revenue">
+                <span class="value">{{ cashier.settings.data[cashier.dataSelected]?.total | currency }}</span>
+                <span class="label">{{ isAdmin ? translate.blocks.second_section.cashier.summary.labels.revenue :
+                  translate.blocks.second_section.cashier.summary.labels.salesTotal }}</span>
+              </div>
+
+              <div class="container-info">
+                <ul>
+                  <li *ngFor="let item of cashier.settings.data[cashier.dataSelected]?.results || []; let i = index"
+                    [style.borderLeftColor]="cashier.settings.scheme.domain[i]">
+                    <span class="value">{{ (!cashier.settings.data[cashier.dataSelected].fake ? item.value : 0) |
+                      currency }}</span>
+                    <span class="label">{{ item.name }} (<small class="percentage">{{
+                        (!cashier.settings.data[cashier.dataSelected].fake ? item.percentage : 0) + '%'
+                        }}</small>)</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 bestSellers" *ngIf="companyProfile?.stock?.active && permissions.bestSellers">
+      <div class="container-wrapper" [nbSpinner]="bestSellersList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.bestSellers.title }}</h6>
+          <small>{{ translate.blocks.second_section.bestSellers.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!bestSellersList.loading && (bestSellersList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of bestSellersList.data; let i = index">
+                <td>{{ (i + 1) }}</td>
+                <td>
+                  <span class="name">{{ item.code + ' - ' + item.name }}</span>
+                  <!-- <span class="code"><b>{{ translate.blocks.second_section.bestSellers.label.code + ':' }}</b> {{ item.code }}</span> -->
+                  <span class="quantity"><b>{{ translate.blocks.second_section.bestSellers.label.quantity + ':' }}</b>
+                    {{ item.quantity }}</span>
+                </td>
+                <td>
+                  <!-- <span class="disclosure"><icon name="arrow-ios-forward-outline" pack="eva"></icon></span> -->
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!bestSellersList.loading && (bestSellersList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="list" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.bestSellers.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 stockAlert"
+      *ngIf="companyProfile?.stock?.active && !companyProfile?.events?.active && permissions.stockAlert">
+      <div class="container-wrapper" [nbSpinner]="stockAlertList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.stockAlert.title }}</h6>
+          <small>{{ translate.blocks.second_section.stockAlert.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!stockAlertList.loading && (stockAlertList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of stockAlertList.data">
+                <td>
+                  <span class="name">{{ item.name }}</span>
+                  <span class="label code"><b>{{ translate.blocks.second_section.stockAlert.label.code + ':' }}</b> {{
+                    item.code }}</span>
+                  <span class="label quantity"><b>{{ translate.blocks.second_section.stockAlert.label.quantity + ':'
+                      }}</b> {{ item.quantity + ' ' + item.commercialUnit.name }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!stockAlertList.loading && (stockAlertList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="alert-triangle-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.stockAlert.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 serviceOrders"
+      *ngIf="companyProfile?.serviceOrders?.active && permissions?.serviceOrders?._active">
+      <div class="container-wrapper" [nbSpinner]="serviceOrdersList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.serviceOrders.title }}</h6>
+          <small>{{ translate.blocks.second_section.serviceOrders.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!serviceOrdersList.loading && (serviceOrdersList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of serviceOrdersList.data">
+                <td>
+                  <span class="name">{{ item.customer.name }}</span>
+                  <span class="label code"><b>{{ translate.blocks.second_section.serviceOrders.label.code + ':' }}</b>
+                    {{ item.code }}</span>
+                  <span class="label status"><b>{{ translate.blocks.second_section.serviceOrders.label.status.title +
+                      ':' }}</b> {{ translate.blocks.second_section.serviceOrders.label.status.enum[item.status]
+                    }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!serviceOrdersList.loading && (serviceOrdersList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="layers-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.serviceOrders.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 requests" *ngIf="companyProfile?.requests?.active && permissions.requests">
+      <div class="container-wrapper" [nbSpinner]="requestsList.loading" nbSpinnerStatus="success" nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.requests.title }}</h6>
+          <small>{{ translate.blocks.second_section.requests.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!requestsList.loading && (requestsList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of requestsList.data">
+                <td>
+                  <span class="name">{{ translate.blocks.second_section.requests.label.number + ' ' + item.code
+                    }}</span>
+                  <span class="label code"><b>{{ translate.blocks.second_section.requests.label.customer + ':' }}</b> {{
+                    item.customer?.name || item.member?.name }}</span>
+                  <span class="label status"><b>{{ translate.blocks.second_section.requests.label.status.title + ':'
+                      }}</b> {{ translate.blocks.second_section.requests.label.status.enum[item.status] }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!requestsList.loading && (requestsList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="shopping-bag-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.requests.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 billsToPay"
+      *ngIf="companyProfile?.financial?.components?.billsToPay?.active && permissions.billsToPay">
+      <div class="container-wrapper" [nbSpinner]="billsToPayList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.billsToPay.title }}</h6>
+          <small>{{ translate.blocks.second_section.billsToPay.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!billsToPayList.loading && (billsToPayList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of billsToPayList.data">
+                <td>
+                  <span class="name">{{ item.beneficiary }}</span>
+                  <span class="label code"><b>{{ translate.blocks.second_section.billsToPay.label.code + ':' }}</b> {{
+                    item.code }}</span>
+                  <span class="label dueDate"><b>{{ translate.blocks.second_section.billsToPay.label.dueDate + ':'
+                      }}</b> {{ item.dueDate | date:'dd/MM/yyyy' }}</span>
+                  <span class="label value"><b>{{ translate.blocks.second_section.billsToPay.label.value + ':' }}</b> {{
+                    item.value | currency }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!billsToPayList.loading && (billsToPayList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="log-out-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.billsToPay.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 billsToReceive"
+      *ngIf="companyProfile?.financial?.components?.billsToReceive?.active && permissions.billsToReceive">
+      <div class="container-wrapper" [nbSpinner]="billsToReceiveList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.billsToReceive.title }}</h6>
+          <small>{{ translate.blocks.second_section.billsToReceive.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content" *ngIf="!billsToReceiveList.loading && (billsToReceiveList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of billsToReceiveList.data">
+                <td>
+                  <span class="name">{{ item.debtor }}</span>
+                  <span class="label code"><b>{{ translate.blocks.second_section.billsToReceive.label.code + ':' }}</b>
+                    {{ item.code }}</span>
+                  <span class="label dueDate"><b>{{ translate.blocks.second_section.billsToReceive.label.dueDate + ':'
+                      }}</b> {{ item.dueDate | date:'dd/MM/yyyy' }}</span>
+                  <span class="label value"><b>{{ translate.blocks.second_section.billsToReceive.label.value + ':'
+                      }}</b> {{ item.value | currency }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data" *ngIf="!billsToReceiveList.loading && (billsToReceiveList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="log-in-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.billsToReceive.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-4 birthdayCustomers"
+      *ngIf="companyProfile?.registers?.components?.customers?.active">
+      <div class="container-wrapper" [nbSpinner]="birthdayCustomersList.loading" nbSpinnerStatus="success"
+        nbSpinnerSize="large">
+        <div class="container-header">
+          <h6>{{ translate.blocks.second_section.birthdayCustomers.title }}</h6>
+          <small>{{ translate.blocks.second_section.birthdayCustomers.subtitle }}</small>
+        </div>
+
+        <div class="container-view clearfix">
+          <div class="container-content"
+            *ngIf="!birthdayCustomersList.loading && (birthdayCustomersList.data).length > 0">
+            <table class="table">
+              <tr *ngFor="let item of birthdayCustomersList.data">
+                <td>
+                  <button class="thumbnail">
+                    <span style="font-size: 20px;">🎂</span>
+                  </button>
+                </td>
+                <td>
+                  <span class="name">{{ item.name }}</span>
+                  <span class="phone" *ngIf="item.phone">{{ item.phone }}</span>
+                  <span class="date">{{ item.birthDate }}</span>
+                </td>
+                <td>
+                  <span class="disclosure">
+                    <icon name="arrow-ios-forward-outline" pack="eva"></icon>
+                  </span>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <div class="container-no-data"
+            *ngIf="!birthdayCustomersList.loading && (birthdayCustomersList.data).length == 0">
+            <div class='internal-wrapper'>
+              <button class="container-icon">
+                <icon name="people-outline" pack="eva"></icon>
+              </button>
+
+              <div class="container-info">
+                <span class="info">{{ translate.blocks.second_section.birthdayCustomers.notice }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</div>

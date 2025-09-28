@@ -1,0 +1,43 @@
+
+<modal #test (callback)="onModalResponse($event)">
+
+  <div slot="content">
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-12 col-md-6 offset-md-3 header">
+          <h3 class="title">{{ data.title || translation.title }}</h3>
+          <small class="note">{{ translation.release.version + ': ' + data.version + ' / ' + translation.release.date + ': ' + (data.date | date:'dd/MM/yyy') + ' ' + (data.hours)  }}</small>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-6 offset-md-3 content">          
+          <div class="wrapper">
+
+            <div class="description" *ngIf="data.description">
+              <p>{{ data.description }}</p>
+            </div>
+
+            <div class="list" *ngIf="data.list">
+              <ul *ngFor="let item of data.list">
+                <li>{{ item }}</li>
+              </ul>              
+            </div>    
+
+          </div>          
+        </div>
+      </div>
+
+      <div class="row">
+        <button (click)="onReloadSystem()">
+          <icon name="cloud-download-outline" pack="eva"></icon> <span>{{ translation.button.update }}</span>
+        </button>
+      </div>
+
+    </div>    
+
+  </div>
+ 
+</modal>

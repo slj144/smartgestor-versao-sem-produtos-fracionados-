@@ -1,0 +1,577 @@
+
+
+<div class="accordion {{ !isSelectedPermissions() ? 'required' : '' }}" *ngIf="settings.data && settings.data.userPermissions && usersPermissionsModel" id="permissions" >
+  <div class="accordion-item" *ngFor="let pageName of settings.data.userPermissions.pagesNames;let i = index">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapse' + i" aria-expanded="true" aria-controls="collapse{{i}}">
+        
+        <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+          <input type="checkbox"
+            [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]]._status"
+            (change)="onSelectPagePermission($event, settings.data.userPermissions.originalpagesNames[i], settings.data.userPermissions.originalpagesNames[i])"
+            (click)="onSelectPagePermissionClearClickPropagation($event)"
+            [ngModelOptions]="{standalone: true}" 
+          />
+        </label>
+
+        <span class="pageName">{{ pageName }}</span>
+      </button>
+    </h2>
+
+      <div [id]="'collapse' + i" class="accordion-collapse collapse" aria-labelledby="heading{{i}}" data-bs-parent="#permissions">
+      <div class="accordion-body">
+        
+        <!-- Pages without subpages -->
+
+        <div *ngIf="settings.data.userPermissions.pagesDatas[i] != undefined && pagesWithSubpages.indexOf(settings.data.userPermissions.originalpagesNames[i]) == -1 && settings.data.userPermissions.originalpagesNames[i] != 'reports'">
+          <div *ngIf="hasSection('actions', i)">
+            <p class="sectionName">{{ translate.mainModal.permissions.actions }}</p>
+            <span class="item" *ngFor="let action of hasSection('actions', i, -1, true); let i2 = index">
+
+              <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                <input type="checkbox"
+                  status="info" (change)="onSelectActionsAnfIeldsPermission($event)"
+                  [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]].actions[action]" 
+                  [ngModelOptions]="{standalone: true}"
+                />
+                {{ 
+                  translateFieldsAndAction('actions', hasSection('actions', i, -1, true), [
+                  {
+                    currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                    currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                  }
+                ])[i2] }}
+              </label>
+
+              <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>   {{ 
+                translateFieldsAndAction('actions', hasSection('actions', i, -1, true), [
+                {
+                  currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                }
+              ])[i2] }}</span>
+            </span>
+          </div>
+          <div *ngIf="hasSection('widgets', i)" class="box">
+            <p class="sectionName">{{ translate.mainModal.permissions.widgets }}</p>
+            <span class="item" *ngFor="let widget of hasSection('widgets', i, -1, true); let i2 = index">
+              <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                <input type="checkbox"
+                  status="info" (change)="onSelectActionsAnfIeldsPermission($event)"
+                  [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]].widgets[widget]"
+                  [ngModelOptions]="{standalone: true}"
+                />
+                {{ 
+                  translateFieldsAndAction('widgets', hasSection('widgets', i, -1, true), [
+                  {
+                    currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                    currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                  }
+                ])[i2] }}
+              </label>
+
+              <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>   {{ 
+                translateFieldsAndAction('widgets', hasSection('widgets', i, -1, true), [
+                {
+                  currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                }
+              ])[i2] }}</span>
+            </span>
+          </div>
+          <div *ngIf="hasSection('fields', i)" class="box">
+            <p class="sectionName">{{ translate.mainModal.permissions.fields }}</p>
+            <span class="item" *ngFor="let field of hasSection('fields', i, -1, true); let i2 = index">
+
+              <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                <input type="checkbox"
+                status="info" (change)="onSelectActionsAnfIeldsPermission($event)"
+                [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]].fields[field]"
+                [ngModelOptions]="{standalone: true}"
+                />
+                {{
+                  translateFieldsAndAction('fields', hasSection('fields', i, -1, true), [
+                  {
+                    currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                    currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                  }
+              ])[i2] }}
+              </label>
+
+              <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>   {{
+                translateFieldsAndAction('fields', hasSection('fields', i, -1, true), [
+                {
+                  currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                }
+            ])[i2] }}</span>
+            </span>
+          </div>
+          <div *ngIf="hasSection('sections', i)" class="box">
+            <p class="sectionName">{{ translate.mainModal.permissions.sections }}</p>
+            <span class="item" *ngFor="let section of hasSection('sections', i, -1, true); let i2 = index">
+
+              <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                <input type="checkbox"
+                status="info" (change)="onSelectActionsAnfIeldsPermission($event)"
+                [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]].sections[section]"
+                [ngModelOptions]="{standalone: true}"
+                />
+                {{ 
+                  translateFieldsAndAction('sections', hasSection('sections', i, -1, true), [
+                  {
+                    currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                    currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                  }
+                ])[i2] }}
+              </label>
+
+              <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>
+                {{ 
+                  translateFieldsAndAction('sections', hasSection('sections', i, -1, true), [
+                  {
+                    currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                    currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                  }
+                ])[i2] }}
+              </span>
+            </span>
+          </div>
+        </div>
+
+
+        <!-- Pages with subpages exception fo reports -->
+
+        <div class="accordion" id="subPagesExcludeReports" *ngIf="settings.data.userPermissions.pagesDatas[i] != undefined && pagesWithSubpages.indexOf(settings.data.userPermissions.originalpagesNames[i]) != -1 && settings.data.userPermissions.subPagesNames != undefined">
+          <div class="accordion-item" *ngFor="let subPageName of settings.data.userPermissions.subPagesNames[settings.data.userPermissions.originalpagesNames[i]];let i2 = index">
+            <h2 class="accordion-header" id="headingSubPagesExcludeReports{{i}}_{{i2}}">
+
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseSubPagesExcludeReports' + i + '_' + i2" aria-expanded="true" aria-controls="collapseSubPagesExcludeReports{{i}}_{{i2}}">
+                
+                <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete' && settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]" >
+                  <input type="checkbox"
+                    status="info"
+                    [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]]._status"
+                    (change)="onSelectPagePermission($event, settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2], settings.data.userPermissions.originalpagesNames[i])"
+                    (click)="onSelectPagePermissionClearClickPropagation($event)"
+                    [ngModelOptions]="{standalone: true}"
+                  />              
+                </label>
+
+                <span class="pageName">{{ subPageName }}</span>
+
+              </button>
+            </h2>
+              <div [id]="'collapseSubPagesExcludeReports' + i + '_' + i2" class="accordion-collapse collapse" aria-labelledby="headingSubPagesExcludeReports{{i}}_{{i2}}" data-bs-parent="#subPagesExcludeReports" *ngIf="settings.data.userPermissions.subPagesDatas[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]]">
+              <div class="accordion-body">
+                <div class="section">
+                  <div *ngIf="hasSection('actions', i, i2)">
+                    <p class="sectionName">{{ translate.mainModal.permissions.actions }}</p>
+                    <span class="item" *ngFor="let action of hasSection('actions', i, i2, true); let i3  = index">
+  
+                      <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete' && usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]] != undefined">
+                        <input type="checkbox"
+                          (change)="onSelectActionsAnfIeldsPermission($event)"
+                          [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]].actions[action]" 
+                          [ngModelOptions]="{standalone: true}" 
+                        />
+                        {{ 
+                          translateFieldsAndAction('actions', hasSection('actions', i, i2, true),
+                        [
+                          {
+                            currentLevelData:  hasSection('actions', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          },
+                          {
+                            currentLevelData:  hasSection('actions', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          }
+                        ])[i3] }}
+                      </label>
+          
+                      <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>
+                        {{ 
+                          translateFieldsAndAction('actions', hasSection('actions', i, i2, true),
+                        [
+                          {
+                            currentLevelData:  hasSection('actions', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          },
+                          {
+                            currentLevelData:  hasSection('actions', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          }
+                        ])[i3] }}
+                      </span>
+                    </span>
+                  </div>
+                  <div *ngIf="hasSection('fields', i, i2)" class="box">
+                    <p class="sectionName">{{ translate.mainModal.permissions.fields }}</p>
+                    <span class="item" *ngFor="let field of hasSection('fields', i, i2, true); let i3  = index">
+                      <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete' && usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]] != undefined">
+                        <input type="checkbox"
+                          (change)="onSelectActionsAnfIeldsPermission($event)"
+                          [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]].fields[field]" 
+                          [ngModelOptions]="{standalone: true}"
+                        />
+                        {{ 
+                          translateFieldsAndAction('fields', hasSection('fields', i, i2, true),
+                        [
+                          {
+                            currentLevelData:  [], 
+                            currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          },
+                          {
+                            currentLevelData:  hasSection('fields', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          }
+                        ])[i3] }}
+                      </label>
+  
+                      <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>
+                        {{ 
+                          translateFieldsAndAction('fields', hasSection('fields', i, i2, true),
+                        [
+                          {
+                            currentLevelData:  [], 
+                            currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          },
+                          {
+                            currentLevelData:  hasSection('fields', i, i2, true), 
+                            currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                            currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                          }
+                        ])[i3] }}
+                      </span>
+                    </span>
+                  </div>
+                  <div *ngIf="hasSection('sections', i, i2)" class="box">
+                    <div *ngIf="typeof(hasSection('sections', i, i2, true)[0]) == 'string'">
+                      <p class="sectionName">{{ translate.mainModal.permissions.sections }}</p>
+                      <span class="item" *ngFor="let section of hasSection('sections', i, i2, true); let i3  = index">
+                        <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete' && usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]] != undefined">
+                          <input type="checkbox"
+                            (change)="onSelectActionsAnfIeldsPermission($event)"
+                            [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]].sections[section]"  
+                            [ngModelOptions]="{standalone: true}" 
+                          />
+                          {{ 
+                            translateFieldsAndAction('sections', hasSection('sections', i, i2, true),
+                          [
+                            {
+                              currentLevelData:  [], 
+                              currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                            },
+                            {
+                              currentLevelData:  hasSection('sections', i, i2, true), 
+                              currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                            }
+                          ])[i3] }}
+                        </label>
+  
+                        <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>
+                          {{ 
+                            translateFieldsAndAction('sections', hasSection('sections', i, i2, true),
+                            [
+                            {
+                              currentLevelData:  [], 
+                              currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                            },
+                            {
+                              currentLevelData:  hasSection('sections', i, i2, true), 
+                              currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                            }
+                          ])[i3] }}
+                        </span>
+                      </span>
+                    </div>
+          
+                    <div *ngIf="checkIfIsSectionMap(hasSection('sections', i, i2, true))" class="sectionObjectBox">
+          
+                      <p class="sectionName map" *ngIf="hasSection('sections', i, i2, true)">{{ translate.mainModal.permissions.sections }}</p>
+          
+                      <div class="wrapper">
+                        <div class="item" *ngFor="let section of hasSection('sections', i, i2, true) | keyvalue" class="sectionObjectItemBox">
+          
+                          <p class="sectionName itemTitle" *ngIf="checkIfHasData('actions', section.value, false)">
+                            {{ 
+                              translateFieldsAndAction('sections', [section.key],
+                              [
+                              {
+                                currentLevelData:  [], 
+                                currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                              },
+                              {
+                                currentLevelData:  [section.key], 
+                                currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                                currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                              }
+                            ]) }}
+                          </p>
+          
+                          <span class="item" *ngFor="let action of checkIfHasData('actions', section.value, true); let i3  = index" class="containerSectionItems">
+                            <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete' && usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]] != undefined && usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]].sections[section.key].actions">
+                              <input type="checkbox"
+                              (change)="onSelectActionsAnfIeldsPermission($event)"
+                              [(ngModel)]="usersPermissionsModel[settings.data.userPermissions.originalpagesNames[i]][settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2]].sections[section.key].actions[action]" 
+                              [ngModelOptions]="{standalone: true}"
+                            />
+                              {{ 
+                                translateFieldsAndAction('actions', checkIfHasData('actions', section.value, true), [
+                                {
+                                  currentLevelData:  [],
+                                  currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                },
+                                {
+                                  currentLevelData:  checkIfHasData('actions', section.value, true),
+                                  currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                }
+                              ])[i3] }}
+                            </label>
+  
+                            <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i>
+                              {{ 
+                                translateFieldsAndAction('actions', checkIfHasData('actions', section.value, true), [
+                                {
+                                  currentLevelData:  [],
+                                  currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                },
+                                {
+                                  currentLevelData:  checkIfHasData('actions', section.value, true),
+                                  currentPermission: settings.data.userPermissions.originalSubPagesNames[settings.data.userPermissions.originalpagesNames[i]][i2],
+                                  currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                }
+                              ])[i3] }}
+                            </span>
+                          </span>
+          
+                        </div>
+                      </div>
+          
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+         <!-- Reports -->
+
+          <!-- FirstLevel -->
+
+        <div class="accordion" id="subPagesReports" *ngIf="settings.data.userPermissions.pagesDatas[i] != undefined && pagesWithSubpages.indexOf(settings.data.userPermissions.originalpagesNames[i]) == -1 && settings.data.userPermissions.originalpagesNames[i] == 'reports' && settings.data.userPermissions.reportsPagesDatas">
+          <div class="accordion-item" *ngFor="let section of settings.data.userPermissions.reportsPagesDatas | keyvalue">
+            <h2 class="accordion-header" id="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}">
+
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseSubPagesReports' + i + '_' + i2 + '_' + section.key" aria-expanded="true" aria-controls="collapseSubPagesReports{{i}}_{{i2}}_{{section.key}}">
+                
+                  <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                    <input type="checkbox"
+                      status="info"
+                      (change)="onSelectPagePermission($event, section.key, settings.data.userPermissions.originalpagesNames[i])"
+                      (click)="onSelectPagePermissionClearClickPropagation($event)"
+                      [(ngModel)] = "usersPermissionsModel['reports'][section.key]._status"
+                      [ngModelOptions]="{standalone: true}" />
+                  </label>
+    
+                  <span class="pageName">{{ translateReportsSectionName(section.key) }}</span>
+
+              </button>
+            </h2>
+              <div [id]="'collapseSubPagesReports' + i + '_' + i2 + '_' + section.key" class="accordion-collapse collapse" aria-labelledby="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}" data-bs-parent="#subPagesReports">
+              <div class="accordion-body">
+
+
+               <!-- SecondLevel -->
+
+                <div class="accordion" id="subPagesReports_l1">
+                  <div class="accordion-item" *ngFor="let subSection of section.value.sections | keyvalue">
+                    <h2 class="accordion-header" id="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}">
+        
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseSubPagesReports' + i + '_' + i2 + '_' + section.key +  '_'  + subSection.key" aria-expanded="true" aria-controls="collapseSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}">
+
+                        <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                          <input type="checkbox"
+                            status="info"
+                            (change)="onSelectPagePermission($event, subSection.key, settings.data.userPermissions.originalpagesNames[i])"
+                            (click)="onSelectPagePermissionClearClickPropagation($event)"
+                            [(ngModel)]="usersPermissionsModel['reports'][section.key].sections[subSection.key]._status"
+                            [ngModelOptions]="{standalone: true}" />
+                        </label>
+            
+                        <span class="pageName">{{ translateReportsSubSectionName(subSection.key) }}</span>
+        
+                      </button>
+                    </h2>
+
+                       <!-- ThirdyLevel -->
+
+                      <div [id]="'collapseSubPagesReports' + i + '_' + i2 + '_' + section.key +  '_' + subSection.key" class="accordion-collapse collapse" aria-labelledby="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}" data-bs-parent="#subPagesReports_l1" >
+                      <div class="accordion-body">
+
+                                  
+                          <div class="accordion" id="subPagesReports_l2">
+                            <div class="accordion-item" *ngFor="let type of subSection.value | keyvalue">
+                              <h2 class="accordion-header" id="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}_{{type.key}}">
+                  
+                                  <button class="accordion-button" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseSubPagesReports' + i + '_' + i2 + '_' + section.key +  '_'  + subSection.key + '_' + type.key" aria-expanded="true" aria-controls="collapseSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}_{{type.key}}">
+
+                                    <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                                      <input type="checkbox"
+                                        status="info"
+                                        (change)="onSelectPagePermission($event, type.key, settings.data.userPermissions.originalpagesNames[i])"
+                                        (click)="onSelectPagePermissionClearClickPropagation($event)"
+                                        [(ngModel)]="usersPermissionsModel['reports'][section.key].sections[subSection.key][type.key]._status"
+                                        [ngModelOptions]="{standalone: true}" />
+                                    </label>
+                      
+                                    <span class="pageName">{{ translateReportsTypeName(type.key) }}</span>
+                  
+                                </button>
+                              </h2>
+
+                                <!-- FourthLevel -->
+
+                                <div [id]="'collapseSubPagesReports' + i + '_' + i2 + '_' + section.key +  '_' + subSection.key + '_' + type.key" class="accordion-collapse collapse" aria-labelledby="headingSubPagesReports{{i}}_{{i2}}_{{section.key}}_{{subSection.key}}_{{type.key}}" data-bs-parent="#subPagesReports_l2" >
+                                <div class="accordion-body">
+
+                                   <div>
+
+                                      <p class="sectionName">{{ translate.mainModal.permissions.actions }}</p>
+                                      <span class="item" *ngFor="let action of type.value.actions;let actionIndex=index">
+                                        <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                                          <input type="checkbox"
+                                            status="info" (change)="onSelectActionsAnfIeldsPermission($event)"  
+                                            [(ngModel)]="usersPermissionsModel['reports'][section.key].sections[subSection.key][type.key].actions[action]"
+                                            [ngModelOptions]="{standalone: true}"
+                                          />
+                                          {{ 
+                                            translateFieldsAndAction('actions', type.value.actions,
+                                            [
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: section.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: subSection.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  type.value.actions, 
+                                              currentPermission: type.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            }
+                                          ])[actionIndex] }}
+                                        </label>
+                                      </span>
+
+
+                                      <p class="sectionName">{{ translate.mainModal.permissions.fields }}</p>
+                                      <span class="item" *ngFor="let field of type.value.fields;let fieldIndex=index">
+                                        <label *ngIf="settings.data.action != 'view' && settings.data.action != 'delete'">
+                                          <input type="checkbox"
+                                            status="info" (change)="onSelectActionsAnfIeldsPermission($event)"  
+                                            [(ngModel)]="usersPermissionsModel['reports'][section.key].sections[subSection.key][type.key].fields[field]"
+                                            [ngModelOptions]="{standalone: true}"
+                                          />
+                                          {{ 
+                                            translateFieldsAndAction('fields', type.value.fields,
+                                            [
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: section.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  [], 
+                                              currentPermission: subSection.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData:  type.value.fields, 
+                                              currentPermission: type.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            }
+                                          ])[fieldIndex] }}
+                                        </label>
+
+
+                                        <span *ngIf="settings.data.action == 'view' || settings.data.action == 'delete'" class="item-cehcked"><i class="fas fa-check"></i> {{ 
+                                          translateFieldsAndAction('fields', type.value.fields,
+                                          [
+                                            {
+                                              currentLevelData: [], 
+                                              currentPermission: settings.data.userPermissions.originalpagesNames[i],
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData: [], 
+                                              currentPermission: section.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData: [], 
+                                              currentPermission: subSection.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            },
+                                            {
+                                              currentLevelData: type.value.fields, 
+                                              currentPermission: type.key,
+                                              currentRootPermission: settings.data.userPermissions.originalpagesNames[i]
+                                            }
+                                        ])[fieldIndex] }}</span>
+                                      </span>
+                                    </div>
+                                    
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
