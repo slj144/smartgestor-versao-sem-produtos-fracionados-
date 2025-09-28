@@ -3,7 +3,7 @@ import { RouterModule } from '@angular/router';
 
 // Modules
 import { SharedModule } from '../../@shared/shared.module';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+// import { NgxChartsModule } from '@swimlane/ngx-charts'; // Temporariamente comentado para resolver compatibilidade
 
 // Components
 import { DashboardComponent } from './dashboard.component';
@@ -11,7 +11,7 @@ import { DashboardComponent } from './dashboard.component';
 @NgModule({
   imports: [
     SharedModule,
-    NgxChartsModule,
+    // NgxChartsModule, // Temporariamente comentado para resolver compatibilidade
     RouterModule.forChild([
       { path: '', component: DashboardComponent },
       { path: '**', redirectTo: '', pathMatch: 'full' }
