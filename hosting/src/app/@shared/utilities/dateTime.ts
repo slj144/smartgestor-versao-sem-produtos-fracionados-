@@ -42,12 +42,27 @@ export class DateTime {
 
 
   public static context(callback: () => void) {
+    // Se já está inicializado, executar imediatamente
+    if (DateTime.shared && DateTime.shared.localDate) {
+      callback();
+      return;
+    }
+
+    // Caso contrário, aguardar com timeout de 3 segundos
+    let attempts = 0;
+    const maxAttempts = 30; // 3 segundos (30 * 100ms)
     const timer = setInterval(() => {
+      attempts++;
       if (DateTime.shared && DateTime.shared.localDate) {
         clearInterval(timer);
         callback();
+      } else if (attempts >= maxAttempts) {
+        // Timeout - executar callback mesmo assim para evitar travamento
+        clearInterval(timer);
+        console.warn('DateTime initialization timeout - using fallback');
+        callback();
       }
-    });
+    }, 100);
   }
 
 
@@ -126,7 +141,20 @@ export class DateTime {
   }
 
   public static getDateObject() {
-    return DateTime.getDateObjectFromString(DateTime.shared.localDate.toISOString());
+    // Verificação de segurança para evitar erro quando DateTime.shared ou localDate não está inicializado
+    if (!DateTime.shared || !DateTime.shared.localDate) {
+      // Retornar data atual do cliente como fallback
+      const now = new Date();
+      // Não aplicar offset se não tiver dados de timezone para evitar problemas
+      return now;
+    }
+    try {
+      return DateTime.getDateObjectFromString(DateTime.shared.localDate.toISOString());
+    } catch (error) {
+      // Se houver erro ao converter, retornar data atual
+      console.warn('Error getting date object:', error);
+      return new Date();
+    }
   }
 
   public static async getAsyncDateObject() {
@@ -173,6 +201,19 @@ export class DateTime {
 
     format = <any>format.toUpperCase();
     locale = locale.toUpperCase();
+
+    // Validação de entrada
+    if (!input || input === 'undefined' || input === 'null') {
+      // Retornar valores padrão baseados no returnMode
+      switch (returnMode.toLowerCase()) {
+        case 'string':
+          return format === "DH" ? '01/01/1970 00:00:00' : (format === "D" ? '01/01/1970' : '00:00:00');
+        case 'array':
+          return ['01/01/1970', '00:00:00'];
+        case 'object':
+          return { date: '01/01/1970', hours: '00:00:00' };
+      }
+    }
 
     const date = DateTime.getDateObjectFromString(input, true);
 

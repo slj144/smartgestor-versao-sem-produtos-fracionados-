@@ -37,7 +37,41 @@ export class CashierFrontReceiptsPrintComponent implements OnInit {
 
     this.settings = settings;
     this.settings.storeInfo = Utilities.storeInfo;
-    this.settings.currentDate = `${DateTime.formatDate(DateTime.getDate('D'), 'array', 'BR')[0]} ${DateTime.getDate('H')}`;
+
+    // Tentar obter a data do DateTime, mas não bloquear se falhar
+    try {
+      const dateString = DateTime.getDate('D');
+      const formattedDate = DateTime.formatDate(dateString, 'array', 'BR');
+      const timeString = DateTime.getDate('H');
+
+      if (formattedDate && Array.isArray(formattedDate)) {
+        this.settings.currentDate = `${formattedDate[0]} ${timeString}`;
+      } else {
+        // Usar data do cliente se formatDate falhar
+        this.settings.currentDate = this.getClientDate();
+      }
+    } catch (error) {
+      // Fallback para data do cliente em caso de qualquer erro
+      console.warn('DateTime error, using client date:', error);
+      this.settings.currentDate = this.getClientDate();
+    }
+
+    // Continuar com a impressão imediatamente
+    this.continuePrint();
+  }
+
+  private getClientDate(): string {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+  }
+
+  private continuePrint() {
 
     if (Utilities.localStorage("CashierWarrantyTerm")) {
       this.settings.warrantyTerm = this.safeHTML(Utilities.localStorage("CashierWarrantyTerm"));
@@ -55,7 +89,7 @@ export class CashierFrontReceiptsPrintComponent implements OnInit {
       setTimeout(() => {
 
         Utilities.loading(false);
-      
+
         newWin.focus();
         newWin.print();
       }, 2000);

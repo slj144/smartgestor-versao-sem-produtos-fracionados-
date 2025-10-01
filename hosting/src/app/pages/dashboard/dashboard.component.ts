@@ -89,6 +89,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     loading: true
   };
 
+  // ✅ DADOS DO GRÁFICO (computado uma vez para evitar loops)
+  public chartData: any[] = [];
+
   // Permissões do usuário
   public permissions = {
     counters: {
@@ -330,16 +333,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
               };
             }
 
-            // ✅ LINHA 146 APROXIMADA - AQUI ESTAVA O ERRO!
-            this.cashier.settings.data = data || { currentDay: { results: [], total: 0, fake: true } };
+            // ✅ USAR DADOS REAIS QUANDO DISPONÍVEIS
+            if (data && Object.keys(data).length > 0) {
+              this.cashier.settings.data = data;
+            } else {
+              this.cashier.settings.data = { currentDay: { results: [], total: 0, fake: true } };
+            }
             this.cashier.loading = false;
+
+            // ✅ ATUALIZAR DADOS DO GRÁFICO UMA VEZ
+            this.updateChartData();
           }
         } catch (error) {
           console.error('❌ Erro ao processar dados do caixa:', error);
           this.cashier.loading = false;
           this.cashier.settings.data = { currentDay: { results: [], total: 0, fake: true } };
+
+          // ✅ ATUALIZAR COM DADOS DE EXEMPLO EM CASO DE ERRO
+          this.updateChartData();
         }
       }, this.permissions.cashierResume);
+    } else {
+      // ✅ SE NÃO HOUVER CAIXA ATIVO, USAR DADOS DE EXEMPLO
+      this.updateChartData();
     }
   }
 
@@ -547,6 +563,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
 
       this.cashier.dataSelected = type;
+
+      // ✅ ATUALIZAR DADOS DO GRÁFICO QUANDO PERÍODO MUDAR
+      this.updateChartData();
     } catch (error) {
       console.error('❌ Erro ao alterar período do caixa:', error);
     }
@@ -622,7 +641,127 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
   /**
-   * 🏷️ FORMATAR LABELS do gráfico de pizza
+   * 🎯 ATUALIZAR DADOS DO GRÁFICO
+   * Atualiza a propriedade chartData uma vez para evitar loops
+   */
+  private updateChartData(): void {
+    try {
+      const data = this.cashier.settings.data[this.cashier.dataSelected];
+
+
+      // Verifica se há dados válidos - Prioriza resultados reais sobre flag fake
+      const hasRealResults = data && data.results && data.results.length > 0;
+      const hasValidValues = hasRealResults && data.results.some(item => {
+        const val = parseFloat(item.value?.toString() || '0');
+        return val > 0.01; // Valores reais são maiores que 0.01
+      });
+
+      if (!hasRealResults || (!hasValidValues && data.fake)) {
+        // Para o dia atual sem dados: mostrar zerado
+        if (this.cashier.dataSelected === 'currentDay') {
+          this.chartData = [
+            { name: 'Vendas', value: 0 },
+            { name: 'Entradas', value: 0 },
+            { name: 'Saídas', value: 0 }
+          ];
+        } else {
+          // Para outros períodos sem dados: usar exemplo
+          this.chartData = [
+            { name: 'Vendas', value: 2500.75 },
+            { name: 'Entradas', value: 1850.30 },
+            { name: 'Saídas', value: 980.50 }
+          ];
+        }
+        return;
+      }
+
+      // ✅ DADOS REAIS quando disponíveis
+      const processedData = data.results
+        .filter(item => {
+          const val = parseFloat(item.value?.toString() || '0');
+          return val > 0; // Aceita qualquer valor maior que 0
+        })
+        .map(item => ({
+          name: item.name || 'Sem nome',
+          value: parseFloat(item.value?.toString() || '0'),
+          percentage: item.percentage || 0
+        }));
+
+
+      // Se não houver dados processados válidos
+      const hasRealData = processedData.some(item => item.value > 0);
+
+      if (processedData.length > 0 && hasRealData) {
+        this.chartData = processedData;
+      } else {
+        // Sem dados válidos: zerado para dia atual, exemplo para outros períodos
+        if (this.cashier.dataSelected === 'currentDay') {
+          this.chartData = [
+            { name: 'Vendas', value: 0 },
+            { name: 'Entradas', value: 0 },
+            { name: 'Saídas', value: 0 }
+          ];
+        } else {
+          this.chartData = [
+            { name: 'Vendas', value: 2500.75 },
+            { name: 'Entradas', value: 1850.30 },
+            { name: 'Saídas', value: 980.50 }
+          ];
+        }
+      }
+
+    } catch (error) {
+      console.error('❌ Erro ao processar dados do gráfico:', error);
+      this.chartData = [
+        { name: 'Vendas', value: 2500.75 },
+        { name: 'Entradas', value: 1850.30 },
+        { name: 'Saídas', value: 980.50 }
+      ];
+    }
+  }
+
+  /**
+   * 🎯 GETTER PARA DADOS DO GRÁFICO (usado no template)
+   */
+  public getChartData(): any[] {
+    return this.chartData;
+  }
+
+  /**
+   * 🎨 CORES DO DASHBOARD
+   * Cores de acordo com modal de resultado: AZUL=Vendas, VERDE=Entradas, VERMELHO=Saídas
+   */
+  public getDashboardColorScheme(): { domain: string[] } {
+    return {
+      domain: [
+        '#667eea',  // AZUL - Vendas
+        '#10b981',  // VERDE - Entradas
+        '#ef4444',  // VERMELHO - Saídas
+        '#f59e0b',  // LARANJA - Custos (se houver)
+        '#764ba2',  // ROXO - Outros
+        '#6c7293'   // CINZA - Neutro
+      ]
+    };
+  }
+
+  /**
+   * 🎯 EVENTO DE CLICK NO GRÁFICO
+   */
+  public onChartClick(event: any): void {
+    console.log('🎯 Chart click:', event);
+    // Aqui você pode adicionar ações específicas quando clicar no gráfico
+  }
+
+  /**
+   * 🎯 EVENTO DE HOVER NO GRÁFICO
+   */
+  public onChartHover(event: any): void {
+    // console.log('🎯 Chart hover:', event);
+    // Aqui você pode adicionar ações específicas quando fazer hover no gráfico
+  }
+
+  /**
+   * 🏷️ FORMATAR LABELS do gráfico de pizza (mantido para compatibilidade)
    * Adiciona o valor em R$ no label de cada fatia
    */
   public formatLabel = (label: string): string => {

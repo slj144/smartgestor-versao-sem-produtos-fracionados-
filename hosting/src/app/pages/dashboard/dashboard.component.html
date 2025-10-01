@@ -107,13 +107,17 @@
 
         <div class="container-view">
           <div class="container-chart">
-            <!-- Gráfico de Pizza Melhorado com mais configurações visuais -->
-            <ngx-charts-pie-chart [scheme]="cashier.settings.scheme"
-              [results]="cashier.settings.data[cashier.dataSelected]?.results || []"
-              [gradient]="cashier.settings.gradient" [doughnut]="cashier.settings.isDoughnut" [animations]="true"
-              [tooltipDisabled]="false" [labels]="true" [arcWidth]="0.6" [explodeSlices]="false" [trimLabels]="true"
-              [labelFormatting]="formatLabel" [maxLabelLength]="20">
-            </ngx-charts-pie-chart>
+            <!-- 🎯 GRÁFICO DE PIZZA MODERNO Chart.js -->
+            <smart-chart
+              type="doughnut"
+              [data]="getChartData()"
+              [loading]="cashier.loading"
+              [gradient]="true"
+              [scheme]="getDashboardColorScheme()"
+              height="280px"
+              (chartClick)="onChartClick($event)"
+              (chartHover)="onChartHover($event)">
+            </smart-chart>
           </div>
 
           <div class="container-content">

@@ -32,8 +32,10 @@ export const setupMenu = (): IMenuOptions[] => {
   const profile = projectSettings.profile;
 
   // Verificar se é CRM Only de forma mais robusta
+  // Tratamento: null é considerado false
+  const crmActiveCheck = profile?.data?.crm?.active === true || profile?.crm?.active === true;
   const isCRMOnly = (
-    profile?.crm?.active === true &&
+    crmActiveCheck === true &&
     profile?.cashier?.active === false &&
     profile?.stock?.active === false &&
     profile?.financial?.active === false &&
@@ -41,17 +43,8 @@ export const setupMenu = (): IMenuOptions[] => {
     profile?.requests?.active === false
   );
 
-  console.log('🚀 É CRM Only?', isCRMOnly);
-  console.log('📊 Profile detalhado:', {
-    crm: profile?.crm?.active,
-    cashier: profile?.cashier?.active,
-    stock: profile?.stock?.active,
-    financial: profile?.financial?.active
-  });
-
   // Se for CRM Only, retorna menu simplificado
   if (isCRMOnly) {
-    console.log('✅ Menu CRM Only ativado!');
 
     // Constrói subitens do CRM dinamicamente
     const crmSubItems = [
@@ -153,14 +146,10 @@ export const setupMenu = (): IMenuOptions[] => {
     return MENU_CRM_ONLY;
   }
 
-  // 🔍 VERIFICANDO PERFIL
-  console.log('🔍 VERIFICANDO PERFIL');
-  console.log('Company Settings:', ProjectSettings.companySettings());
-  console.log('Tipo de empresa:', ProjectSettings.companySettings().type);
-
   const MENU_ITEMS: IMenuOptions[] = [];
 
-  const companyProfile = ProjectSettings.companySettings().profile;
+  const companySettings = ProjectSettings.companySettings();
+  const companyProfile = companySettings.profile;
   const loginData = Utilities.currentLoginData; // Esta declaração permanece aqui
   const isDistributor = companyProfile?.name?.toLowerCase()?.includes('distributor');
 
@@ -367,8 +356,11 @@ export const setupMenu = (): IMenuOptions[] => {
 
   // ⭐ CRM COM SUBMENU - VERSÃO SEGURA
   // Verificar CRM em ambos os lugares (profile.data.crm tem prioridade)
-  const crmActive = companyProfile?.data?.crm?.active || companyProfile?.crm?.active;
-  if (crmActive && (Utilities.isAdmin || (Utilities.permissions().crm != null))) {
+  // Tratamento especial: se crm for null, considera como false
+  const crmActive = (companyProfile?.data?.crm?.active === true) || (companyProfile?.crm?.active === true);
+  const hasCrmPermission = Utilities.isAdmin || (Utilities.permissions().crm != null);
+
+  if (crmActive && hasCrmPermission) {
 
     const item = {
       id: 'crm',
@@ -460,15 +452,6 @@ export const setupMenu = (): IMenuOptions[] => {
     }
   }
 
-  // ⭐ DEBUG
-  console.log('=== DEBUG MENU ===');
-  console.log('Profile:', companyProfile);
-  console.log('CRM Active:', companyProfile?.data?.crm?.active || companyProfile?.crm?.active);
-  console.log('CRM Components:', companyProfile?.crm?.components);
-  console.log('Permissions:', Utilities.permissions());
-  console.log('IsAdmin:', Utilities.isAdmin);
-  console.log('Menu Items:', MENU_ITEMS);
-  console.log('==================');
 
   return MENU_ITEMS;
 }

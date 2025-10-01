@@ -134,12 +134,77 @@ export class AuthService {
 
 
       /// get Project Settings
+      console.log('🔄 [AuthService] Buscando Project Settings...');
 
-      await this.iToolsService.functions().call("getProjectSettings").then((res) => {
+      // 🔥 Criar instância do iTools conectada ao banco "projects-manager"
+      const managerInstance = new iTools();
+      try {
+        await managerInstance.initializeApp({
+          projectId: "projects-manager",
+          email: environment.loginSettings.email,
+          password: environment.loginSettings.password,
+          encrypted: false
+        });
+        console.log('✅ [AuthService] Conectado ao projects-manager');
 
+        // Buscar o projeto pelo _id
+        const projectDoc: any = await managerInstance.database()
+          .collection("Projects")
+          .doc(ProjectSettings.companyID())
+          .get();
 
+        console.log('🔍 [AuthService] projectDoc do projects-manager:', projectDoc);
 
-        if (res.status) {
+        if (projectDoc && projectDoc.data && projectDoc.data()) {
+          const projectData = projectDoc.data();
+          console.log('✅ [AuthService] projectData encontrado:', projectData);
+
+          projectInfo = {
+            companyName: projectData.companyName,
+            projectId: projectData.projectId || projectData._id,
+            country: projectData.country || "BR",
+            currency: projectData.currency || 'BRL',
+            language: projectData.language || "pt_BR",
+            timezone: projectData.timezone || "America/Sao_Paulo",
+            profile: projectData.profile
+          };
+
+          // 🔥 Sincronizar CRM de profile.data.crm para profile.crm
+          if (projectInfo.profile?.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+            projectInfo.profile.crm = projectInfo.profile.data.crm;
+            console.log('✅ [AuthService] CRM sincronizado de profile.data.crm');
+          } else if (projectInfo.profile?.crm === null) {
+            delete projectInfo.profile.crm;
+            console.log('🗑️ [AuthService] profile.crm era null, foi removido');
+          }
+
+          console.log('✅ [AuthService] ProjectInfo carregado do projects-manager:', projectInfo);
+          console.log('🔍 [AuthService] Profile.crm:', projectInfo.profile?.crm);
+          console.log('🔍 [AuthService] Profile.data.crm:', projectInfo.profile?.data?.crm);
+        } else {
+          console.error('❌ [AuthService] Projeto não encontrado no projects-manager:', ProjectSettings.companyID());
+        }
+
+        // Fechar a conexão com projects-manager
+        managerInstance.close();
+      } catch (error) {
+        console.error('❌ [AuthService] Erro ao buscar do projects-manager:', error);
+
+        // Fechar a conexão em caso de erro
+        try {
+          managerInstance.close();
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      // FALLBACK antigo comentado (não é mais necessário)
+      /*
+      try {
+        const res = await this.iToolsService.functions().call("getProjectSettings");
+        console.log('📦 [AuthService] Resposta getProjectSettings:', res);
+
+        if (res.status && res.data?.data) {
           projectInfo = {
             companyName: res.data.data.companyName,
             projectId: res.data.data._id,
@@ -150,26 +215,167 @@ export class AuthService {
             profile: res.data.data.profile
           };
 
-          // console.log(res);
+          console.log('✅ [AuthService] ProjectInfo carregado via função:', projectInfo);
         } else {
-          reject({
-            code: 400,
-            status: false
-          });
-          return;
+          console.warn('⚠️ [AuthService] Função falhou ou retornou vazio, usando FALLBACK direto do banco...');
+          console.log('🔍 [AuthService] CompanyID:', ProjectSettings.companyID());
+
+          // ⭐ DEBUG: Listar todos os projetos para ver a estrutura
+          console.log('📋 [AuthService] Listando TODOS os projetos para debug...');
+          const allProjects = await this.iToolsService.database()
+            .collection("Projects")
+            .limit(10)
+            .get();
+
+          console.log('📋 [AuthService] Resposta completa da query:', allProjects);
+
+          if (allProjects && allProjects.docs) {
+            console.log('📋 [AuthService] Total de projetos encontrados:', allProjects.docs.length);
+
+            if (allProjects.docs.length === 0) {
+              console.error('⚠️ [AuthService] NENHUM projeto encontrado! Verifique:');
+              console.error('   1. iTools está conectado ao banco correto?');
+              console.error('   2. A coleção "Projects" existe?');
+              console.error('   3. Há permissões para ler a coleção?');
+            } else {
+              allProjects.docs.forEach((doc: any) => {
+                const data = doc.data();
+                console.log('📋 [AuthService] Projeto:', {
+                  _id: data._id,
+                  projectId: data.projectId,
+                  companyName: data.companyName
+                });
+              });
+            }
+          } else {
+            console.error('❌ [AuthService] allProjects.docs não existe!', allProjects);
+          }
+
+          // ⭐ FALLBACK: Buscar direto pelo _id
+          console.log('🔍 [AuthService] Tentando buscar por _id:', ProjectSettings.companyID());
+          let projectDoc: any = await this.iToolsService.database()
+            .collection("Projects")
+            .doc(ProjectSettings.companyID())
+            .get();
+
+          console.log('🔍 [AuthService] projectDoc (busca por _id):', projectDoc);
+
+          // Se não encontrou por _id, tentar por where com projectId
+          if (!projectDoc || !projectDoc.data()) {
+            console.log('🔍 [AuthService] Não encontrado por _id, tentando where com projectId...');
+            const projectsQuery: any = await this.iToolsService.database()
+              .collection("Projects")
+              .where([{ field: 'projectId', operator: '=', value: ProjectSettings.companyID() }])
+              .limit(1)
+              .get();
+
+            console.log('🔍 [AuthService] projectsQuery do fallback:', projectsQuery);
+
+            if (projectsQuery && projectsQuery.docs && projectsQuery.docs.length > 0) {
+              projectDoc = projectsQuery.docs[0];
+            }
+          }
+
+          // iTools retorna { docs: [...] }, não um array direto
+          if (projectDoc && projectDoc.data && projectDoc.data()) {
+            const projectData = projectDoc.data();
+            console.log('🔍 [AuthService] projectData encontrado:', projectData);
+
+            projectInfo = {
+              companyName: projectData.companyName,
+              projectId: projectData.projectId || projectData._id,
+              country: projectData.country || "BR",
+              currency: projectData.currency || 'BRL',
+              language: projectData.language || "pt_BR",
+              timezone: projectData.timezone || "America/Sao_Paulo",
+              profile: projectData.profile
+            };
+
+            // 🔥 Sincronizar CRM se necessário
+            if (projectInfo.profile?.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+              projectInfo.profile.crm = projectInfo.profile.data.crm;
+              console.log('✅ [AuthService] CRM sincronizado de profile.data.crm (fallback 1)');
+            } else if (projectInfo.profile?.crm === null) {
+              delete projectInfo.profile.crm;
+              console.log('🗑️ [AuthService] profile.crm era null, foi removido (fallback 1)');
+            }
+
+            console.log('✅ [AuthService] ProjectInfo carregado via FALLBACK (função vazia):', projectInfo);
+          } else {
+            console.error('❌ [AuthService] Projeto não encontrado com projectId:', ProjectSettings.companyID());
+          }
         }
-      }).catch((error) => {
 
-        console.log(error);
+        if (projectInfo) {
+          console.log('🔍 [AuthService] Profile.crm:', projectInfo.profile?.crm);
+          console.log('🔍 [AuthService] Profile.data.crm:', projectInfo.profile?.data?.crm);
+        }
+      } catch (error) {
+        console.error('❌ [AuthService] Erro ao buscar ProjectSettings:', error);
 
+        // Mesmo com erro, tentar o fallback
+        try {
+          console.warn('⚠️ [AuthService] Tentando FALLBACK após erro...');
+          console.log('🔍 [AuthService] CompanyID:', ProjectSettings.companyID());
 
-        reject({
-          code: -400,
-          status: false
-        });
-        return;
-      });
+          // ⭐ BUSCAR PRIMEIRO PELO _ID, DEPOIS POR PROJECTID
+          console.log('🔍 [AuthService] Tentando buscar por _id:', ProjectSettings.companyID());
+          let projectDoc: any = await this.iToolsService.database()
+            .collection("Projects")
+            .doc(ProjectSettings.companyID())
+            .get();
 
+          console.log('🔍 [AuthService] projectDoc (busca por _id):', projectDoc);
+
+          // Se não encontrou por _id, tentar por where com projectId
+          if (!projectDoc || !projectDoc.data()) {
+            console.log('🔍 [AuthService] Não encontrado por _id, tentando where com projectId...');
+            const projectsQuery: any = await this.iToolsService.database()
+              .collection("Projects")
+              .where([{ field: 'projectId', operator: '=', value: ProjectSettings.companyID() }])
+              .limit(1)
+              .get();
+
+            console.log('🔍 [AuthService] projectsQuery:', projectsQuery);
+
+            if (projectsQuery && projectsQuery.docs && projectsQuery.docs.length > 0) {
+              projectDoc = projectsQuery.docs[0];
+            }
+          }
+
+          // iTools retorna { docs: [...] }, não um array direto
+          if (projectDoc && projectDoc.data && projectDoc.data()) {
+            const projectData = projectDoc.data();
+            console.log('🔍 [AuthService] projectData encontrado via where():', projectData);
+
+            projectInfo = {
+              companyName: projectData.companyName,
+              projectId: projectData.projectId || projectData._id,
+              country: projectData.country || "BR",
+              currency: projectData.currency || 'BRL',
+              language: projectData.language || "pt_BR",
+              timezone: projectData.timezone || "America/Sao_Paulo",
+              profile: projectData.profile
+            };
+
+            // 🔥 Sincronizar CRM se necessário
+            if (projectInfo.profile?.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+              projectInfo.profile.crm = projectInfo.profile.data.crm;
+              console.log('✅ [AuthService] CRM sincronizado de profile.data.crm (fallback 2)');
+            } else if (projectInfo.profile?.crm === null) {
+              delete projectInfo.profile.crm;
+              console.log('🗑️ [AuthService] profile.crm era null, foi removido (fallback 2)');
+            }
+
+            console.log('✅ [AuthService] ProjectInfo carregado via FALLBACK após erro:', projectInfo);
+          } else {
+            console.error('❌ [AuthService] Projeto não encontrado com projectId:', ProjectSettings.companyID());
+          }
+        } catch (fallbackError) {
+          console.error('❌ [AuthService] FALLBACK falhou:', fallbackError);
+        }
+      }
+      */
 
       const exec = async () => {
 
@@ -297,6 +503,9 @@ export class AuthService {
 
                       this.iToolsService.auth().login(user.email.toLowerCase(), password).then((res) => {
 
+                        console.log('📝 [AuthService] Criando loginData...');
+                        console.log('📦 [AuthService] projectInfo que será salvo:', projectInfo);
+
                         const loginData = {
                           userId: info.data._id,
                           email: info.data.email,
@@ -315,20 +524,39 @@ export class AuthService {
                           projectInfo: projectInfo
                         };
 
+                        console.log('✅ [AuthService] loginData criado:', {
+                          userId: loginData.userId,
+                          hasProjectInfo: !!loginData.projectInfo,
+                          projectInfo: loginData.projectInfo
+                        });
+
                         const allSessions = window.localStorage.getItem("logins") ? JSON.parse(window.localStorage.getItem("logins")) : {};
+
+                        console.log('💾 [AuthService] Salvando loginData no localStorage...');
+                        console.log('💾 [AuthService] userId:', loginData.userId);
+                        console.log('💾 [AuthService] loginData.projectInfo:', loginData.projectInfo);
 
                         allSessions[loginData.userId] = loginData;
 
                         window.localStorage.setItem("logins", JSON.stringify(allSessions));
 
+                        console.log('✅ [AuthService] Salvo! Verificando...');
+                        const verificacao = JSON.parse(window.localStorage.getItem("logins"));
+                        console.log('🔍 [AuthService] Verificação - projectInfo salvo:', verificacao[loginData.userId]?.projectInfo);
+
                         // Sincronizar configurações do projeto com o banco
                         if (projectInfo && projectInfo.profile) {
                           console.log('🔄 Sincronizando configurações do projeto...');
 
-                          // Se tem CRM em profile.data, copiar para profile (compatibilidade)
-                          if (projectInfo.profile.data?.crm !== undefined) {
+                          // 🔥 PRIORIDADE: profile.data.crm (fonte da verdade)
+                          if (projectInfo.profile.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+                            // Copiar de profile.data.crm para profile.crm (compatibilidade)
                             projectInfo.profile.crm = projectInfo.profile.data.crm;
-                            console.log('✅ CRM sincronizado de profile.data.crm');
+                            console.log('✅ CRM sincronizado de profile.data.crm para profile.crm');
+                          } else if (projectInfo.profile.crm === null) {
+                            // Se profile.crm for null, remover
+                            delete projectInfo.profile.crm;
+                            console.log('🗑️ profile.crm era null, foi removido');
                           }
 
                           // Salvar novamente com dados sincronizados
@@ -337,6 +565,10 @@ export class AuthService {
                             logins[loginData.userId].projectInfo = projectInfo;
                             localStorage.setItem("logins", JSON.stringify(logins));
                             console.log('✅ Configurações sincronizadas e salvas!');
+                            console.log('📦 ProjectInfo final:', {
+                              'profile.crm': projectInfo.profile.crm,
+                              'profile.data.crm': projectInfo.profile.data?.crm
+                            });
                           }
                         }
 
@@ -435,6 +667,71 @@ export class AuthService {
         });
         return;
       });
+    });
+  }
+
+  /**
+   * 🔄 RECARREGAR CONFIGURAÇÕES DO PROJETO
+   * Atualiza o projectInfo no localStorage sem precisar fazer logout
+   */
+  public async reloadProjectSettings(): Promise<void> {
+    return new Promise<void>(async (resolve, reject) => {
+      try {
+        console.log('🔄 [AuthService] Recarregando configurações do projeto...');
+
+        // Buscar configurações atualizadas
+        const res = await this.iToolsService.functions().call("getProjectSettings");
+
+        if (res.status) {
+          const projectInfo = {
+            companyName: res.data.data.companyName,
+            projectId: res.data.data._id,
+            country: res.data.data.country || "BR",
+            currency: res.data.data.currency || 'BRL',
+            language: res.data.data.language || "pt_BR",
+            timezone: res.data.data.timezone || "America/Sao_Paulo",
+            profile: res.data.data.profile
+          };
+
+          console.log('📦 [AuthService] ProjectInfo atualizado:', projectInfo);
+
+          // Normalizar profile.data.crm para profile.crm
+          if (projectInfo.profile?.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+            projectInfo.profile.crm = projectInfo.profile.data.crm;
+            console.log('✅ [AuthService] CRM sincronizado de profile.data.crm');
+          } else if (projectInfo.profile?.crm === null) {
+            delete projectInfo.profile.crm;
+            console.log('🗑️ [AuthService] profile.crm era null, foi removido');
+          }
+
+          // Atualizar localStorage
+          const logins = localStorage.getItem("logins") ? JSON.parse(localStorage.getItem("logins")) : {};
+          const userId = (<any>window).id;
+
+          if (logins[userId]) {
+            logins[userId].projectInfo = projectInfo;
+            localStorage.setItem("logins", JSON.stringify(logins));
+            console.log('✅ [AuthService] Configurações atualizadas no localStorage');
+
+            // Recarregar a página para aplicar as mudanças
+            console.log('🔄 [AuthService] Recarregando página...');
+            setTimeout(() => {
+              window.location.reload();
+            }, 500);
+
+            resolve();
+          } else {
+            console.error('❌ [AuthService] Usuário não encontrado no localStorage');
+            reject(new Error('Usuário não encontrado'));
+          }
+        } else {
+          console.error('❌ [AuthService] Falha ao buscar configurações');
+          reject(new Error('Falha ao buscar configurações'));
+        }
+      } catch (error) {
+        console.error('❌ [AuthService] Erro ao recarregar configurações:', error);
+        reject(error);
+      }
     });
   }
 

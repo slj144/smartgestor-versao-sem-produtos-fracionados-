@@ -41,106 +41,43 @@ export class ProjectSettings {
   }
 
   public static companySettings() {
+    // ⚠️ SEGURANÇA: Verifica se window.id existe antes de prosseguir
+    const windowId = (<any>window).id;
+    if (!windowId || windowId === 'undefined') {
+      // Retorna configuração padrão sem fazer logs repetidos
+      return this.getDefaultSettings();
+    }
+
     const logins = window.localStorage.getItem("logins") ? JSON.parse(window.localStorage.getItem("logins")) : {};
-    const currentLoginData = logins[(<any>window).id] ? logins[(<any>window).id] : {};
+    const currentLoginData = logins[windowId] ? logins[windowId] : {};
 
     let info = currentLoginData.projectInfo;
 
     if (!info) {
-      info = {
-        companyName: "",
-        projectId: ProjectSettings.companyID(),
-        country: "BR",
-        currency: 'BRL',
-        language: "pt_BR",
-        timezone: "America/Sao_Paulo",
-        profile: {
-          dashboard: { active: true },
-          crm: {
-            active: false,  // ⬅️ Desativado por padrão
-            components: {
-              dashboard: { active: true },
-              leads: { active: true },
-              pipeline: { active: true },
-              activities: { active: true }
-            }
-          },
-          requests: { active: true },
-          cashier: {
-            active: true,
-            components: {
-              cashierFront: { active: true },
-              cashierRegisters: { active: true }
-            }
-          },
-          serviceOrders: { active: true },
-          stock: {
-            active: true,
-            components: {
-              products: { active: true },
-              purchases: { active: true },
-              transfers: { active: true }
-            }
-          },
-          financial: {
-            active: true,
-            components: {
-              billsToPay: { active: true },
-              billsToReceive: { active: true },
-              bankAccounts: { active: true }
-            }
-          },
-          registers: {
-            active: true,
-            components: {
-              customers: { active: true },
-              collaborators: { active: true },
-              providers: { active: true },
-              carriers: { active: true },
-              partners: { active: true },
-              paymentMethods: { active: true },
-              services: { active: true },
-              vehicles: { active: false },
-              branches: { active: true }
-            }
-          },
-          fiscal: { active: true },
-          reports: { active: true },
-          informations: { active: true },
-          settings: { active: true }
-        }
-      };
+      info = this.getDefaultSettings();
     }
 
     // ⭐ CRM agora é opcional e controlado pelo Super Admin
 
-    // Verificar CRM em ambos os lugares possíveis
-    if (info && info.profile) {
-      // Priorizar profile.data.crm (local correto)
-      if (info.profile.data?.crm !== undefined) {
-        info.profile.crm = info.profile.data.crm;
-      }
-      // Se não existir em data, mas existir direto no profile (legado)
-      else if (info.profile.crm === undefined && info.profile?.data?.crm !== undefined) {
-        info.profile.crm = info.profile.data.crm;
-      }
+    // Normalizar estrutura do profile antes de retornar
+    if (info && info.profile && info.profile.data) {
+      // Copiar TODOS os módulos de profile.data para profile (para garantir compatibilidade)
+      Object.keys(info.profile.data).forEach(key => {
+        // Sempre sobrescrever com os dados de profile.data (fonte da verdade)
+        // Ignorar se for null
+        if (info.profile.data[key] !== undefined && info.profile.data[key] !== null) {
+          info.profile[key] = info.profile.data[key];
+        }
+      });
     }
 
-    // Normalizar estrutura do profile antes de retornar
+    // 🔥 TRATAMENTO ESPECIAL: Remover campos null do profile
     if (info && info.profile) {
-      // Se o CRM está em profile.data, copiar para profile diretamente
-      if (info.profile.data?.crm && !info.profile.crm) {
-        info.profile.crm = info.profile.data.crm;
-      }
-
-      // Fazer o mesmo para outros módulos se necessário
-      if (info.profile.data) {
-        Object.keys(info.profile.data).forEach(key => {
-          if (!info.profile[key]) {
-            info.profile[key] = info.profile.data[key];
-          }
-        });
-      }
+      Object.keys(info.profile).forEach(key => {
+        if (info.profile[key] === null && key !== 'data') {
+          delete info.profile[key];
+        }
+      });
     }
     // Garante que instâncias com ordens de serviço possuam o registro de serviços
     // ativo nos cadastros. O único perfil que não utiliza este recurso é o
@@ -167,5 +104,75 @@ export class ProjectSettings {
   // Método para resetar a flag (útil após logout)
   public static resetFlags() {
     this.crmAdded = false;
+  }
+
+  /**
+   * Retorna as configurações padrão do sistema
+   * Usada quando não há projectInfo disponível
+   */
+  private static getDefaultSettings() {
+    return {
+      companyName: "",
+      projectId: ProjectSettings.companyID(),
+      country: "BR",
+      currency: 'BRL',
+      language: "pt_BR",
+      timezone: "America/Sao_Paulo",
+      profile: {
+        dashboard: { active: true },
+        crm: {
+          active: false,  // ⬅️ Desativado por padrão
+          components: {
+            dashboard: { active: true },
+            leads: { active: true },
+            pipeline: { active: true },
+            activities: { active: true }
+          }
+        },
+        requests: { active: true },
+        cashier: {
+          active: true,
+          components: {
+            cashierFront: { active: true },
+            cashierRegisters: { active: true }
+          }
+        },
+        serviceOrders: { active: true },
+        stock: {
+          active: true,
+          components: {
+            products: { active: true },
+            purchases: { active: true },
+            transfers: { active: true }
+          }
+        },
+        financial: {
+          active: true,
+          components: {
+            billsToPay: { active: true },
+            billsToReceive: { active: true },
+            bankAccounts: { active: true }
+          }
+        },
+        registers: {
+          active: true,
+          components: {
+            customers: { active: true },
+            collaborators: { active: true },
+            providers: { active: true },
+            carriers: { active: true },
+            partners: { active: true },
+            paymentMethods: { active: true },
+            services: { active: true },
+            vehicles: { active: false },
+            branches: { active: true }
+          }
+        },
+        fiscal: { active: true },
+        reports: { active: true },
+        informations: { active: true },
+        settings: { active: true }
+      }
+    };
   }
 }

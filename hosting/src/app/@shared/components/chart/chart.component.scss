@@ -1,0 +1,248 @@
+/**
+ * =====================================================
+ * ESTILOS: ChartComponent (Chart.js Moderno)
+ * CAMINHO: src/app/@shared/components/chart/chart.component.scss
+ * =====================================================
+ *
+ * DESCRIÇÃO:
+ * Estilos modernos para o componente de gráficos
+ * Design responsivo e animações suaves
+ *
+ * FEATURES:
+ * ✅ Container responsivo
+ * ✅ Loading spinner
+ * ✅ Estados vazios
+ * ✅ Animações suaves
+ * ✅ Hover effects
+ * =====================================================
+ */
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow:
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  // ✅ CANVAS DO GRÁFICO
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+
+    &:hover {
+      filter: brightness(1.05);
+    }
+  }
+
+  // ✅ LOADING OVERLAY
+  .chart-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    z-index: 10;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e5e7eb;
+      border-left: 4px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    span {
+      color: #6b7280;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+  }
+
+  // ✅ NO DATA OVERLAY
+  .chart-no-data {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(249, 250, 251, 0.8);
+    backdrop-filter: blur(4px);
+    border-radius: 16px;
+    z-index: 5;
+
+    span:first-child {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.6;
+    }
+
+    span:last-child {
+      color: #9ca3af;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+    }
+  }
+}
+
+// ✅ ANIMAÇÕES
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ✅ RESPONSIVIDADE
+@media (max-width: 768px) {
+  .chart-container {
+    height: 250px;
+    padding: 16px;
+    border-radius: 12px;
+
+    .chart-loading,
+    .chart-no-data {
+      border-radius: 12px;
+
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border-width: 3px;
+      }
+
+      span:first-child {
+        font-size: 36px;
+      }
+
+      span:last-child {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .chart-container {
+    height: 200px;
+    padding: 12px;
+    border-radius: 8px;
+
+    .chart-loading,
+    .chart-no-data {
+      border-radius: 8px;
+
+      .spinner {
+        width: 28px;
+        height: 28px;
+        border-width: 2px;
+      }
+
+      span:first-child {
+        font-size: 32px;
+        margin-bottom: 8px;
+      }
+
+      span:last-child {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+// ✅ DARK MODE SUPPORT (se necessário)
+@media (prefers-color-scheme: dark) {
+  .chart-container {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.3),
+      0 2px 4px -1px rgba(0, 0, 0, 0.2);
+
+    &:hover {
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-loading {
+      background: rgba(17, 24, 39, 0.95);
+
+      .spinner {
+        border-color: #374151;
+        border-left-color: #667eea;
+      }
+
+      span {
+        color: #d1d5db;
+      }
+    }
+
+    .chart-no-data {
+      background: rgba(31, 41, 55, 0.8);
+
+      span:last-child {
+        color: #9ca3af;
+      }
+    }
+  }
+}
+
+// ✅ ACESSIBILIDADE
+.chart-container {
+  &:focus-within {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+  }
+}
+
+// ✅ PRINT STYLES
+@media print {
+  .chart-container {
+    background: white !important;
+    box-shadow: none !important;
+    transform: none !important;
+
+    .chart-loading,
+    .chart-no-data {
+      display: none !important;
+    }
+  }
+}

@@ -55,6 +55,7 @@ import { ActivityBellComponent } from './components/activity-bell/activity-bell.
 import { UpdatesBannerComponent } from './components/updates-banner/updates-banner.component';
 
 import { SystemUpdateComponent } from './components/system-update/system-update.component';
+import { ChartComponent } from './components/chart/chart.component';
 //import { CameraScannerModalComponent } from './components/camera-scanner-modal/camera-scanner-modal.component';
 // REMOVIDO: import { CameraScannerService } from './services/camera-scanner.service';
 
@@ -116,6 +117,8 @@ import { CurrencyCustomPipe } from './pipes/currency.pipe';
     SystemUpdateComponent,
     UpdatesBannerComponent,
 
+    ChartComponent,
+
     EllipsisPipe,
     CurrencyCustomPipe,
     //CameraScannerModalComponent
@@ -173,9 +176,10 @@ import { CurrencyCustomPipe } from './pipes/currency.pipe';
     ActivityBellComponent,
     SystemUpdateComponent,
     UpdatesBannerComponent,
+    ChartComponent,
 
     EllipsisPipe,
-    CurrencyCustomPipe,
+    CurrencyCustomPipe
     //CameraScannerModalComponent
   ],
 })

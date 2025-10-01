@@ -932,6 +932,58 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
                 projectData.profile.data = {};
             }
 
+            // ⭐ IMPORTANTE: Preservar módulos existentes ao atualizar CRM
+            // Se profile.data está vazio, inicializar com todos os módulos padrão
+            if (!projectData.profile.data || Object.keys(projectData.profile.data).length === 0) {
+                console.log('⚠️ profile.data vazio! Inicializando com módulos padrão...');
+                projectData.profile.data = {
+                    dashboard: { active: true },
+                    requests: { active: true },
+                    cashier: {
+                        active: true,
+                        components: {
+                            cashierFront: { active: true },
+                            cashierRegisters: { active: true }
+                        }
+                    },
+                    serviceOrders: { active: true },
+                    stock: {
+                        active: true,
+                        components: {
+                            products: { active: true },
+                            purchases: { active: true },
+                            transfers: { active: true }
+                        }
+                    },
+                    financial: {
+                        active: true,
+                        components: {
+                            billsToPay: { active: true },
+                            billsToReceive: { active: true },
+                            bankAccounts: { active: true }
+                        }
+                    },
+                    registers: {
+                        active: true,
+                        components: {
+                            customers: { active: true },
+                            collaborators: { active: true },
+                            providers: { active: true },
+                            carriers: { active: true },
+                            partners: { active: true },
+                            paymentMethods: { active: true },
+                            services: { active: true },
+                            vehicles: { active: false },
+                            branches: { active: true }
+                        }
+                    },
+                    fiscal: { active: true },
+                    reports: { active: true },
+                    informations: { active: true },
+                    settings: { active: true }
+                };
+            }
+
             // Preparar objeto CRM
             const crmConfig = novoStatusCRM ? {
                 active: true,
@@ -943,9 +995,12 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
                 }
             } : { active: false };
 
-            // IMPORTANTE: Atualizar AMBOS os lugares para manter consistência
+            // ⭐ Adicionar CRM aos módulos existentes (preservando os outros)
+            projectData.profile.data.crm = crmConfig;
+
+            // IMPORTANTE: Atualizar o objeto completo profile.data para preservar todos os módulos
             const updateData: any = {
-                'profile.data.crm': crmConfig
+                'profile.data': projectData.profile.data  // ⬅️ Salvar TODOS os módulos
             };
 
             // Se o profile.crm existe (legado), remover para evitar conflito
@@ -985,29 +1040,52 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
                 this.mensagem = "";
             }, 3000);
 
-            // Limpar cache local se for a instância atual
+            // Atualizar cache local se for a instância atual
             const logins = window.localStorage.getItem("logins") ? JSON.parse(window.localStorage.getItem("logins")) : {};
             const currentLoginData = logins[(<any>window).id];
 
             if (currentLoginData && currentLoginData.projectId === instancia.projectId) {
-                console.log('🧹 Limpando cache da instância atual...');
+                console.log('🔄 Atualizando cache da instância atual...');
 
-                // Forçar atualização removendo dados do profile
+                // ⭐ IMPORTANTE: Preservar módulos existentes ao atualizar localStorage
                 if (currentLoginData.projectInfo?.profile) {
-                    delete currentLoginData.projectInfo.profile.crm;
-                    if (currentLoginData.projectInfo.profile.data) {
-                        delete currentLoginData.projectInfo.profile.data.crm;
+                    // Garantir que profile.data existe
+                    if (!currentLoginData.projectInfo.profile.data) {
+                        currentLoginData.projectInfo.profile.data = {};
                     }
+
+                    // ⭐ Se profile.data está vazio, copiar do projectData que acabamos de salvar no banco
+                    if (Object.keys(currentLoginData.projectInfo.profile.data).length === 0) {
+                        console.log('⚠️ localStorage profile.data vazio! Copiando dados do banco...');
+                        currentLoginData.projectInfo.profile.data = JSON.parse(JSON.stringify(projectData.profile.data));
+                    } else {
+                        // Se já tem dados, apenas adicionar/atualizar o CRM
+                        currentLoginData.projectInfo.profile.data.crm = crmConfig;
+                    }
+
+                    // Também atualizar em profile.crm para compatibilidade
+                    currentLoginData.projectInfo.profile.crm = crmConfig;
+
+                    console.log('✅ CRM atualizado no localStorage. Profile.data completo:',
+                        Object.keys(currentLoginData.projectInfo.profile.data));
                 }
 
                 // Salvar no localStorage
                 logins[(<any>window).id] = currentLoginData;
                 window.localStorage.setItem("logins", JSON.stringify(logins));
 
-                console.log('✅ Cache limpo! Recarregando em 2 segundos...');
+                console.log('✅ Cache atualizado! Recarregando página...');
 
-                // Mostrar mensagem para o usuário fazer logout
-                alert('⚠️ CRM ' + (novoStatusCRM ? 'ativado' : 'desativado') + ' com sucesso!\n\nPara que as alterações tenham efeito completo, faça logout e login novamente na instância.');
+                // Mostrar mensagem e recarregar
+                alert('✅ CRM ' + (novoStatusCRM ? 'ATIVADO' : 'DESATIVADO') + ' com sucesso!\n\n🔄 A página será recarregada para aplicar as mudanças...');
+
+                // Recarregar a página para aplicar as mudanças
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            } else {
+                // Se não é a instância atual, apenas mostrar mensagem de sucesso
+                console.log('ℹ️ Alteração feita em outra instância, não é necessário recarregar');
             }
 
             // Recarregar a lista para garantir consistência
