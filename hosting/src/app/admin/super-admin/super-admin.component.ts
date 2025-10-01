@@ -1537,76 +1537,66 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
 
         console.log(`Alterando status da instância ${instancia.projectId} para isPaid: ${novoIsPaid}`);
 
-        const url = 'https://functions.ipartts.com/bm-iparttsdev/updateInstanceStatus';
+        // Atualizar diretamente no banco projects-manager usando iTools
+        const managerInstance = new iTools();
 
-        const payload = {
-            secretKey: "1da392a6-89d2-3304-a8b7-959572c7e44e",
-            projectId: instancia.projectId,
-            isPaid: novoIsPaid
-        };
+        managerInstance.initializeApp({
+            projectId: "projects-manager",
+            email: environment.loginSettings.email,
+            password: environment.loginSettings.password,
+            encrypted: false
+        }).then(() => {
+            console.log('Conectado ao projects-manager');
 
-        console.log('Enviando requisição para:', url);
-        console.log('Payload:', payload);
+            // Atualizar o projeto no banco
+            return managerInstance.database().collection("Projects").doc(instancia.projectId).update({
+                isPaid: novoIsPaid
+            });
+        }).then(() => {
+            console.log('Status atualizado no projects-manager');
 
-        this.http.post(url, payload).subscribe({
-            next: (resposta: any) => {
-                console.log('Resposta da API:', resposta);
-
-                const managerInstance = new iTools();
-                managerInstance.initializeApp({
-                    projectId: "projects-manager"
-                });
-
-                managerInstance.database().collection("Projects").doc(instancia.projectId).update({
+            // Atualizar também na Store do projeto específico
+            const projectInstance = new iTools();
+            return projectInstance.initializeApp({
+                projectId: instancia.projectId,
+                email: environment.loginSettings.email,
+                password: environment.loginSettings.password,
+                encrypted: false
+            }).then(() => {
+                return projectInstance.database().collection("Stores").doc("matrix").update({
                     isPaid: novoIsPaid
-                }).then(() => {
-                    console.log('Status também atualizado no projects-manager');
-                    managerInstance.close();
-
-                    instancia.isPaid = novoIsPaid;
-
-                    this.contadorAtivas = this.instancias.filter(inst => inst.isPaid !== false).length;
-                    this.contadorInativas = this.instancias.filter(inst => inst.isPaid === false).length;
-
-                    this.mensagem = `Instância ${novoIsPaid ? 'ativada' : 'desativada'} com sucesso!`;
-                    this.tipoMensagem = "sucesso";
-
-                    setTimeout(() => {
-                        this.mensagem = "";
-                    }, 3000);
-
-                    this.alterandoStatus = false;
-                }).catch((erro: any) => {
-                    console.error('Erro ao atualizar projects-manager:', erro);
-                    instancia.isPaid = novoIsPaid;
-
-                    this.contadorAtivas = this.instancias.filter(inst => inst.isPaid !== false).length;
-                    this.contadorInativas = this.instancias.filter(inst => inst.isPaid === false).length;
-
-                    this.mensagem = `Instância ${novoIsPaid ? 'ativada' : 'desativada'} com sucesso!`;
-                    this.tipoMensagem = "sucesso";
-
-                    setTimeout(() => {
-                        this.mensagem = "";
-                    }, 3000);
-
-                    this.alterandoStatus = false;
-                    managerInstance.close();
+                }).finally(() => {
+                    projectInstance.close();
                 });
-            },
-            error: (erro) => {
-                console.error('Erro na API:', erro);
+            }).catch((err) => {
+                console.warn('Aviso: Não foi possível atualizar Store do projeto:', err);
+                // Não bloqueia o fluxo se falhar
+            });
+        }).then(() => {
+            managerInstance.close();
 
-                if (erro.status === 404) {
-                    this.mensagem = "Função de atualização não disponível. Entre em contato com o suporte.";
-                    this.tipoMensagem = "erro";
-                } else {
-                    this.mensagem = `Erro ao ${novoStatus} instância: ${erro.message || 'Falha na comunicação'}`;
-                    this.tipoMensagem = "erro";
-                }
+            // Atualizar UI
+            instancia.isPaid = novoIsPaid;
 
-                this.alterandoStatus = false;
-            }
+            this.contadorAtivas = this.instancias.filter(inst => inst.isPaid !== false).length;
+            this.contadorInativas = this.instancias.filter(inst => inst.isPaid === false).length;
+
+            this.mensagem = `Instância ${novoIsPaid ? 'ativada' : 'desativada'} com sucesso!`;
+            this.tipoMensagem = "sucesso";
+
+            setTimeout(() => {
+                this.mensagem = "";
+            }, 3000);
+
+            this.alterandoStatus = false;
+        }).catch((erro: any) => {
+            console.error('Erro ao atualizar status:', erro);
+            managerInstance.close();
+
+            this.mensagem = `Erro ao ${novoStatus} instância: ${erro.message || 'Falha na operação'}`;
+            this.tipoMensagem = "erro";
+
+            this.alterandoStatus = false;
         });
     }
 
