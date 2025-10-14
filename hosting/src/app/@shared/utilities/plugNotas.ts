@@ -61,6 +61,7 @@ export class PlugNotasApiService {
 
       this.envrounment = fiscal.envrounment || EEnvrounment.SANDBOX;
       this.apiKey = fiscal.apiKey || "2da392a6-79d2-4304-a8b7-959572c7e44d";
+
       this._checkRequest = true;
 
       this._dataMonitors.emit("ready", true);
@@ -145,13 +146,10 @@ export class PlugNotasApiService {
         data: data,
         formData: !!(data instanceof FormData),
         success: (res) => {
-
-          // console.log(res);
           res = toObject(res);
           resolve(res);
         },
         error: (error) => {
-
           error = toObject(error);
           reject(error);
         }

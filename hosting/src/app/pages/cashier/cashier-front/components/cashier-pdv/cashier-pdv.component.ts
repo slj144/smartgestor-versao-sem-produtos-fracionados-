@@ -88,6 +88,11 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
     CashierFrontPDVComponent.shared = this;
   }
 
+  // Símbolo de moeda dinâmico para usar no template
+  public get currencySymbol(): string {
+    return Utilities.currencySymbol;
+  }
+
   public ngOnInit() {
 
     // setTimeout(()=>{
@@ -233,7 +238,10 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
     if (this.data?.service?.types?.length > 0) {
       for (const item of (<any[]>this.data.service.types)) {
-        item.customPrice = item.executionPrice;
+        const hasCustom = item.customPrice !== undefined && item.customPrice !== null && !isNaN(Number(item.customPrice));
+        if (!hasCustom) {
+          item.customPrice = item.executionPrice;
+        }
       }
     }
 

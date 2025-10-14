@@ -113,7 +113,7 @@
               <div class="service-price">
                 <label>Preço:</label>
                 <div class="price-input">
-                  <span class="currency">R$</span>
+                  <span class="currency">{{ currencySymbol }}</span>
                   <input type="text" [value]="item.customPrice | currency:''" autocomplete="off"
                     (input)="onApplyPrice(item, priceField, 'service')" #priceField />
                 </div>
@@ -183,7 +183,7 @@
                   <div class="price-control">
                     <label>Preço:</label>
                     <div class="price-input">
-                      <span class="currency">R$</span>
+                      <span class="currency">{{ currencySymbol }}</span>
                       <input type="text" [value]="item.unitaryPrice | currency:''" autocomplete="off"
                         (input)="onApplyPrice(item, priceField, 'product')" #priceField />
                     </div>
@@ -243,7 +243,7 @@
                 <div class="value-input">
                   <label>{{ translate.panel.paymentMethods.label.value }}</label>
                   <div class="input-group">
-                    <span class="currency">R$</span>
+                    <span class="currency">{{ currencySymbol }}</span>
                     <input type="text" placeholder="0,00" autocomplete="off" [value]="(item.value || 0) | currency:''"
                       (input)="onPaymentValue(item, paymentValueField)" #paymentValueField />
                   </div>

@@ -433,12 +433,12 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
     const costPriceValue = this.formControl('costPrice').value;
     const salePriceValue = this.formControl('salePrice').value;
 
-    if (!costPriceValue || !salePriceValue) {
+    if (costPriceValue == null || salePriceValue == null) {
       return false;
     }
 
-    const costPrice = parseFloat(costPriceValue.toString().replace(',', '.')) || 0;
-    const salePrice = parseFloat(salePriceValue.toString().replace(',', '.')) || 0;
+    const costPrice = Utilities.parseCurrencyToNumber(costPriceValue);
+    const salePrice = Utilities.parseCurrencyToNumber(salePriceValue);
 
     return costPrice > 0 && salePrice > 0;
   }
@@ -447,12 +447,11 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
   * 💰 Calcula margem de lucro
   */
   public calculateProfitMargin(): { value: number; percentage: number } {
-    const costPriceStr = this.formControl('costPrice').value || '0';
-    const salePriceStr = this.formControl('salePrice').value || '0';
+    const costPriceRaw = this.formControl('costPrice').value ?? '0';
+    const salePriceRaw = this.formControl('salePrice').value ?? '0';
 
-    // Remove vírgulas e converte para número
-    const costPrice = parseFloat(costPriceStr.toString().replace(',', '.')) || 0;
-    const salePrice = parseFloat(salePriceStr.toString().replace(',', '.')) || 0;
+    const costPrice = Utilities.parseCurrencyToNumber(costPriceRaw);
+    const salePrice = Utilities.parseCurrencyToNumber(salePriceRaw);
 
     if (costPrice === 0 || salePrice === 0) {
       return { value: 0, percentage: 0 };

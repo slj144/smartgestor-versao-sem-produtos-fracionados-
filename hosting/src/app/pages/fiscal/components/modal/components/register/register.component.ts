@@ -1336,6 +1336,10 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
 
         const configProduct = (item) => {
 
+          const rawNcm = item.ncm ? `${item.ncm}` : "";
+          const sanitizedNcm = rawNcm.replace(/\D+/g, "");
+          const hasValidNcm = sanitizedNcm.length === 8;
+
           let quantity = item.reserve;
           if (!quantity) {
             quantity = item.selectedItems ? parseFloat(item.selectedItems) : quantity;
@@ -1375,6 +1379,16 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
           }
 
           const obj: any = {
+            codigo: (() => {
+              const candidate = [item.code, item.productCode, item.barcode, item.id, item._id].find(value => {
+                if (value === null || value === undefined) {
+                  return false;
+                }
+                const stringValue = `${value}`.trim();
+                return stringValue.length > 0;
+              });
+              return candidate ? `${candidate}` : Utilities.uuid();
+            })(),
             descricao: item.name,
             cfop: (() => {
               if (item.cfop) { return item.cfop.replaceAll(".", ""); }
@@ -1386,7 +1400,7 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
                 return this.settings.cfop.replaceAll(".", "")
               }
             })(),
-            ncm: item.ncm || "00000000",
+            ncm: hasValidNcm ? sanitizedNcm : "00000000",
             cest: item.cest,
             codigoBeneficioFiscal: item.codigoBeneficioFiscal || "",
             quantidade: {

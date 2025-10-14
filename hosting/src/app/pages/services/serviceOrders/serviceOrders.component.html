@@ -63,7 +63,7 @@
 
             <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
               <span class="label d-block d-md-none">{{ translate.table.label.responsible() }}:</span>
-              <span class="value">{{ item.executor?.name ?? '-' }}</span>
+              <span class="value">{{ (item.operator?.name || item.executor?.name) ?? '-' }}</span>
             </div> 
   
             <div class="col-12 col-md-3 text-start text-md-center pt-1 hr-down-md-bottom">

@@ -406,11 +406,16 @@ export class Utilities {
       return "_cnpj";
     }
 
+    const sanitize = (value: string) => {
+      return value ? value.toString().replace(/\D+/g, "") : "";
+    };
+
     if (Utilities.isMatrix) {
-      return Utilities.storeInfo.cnpj ? Utilities.storeInfo.cnpj.toString().replace(/[\.\-\/]+/ig, "") : "_cnpj";
+      const cnpj = sanitize(Utilities.storeInfo.cnpj);
+      return cnpj || "_cnpj";
     } else if (Utilities.currentLoginData && Utilities.currentLoginData.matrixInfo) {
-      const cnpj = Utilities.storeInfo.cnpjFiscal || Utilities.currentLoginData.matrixInfo.cnpj;
-      return cnpj ? cnpj.toString().replace(/[\.\-\/]+/ig, "") : "_cnpj";
+      const cnpj = sanitize(Utilities.storeInfo.cnpjFiscal || Utilities.currentLoginData.matrixInfo.cnpj);
+      return cnpj || "_cnpj";
     } else {
       return "_cnpj";
     }

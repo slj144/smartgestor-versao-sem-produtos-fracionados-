@@ -173,7 +173,7 @@
                         <tr *ngFor="let item of settings.data.service.types">
                           <td class="col-xsmall"><span>{{ item.code }}</span></td>
                           <td><span>{{ item.name }}</span></td>
-                          <td class="col-small"><span class="price">{{ item.executionPrice | currency:'' }}</span></td>
+                          <td class="col-small"><span class="price">{{ (item.customPrice ?? item.executionPrice) | currency:'' }}</span></td>
                         </tr>
                       </tbody>                    
                     </table>
