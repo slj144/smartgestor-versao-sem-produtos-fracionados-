@@ -142,6 +142,7 @@ export class ProjectSettings {
           active: true,
           components: {
             products: { active: true },
+            departments: { active: false },
             purchases: { active: true },
             transfers: { active: true }
           }

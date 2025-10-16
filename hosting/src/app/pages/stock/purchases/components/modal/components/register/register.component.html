@@ -85,6 +85,7 @@
                     <th>{{ translate.products.label.averageCost }}</th>
                     <th>{{ translate.products.label.total }}</th>
                     <th *ngIf="data.configFromXml">Categoria</th>
+                    <th *ngIf="data.configFromXml && useDepartments">Departamento</th>
                     <th *ngIf="data.configFromXml">Unidade Comercial</th>
                     <th *ngIf="data.configFromXml">
                       Conciliação de Estoque
@@ -136,6 +137,28 @@
                                 - ' + item.name }}</option>
                             </select>
                             <button type="button" (click)="onOpenLayer('categories',  i)">
+                              <icon name="list-outline" pack="eva"></icon>
+                            </button>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </td>
+
+                    <td *ngIf="data.configFromXml && useDepartments">
+                      <div class="form-group">
+                        <div *ngIf="!item.isRegister">
+                          <span>{{ item?.department?.code + ' - ' + item?.department?.name }}</span>
+                        </div>
+                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
+                          <div class="manager-category clearfix"
+                            [formGroup]="productsFormArray.controls[i].controls.department">
+                            <select class="form-control" formControlName="code"
+                              (change)="onChangeDepartment($event, item)">
+                              <option value=""></option>
+                              <option *ngFor="let item of departmentsData || []" value="{{ item.code }}">{{ item.code +
+                                ' - ' + item.name }}</option>
+                            </select>
+                            <button type="button" (click)="onOpenLayer('departments', i)">
                               <icon name="list-outline" pack="eva"></icon>
                             </button>
                           </div>

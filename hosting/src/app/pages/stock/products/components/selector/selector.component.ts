@@ -45,6 +45,10 @@ export class ProductsSelectorComponent implements OnInit {
   private searchDebounce: any;
   private searchToken = 0;
 
+  public get useDepartments(): boolean {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+  }
+
   constructor(
     private productsService: ProductsService,
     private alertService: AlertService

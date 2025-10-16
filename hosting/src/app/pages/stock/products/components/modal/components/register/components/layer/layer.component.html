@@ -2,7 +2,7 @@
 <layer (callback)="onLayerResponse($event)">
   <ng-container slot="content">
 
-    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits')">
+    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits') || (settings.activeComponent == 'departments')">
       <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
     </div>
 

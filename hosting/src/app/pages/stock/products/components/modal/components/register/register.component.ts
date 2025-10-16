@@ -11,6 +11,7 @@ import { ProductsService } from '@pages/stock/products/products.service';
 import { ProvidersService } from '@pages/registers/providers/providers.service';
 import { ProductCommercialUnitsService } from '@pages/registers/_aggregates/stock/product-commercial-units/product-commercial-units.service';
 import { ProductCategoriesService } from '@pages/registers/_aggregates/stock/product-categories/product-categories.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 
 // Translate
 import { ProductsTranslate } from '@pages/stock/products/products.translate';
@@ -49,11 +50,13 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
 
   public commercialUnitsData: any = [];
   public categoriesData: any = [];
+  public departmentsData: any = [];
   public providersData: any = [];
   public fiscalSettings: any = { simplesNacional: true };
 
   public checkBootstrap: boolean = false;
   public checkCategories: boolean = false;
+  public checkDepartments: boolean = false;
   public checkCommercialUnits: boolean = false;
   public checkProviders: boolean = false;
   public checkFiscalSettings: boolean = false;
@@ -82,6 +85,7 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
     private providersService: ProvidersService,
     private productCommercialUnitsService: ProductCommercialUnitsService,
     private productCategoriesService: ProductCategoriesService,
+    private productDepartmentsService: ProductDepartmentsService,
     private fiscalService: FiscalService
   ) { }
 
@@ -131,6 +135,15 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
       this.checkCategories = true;
     });
 
+    if (this.useDepartments) {
+      this.productDepartmentsService.getDepartments('ProductsRegisterComponent', (data) => {
+        this.departmentsData = data;
+        this.checkDepartments = true;
+      });
+    } else {
+      this.checkDepartments = true;
+    }
+
     this.productCommercialUnitsService.getUnits('ProductsRegisterComponent', (data) => {
       this.commercialUnitsData = data;
       this.checkCommercialUnits = true;
@@ -168,17 +181,21 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
 
     const timer = setInterval(() => {
 
-      if (this.checkCommercialUnits && this.checkCategories && this.checkProviders && this.checkFiscalSettings) {
+      if (this.checkCommercialUnits && this.checkCategories && this.checkDepartments && this.checkProviders && this.checkFiscalSettings) {
 
         this.formSettings(this.settings.data);
         this.checkBootstrap = true;
 
         clearInterval(timer);
       }
-    }, (!(this.checkCommercialUnits && this.checkCategories && this.checkProviders && this.checkFiscalSettings) ? 1000 : 0));
+    }, (!(this.checkCommercialUnits && this.checkCategories && this.checkDepartments && this.checkProviders && this.checkFiscalSettings) ? 1000 : 0));
   }
 
   // Getters and Setters Methods
+
+  public get useDepartments() {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+  }
 
   public get isMatrix() {
     return (Utilities.storeID == 'matrix');
@@ -502,6 +519,25 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
       return category;
     })();
 
+    const department = (() => {
+
+      let department = this.settings.data.department;
+
+      if (this.useDepartments) {
+        $$(this.departmentsData).map((_, item) => {
+          if (item.code == formData.department) {
+            department = {
+              _id: item._id,
+              code: parseInt(<string>item.code),
+              name: item.name
+            };
+          }
+        });
+      }
+
+      return department;
+    })();
+
     const commercialUnit = (() => {
 
       let commercialUnit = this.settings.data.commercialUnit;
@@ -573,10 +609,23 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
       salePrice: Utilities.parseCurrencyToNumber(formData.salePrice),
       commercialUnit: commercialUnit,
       category: category,
+      department: department,
       ncm: formData.ncm.toString().replace(/\./g, '').replace(',', ''),
       provider: (provider || {}),
       specialization: formData.specialization
     };
+
+    if (this.useDepartments) {
+      if (department) {
+        data.department = department;
+      } else if (source?.department) {
+        data.department = (<any>'$unset()');
+      } else {
+        delete data.department;
+      }
+    } else {
+      delete data.department;
+    }
 
     // 🎯 CORREÇÃO APLICADA - Monta objeto de comissão garantindo valores numéricos
     if (formData.commissionEnabled) {
@@ -726,6 +775,9 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
       case 'Categories':
         selectedItem = this.formControl('category').value;
         break;
+      case 'Departments':
+        selectedItem = this.formControl('department').value;
+        break;
       case 'CommercialUnits':
         selectedItem = this.formControl('commercialUnit').value;
         break;
@@ -751,6 +803,10 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
 
     if (event.category) {
       this.formControl('category').setValue(event.category.code);
+    }
+
+    if (event.department) {
+      this.formControl('department').setValue(event.department.code);
     }
 
     if (event.provider) {
@@ -817,6 +873,7 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
       commissionValue: [(data.commission ? data.commission.value : 0)],
 
       category: [(data.category && data.category.code ? data.category.code : ''), [Validators.required]],
+      department: [(data.department && data.department.code ? Utilities.prefixCode(data.department.code) : '')],
       commercialUnit: [(data.commercialUnit && data.commercialUnit.code ? data.commercialUnit.code : ''), [Validators.required]],
       provider: [(data.provider && data.provider.code ? data.provider.code : '')],
       cest: [data.cest ? data.cest : '', [Validators.maxLength(7)]],

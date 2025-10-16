@@ -470,6 +470,14 @@ export class PurchasesService {
             };
           }
 
+          if (item.department) {
+            obj.department = {
+              _id: item.department._id,
+              code: (typeof item.department.code === 'string' ? parseInt(<string>item.department.code, 10) : item.department.code),
+              name: item.department.name
+            };
+          }
+
           if (!item.code) {
             registerProductsIndex.push(index);
           }
@@ -566,36 +574,44 @@ export class PurchasesService {
 
           if (Utilities.storeID == 'matrix') {
 
-            if (!hasProductRegistered) {
-              product.costPrice = 0;
-              product.quantity = 0;
-            }
-
-            obj.costPrice = ((item.costPrice * item.quantity) + (product.costPrice * (<number>product.quantity))) / (item.quantity + (<number>product.quantity));
-            obj.salePrice = item.salePrice;
-            obj.quantity = iTools.FieldValue.inc(item.quantity);
-
-            // console.log(hasProductRegistered, obj);
-          } else {
-
-            product.branches = product.branches ?? {};
-            product.branches[Utilities.storeID] = <any>(product.branches[Utilities.storeID] ?? { costPrice: item.costPrice, quantity: 0 });
-
-            const productInBranch = product.branches[Utilities.storeID];
-
-            obj.branches = {};
-            obj.branches[Utilities.storeID] = {
-              costPrice: ((item.costPrice * item.quantity) + (productInBranch.costPrice * (<number>productInBranch.quantity))) / (item.quantity + (<number>productInBranch.quantity)),
-              salePrice: item.salePrice,
-              quantity: iTools.FieldValue.inc(item.quantity)
-            }
+          if (!hasProductRegistered) {
+            product.costPrice = 0;
+            product.quantity = 0;
           }
 
-          if (!item.code) {
-            registerProductsIndex.push(index);
-          }
+          obj.costPrice = ((item.costPrice * item.quantity) + (product.costPrice * (<number>product.quantity))) / (item.quantity + (<number>product.quantity));
+          obj.salePrice = item.salePrice;
+          obj.quantity = iTools.FieldValue.inc(item.quantity);
 
-          updateArray.push(obj);
+          // console.log(hasProductRegistered, obj);
+        } else {
+
+          product.branches = product.branches ?? {};
+          product.branches[Utilities.storeID] = <any>(product.branches[Utilities.storeID] ?? { costPrice: item.costPrice, quantity: 0 });
+
+          const productInBranch = product.branches[Utilities.storeID];
+
+          obj.branches = {};
+          obj.branches[Utilities.storeID] = {
+            costPrice: ((item.costPrice * item.quantity) + (productInBranch.costPrice * (<number>productInBranch.quantity))) / (item.quantity + (<number>productInBranch.quantity)),
+            salePrice: item.salePrice,
+            quantity: iTools.FieldValue.inc(item.quantity)
+          }
+        }
+
+        if (item.department) {
+          obj.department = {
+            _id: item.department._id,
+            code: (typeof item.department.code === 'string' ? parseInt(<string>item.department.code, 10) : item.department.code),
+            name: item.department.name
+          };
+        }
+
+        if (!item.code) {
+          registerProductsIndex.push(index);
+        }
+
+        updateArray.push(obj);
         }
 
         // console.log(updateArray)

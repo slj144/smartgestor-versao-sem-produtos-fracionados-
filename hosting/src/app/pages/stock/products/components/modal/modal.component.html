@@ -87,6 +87,11 @@
                     }}</span> <span class="value">{{ settings.data.category.name }}</span>
                 </p>
 
+                <p *ngIf="settings.data.department?.name">
+                  <span class="label">{{ translate.action.read.section.classification.label.department.title + ':'
+                    }}</span> <span class="value">{{ settings.data.department.name }}</span>
+                </p>
+
                 <p>
                   <span class="label">{{ translate.action.read.section.classification.label.commercialUnit.title + ':'
                     }}</span> <span class="value">{{ settings.data.commercialUnit.name }}</span>

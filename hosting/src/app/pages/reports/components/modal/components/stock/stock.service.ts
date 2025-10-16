@@ -46,6 +46,10 @@ export class StockReportsService {
             item.category.code = Utilities.prefixCode(item.category.code);
           }
 
+          if (item.department && item.department.code) {
+            item.department.code = Utilities.prefixCode(item.department.code);
+          }
+
           if (item.type && item.type.code) {
             item.type.code = Utilities.prefixCode(item.type.code);
           }
@@ -503,6 +507,7 @@ export class StockReportsService {
                   productCode: record.code,                  
                   name: record.name,                  
                   category: record.category,
+                  department: record.department,
                   costPrice: record.costPrice,
                   salePrice: record.salePrice,
                   quantity: 0, totalCost: 0,
@@ -568,6 +573,7 @@ export class StockReportsService {
                   productCode: record.code,
                   name: record.name,
                   category: record.category,
+                  department: record.department,
                   costPrice: record.costPrice,
                   salePrice: record.salePrice,
                   quantity: 0, totalCost: 0,

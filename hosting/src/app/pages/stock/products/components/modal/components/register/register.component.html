@@ -313,6 +313,29 @@
 
                     </div>
 
+                    <div class="col-6 col-md-3 form-group" *ngIf="useDepartments">
+
+                      <label>{{ translate.form.department.label }}</label>
+
+                      <fieldset [disabled]="!isMatrix">
+                        <div class="manager-category clearfix">
+
+                          <select formControlName="department" class="form-control">
+                            <option value=""></option>
+                            <option *ngFor="let item of departmentsData" [value]="item.code">{{ item.code + ' - ' +
+                              item.name }}</option>
+                          </select>
+
+                          <button type="button" (click)="onOpenLayer('departments')">
+                            <icon name="list-outline" pack="eva"></icon>
+                          </button>
+                        </div>
+                      </fieldset>
+
+                    </div>
+
+                    <div class="col-12 d-none d-md-block" *ngIf="useDepartments"></div>
+
                     <div class="col-6 col-md-3 form-group" [class.required]="formControl('commercialUnit').errors">
 
                       <label>{{ translate.form.commercialUnit.label }}*</label>

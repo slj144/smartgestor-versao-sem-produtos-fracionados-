@@ -129,6 +129,48 @@ export class FiscalModalComponent implements OnInit {
     this.clearPdfUrl();
   }
 
+  public formatDate(value: any): Date | null {
+    if (!value) {
+      return null;
+    }
+
+    if (value instanceof Date) {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      const dateFromNumber = new Date(value);
+      return isNaN(dateFromNumber.getTime()) ? null : dateFromNumber;
+    }
+
+    if (typeof value === 'string') {
+      const trimmed = value.trim();
+
+      if (!trimmed) {
+        return null;
+      }
+
+      if (trimmed.includes('T')) {
+        const isoDate = new Date(trimmed);
+        return isNaN(isoDate.getTime()) ? null : isoDate;
+      }
+
+      const parts = trimmed.split('/');
+      if (parts.length === 3) {
+        const [day, month, year] = parts.map((part) => parseInt(part, 10));
+        if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+          const dateFromBr = new Date(year, month - 1, day);
+          return isNaN(dateFromBr.getTime()) ? null : dateFromBr;
+        }
+      }
+
+      const fallback = new Date(trimmed);
+      return isNaN(fallback.getTime()) ? null : fallback;
+    }
+
+    return null;
+  }
+
   private clearPdfUrl(){
     window.URL.revokeObjectURL(this.pdfUrl ?? '');
     this.pdfUrl = '';

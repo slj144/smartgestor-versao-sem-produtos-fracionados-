@@ -39,6 +39,7 @@ export enum ESystemLogType {
   StockProducts = 'StockProducts', 
   StockProductCommercialUnit = 'StockProductCommercialUnit',
   StockProductCategories = 'StockProductCategories', 
+  StockProductDepartments = 'StockProductDepartments',
   StockPurchases = 'StockPurchases',
   StockTransfers = 'StockTransfers',
   StockLogTypes = 'StockLogTypes',

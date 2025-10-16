@@ -644,12 +644,21 @@ export class CashierFrontPDVService {
             data.paymentMethods[index].bankAccount = method.bankAccount;
           }
 
+          const grossValue = Number(method.value || 0);
+          const netValue = this.calculateNetDepositValue(method, grossValue);
+
+          // Banking movement always uses the net value that actually hits the account
+          const transactionValue = (() => {
+            const netAbs = Math.abs(netValue);
+            return grossValue >= 0 ? netAbs : (netAbs * -1);
+          })();
+
           const obj: any = {
             code: method.bankAccount.code,
             transaction: {
               bankAccount: method.bankAccount,
               type: (operation != 'cancel' ? (method.value > 0 ? EFinancialBankTransactionType.DEPOSIT : EFinancialBankTransactionType.WITHDRAW) : EFinancialBankTransactionType.WITHDRAW),
-              value: (method.value > 0 ? method.value : (method.value * -1)),
+              value: transactionValue,
               uninvoiced: !!method.uninvoiced
             }
           };
@@ -792,6 +801,54 @@ export class CashierFrontPDVService {
 
     this.notificationService.create(settings, storage);
   }
+
+  /**
+   * Extracts the percentual fee configured for a payment method.
+   * Accepts values persisted either in `method.fees.fee` (parcel table) or
+   * directly in `method.fee`, handling numbers and strings such as "2,99" or "2.99%".
+   */
+  private parseFeePercentage(method: any): number {
+    const rawFee = (method && method.fees && method.fees.fee != undefined)
+      ? method.fees.fee
+      : (method && method.fee != undefined ? method.fee : 0);
+
+    if (rawFee === null || rawFee === undefined) {
+      return 0;
+    }
+
+    if (typeof rawFee === 'number') {
+      return isFinite(rawFee) ? rawFee : 0;
+    }
+
+    const parsed = parseFloat(String(rawFee).replace('%', '').replace(',', '.'));
+    return isFinite(parsed) ? parsed : 0;
+  }
+
+  /**
+   * Returns the amount that must be deposited to the bank account considering
+   * the processor fee. For positive values (card receipts, etc.) we discount
+   * the percentual fee. For withdrawals/adjustments (negative values) we keep
+   * the original amount to avoid duplicating reversals.
+   */
+  private calculateNetDepositValue(method: any, grossValue: number): number {
+    const baseValue = Number(grossValue || 0);
+
+    if (!(baseValue > 0)) {
+      return baseValue;
+    }
+
+    const feePercent = this.parseFeePercentage(method);
+
+    if (!(feePercent > 0)) {
+      return baseValue;
+    }
+
+    const feeAmount = parseFloat((baseValue * (feePercent / 100)).toFixed(2));
+    const netValue = parseFloat((baseValue - feeAmount).toFixed(2));
+
+    return netValue >= 0 ? netValue : 0;
+  }
+
   public async getDefaultCustomer() {
     return new Promise<any>((resolve, reject) => {
       const collection = this.iToolsService.database().collection('Customers');

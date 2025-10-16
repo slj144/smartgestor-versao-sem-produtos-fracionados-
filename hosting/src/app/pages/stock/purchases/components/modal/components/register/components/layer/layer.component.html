@@ -14,7 +14,7 @@
       <bills-to-pay-register (callback)="onBillsToPayResponse($event)" [embed]="true"></bills-to-pay-register>
     </div>
 
-    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits')">
+    <div class="container-general" *ngIf="(settings.activeComponent == 'categories') || (settings.activeComponent == 'commercialUnits') || (settings.activeComponent == 'departments')">
       <general-selector #generalSelector (callback)="onGeneralSelectorResponse($event)"></general-selector>
     </div>
 

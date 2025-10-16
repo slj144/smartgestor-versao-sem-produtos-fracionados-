@@ -16,6 +16,7 @@ export class ProductsSelectorTranslate {
         item: {
           label: {
             code: 'Código',
+            department: 'Departamento',
             serialNumber: 'Número de Série',
             available: 'Disponível',
             price: 'Preço',
@@ -54,6 +55,7 @@ export class ProductsSelectorTranslate {
         item: {
           label: {
             code: 'Code',
+            department: 'Department',
             serialNumber: 'Serial Number',
             available: 'Available',
             price: 'Price',

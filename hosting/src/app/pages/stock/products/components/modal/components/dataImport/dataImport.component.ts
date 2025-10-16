@@ -8,6 +8,7 @@ import readXlsxFile from 'read-excel-file';
 import { DataImportService } from './dataImport.service';
 import { ProductsService } from '../../../../products.service';
 import { ProductCategoriesService } from '../../../../../../registers/_aggregates/stock/product-categories/product-categories.service';
+import { ProductDepartmentsService } from '../../../../../../registers/_aggregates/stock/product-departments/product-departments.service';
 import { ProductCommercialUnitsService } from '../../../../../../registers/_aggregates/stock/product-commercial-units/product-commercial-units.service';
 import { ProvidersService } from '../../../../../../registers/providers/providers.service';
 
@@ -43,6 +44,7 @@ export class DataImportComponent implements OnInit {
   };
 
   public productsCategories: any = {};
+  public productsDepartments: any = {};
   public productsCommercialUnits: any = {};
   public productsProviders: any = {};
 
@@ -50,6 +52,7 @@ export class DataImportComponent implements OnInit {
 
   private checkFileUrl: boolean = false;
   private checkProductsCategories: boolean = false;
+  private checkProductsDepartments: boolean = false;
   private checkProductsCommercialUnits: boolean = false;
   private checkProductsProviders: boolean = false;
 
@@ -57,6 +60,7 @@ export class DataImportComponent implements OnInit {
     private dataImportService: DataImportService,
     private productsService: ProductsService,
     private productCategoriesService: ProductCategoriesService,
+    private productDepartmentsService: ProductDepartmentsService,
     private productCommercialUnitsService: ProductCommercialUnitsService,
     private productProvidersService: ProvidersService,
     private itoolsService: IToolsService
@@ -98,6 +102,26 @@ export class DataImportComponent implements OnInit {
       this.checkProductsCategories = true;
       console.log('✅ Categorias carregadas:', Object.keys(obj).length);
     });
+
+    if (this.useDepartments) {
+      this.productDepartmentsService.getDepartments('DataImportComponent', (data) => {
+        const obj: { [key: number]: IStockProduct['department'] } = {}
+
+        $$(data).map((_, item) => {
+          obj[parseInt(<string>item.code)] = {
+            _id: item._id,
+            code: item.code,
+            name: item.name
+          };
+        });
+
+        this.productsDepartments = obj;
+        this.checkProductsDepartments = true;
+        console.log('✅ Departamentos carregados:', Object.keys(obj).length);
+      });
+    } else {
+      this.checkProductsDepartments = true;
+    }
 
     this.productCommercialUnitsService.getUnits('DataImportComponent', (data) => {
       const obj: { [key: number]: IStockProduct['commercialUnit'] } = {}
@@ -155,6 +179,7 @@ export class DataImportComponent implements OnInit {
       if (
         this.checkFileUrl &&
         this.checkProductsCategories &&
+        this.checkProductsDepartments &&
         this.checkProductsCommercialUnits &&
         this.checkProductsProviders
       ) {
@@ -170,6 +195,10 @@ export class DataImportComponent implements OnInit {
   // Getter para verificar se é matriz
   public get isMatrix() {
     return Utilities.isMatrix;
+  }
+
+  public get useDepartments() {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
   }
 
   // Initialize Method chamado pelo modal
@@ -302,6 +331,14 @@ export class DataImportComponent implements OnInit {
           required: checkRequired,
           parse: (value) => this.checkValue(value, 'category')
         },
+        ...(this.useDepartments ? {
+          'DEPARTAMENTO': {
+            prop: 'department',
+            type: String,
+            required: false,
+            parse: (value) => this.checkValue(value, 'department')
+          }
+        } : {}),
         'TIPO': {
           prop: 'commercialUnit',
           type: String,
@@ -527,6 +564,15 @@ export class DataImportComponent implements OnInit {
           return this.productsCategories[code];
         } else {
           console.warn(`⚠️ Categoria ${code} não encontrada`);
+          throw new Error('nonexistent');
+        }
+      }
+
+      if (type == 'department') {
+        if (this.productsDepartments[code]) {
+          return this.productsDepartments[code];
+        } else {
+          console.warn(`⚠️ Departamento ${code} não encontrado`);
           throw new Error('nonexistent');
         }
       }

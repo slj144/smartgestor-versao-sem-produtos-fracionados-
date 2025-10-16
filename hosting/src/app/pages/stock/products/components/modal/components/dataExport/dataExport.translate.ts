@@ -27,6 +27,13 @@ export class DataExportTranslate {
               name: 'Nome'
             }
           },
+          department: {
+            title: 'Departamento',
+            sub: {
+              code: 'Código',
+              name: 'Nome'
+            }
+          },
           commercialUnit: {
             title:'Unidade Comercial',
             sub: {
@@ -64,6 +71,13 @@ export class DataExportTranslate {
           alert: 'Alert',
           category: {
             title: 'Category',
+            sub: {
+              code: 'Code',
+              name: 'Name'
+            }
+          },
+          department: {
+            title: 'Department',
             sub: {
               code: 'Code',
               name: 'Name'

@@ -41,6 +41,10 @@ export class ProductsComponent implements OnInit, OnDestroy {
   public isFiscal: boolean = Utilities.isFiscal;
   public fiscalConfigured: boolean = false;
 
+  public get useDepartments(): boolean {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+  }
+
   private modalComponent: any;
 
   constructor(
@@ -109,6 +113,16 @@ export class ProductsComponent implements OnInit, OnDestroy {
             { label: translate.category.option.name.label, property: 'category.name', combination: 'partial', path: translate.category.option.name.path, type: 'text', nested: true, checked: false }
           ], checked: false, collapsed: false
         },
+        ...(this.useDepartments ? [{
+          label: translate.department.label,
+          property: 'department',
+          options: [
+            { label: translate.department.option.code.label, property: 'department.code', combination: 'full', path: translate.department.option.code.path, type: 'number/integer', nested: true, checked: false },
+            { label: translate.department.option.name.label, property: 'department.name', combination: 'partial', path: translate.department.option.name.path, type: 'text', nested: true, checked: false }
+          ],
+          checked: false,
+          collapsed: false
+        }] : []),
         {
           label: translate.commercialUnit.label, property: 'commercialUnit', options: [
             { label: translate.commercialUnit.option.code.label, property: 'commercialUnit.code', combination: 'full', path: translate.commercialUnit.option.code.path, type: 'text', nested: true, checked: false },

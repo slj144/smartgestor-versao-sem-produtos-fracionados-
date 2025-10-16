@@ -36,6 +36,12 @@ export class StockReportsTranslate {
               all: "Todas as Categorias"
             }
           },
+          departments: {
+            title: "Departamentos",
+            list: {
+              all: "Todos os Departamentos"
+            }
+          },
           status: {
             title: "Status",
             list: {
@@ -80,6 +86,15 @@ export class StockReportsTranslate {
             category: {
               external: 'Categoria', internal: {
                 label: 'Categoria',
+                sub: {
+                  code: 'Código',
+                  name: 'Nome'
+                }
+              }
+            },
+            department: {
+              external: 'Departamento', internal: {
+                label: 'Departamento',
                 sub: {
                   code: 'Código',
                   name: 'Nome'
@@ -197,6 +212,7 @@ export class StockReportsTranslate {
             name: { external: 'Nome', internal: 'Nome' },
             provider: { external: 'Fornecedor', internal: 'Fornecedor' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             quantity: { external: 'Quantidade', internal: 'Quantidade' },
             costPrice: { external: 'Preço de Custo', internal: `Preço de Custo (${Utilities.currencySymbol})` },
             salePrice: { external: 'Preço de Venda', internal: `Preço de Venda (${Utilities.currencySymbol})` },
@@ -263,6 +279,7 @@ export class StockReportsTranslate {
             productCode: { external: 'Referência de Produto', internal: 'Ref. Produto' },
             name: { external: 'Nome', internal: 'Nome' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             quantity: { external: 'Quantidade', internal: 'Quantidade' },
             costPrice: { external: 'Preço de Custo', internal: `Preço de Custo (${Utilities.currencySymbol})` },
             salePrice: { external: 'Preço de Venda', internal: `Preço de Venda (${Utilities.currencySymbol})` },
@@ -339,6 +356,12 @@ export class StockReportsTranslate {
               all: "All Categories"
             }
           },
+          departments: {
+            title: "Departments",
+            list: {
+              all: "All Departments"
+            }
+          },
           status: {
             title: "Status",
             list: {
@@ -389,6 +412,15 @@ export class StockReportsTranslate {
             category: {
               external: 'Category', internal: {
                 label: 'Category',
+                sub: {
+                  code: 'Code',
+                  name: 'Name'
+                }
+              }
+            },
+            department: {
+              external: 'Department', internal: {
+                label: 'Department',
                 sub: {
                   code: 'Code',
                   name: 'Name'
@@ -506,6 +538,7 @@ export class StockReportsTranslate {
             name: { external: 'Name', internal: 'Name' },
             provider: { external: 'Provider', internal: 'Provider' },
             category: { external: 'Category', internal: 'Category' },
+            department: { external: 'Department', internal: 'Department' },
             quantity: { external: 'Quantity', internal: 'Quantity' },
             costPrice: { external: 'Cost Price', internal: `Cost Price (${Utilities.currencySymbol})` },
             salePrice: { external: 'Sale Price', internal: `Sale Price (${Utilities.currencySymbol})` },
@@ -567,6 +600,7 @@ export class StockReportsTranslate {
           transferedProducts: {
             code: { external: 'Code', internal: 'Code' },
             name: { external: 'Name', internal: 'Name' },
+            department: { external: 'Department', internal: 'Department' },
             quantity: { external: 'Quantity', internal: 'Quantity' },
             totalCost: { external: 'Total Cost', internal: `Total Cost (${Utilities.currencySymbol})` },
             totalSale: { external: 'Total Sale', internal: `Total Sale (${Utilities.currencySymbol})` },

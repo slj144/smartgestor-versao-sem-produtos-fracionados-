@@ -43,6 +43,7 @@ export class ProductsRegisterLayerComponent implements OnInit, OnDestroy {
       if (
         (this.generalSelectorComponent && (this.settings.activeComponent == 'commercialUnits')) || 
         (this.generalSelectorComponent && (this.settings.activeComponent == 'categories')) || 
+        (this.generalSelectorComponent && (this.settings.activeComponent == 'departments')) || 
         (this.generalSelectorComponent && (this.settings.activeComponent == 'providers'))
       ) {
         clearInterval(timer);
@@ -57,6 +58,12 @@ export class ProductsRegisterLayerComponent implements OnInit, OnDestroy {
       if (this.generalSelectorComponent && (this.settings.activeComponent == 'categories')) {
         this.generalSelectorComponent.bootstrap({ 
           activeComponent: 'Products/Categories', selectItem: this.settings.selectedItem
+        });
+      }
+
+      if (this.generalSelectorComponent && (this.settings.activeComponent == 'departments')) {
+        this.generalSelectorComponent.bootstrap({
+          activeComponent: 'Products/Departments', selectItem: this.settings.selectedItem
         });
       }
 
@@ -123,6 +130,10 @@ export class ProductsRegisterLayerComponent implements OnInit, OnDestroy {
 
       if (this.settings.activeComponent == 'categories') {
         this.callback.emit({ category: event.data });
+      }
+
+      if (this.settings.activeComponent == 'departments') {
+        this.callback.emit({ department: event.data });
       }
     }
 

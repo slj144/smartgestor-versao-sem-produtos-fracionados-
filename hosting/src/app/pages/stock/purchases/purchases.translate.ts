@@ -177,8 +177,9 @@ export class PurchasesTranslate {
               providers: { title: 'Fornecedores' },
               products: { title: 'Produtos' },
               billToPay: { title: 'Conta a Pagar' },
-              categories: {title: 'Categorias'},
-              commercialUnits: {title: 'Unidades Comerciais'},
+              categories: { title: 'Categorias' },
+              departments: { title: 'Departamentos' },
+              commercialUnits: { title: 'Unidades Comerciais' },
             },
           },          
           read: {
@@ -480,8 +481,9 @@ export class PurchasesTranslate {
               providers: { title: 'Providers' },
               products: { title: 'Products' },
               billToPay: { title: 'Bill to Pay' },
-              categories: {title: 'Categories'},
-              commercialUnits: {title: 'Comercial Units'},
+              categories: { title: 'Categories' },
+              departments: { title: 'Departments' },
+              commercialUnits: { title: 'Comercial Units' },
             }
           },          
           read: {

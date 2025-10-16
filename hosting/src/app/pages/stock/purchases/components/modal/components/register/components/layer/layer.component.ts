@@ -50,7 +50,8 @@ export class PurchasesRegisterLayerComponent implements OnInit {
         (this.productsComponent && (this.settings.activeComponent == 'products')) ||
         (this.billsToPayComponent && (this.settings.activeComponent == 'billToPay')) ||
         (this.generalSelectorComponent && (this.settings.activeComponent == 'commercialUnits')) || 
-        (this.generalSelectorComponent && (this.settings.activeComponent == 'categories'))
+        (this.generalSelectorComponent && (this.settings.activeComponent == 'categories')) ||
+        (this.generalSelectorComponent && (this.settings.activeComponent == 'departments'))
       ) {
         clearInterval(timer);
       }
@@ -76,6 +77,12 @@ export class PurchasesRegisterLayerComponent implements OnInit {
       if (this.generalSelectorComponent && (this.settings.activeComponent == 'categories')) {
         this.generalSelectorComponent.bootstrap({ 
           activeComponent: 'Products/Categories', selectItem: this.settings.selectedItem
+        });
+      }
+
+      if (this.generalSelectorComponent && (this.settings.activeComponent == 'departments')) {
+        this.generalSelectorComponent.bootstrap({
+          activeComponent: 'Products/Departments', selectItem: this.settings.selectedItem
         });
       }
     }, 0);
@@ -158,6 +165,10 @@ export class PurchasesRegisterLayerComponent implements OnInit {
 
       if (this.settings.activeComponent == 'categories') {
         this.callback.emit({ category: event.data });
+      }
+
+      if (this.settings.activeComponent == 'departments') {
+        this.callback.emit({ department: event.data });
       }
     }
 

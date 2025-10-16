@@ -58,6 +58,11 @@
                   <span class="value code">{{ item.code }}</span>
                 </div>
 
+                <div class="info-row" *ngIf="useDepartments && item.department?.name">
+                  <span class="label">{{ translate.search.item.label.department }}:</span>
+                  <span class="value">{{ item.department.name }}</span>
+                </div>
+
                 <div class="info-row" *ngIf="item.internalCode">
                   <span class="label">Código Interno:</span>
                   <span class="value">{{ item.internalCode }}</span>

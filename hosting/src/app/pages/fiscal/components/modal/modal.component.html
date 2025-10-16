@@ -39,9 +39,9 @@
                 <div class="content" *ngIf="!this.pdfUrl">
                   <p><span class="label">Id: </span> <span class="value">{{ settings.data.id }}</span></p>
                   <p><span class="label">IdIntegração: </span> <span class="value">{{ settings.data.idIntegracao }}</span></p>
-                  <p><span class="label">Emissão:</span> <span class="value negative">{{ settings.data.emissao }}</span></p>
-                  <p *ngIf="settings.data.autorizacao"><span class="label">Autorização:</span> <span class="value negative">{{ settings.data.autorizacao | date }}</span></p>
-                  <p *ngIf="settings.data.cancelamento"><span class="label">Cancelamento:</span> <span class="value negative">{{ settings.data.cancelamento | date }}</span></p>
+                  <p><span class="label">Emissão:</span> <span class="value negative">{{ formatDate(settings.data.emissao) | date:'dd/MM/yyyy' : '' : 'pt-BR' }}</span></p>
+                  <p *ngIf="settings.data.autorizacao"><span class="label">Autorização:</span> <span class="value negative">{{ formatDate(settings.data.autorizacao) | date:'dd/MM/yyyy' : '' : 'pt-BR' }}</span></p>
+                  <p *ngIf="settings.data.cancelamento"><span class="label">Cancelamento:</span> <span class="value negative">{{ formatDate(settings.data.cancelamento) | date:'dd/MM/yyyy' : '' : 'pt-BR' }}</span></p>
                   <p><span class="label">Tipo:</span> <span class="value positive">{{ settings.data.type }}</span></p>
                   <p><span class="label">Situação:</span> <span class="value positive">{{ settings.data.situacao || settings.data.status }}</span></p>
                   <p><span class="label">Número:</span> <span class="value positive">{{ settings.data.numero }}</span></p>

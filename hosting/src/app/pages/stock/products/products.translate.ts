@@ -15,6 +15,7 @@ export class ProductsTranslate {
           code: 'Código',
           name: 'Nome',
           category: 'Categoria',
+          department: 'Departamento',
           costPrice: `Custo (${Utilities.currencySymbol})`,
           salePrice: `Preço (${Utilities.currencySymbol})`,
           quantity: 'Quantidade',
@@ -55,6 +56,19 @@ export class ProductsTranslate {
                 name: {
                   label: 'Nome',
                   path: 'Categoria/Nome'
+                }
+              }
+            },
+            department: {
+              label: 'Departamento',
+              option: {
+                code: {
+                  label: 'Código',
+                  path: 'Departamento/Código'
+                },
+                name: {
+                  label: 'Nome',
+                  path: 'Departamento/Nome'
                 }
               }
             },
@@ -132,6 +146,7 @@ export class ProductsTranslate {
               quantity: { label: 'Quantidade em estoque' },
               alert: { label: 'Quantidade de alerta' },
               category: { label: 'Categoria' },
+              department: { label: 'Departamento' },
               commercialUnit: { label: 'Unidade Comercial' },
               provider: { label: 'Fornecedor' },
               batch: { label: 'Lote' },
@@ -175,11 +190,12 @@ export class ProductsTranslate {
                 submit: 'Confirmar'
               }
             },
-            layer: {
-              commercialUnits: { title: 'Unidades Comerciais' },
-              categories: { title: 'Categorias' },
-              providers: { title: 'Fornecedores' }
-            }
+              layer: {
+                commercialUnits: { title: 'Unidades Comerciais' },
+                categories: { title: 'Categorias' },
+                departments: { title: 'Departamentos' },
+                providers: { title: 'Fornecedores' }
+              }
           },
           read: {
             title: 'Detalhes do Produto',
@@ -211,6 +227,13 @@ export class ProductsTranslate {
                 label: {
                   category: {
                     title: 'Categoria',
+                    sub: {
+                      code: 'Código',
+                      name: 'Nome'
+                    }
+                  },
+                  department: {
+                    title: 'Departamento',
                     sub: {
                       code: 'Código',
                       name: 'Nome'
@@ -307,6 +330,7 @@ export class ProductsTranslate {
           code: 'Code',
           name: 'Name',
           category: 'Category',
+          department: 'Department',
           costPrice: `Cost (${Utilities.currencySymbol})`,
           salePrice: `Price (${Utilities.currencySymbol})`,
           quantity: 'Quantity',
@@ -347,6 +371,19 @@ export class ProductsTranslate {
                 name: {
                   label: 'Name',
                   path: 'Category/Name'
+                }
+              }
+            },
+            department: {
+              label: 'Department',
+              option: {
+                code: {
+                  label: 'Code',
+                  path: 'Department/Code'
+                },
+                name: {
+                  label: 'Name',
+                  path: 'Department/Name'
                 }
               }
             },
@@ -424,6 +461,7 @@ export class ProductsTranslate {
               quantity: { label: 'Available Quantity' },
               alert: { label: 'Minimum Quantity' },
               category: { label: 'Category' },
+              department: { label: 'Department' },
               commercialUnit: { label: 'Commercial Unit' },
               provider: { label: 'Provider' },
               batch: { label: 'Batch' },
@@ -467,11 +505,12 @@ export class ProductsTranslate {
                 submit: 'Confirm'
               }
             },
-            layer: {
-              commercialUnits: { title: 'Commercial Units' },
-              categories: { title: 'Categories' },
-              providers: { title: 'Providers' }
-            }
+              layer: {
+                commercialUnits: { title: 'Commercial Units' },
+                categories: { title: 'Categories' },
+                departments: { title: 'Departments' },
+                providers: { title: 'Providers' }
+              }
           },
           read: {
             title: 'Product Details',
@@ -503,6 +542,13 @@ export class ProductsTranslate {
                 label: {
                   category: {
                     title: 'Category',
+                    sub: {
+                      code: 'Code',
+                      name: 'Name'
+                    }
+                  },
+                  department: {
+                    title: 'Department',
                     sub: {
                       code: 'Code',
                       name: 'Name'

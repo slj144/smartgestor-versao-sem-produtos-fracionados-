@@ -16,6 +16,7 @@ import { Utilities } from '@shared/utilities/utilities';
 import { DateTime } from '@shared/utilities/dateTime';
 import { FieldMask } from '@shared/utilities/fieldMask';
 import { ProductCategoriesService } from '@pages/registers/_aggregates/stock/product-categories/product-categories.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 import { query } from '@shared/types/query';
 
 @Component({
@@ -36,11 +37,16 @@ export class StockReportsComponent implements OnInit {
   public typeActived: string = '';
   public filtersData: any = [];
   public categories: any = [];
+  public departments: any = [];
 
   public formFilters: FormGroup;
   public formControls: any;
 
   public isMatrix = Utilities.isMatrix;
+
+  public get useDepartments(): boolean {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+  }
 
   private modalComponent: any;
   private layerComponent: any;
@@ -48,7 +54,8 @@ export class StockReportsComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private stockReportsService: StockReportsService,
-    private productsCategoriesService: ProductCategoriesService
+    private productsCategoriesService: ProductCategoriesService,
+    private productDepartmentsService: ProductDepartmentsService
   ) { }
 
   public ngOnInit() {
@@ -62,6 +69,7 @@ export class StockReportsComponent implements OnInit {
     if (this.settings.model.id == 'products') {
 
       this.onGetCategories();
+      this.onGetDepartments();
 
       const translate = this.translate.products;
 
@@ -75,6 +83,7 @@ export class StockReportsComponent implements OnInit {
       this.settings['fields'] = {
         default: [
           { label: translate.fields['default'].category.external, field: 'category', disabled: this.checkPermissions('default', 'category') },
+          ...(this.useDepartments ? [{ label: translate.fields['default'].department.external, field: 'department', disabled: this.checkPermissions('default', 'department') }] : []),
           { label: translate.fields['default'].provider.external, field: 'provider', disabled: this.checkPermissions('default', 'provider') },
           { label: translate.fields['default'].quantity.external, field: 'quantity', disabled: this.checkPermissions('default', 'quantity') },
           { label: translate.fields['default'].alert.external, field: 'alert', disabled: this.checkPermissions('default', 'alert') },
@@ -146,6 +155,7 @@ export class StockReportsComponent implements OnInit {
         purchasedProducts: [
           { label: translate.fields['purchasedProducts'].provider.external, field: 'provider', disabled: this.checkPermissions('purchasedProducts', 'provider') },
           { label: translate.fields['purchasedProducts'].category.external, field: 'category', disabled: this.checkPermissions('purchasedProducts', 'category') },
+          ...(this.useDepartments ? [{ label: translate.fields['purchasedProducts'].department.external, field: 'department', disabled: this.checkPermissions('purchasedProducts', 'department') }] : []),
           { label: translate.fields['purchasedProducts'].quantity.external, field: 'quantity', disabled: this.checkPermissions('purchasedProducts', 'quantity') },
           { label: translate.fields['purchasedProducts'].costPrice.external, field: 'costPrice', disabled: this.checkPermissions('purchasedProducts', 'costPrice') },
           { label: translate.fields['purchasedProducts'].salePrice.external, field: 'salePrice', disabled: this.checkPermissions('purchasedProducts', 'salePrice') },
@@ -195,6 +205,7 @@ export class StockReportsComponent implements OnInit {
           { label: translate.fields['transferedProducts'].destination.external, field: 'destination', disabled: this.checkPermissions('transferedProducts', 'destination') },
           { label: translate.fields['transferedProducts'].name.external, field: 'name', disabled: this.checkPermissions('transferedProducts', 'name') },
           { label: translate.fields['transferedProducts'].category.external, field: 'category', disabled: this.checkPermissions('transferedProducts', 'category') },
+          ...(this.useDepartments ? [{ label: translate.fields['transferedProducts'].department.external, field: 'department', disabled: this.checkPermissions('transferedProducts', 'department') }] : []),
           { label: translate.fields['transferedProducts'].quantity.external, field: 'quantity', disabled: this.checkPermissions('transferedProducts', 'quantity') },
           { label: translate.fields['transferedProducts'].costPrice.external, field: 'costPrice', disabled: this.checkPermissions('transferedProducts', 'costPrice') },
           { label: translate.fields['transferedProducts'].salePrice.external, field: 'salePrice', disabled: this.checkPermissions('transferedProducts', 'salePrice') },
@@ -275,6 +286,7 @@ export class StockReportsComponent implements OnInit {
     const model = this.settings.model;
     const filter = this.captureFilters();
     const category = this.formFilters.value.category;
+    const department = this.formFilters.value.department;
 
     this.settings.model.download = Utilities.isAdmin ? true : !!this.checkPermissions(this.typeActived, null, "downloadReport");
 
@@ -287,6 +299,14 @@ export class StockReportsComponent implements OnInit {
           field: "category.code",
           operator: "=",
           value: category["0"] != "@" ? parseInt(category) : category
+        });
+      }
+
+      if (this.useDepartments && department != "##all##") {
+        where.push({
+          field: "department.code",
+          operator: "=",
+          value: department["0"] != "@" ? parseInt(department) : department
         });
       }
 
@@ -403,6 +423,32 @@ export class StockReportsComponent implements OnInit {
     })
   }
 
+  public onGetDepartments() {
+
+    if (!this.useDepartments) {
+      this.departments = [];
+      return;
+    }
+
+    const timer = setInterval(() => {
+
+      if (this.formFilters) {
+
+        clearInterval(timer);
+
+        this.productDepartmentsService.getDepartments("ReportsStockDepartments", ((res) => {
+          this.productDepartmentsService.removeListeners("records", "ReportsStockDepartments");
+          this.departments = res;
+
+          if (this.formFilters.get("department")) {
+            this.formFilters.get("department").setValue("##all##");
+          }
+        }));
+
+      }
+    })
+  }
+
   // Filter Actions
 
   public onAddFilter(event: any) {
@@ -497,7 +543,8 @@ export class StockReportsComponent implements OnInit {
       endDate: [`${DateTime.getCurrentYear()}-${DateTime.getCurrentMonth()}-${DateTime.getCurrentDay()}`],
       fields: this.formBuilder.array([]),
       status: ["##all##"],
-      category: ["##all##"]
+      category: ["##all##"],
+      department: ["##all##"]
     });
 
 

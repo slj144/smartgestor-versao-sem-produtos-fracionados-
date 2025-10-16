@@ -37,6 +37,12 @@ export class GeneralSelectorTranslate {
                 update: { title: 'Editar Unidade Comercial' }
               }
             },
+            departments: {
+              action: {
+                register: { title: 'Adicionar Departamento' },
+                update: { title: 'Editar Departamento' }
+              }
+            },
             providers: {
               action: {
                 register: { title: 'Adicionar Fornecedor' }
@@ -86,6 +92,14 @@ export class GeneralSelectorTranslate {
                 code: 'Código',
                 name: 'Nome'
               }
+            },
+            departments: {
+              title: 'Excluir Departamento',
+              notice: 'Você deseja realmente remover este departamento?',
+              label: {
+                code: 'Código',
+                name: 'Nome'
+              }
             }
           },
           option: {
@@ -127,6 +141,12 @@ export class GeneralSelectorTranslate {
               action: {
                 register: { title: 'Add Commercial Unit' },
                 update: { title: 'Edit Commercial Unit' }
+              }
+            },
+            departments: {
+              action: {
+                register: { title: 'Add Department' },
+                update: { title: 'Edit Department' }
               }
             },
             providers: {
@@ -174,6 +194,14 @@ export class GeneralSelectorTranslate {
             commercialUnits: {
               title: 'Remove Commercial Unit',
               notice: 'Do you really want to remove this commercial unit?',
+              label: {
+                code: 'Code',
+                name: 'Name'
+              }
+            },
+            departments: {
+              title: 'Remove Department',
+              notice: 'Do you really want to remove this department?',
               label: {
                 code: 'Code',
                 name: 'Name'

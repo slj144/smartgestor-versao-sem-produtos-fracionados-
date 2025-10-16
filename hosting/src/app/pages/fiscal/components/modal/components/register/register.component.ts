@@ -2030,6 +2030,115 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
 
         statusServices = false;
 
+        const nfseServiceItems: Array<{ obj: any; baseValue: number }> = [];
+        let nfseTotalBaseValue = 0;
+
+        const getBalanceDiscountValue = () => {
+          const subtotalDiscount = Number(sourceData.balance?.subtotal?.discount || 0);
+          const totalDiscount = Number(sourceData.balance?.totalDiscount || 0);
+          if (this.embed) {
+            return subtotalDiscount > 0 ? subtotalDiscount : totalDiscount;
+          }
+          return totalDiscount > 0 ? totalDiscount : subtotalDiscount;
+        };
+
+        const applyNfseDiscount = () => {
+          const discountValue = round(getBalanceDiscountValue(), 2);
+          if (!(discountValue > 0)) {
+            return;
+          }
+
+          const saleTotal = Number(sourceData.balance?.total ?? sourceData.balance?.totalSale ?? 0);
+          if (!(saleTotal > 0)) {
+            return;
+          }
+
+          let currentTotal = 0;
+          nfseServiceItems.forEach((entry) => {
+            currentTotal += Number(entry.obj?.valor?.servico || 0);
+          });
+
+          currentTotal = round(currentTotal, 2);
+          const expectedTotal = round(saleTotal, 2);
+
+          let difference = round(currentTotal - expectedTotal, 2);
+          if (!(difference > 0)) {
+            return;
+          }
+
+          difference = Math.min(difference, round(discountValue, 2));
+
+          const baseTotal = nfseTotalBaseValue > 0 ? nfseTotalBaseValue : currentTotal;
+          if (!(baseTotal > 0)) {
+            return;
+          }
+
+          nfseServiceItems.forEach((entry, index) => {
+            if (!(difference > 0)) {
+              return;
+            }
+
+            const currentValue = Number(entry.obj?.valor?.servico || 0);
+            if (!(currentValue > 0)) {
+              return;
+            }
+
+            const baseValue = entry.baseValue > 0 ? entry.baseValue : currentValue;
+
+            let discountShare = index === (nfseServiceItems.length - 1)
+              ? round(difference, 2)
+              : round(difference * (baseValue / baseTotal), 2);
+
+            if (discountShare > currentValue) {
+              discountShare = currentValue;
+            }
+
+            if (!(discountShare > 0)) {
+              return;
+            }
+
+            difference = round(difference - discountShare, 2);
+
+            entry.obj.valorDesconto = round((entry.obj.valorDesconto || 0) + discountShare, 2);
+            if (!entry.obj.valor) {
+              entry.obj.valor = {};
+            }
+
+            const newValue = round(currentValue - discountShare, 2);
+            entry.obj.valor.servico = newValue;
+
+            if (entry.obj.tributos && entry.obj.tributos.issqn) {
+              entry.obj.tributos.issqn.baseCalculo = newValue;
+              entry.obj.tributos.issqn.valor = round(newValue * (entry.obj.tributos.issqn.aliquota / 100), 2);
+            }
+          });
+
+          // Recalcular totais e impostos após ajustes
+          totalTaxes.iss = 0;
+
+          if (response.total && response.total.servico) {
+            response.total.servico.baseCalculo = 0;
+            response.total.servico.valor = 0;
+            response.total.servico.valorIss = 0;
+          }
+
+          nfseServiceItems.forEach((entry) => {
+            const serviceValue = Number(entry.obj?.valor?.servico || 0);
+
+            if (entry.obj.tributos && entry.obj.tributos.issqn) {
+              totalTaxes.iss += entry.obj.tributos.issqn.valor;
+
+              if (response.total && response.total.servico) {
+                response.total.servico.baseCalculo += entry.obj.tributos.issqn.baseCalculo;
+                response.total.servico.valor += serviceValue;
+                response.total.servico.valorIss += entry.obj.tributos.issqn.valor;
+              }
+            } else if (response.total && response.total.servico) {
+              response.total.servico.valor += serviceValue;
+            }
+          });
+        };
+
         // console.log(settingsData.updateTributes, sourceData.services);
 
         if (!sourceData.services && sourceData.service || sourceData.services && sourceData.services.length == 0 && sourceData.service) {
@@ -2108,13 +2217,31 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
 
               obj.servico = item.customPrice + products;
 
-              return obj;
-            })()
+          return obj;
+        })()
           };
 
           if (item.codigoTributacao || serviceInfo["XML_CodigoTributacaoMunicipio"]) {
             obj.codigoTributacao = item.codigoTributacao || serviceInfo["XML_CodigoTributacaoMunicipio"];
           }
+
+          const productsValue = (() => {
+            if (!this.formSettingsControls.addProductsInService.value) {
+              return 0;
+            }
+
+            let value = 0;
+            Object.values(item.products || {}).forEach((product: any) => {
+              const quantity = product.selectedItems || product.quantity || 1;
+              const unitary = product.unitaryPrice != undefined ? product.unitaryPrice : product.salePrice;
+              value += (unitary || 0) * quantity;
+            });
+
+            return value;
+          })();
+
+          const executionValue = (item.executionPrice != undefined ? item.executionPrice : item.customPrice) || 0;
+          const baseValue = executionValue + productsValue;
 
           // console.log(obj.valor.servico * (obj.iss.aliquota / 100));
 
@@ -2124,6 +2251,8 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
           }
 
           response.servico.push(obj);
+          nfseServiceItems.push({ obj, baseValue });
+          nfseTotalBaseValue += baseValue;
         }
 
 
@@ -2158,6 +2287,7 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
             if (!error) {
               sourceData.products = Object.values(currentServices);
               (sourceData.products || []).forEach(configService);
+              applyNfseDiscount();
               statusServices = true;
             }
 
@@ -2171,6 +2301,7 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
 
 
           (sourceData.services || []).forEach(configService);
+          applyNfseDiscount();
           statusServices = true;
         }
 

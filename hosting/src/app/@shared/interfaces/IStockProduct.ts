@@ -3,6 +3,7 @@
 // Esta interface é usada em todo o sistema para tipar objetos de produto
 
 import { IStockLog } from './IStockLog';
+import { IStockProductDepartment } from './IStockProductDepartment';
 
 export interface IStockProduct {
   _id?: string;
@@ -37,6 +38,7 @@ export interface IStockProduct {
     code: string;
     name: string;
   };
+  department?: IStockProductDepartment;
   provider?: {
     _id: string;
     code: string;

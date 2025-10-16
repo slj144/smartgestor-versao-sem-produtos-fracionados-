@@ -6,6 +6,7 @@ import { CashierInflowCategoriesService } from '@pages/registers/_aggregates/cas
 import { CashierOutflowCategoriesService } from '@pages/registers/_aggregates/cashier/cashier-outflow-categories/cashier-outflow-categories.service';
 import { ProductCategoriesService } from '@pages/registers/_aggregates/stock/product-categories/product-categories.service';
 import { ProductCommercialUnitsService } from '@pages/registers/_aggregates/stock/product-commercial-units/product-commercial-units.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 import { StockAjustmentTypesService } from '@pages/registers/_aggregates/stock/stock-adjustment-types/stock-adjustment-types.service';
 import { BillsToPayCategoriesService } from '@pages/registers/_aggregates/financial/bills-to-pay-categories/bills-to-pay-categories.service';
 import { BillsToReceiveCategoriesService } from '@pages/registers/_aggregates/financial/bills-to-receive-categories/bills-to-receive-categories.service';
@@ -48,6 +49,7 @@ export class GeneralSelectorComponent implements OnInit {
     private cashierOutflowCategoriesService: CashierOutflowCategoriesService,
     private productCategoriesService: ProductCategoriesService,
     private productCommercialUnitsService: ProductCommercialUnitsService,
+    private productDepartmentsService: ProductDepartmentsService,
     private stockAjustmentTypesService: StockAjustmentTypesService,
     private billsToPayCategoriesService: BillsToPayCategoriesService,
     private billsToReceiveCategoriesService: BillsToReceiveCategoriesService
@@ -96,6 +98,11 @@ export class GeneralSelectorComponent implements OnInit {
     if (this.settings.activeComponent == 'Products/Categories') {
       this.type = 'categories';
       this.productCategoriesService.getCategories('GeneralSelectorComponent', callback);
+    }
+
+    if (this.settings.activeComponent == 'Products/Departments') {
+      this.type = 'departments';
+      this.productDepartmentsService.getDepartments('GeneralSelectorComponent', callback);
     }
 
     if (this.settings.activeComponent == 'Products/CommercialUnits') {
@@ -225,6 +232,10 @@ export class GeneralSelectorComponent implements OnInit {
       this.productCommercialUnitsService.registerUnit(data).then(callback);
     }
 
+    if (this.settings.activeComponent == 'Products/Departments') {
+      this.productDepartmentsService.registerDepartment(data).then(callback);
+    }
+
     if (this.settings.activeComponent == 'StockMovement/AdjustmentTypes') {
       this.stockAjustmentTypesService.registerType(data).then(callback);
     }
@@ -261,6 +272,10 @@ export class GeneralSelectorComponent implements OnInit {
 
     if (this.settings.activeComponent == 'Products/CommercialUnits') {
       this.productCommercialUnitsService.deleteUnit(data).then(callback);
+    }
+
+    if (this.settings.activeComponent == 'Products/Departments') {
+      this.productDepartmentsService.deleteDepartment(data).then(callback);
     }
 
     if (this.settings.activeComponent == 'Products/StockAdjustmentType') {
@@ -376,6 +391,7 @@ export class GeneralSelectorComponent implements OnInit {
     this.cashierOutflowCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.productCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.productCommercialUnitsService.removeListeners('records', 'GeneralSelectorComponent');
+    this.productDepartmentsService.removeListeners('records', 'GeneralSelectorComponent');
     this.stockAjustmentTypesService.removeListeners('records', 'GeneralSelectorComponent');
     this.billsToPayCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.billsToReceiveCategoriesService.removeListeners('records', 'GeneralSelectorComponent');

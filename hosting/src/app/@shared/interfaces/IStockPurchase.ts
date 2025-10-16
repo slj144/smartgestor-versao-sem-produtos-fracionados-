@@ -22,6 +22,11 @@ export interface IStockPurchase {
     averageCost: number;
     salePrice: number;
     quantity: number;
+    department?: {
+      _id?: string;
+      code: string;
+      name: string;
+    };
   }[];
   balance: {
     quantity: number;

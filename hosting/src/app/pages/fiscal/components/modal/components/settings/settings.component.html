@@ -321,7 +321,7 @@
                     <td>
                       <input type="text" class="form-control"  #nfeNumerationNumber />
                     </td>
-                    <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfe.controls.config.controls.numeracao, nfeNumerationSerie, nfeNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfe.controls.config.controls.numeracao, nfeNumerationSerie, nfeNumerationNumber, 'nfe')"><icon name="plus-outline" pack="eva"></icon></button></td>
                   </tr>               
                 </tbody>              
               </table>
@@ -427,7 +427,7 @@
                   <td>
                     <input type="text" class="form-control"  #nfceNumerationNumber />
                   </td>
-                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfce.controls.config.controls.numeracao, nfceNumerationSerie, nfceNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfce.controls.config.controls.numeracao, nfceNumerationSerie, nfceNumerationNumber, 'nfce')"><icon name="plus-outline" pack="eva"></icon></button></td>
                 </tr>               
               </tbody>              
             </table>
@@ -535,6 +535,7 @@
         
         <div class="form-group col-12 col-md-6  stack" formGroupName="config">
           <span>Numeração</span>
+          <small *ngIf="isAnapolisMunicipality" class="form-text">Para Anapolis/GO utilize a serie 8 e numeracao sequencial com ate 5 caracteres.</small>
   
 
           <div class="table-responsive">
@@ -565,7 +566,7 @@
                   <td>
                     <input type="text" class="form-control"  #nfseNumerationNumber />
                   </td>
-                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfse.controls.config.controls.rps.controls.numeracao, nfseNumerationSerie, nfseNumerationNumber)"><icon name="plus-outline" pack="eva"></icon></button></td>
+                  <td class="action-td"><button type="button" class="btnAddMethod" (click)="onAddNumeration(form.controls.nfse.controls.config.controls.rps.controls.numeracao, nfseNumerationSerie, nfseNumerationNumber, 'nfse')"><icon name="plus-outline" pack="eva"></icon></button></td>
                 </tr>               
               </tbody>              
             </table>

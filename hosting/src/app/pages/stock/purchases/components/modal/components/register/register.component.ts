@@ -27,6 +27,7 @@ import { cst as cstPIS } from '@shared/settingers/pis';
 import { cst as cstCOFINS } from '@shared/settingers/cofins';
 import { ProductCommercialUnitsService } from '@pages/registers/_aggregates/stock/product-commercial-units/product-commercial-units.service';
 import { ProductCategoriesService } from '@pages/registers/_aggregates/stock/product-categories/product-categories.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 import { FormBuilder } from '@angular/forms';
 
 @Component({
@@ -48,8 +49,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
   public categoriesData: any[] = [];
   public commercialUnitsData: any[] = [];
+  public departmentsData: any[] = [];
   public checkCategories: boolean = false;
   public checkCommercialUnits: boolean = false;
+  public checkDepartments: boolean = false;
 
   public productsFormArray;
 
@@ -64,6 +67,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
   public isMatrix: boolean = Utilities.isMatrix;
   public isSimplesNacional: boolean = true;
 
+  public get useDepartments(): boolean {
+    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+  }
+
   private layerComponent: any;
 
   constructor(
@@ -72,7 +79,8 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     private billsToPayService: BillsToPayService,
     private fiscalService: FiscalService,
     private productCommercialUnitsService: ProductCommercialUnitsService,
-    private productCategoriesService: ProductCategoriesService
+    private productCategoriesService: ProductCategoriesService,
+    private productDepartmentsService: ProductDepartmentsService
   ) {
     PurchasesRegisterComponent.shared = this;
   }
@@ -145,6 +153,15 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
       this.commercialUnitsData = data;
       this.checkCommercialUnits = true;
     });
+
+    if (this.useDepartments) {
+      this.productDepartmentsService.getDepartments('PurchasesRegisterComponent', (data) => {
+        this.departmentsData = data;
+        this.checkDepartments = true;
+      });
+    } else {
+      this.checkDepartments = true;
+    }
 
     this.fiscalService.removeListeners("store-settings", "PurchasesRegisterComponent");
     this.fiscalService.getStoreSettings("PurchasesRegisterComponent", (fiscalSettings)=>{
@@ -448,6 +465,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
           code: [product?.category?.code],
           name: [product?.category?.name]
         }),
+        department: this.formBuilder.group({
+          code: [product?.department?.code],
+          name: [product?.department?.name]
+        }),
         commercialUnit: this.formBuilder.group({
           code: [product?.commercialUnit?.code],
           name: [product?.commercialUnit?.name]
@@ -484,6 +505,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     const objValue = {code: '', name: ""};
     item.category = objValue
     item.commercialUnit = objValue;
+    item.department = objValue;
 
     if(isRegister){
       item.isRegister = true;
@@ -500,6 +522,12 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     const code = $$(event.target).val();
     const category = this.categoriesData.filter((cat)=> cat.code == code)[0];
     item.category = category;
+  }
+
+  public onChangeDepartment(event, item){
+    const code = $$(event.target).val();
+    const department = this.departmentsData.filter((dep)=> dep.code == code)[0];
+    item.department = department;
   }
 
   public onChangeCommercialunit(event, item){
@@ -556,10 +584,13 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
     switch (type) {
       case 'categories':
-        selectedItem = product.category.code;
+        selectedItem = product?.category?.code;
+        break;
+      case 'departments':
+        selectedItem = product?.department?.code;
         break;
       case 'commercialUnits':
-        selectedItem = product.commercialUnit.code;
+        selectedItem = product?.commercialUnit?.code;
         break;
     }
 
@@ -772,6 +803,15 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
             _id: item.category._id,
             code: item.category.code, 
             name: item.category.name
+          };
+        }
+
+        if (item.department) {
+
+          obj.department = {
+            _id: item.department._id,
+            code: (typeof item.department.code === 'string' ? parseInt(<string>item.department.code, 10) : item.department.code),
+            name: item.department.name
           };
         }
 

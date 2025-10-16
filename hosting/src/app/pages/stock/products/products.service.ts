@@ -797,6 +797,10 @@ export class ProductsService {
             item.category.code = Utilities.prefixCode(item.category.code);
           }
 
+          if (item.department && item.department.code) {
+            item.department.code = Utilities.prefixCode(item.department.code);
+          }
+
           if (item.commercialUnit && item.commercialUnit.code) {
             item.commercialUnit.code = Utilities.prefixCode(item.commercialUnit.code);
           }

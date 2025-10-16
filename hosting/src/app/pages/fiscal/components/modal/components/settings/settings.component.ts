@@ -44,6 +44,9 @@ export class SettingsNfComponent implements OnInit, OnDestroy {
   private layerComponent: any;
   private checkSearchPostCode: boolean = false;
 
+  private readonly ANAPOLIS_IBGE = '5201108';
+  public isAnapolisMunicipality = false;
+
   private storeModel = {
     "endereco": {
       "codigoPais": "1058",
@@ -400,6 +403,8 @@ export class SettingsNfComponent implements OnInit, OnDestroy {
     data.nfce.config = { ...this.storeModel.nfce.config, ...(data.nfce?.config || {}) };
     data.nfse = { ...this.storeModel.nfse, ...(data.nfse || {}) };
     data.nfse.config = { ...this.storeModel.nfse.config, ...(data.nfse?.config || {}) };
+
+    this.applyMunicipalityDefaults(data);
     data.logotipo = { ...this.storeModel.logotipo, ...(data.logotipo || {}) };
     data.email = (data.email || '').trim();
 
@@ -565,6 +570,32 @@ export class SettingsNfComponent implements OnInit, OnDestroy {
 
   // Utility Methods
 
+  private applyMunicipalityDefaults(data: any) {
+    const storeIbge = (Utilities.storeInfo?.address?.ibge || '').toString();
+    const formIbge = (data?.endereco?.codigoCidade || storeIbge || '').toString();
+
+    this.isAnapolisMunicipality = formIbge === this.ANAPOLIS_IBGE;
+
+    if (!data.endereco) {
+      data.endereco = {};
+    }
+
+    if (this.isAnapolisMunicipality) {
+      data.endereco.codigoCidade = this.ANAPOLIS_IBGE;
+      data.endereco.descricaoCidade = data.endereco.descricaoCidade || 'ANAPOLIS';
+      data.endereco.estado = data.endereco.estado || 'GO';
+
+      const numeration = data?.nfse?.config?.rps?.numeracao || [];
+
+      if (!numeration.length) {
+        data.nfse = data.nfse || {};
+        data.nfse.config = data.nfse.config || {};
+        data.nfse.config.rps = data.nfse.config.rps || {};
+        data.nfse.config.rps.numeracao = [{ serie: '8', numero: 1 }];
+      }
+    }
+  }
+
   public onChangeBoolean(event, control: AbstractControl) {
     control.setValue(control.value == "true");
   }
@@ -589,15 +620,54 @@ export class SettingsNfComponent implements OnInit, OnDestroy {
     });
   }
 
-  public onAddNumeration(control, serieInput, numerInput) {
+  public onAddNumeration(control, serieInput, numerInput, type: 'nfe' | 'nfce' | 'nfse' = 'nfe') {
 
-    let serie = $$(serieInput).val().trim();
-    serie = isNaN(parseInt(serie)) ? serie : parseInt(serie);
+    let serie = ($$(serieInput).val() || '').toString().trim();
 
-    const number = parseInt($$(numerInput).val().trim());
+    if (type === 'nfse' && !serie && this.isAnapolisMunicipality) {
+      serie = '8';
+    }
 
-    if (isNaN(number)) {
+    const parsedSerieNumber = parseInt(serie, 10);
+    if (!isNaN(parsedSerieNumber) && serie !== '') {
+      serie = parsedSerieNumber;
+    }
 
+    const numberValue = ($$(numerInput).val() || '').toString().trim();
+    const number = parseInt(numberValue, 10);
+
+    if (type === 'nfse') {
+      const serieAsString = serie?.toString().trim();
+
+      if (!serieAsString) {
+        this.notificationService.create({
+          title: 'Numeração NFSe',
+          description: 'Informe a série RPS antes de adicionar.',
+          status: ENotificationStatus.warning,
+          icon: 'alert-triangle-outline'
+        }, false);
+        return;
+      }
+
+      if (serieAsString.length > 5) {
+        this.notificationService.create({
+          title: 'Numeração NFSe',
+          description: 'A série do RPS deve possuir no máximo 5 caracteres.',
+          status: ENotificationStatus.warning,
+          icon: 'alert-triangle-outline'
+        }, false);
+        return;
+      }
+    }
+
+    if (isNaN(number) || number <= 0) {
+
+      this.notificationService.create({
+        title: 'Numeração',
+        description: 'Informe um número inicial válido para a sequência.',
+        status: ENotificationStatus.warning,
+        icon: 'alert-triangle-outline'
+      }, false);
       return;
     }
 

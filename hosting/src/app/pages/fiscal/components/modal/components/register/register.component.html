@@ -335,10 +335,11 @@
             <option>DEVOLUÇÃO</option>
             <option *ngIf="formSettingsControls.type.value == 'NFE' && !embed">COMPRA</option>
             <option *ngIf="formSettingsControls.type.value == 'NFE' && !embed">TRASNFERÊNCIA</option>
+            <option *ngIf="formSettingsControls.type.value == 'NFE' && !embed">REMESSA PARA CONSERTO</option>
           </select>
         </div>
 
-        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'COMPRA' || formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'DEVOLUÇÃO'">
+        <div class="form-group" *ngIf="formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'COMPRA' || formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'DEVOLUÇÃO' || formSettingsControls.type.value == 'NFE' && formSettingsControls.operationNature.value == 'REMESSA PARA CONSERTO'">
           <label>Chave de Referência Nfe</label>
           <input type="text" class="form-control" formControlName="notaReferenciada" />
         </div>
