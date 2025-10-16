@@ -426,6 +426,43 @@ export class SettingsService {
     }));
   }
 
+  public async updateStockDepartmentsEnabled(value: boolean) {
+
+    return (new Promise<void>((resolve, reject) => {
+
+      try {
+
+        Utilities.loading();
+
+        const updateObject: any = { stock: {} };
+        updateObject.stock.departmentsEnabled = !!value;
+
+        this.collRef().doc(Utilities.storeID).update(updateObject, { merge: true }).then(() => {
+
+          Utilities.loading(false);
+          resolve();
+
+          Utilities.localStorage('StockDepartmentsEnabled', !!value);
+          this.notifications('Stock/Departments', 'success');
+        }).catch((error) => {
+
+          Utilities.loading(false);
+          reject(error);
+
+          this.notifications('Stock/Departments', 'error');
+          console.error(`Error: ${error.message}`);
+        });
+      } catch(error) {
+
+        Utilities.loading(false);
+        reject(error);
+
+        this.notifications('Stock/Departments', 'error');
+        console.error(`Error: ${error.message}`);
+      }
+    }));
+  }
+
   public async updateStockAverageTransfersCost(value: string) {
 
     return (new Promise<void>((resolve, reject) => {
@@ -773,6 +810,9 @@ export class SettingsService {
       }
       if (data.stock && (data.stock.allowNegativeSale !== undefined)) {
         Utilities.localStorage('StockAllowNegativeSale', !!data.stock.allowNegativeSale);
+      }
+      if (data.stock && (data.stock.departmentsEnabled !== undefined)) {
+        Utilities.localStorage('StockDepartmentsEnabled', !!data.stock.departmentsEnabled);
       }
 
       return Utilities.deepClone(data);

@@ -85,7 +85,35 @@
                   </table>
                 </div>
               </div>
-        
+       
+              <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.stock.button.submit }}</button>
+            </form>
+          </div>
+
+          <div class="container-average-cost" *ngIf="settings.activeComponent == 'Stock/Departments'">
+            <header>
+              <h6>{{ settings.translate.section.stock.option.departments.label }}</h6>
+              <small>{{ settings.translate.section.stock.option.departments.description }}</small>
+            </header>
+
+            <form class="form" [formGroup]="form" (submit)="onSubmit()">
+
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-departments" type="checkbox" formControlName="enable" /></td>
+                      <td>
+                        <label for="checkbox-departments">
+                          <span class="description">{{ settings.translate.modal.section.stock.departments.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.stock.departments.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
               <button type="submit" class="btn btnBlue" [disabled]="form.invalid">{{ settings.translate.modal.section.stock.button.submit }}</button>
             </form>
           </div>

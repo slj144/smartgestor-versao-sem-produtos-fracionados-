@@ -198,7 +198,7 @@ export class DataImportComponent implements OnInit {
   }
 
   public get useDepartments() {
-    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+    return Utilities.stockDepartmentsEnabled;
   }
 
   // Initialize Method chamado pelo modal

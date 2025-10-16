@@ -45,7 +45,7 @@ export class StockReportsComponent implements OnInit {
   public isMatrix = Utilities.isMatrix;
 
   public get useDepartments(): boolean {
-    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+    return Utilities.stockDepartmentsEnabled;
   }
 
   private modalComponent: any;

@@ -194,7 +194,7 @@ export class ProductsRegisterComponent implements OnInit, OnDestroy {
   // Getters and Setters Methods
 
   public get useDepartments() {
-    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+    return Utilities.stockDepartmentsEnabled;
   }
 
   public get isMatrix() {

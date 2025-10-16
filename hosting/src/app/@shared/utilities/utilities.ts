@@ -49,6 +49,19 @@ export class Utilities {
     return ProjectSettings.companySettings().profile;
   }
 
+  public static get stockDepartmentsEnabled() {
+    const storedValue = Utilities.localStorage('StockDepartmentsEnabled');
+
+    if (storedValue !== undefined && storedValue !== null) {
+      if (typeof storedValue === 'string') {
+        return storedValue === 'true';
+      }
+      return !!storedValue;
+    }
+
+    return !!ProjectSettings.companySettings().profile?.stock?.components?.departments?.active;
+  }
+
   public static get isFiscal() {
     return ProjectSettings.companySettings().profile && ProjectSettings.companySettings().profile.fiscal ? ProjectSettings.companySettings().profile.fiscal.active : false;
   }

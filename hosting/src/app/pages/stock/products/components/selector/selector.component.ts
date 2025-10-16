@@ -46,7 +46,7 @@ export class ProductsSelectorComponent implements OnInit {
   private searchToken = 0;
 
   public get useDepartments(): boolean {
-    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+    return Utilities.stockDepartmentsEnabled;
   }
 
   constructor(

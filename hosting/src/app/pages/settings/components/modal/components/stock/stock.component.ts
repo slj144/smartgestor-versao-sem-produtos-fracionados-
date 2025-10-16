@@ -69,6 +69,13 @@ export class SettingsStockComponent implements OnInit {
         this.callback.emit({ close: true });
       });
     }
+
+    if (this.settings.activeComponent == 'Stock/Departments') {
+      this.settingsService.updateStockDepartmentsEnabled(!!data.enable).then(() => {
+        Utilities.localStorage('StockDepartmentsEnabled', !!data.enable);
+        this.callback.emit({ close: true });
+      });
+    }
   }
 
   // Setting Methods
@@ -78,12 +85,32 @@ export class SettingsStockComponent implements OnInit {
     if (
       (this.settings.activeComponent == 'Stock/AveragePurchaseCost') ||
       (this.settings.activeComponent == 'Stock/AverageTransfersCost') ||
-      (this.settings.activeComponent == 'Stock/AllowNegativeSale')
+      (this.settings.activeComponent == 'Stock/AllowNegativeSale') ||
+      (this.settings.activeComponent == 'Stock/Departments')
     ) {
-      
+      const key = this.settings.activeComponent.replace('/','');
+      let storedValue = Utilities.localStorage(key);
+
+      if (storedValue === undefined || storedValue === null) {
+        if (this.settings.activeComponent == 'Stock/AllowNegativeSale') {
+          storedValue = Utilities.localStorage('StockAllowNegativeSale');
+        }
+
+        if (this.settings.activeComponent == 'Stock/Departments') {
+          storedValue = Utilities.stockDepartmentsEnabled;
+        }
+      }
+
+      const normalizeBoolean = (value: any) => {
+        if (typeof value === 'string') {
+          return value === 'true';
+        }
+        return !!value;
+      };
+
       this.form = this.formBuilder.group({
-        enable: [Utilities.localStorage(this.settings.activeComponent.replace('/','')), Validators.required]
-      }); 
+        enable: [normalizeBoolean(storedValue), Validators.required]
+      });
     }
   }
 

@@ -68,7 +68,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
   public isSimplesNacional: boolean = true;
 
   public get useDepartments(): boolean {
-    return !!Utilities.companyProfile?.stock?.components?.departments?.active;
+    return Utilities.stockDepartmentsEnabled;
   }
 
   private layerComponent: any;

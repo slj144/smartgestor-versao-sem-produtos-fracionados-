@@ -66,6 +66,10 @@ export class SettingsTranslate {
             allowNegativeSale: {
               label: 'Permitir venda com estoque negativo',
               description: 'Ao ativar, o PDV permitirá vender itens mesmo sem saldo disponível (estoque pode ficar negativo).'
+            },
+            departments: {
+              label: 'Departamentos por produto',
+              description: 'Habilite o campo de departamento nos cadastros de produtos, compras e relatórios.'
             }
           }
         },
@@ -154,6 +158,10 @@ export class SettingsTranslate {
               description: 'Deseja permitir venda de produtos com estoque insuficiente?',
               subDescription: 'Ao ativar esta opção, o PDV não bloqueará a seleção de quantidades acima do saldo disponível e não exibirá alerta de “Fora de Estoque”.'
             },
+            departments: {
+              description: 'Deseja habilitar o campo de departamento para produtos?',
+              subDescription: 'Com esta opção ativa, produtos, compras e relatórios passam a aceitar o filtro e o vínculo de departamentos.'
+            },
             button: {
               submit: 'Confirmar'
             }
@@ -196,6 +204,10 @@ export class SettingsTranslate {
         'Stock/AllowNegativeSale': {
           title: 'Configurações de Estoque',
           description: 'A permissão de venda com estoque negativo foi atualizada com sucesso.'
+        },
+        'Stock/Departments': {
+          title: 'Configurações de Estoque',
+          description: 'A disponibilidade de departamentos por produto foi atualizada com sucesso.'
         },
         'Cashier/OperationalMode': {
           title: 'Configurações do Caixa',
@@ -288,6 +300,10 @@ export class SettingsTranslate {
             allowNegativeSale: {
               label: 'Allow selling with negative stock',
               description: 'When enabled, POS allows selling items even without available balance (stock may go negative).'
+            },
+            departments: {
+              label: 'Product departments',
+              description: 'Enable department usage across products, purchases and stock reports.'
             }
           }
         },
@@ -375,6 +391,10 @@ export class SettingsTranslate {
               description: 'Do you want to allow selling products with insufficient stock?',
               subDescription: 'When enabled, POS will not block selection above available balance and will not show “Out of Stock” alert.'
             },
+            departments: {
+              description: 'Do you want to enable the department field for products?',
+              subDescription: 'When enabled, products, purchases and reports expose department selection and filtering.'
+            },
             button: {
               submit: 'Confirm'
             }
@@ -417,6 +437,10 @@ export class SettingsTranslate {
         'Stock/AllowNegativeSale': {
           title: 'Stock Settings',
           description: 'The negative stock sale permission has been updated successfully.'
+        },
+        'Stock/Departments': {
+          title: 'Stock Settings',
+          description: 'Product departments availability was updated successfully.'
         },
         'Cashier/OperationalMode': {
           title: 'Cashier Settings',
