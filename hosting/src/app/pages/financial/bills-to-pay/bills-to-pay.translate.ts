@@ -12,6 +12,7 @@ export class BillsToPayTranslate {
           dueDate: 'Vencimento',
           beneficiary: 'Beneficiário',           
           category: 'Categoria',           
+          department: 'Departamento',
           installments: 'Parcelas',
           status: 'Status',
           value: `Valor (${Utilities.currencySymbol})`,
@@ -67,6 +68,19 @@ export class BillsToPayTranslate {
                 }
               }
             },
+            department: {
+              label: 'Departamento',
+              option: {
+                code: {
+                  label: 'Código',
+                  path: 'Departamento/Código'
+                },
+                name: {
+                  label: 'Nome',
+                  path: 'Departamento/Nome'
+                }
+              }
+            },
             billStatus: {
               label: 'Status',
               list: {
@@ -107,6 +121,13 @@ export class BillsToPayTranslate {
               },
               category: {
                 title: 'Categoria',
+                label: {
+                  code: 'Código',
+                  name: 'Nome'
+                }
+              },
+              department: {
+                title: 'Departamento',
                 label: {
                   code: 'Código',
                   name: 'Nome'
@@ -178,6 +199,7 @@ export class BillsToPayTranslate {
             layer: {
               beneficiaries: { title: 'Fornecedores' },
               categories: { title: 'Categorias' },
+              departments: { title: 'Departamentos de Produto' },
               paymentMethods: { title: 'Meios de Pagamento' }
             }
           },
@@ -212,6 +234,13 @@ export class BillsToPayTranslate {
               },
               category: {
                 title: 'Categoria',
+                label: {
+                  code: 'Código',
+                  name: 'Nome'
+                }
+              },
+              department: {
+                title: 'Departamento',
                 label: {
                   code: 'Código',
                   name: 'Nome'
@@ -287,7 +316,8 @@ export class BillsToPayTranslate {
           code: 'Code',
           dueDate: 'Due Date',
           beneficiary: 'Beneficiary',            
-          category: 'Category',           
+          category: 'Category',
+          department: 'Department',
           installments: 'Installments',
           status: 'Status',
           value: `Amount (${Utilities.currencySymbol})`,
@@ -343,6 +373,19 @@ export class BillsToPayTranslate {
                 }
               }
             },
+            department: {
+              label: 'Department',
+              option: {
+                code: {
+                  label: 'Code',
+                  path: 'Department/Code'
+                },
+                name: {
+                  label: 'Name',
+                  path: 'Department/Name'
+                }
+              }
+            },
             billStatus: {
               label: 'Status',
               list: {
@@ -383,6 +426,13 @@ export class BillsToPayTranslate {
               },
               category: {
                 title: 'Category',
+                label: {
+                  code: 'Code',
+                  name: 'Name'
+                }
+              },
+              department: {
+                title: 'Department',
                 label: {
                   code: 'Code',
                   name: 'Name'
@@ -455,6 +505,7 @@ export class BillsToPayTranslate {
             layer: {
               beneficiaries: { title: 'Providers' },
               categories: { title: 'Categories' },
+              departments: { title: 'Product Departments' },
               paymentMethods: { title: 'Payment Methods' }
             }
           },
@@ -489,6 +540,13 @@ export class BillsToPayTranslate {
               },
               category: {
                 title: 'Category',
+                label: {
+                  code: 'Code',
+                  name: 'Name'
+                }
+              },
+              department: {
+                title: 'Department',
                 label: {
                   code: 'Code',
                   name: 'Name'

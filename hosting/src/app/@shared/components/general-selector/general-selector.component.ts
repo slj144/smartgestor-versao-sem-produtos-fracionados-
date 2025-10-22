@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, ElementRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // Services
@@ -24,7 +24,7 @@ import { Dispatch } from '@shared/utilities/dispatch';
   templateUrl: './general-selector.component.html',
   styleUrls: ['./general-selector.component.scss']
 })
-export class GeneralSelectorComponent implements OnInit {
+export class GeneralSelectorComponent implements OnInit, OnDestroy {
 
   @Output() callback: EventEmitter<any> = new EventEmitter();
   @ViewChild('searchBar', { static: true }) searchBar: ElementRef;
@@ -102,7 +102,8 @@ export class GeneralSelectorComponent implements OnInit {
 
     if (this.settings.activeComponent == 'Products/Departments') {
       this.type = 'departments';
-      this.productDepartmentsService.getDepartments('GeneralSelectorComponent', callback);
+      this.productDepartmentsService.removeListeners('records', 'GeneralSelectorComponent/Departments');
+      this.productDepartmentsService.getDepartments('GeneralSelectorComponent/Departments', callback);
     }
 
     if (this.settings.activeComponent == 'Products/CommercialUnits') {
@@ -391,7 +392,7 @@ export class GeneralSelectorComponent implements OnInit {
     this.cashierOutflowCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.productCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.productCommercialUnitsService.removeListeners('records', 'GeneralSelectorComponent');
-    this.productDepartmentsService.removeListeners('records', 'GeneralSelectorComponent');
+    this.productDepartmentsService.removeListeners('records', ['GeneralSelectorComponent', 'GeneralSelectorComponent/Departments']);
     this.stockAjustmentTypesService.removeListeners('records', 'GeneralSelectorComponent');
     this.billsToPayCategoriesService.removeListeners('records', 'GeneralSelectorComponent');
     this.billsToReceiveCategoriesService.removeListeners('records', 'GeneralSelectorComponent');

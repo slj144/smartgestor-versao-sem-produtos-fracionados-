@@ -49,8 +49,9 @@ export class BillsToPayRegisterLayerComponent implements OnInit, OnDestroy {
         clearInterval(timer);
       }
 
-      if (this.generalSelectorComponent && (this.settings.activeComponent == 'categories')) {
-        this.generalSelectorComponent.bootstrap({ activeComponent: 'BillsToPay/Categories' });
+      if (this.generalSelectorComponent && (this.settings.activeComponent == 'categories' || this.settings.activeComponent == 'departments')) {
+        const selectorComponent = (this.settings.activeComponent == 'departments') ? 'Products/Departments' : 'BillsToPay/Categories';
+        this.generalSelectorComponent.bootstrap({ activeComponent: selectorComponent, selectItem: this.settings.selectItem });
       }
 
       if (this.paymentMethodsComponent && (this.settings.activeComponent == 'paymentMethods')) {
@@ -110,6 +111,10 @@ export class BillsToPayRegisterLayerComponent implements OnInit, OnDestroy {
 
       if (this.settings.activeComponent == 'categories') {
         this.callback.emit({ category: event.data });
+      }
+
+      if (this.settings.activeComponent == 'departments') {
+        this.callback.emit({ department: event.data });
       }
     }
 

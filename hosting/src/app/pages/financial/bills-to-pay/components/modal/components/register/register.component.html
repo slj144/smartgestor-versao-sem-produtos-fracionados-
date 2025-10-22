@@ -53,6 +53,31 @@
       </div>
     </div>
 
+    <div class="container-department" *ngIf="useDepartments">
+      <h6>
+        <span>{{ translate.panel.department.title }}</span>
+      </h6>
+
+      <div class="data">
+        <select class="form-control" formControlName="department">
+          <option [ngValue]="null"></option>
+          <option *ngFor="let item of departmentsData" [ngValue]="item">{{ item.displayCode + ' - ' + item.name }}</option>
+        </select>
+      </div>
+
+      <div class="data" *ngIf="formControls.department.value">
+        <p>
+          <span class="label">{{ translate.panel.department.label.code + ':' }}</span>
+          <span class="value">{{ formControls.department.value.displayCode }}</span>
+        </p>
+
+        <p>
+          <span class="label">{{ translate.panel.department.label.name + ':' }}</span>
+          <span class="value">{{ formControls.department.value.name }}</span>
+        </p>
+      </div>
+    </div>
+
     <div class="container-installments">
       <h6>
         <span>{{ translate.panel.installments.title }}</span>

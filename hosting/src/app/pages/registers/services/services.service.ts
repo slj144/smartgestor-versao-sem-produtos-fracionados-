@@ -547,6 +547,10 @@ export class ServicesService {
         }
 
         item.code = Utilities.prefixCode(item.code);
+        if (item.department && item.department.code != undefined) {
+          item.department.code = Utilities.prefixCode(parseInt(String(item.department.code), 10));
+        }
+
         records.push(item);
       });     
       

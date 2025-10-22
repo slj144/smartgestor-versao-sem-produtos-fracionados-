@@ -173,6 +173,18 @@
             font-size: 12px;
             text-align: center;
             vertical-align: middle;
+            &.align-top {
+              vertical-align: top;
+            }
+            &.col-small,
+            &.col-medium,
+            &.col-large {
+              div {
+                display: block;
+                padding: 2px 0;
+                text-align: inherit;
+              }
+            }
             &.markStringXLS {
               content: "'";
             }

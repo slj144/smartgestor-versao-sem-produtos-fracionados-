@@ -10,6 +10,10 @@
       <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
     </div>
 
+    <div class="container-departments" [style.display]="(settings.activeComponent == 'departments' ? 'block' : 'none')">
+      <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
+    </div>
+
     <div class="container-payment-methods" [style.display]="(settings.activeComponent == 'paymentMethods' ? 'block' : 'none')">
       <payment-methods-selector (callback)="onPaymentResponse($event)"></payment-methods-selector>
     </div>

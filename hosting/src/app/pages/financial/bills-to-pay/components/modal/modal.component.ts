@@ -36,6 +36,25 @@ export class BillsToPayModalComponent implements OnInit, OnDestroy {
     this.callback.emit({ instance: this });
   }
 
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
+  }
+
+  public formatDepartmentCode(code: number | string | undefined): string {
+    const stringCode = String(code ?? '').trim();
+
+    if (!stringCode) {
+      return '';
+    }
+
+    if (stringCode.startsWith('@')) {
+      return stringCode;
+    }
+
+    const numeric = parseInt(stringCode, 10);
+    return isNaN(numeric) ? stringCode : Utilities.prefixCode(numeric);
+  }
+
   // User Interface Actions
 
   public onCancel() {

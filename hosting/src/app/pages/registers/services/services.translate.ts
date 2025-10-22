@@ -35,7 +35,8 @@ export class ServicesTranslate{
                 name: 'Nome',
                 description: 'Descrição',
                 costPrice: `Preço de Custo (${Utilities.currencySymbol})`,
-                executionPrice: `Preço de Execução (${Utilities.currencySymbol})`
+                executionPrice: `Preço de Execução (${Utilities.currencySymbol})`,
+                department: 'Departamento'
               },
               notice: '* Os campos obrigatórios estão marcados em vermelho.',
               button: {
@@ -53,7 +54,8 @@ export class ServicesTranslate{
                   name: 'Nome',
                   description: 'Descrição',
                   costPrice: `Preço de Custo (${Utilities.currencySymbol})`,
-                  executionPrice: `Preço de Execução (${Utilities.currencySymbol})`
+                  executionPrice: `Preço de Execução (${Utilities.currencySymbol})`,
+                  department: 'Departamento'
                 }
               },
               description: {
@@ -135,7 +137,8 @@ export class ServicesTranslate{
                 name: 'Name',
                 description: 'Description',
                 costPrice: `Cost Price (${Utilities.currencySymbol})`,
-                executionPrice: `Execution Price (${Utilities.currencySymbol})`
+                executionPrice: `Execution Price (${Utilities.currencySymbol})`,
+                department: 'Department'
               },
               notice: '* Mandatory fields are marked in red.',
               button: {
@@ -153,7 +156,8 @@ export class ServicesTranslate{
                   name: 'Name',
                   description: 'Description',
                   costPrice: `Cost Price (${Utilities.currencySymbol})`,
-                  executionPrice: `Execution Price (${Utilities.currencySymbol})`
+                  executionPrice: `Execution Price (${Utilities.currencySymbol})`,
+                  department: 'Department'
                 }
               },
               description: {

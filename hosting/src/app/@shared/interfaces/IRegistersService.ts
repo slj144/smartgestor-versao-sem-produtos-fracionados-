@@ -7,6 +7,11 @@ export interface IRegistersService {
   costPrice: number;
   executionPrice: number;
   description?: string;
+  department?: {
+    _id?: string;
+    code: number | string;
+    name: string;
+  };
   
   cnae?: string;
   codigo?: string;

@@ -932,6 +932,21 @@ export class BillsToPayService {
 
         item.code = Utilities.prefixCode(item.code);
 
+        if (item.department && item.department.code !== undefined && item.department.code !== null) {
+          const raw = item.department.code;
+          const stringCode = String(raw);
+          if (stringCode.startsWith('@')) {
+            item.department.code = stringCode;
+          } else {
+            const numeric = parseInt(stringCode, 10);
+            if (!isNaN(numeric)) {
+              item.department.code = Utilities.prefixCode(numeric);
+            } else {
+              item.department.code = stringCode;
+            }
+          }
+        }
+
         if (item.referenceCode) {
 
           item.referenceCode = Utilities.prefixCode(item.referenceCode);

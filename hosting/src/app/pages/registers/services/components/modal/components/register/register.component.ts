@@ -1,8 +1,9 @@
-import { Component, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
 // Services
 import { ServicesService } from '../../../../services.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 
 // Translate
 import { ServicesTranslate } from '../../../../services.translate';
@@ -20,7 +21,7 @@ import { FieldMask } from '@shared/utilities/fieldMask';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class ServicesRegisterComponent implements OnInit {
+export class ServicesRegisterComponent implements OnInit, OnDestroy {
 
   @Output() public callback: EventEmitter<any> = new EventEmitter(); 
 
@@ -29,14 +30,22 @@ export class ServicesRegisterComponent implements OnInit {
   public formService: FormGroup;
   public settings: any = {};
   public checkBootstrap: boolean = false;
+  public departmentsData: any[] = [];
+
+  private readonly departmentsListenerId = 'ServicesRegisterDepartments';
 
   constructor(
     private formBuilder: FormBuilder,
-    private servicesService: ServicesService
+    private servicesService: ServicesService,
+    private productDepartmentsService: ProductDepartmentsService
   ) {}
 
   public ngOnInit() {  
     this.callback.emit({ instance: this });
+  }
+
+  public ngOnDestroy(): void {
+    this.productDepartmentsService.removeListeners('records', this.departmentsListenerId);
   }
 
   // Getter and Setter Methods
@@ -53,6 +62,10 @@ export class ServicesRegisterComponent implements OnInit {
     return this.formService.controls;
   }
 
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
+  }
+
   // Initialize Method
 
   public bootstrap(settings: any = {}) {
@@ -61,6 +74,7 @@ export class ServicesRegisterComponent implements OnInit {
     this.settings.data = (this.settings.data || {});
 
     this.formSettings(this.settings.data);
+    this.loadDepartments();
 
     this.checkBootstrap = true;
   }
@@ -83,8 +97,52 @@ export class ServicesRegisterComponent implements OnInit {
       codigoTributacao: formData.codigoTributacao?.toString() || ""
     };
 
+    const departmentSelection = (() => {
+      if (!this.useDepartments) {
+        return undefined;
+      }
+
+      const selectedCode = formData.department;
+
+      if (!selectedCode) {
+        return null;
+      }
+
+      const match = this.departmentsData.find((item) => item.code == selectedCode);
+
+      if (match) {
+        return {
+          _id: match._id,
+          code: parseInt(String(match.code), 10),
+          name: match.name
+        };
+      }
+
+      if (source?.department && Utilities.prefixCode(parseInt(String(source.department.code), 10)) == selectedCode) {
+        return {
+          _id: source.department._id,
+          code: typeof source.department.code === 'string' ? parseInt(source.department.code, 10) : source.department.code,
+          name: source.department.name
+        };
+      }
+
+      return null;
+    })();
+
     if (formData.description) {
       data.description = formData.description;
+    }
+
+    if (this.useDepartments) {
+      if (departmentSelection) {
+        data.department = departmentSelection;
+      } else if (departmentSelection === null && source?.department) {
+        (data as any).department = (<any>'$unset()');
+      } else {
+        delete data.department;
+      }
+    } else {
+      delete data.department;
     }
 
     if (formData.tributes && this.isFiscal) {
@@ -125,12 +183,18 @@ export class ServicesRegisterComponent implements OnInit {
 
     this.treatData(data);
 
+    const departmentCode = (this.useDepartments && data.department && data.department.code != undefined)
+      ? Utilities.prefixCode(parseInt(String(data.department.code), 10))
+      : '';
+
     this.formService = this.formBuilder.group({
       code: [],
       name: ['', [ Validators.required ]],
       description: [],
       costPrice: [],
       executionPrice: [],
+
+      department: [departmentCode],
 
       cnae: [data.cnae, Utilities.isFiscal ? [ Validators.required ] : []],
       codigo: [data.codigo, Utilities.isFiscal ? [ Validators.required ] : []],
@@ -150,7 +214,49 @@ export class ServicesRegisterComponent implements OnInit {
       isDisabled: [data._isDisabled]
     });
 
-    this.formService.patchValue(data);
+    const patchData = Utilities.deepClone(data);
+
+    if (this.useDepartments) {
+      patchData.department = departmentCode;
+    } else {
+      delete patchData.department;
+    }
+
+    this.formService.patchValue(patchData);
+  }
+
+  private loadDepartments(): void {
+
+    if (!this.useDepartments) {
+      this.departmentsData = [];
+      if (this.formService?.get('department')) {
+        this.formService.get('department')?.setValue('');
+      }
+      return;
+    }
+
+    this.productDepartmentsService.removeListeners('records', this.departmentsListenerId);
+    this.productDepartmentsService.getDepartments(this.departmentsListenerId, (records) => {
+      this.departmentsData = records || [];
+
+      const control = this.formService?.get('department');
+
+      if (!control) {
+        return;
+      }
+
+      const value = control.value;
+
+      if (!value) {
+        return;
+      }
+
+      const exists = this.departmentsData.some((item) => item.code == value);
+
+      if (!exists) {
+        control.setValue('');
+      }
+    });
   }
 
   private treatData(data) {
@@ -189,4 +295,3 @@ export class ServicesRegisterComponent implements OnInit {
   }
 
 }
-

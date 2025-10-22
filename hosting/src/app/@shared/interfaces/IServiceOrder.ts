@@ -55,6 +55,11 @@ export interface IServiceOrder {
     executionPrice: number;
     customCostPrice: number;
     customPrice: number;
+    department?: {
+      _id?: string;
+      code: number | string;
+      name: string;
+    };
     executor?: IOperator; // Técnico responsável específico do serviço
     commission?: {        // Sistema de comissão para serviços
       enabled: boolean;
@@ -79,6 +84,11 @@ export interface IServiceOrder {
     category: {
       _id: string;
       code: string;
+      name: string;
+    };
+    department?: {
+      _id?: string;
+      code: number | string;
       name: string;
     };
     costPrice: number;

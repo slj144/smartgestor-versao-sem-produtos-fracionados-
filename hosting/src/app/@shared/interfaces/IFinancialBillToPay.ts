@@ -19,6 +19,11 @@ export interface IFinancialBillToPay {
     code: string; 
     name: string;
   };
+  department?: {
+    _id?: string;
+    code: number | string;
+    name: string;
+  };
   installments: {
     parcel: number;
     dueDate: string;

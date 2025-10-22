@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, Input, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 
 // Services
@@ -14,13 +14,14 @@ import { DateTime } from '@shared/utilities/dateTime';
 import { BillsToPayCategoriesService } from '@pages/registers/_aggregates/financial/bills-to-pay-categories/bills-to-pay-categories.service';
 import { BillsToReceiveCategoriesService } from '@pages/registers/_aggregates/financial/bills-to-receive-categories/bills-to-receive-categories.service';
 import { CollaboratorsService } from '@pages/registers/collaborators/collaborators.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 
 @Component({
   selector: 'financial-report',
   templateUrl: './financial.component.html',
   styleUrls: ['./financial.component.scss']
 })
-export class FinancialReportsComponent implements OnInit {
+export class FinancialReportsComponent implements OnInit, OnDestroy {
 
   @Input() settings: any = {};
   @Output() callback: EventEmitter<any> = new EventEmitter();
@@ -36,9 +37,11 @@ export class FinancialReportsComponent implements OnInit {
   public billsToPayCategories: any[] = [];
   public billsToReceiveCategories: any[] = [];
   public collaborators: any[] = []; // 🎯 ADICIONADO: Array para armazenar colaboradores
+  public departments: any[] = [];
   public isMatrix = Utilities.isMatrix;
 
   private layerComponent: any;
+  private readonly departmentListenerId = 'FinancialReportsDepartments';
 
 
   constructor(
@@ -46,7 +49,8 @@ export class FinancialReportsComponent implements OnInit {
     private financialReportsService: FinancialReportsService,
     private billsToPayCategoriesService: BillsToPayCategoriesService,
     private billsToReceiveCategoriesService: BillsToReceiveCategoriesService,
-    private collaboratorsService: CollaboratorsService, // Já estava importado
+    private collaboratorsService: CollaboratorsService,
+    private productDepartmentsService: ProductDepartmentsService,
   ) { }
 
   public ngOnInit() {
@@ -54,6 +58,10 @@ export class FinancialReportsComponent implements OnInit {
     console.log('🔍 Settings:', this.settings);
 
     this.callback.emit({ instance: this });
+  }
+
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
   }
 
   // 🎯 NOVO MÉTODO: Busca colaboradores para o filtro
@@ -146,6 +154,7 @@ export class FinancialReportsComponent implements OnInit {
           { label: translate.fields['paidAccounts'].referenceCode.external, field: 'referenceCode', disabled: this.checkPermissions('paidAccounts', 'referenceCode') },
           { label: translate.fields['paidAccounts'].beneficiary.external, field: 'beneficiary', disabled: this.checkPermissions('paidAccounts', 'beneficiary') },
           { label: translate.fields['paidAccounts'].category.external, field: 'category', disabled: this.checkPermissions('paidAccounts', 'category') },
+          { label: translate.fields['paidAccounts'].department.external, field: 'department', disabled: this.checkPermissions('paidAccounts', 'department') },
           { label: translate.fields['paidAccounts'].registerDate.external, field: 'registerDate', disabled: this.checkPermissions('paidAccounts', 'registerDate') },
           { label: (translate.fields['paidAccounts'].paymentDate || translate.fields['paidAccounts'].dischargeDate).external, field: 'paymentDate', disabled: this.checkPermissions('paidAccounts', 'paymentDate') },
           { label: translate.fields['paidAccounts'].installmentsState.external, field: 'installmentsState', disabled: this.checkPermissions('paidAccounts', 'installmentsState') },
@@ -155,6 +164,7 @@ export class FinancialReportsComponent implements OnInit {
           { label: translate.fields['pendingAccounts'].referenceCode.external, field: 'referenceCode', disabled: this.checkPermissions('pendingAccounts', 'referenceCode') },
           { label: translate.fields['pendingAccounts'].beneficiary.external, field: 'beneficiary', disabled: this.checkPermissions('pendingAccounts', 'beneficiary') },
           { label: translate.fields['pendingAccounts'].category.external, field: 'category', disabled: this.checkPermissions('pendingAccounts', 'category') },
+          { label: translate.fields['pendingAccounts'].department.external, field: 'department', disabled: this.checkPermissions('pendingAccounts', 'department') },
           { label: translate.fields['pendingAccounts'].registerDate.external, field: 'registerDate', disabled: this.checkPermissions('pendingAccounts', 'registerDate') },
           { label: translate.fields['pendingAccounts'].dueDate.external, field: 'dueDate', disabled: this.checkPermissions('pendingAccounts', 'dueDate') },
           { label: translate.fields['pendingAccounts'].installmentsState.external, field: 'installmentsState', disabled: this.checkPermissions('pendingAccounts', 'installmentsState') },
@@ -167,6 +177,7 @@ export class FinancialReportsComponent implements OnInit {
           { label: translate.fields['overdueAccounts'].referenceCode.external, field: 'referenceCode', disabled: this.checkPermissions('overdueAccounts', 'referenceCode') },
           { label: translate.fields['overdueAccounts'].beneficiary.external, field: 'beneficiary', disabled: this.checkPermissions('overdueAccounts', 'beneficiary') },
           { label: translate.fields['overdueAccounts'].category.external, field: 'category', disabled: this.checkPermissions('overdueAccounts', 'category') },
+          { label: translate.fields['overdueAccounts'].department.external, field: 'department', disabled: this.checkPermissions('overdueAccounts', 'department') },
           { label: translate.fields['overdueAccounts'].registerDate.external, field: 'registerDate', disabled: this.checkPermissions('overdueAccounts', 'registerDate') },
           { label: translate.fields['overdueAccounts'].dueDate.external, field: 'dueDate', disabled: this.checkPermissions('overdueAccounts', 'dueDate') },
           { label: translate.fields['overdueAccounts'].daysOverdue.external, field: 'daysOverdue', disabled: this.checkPermissions('overdueAccounts', 'daysOverdue') },
@@ -180,6 +191,7 @@ export class FinancialReportsComponent implements OnInit {
           { label: translate.fields['canceledAccounts'].referenceCode.external, field: 'referenceCode', disabled: this.checkPermissions('canceledAccounts', 'referenceCode') },
           { label: translate.fields['canceledAccounts'].beneficiary.external, field: 'beneficiary', disabled: this.checkPermissions('canceledAccounts', 'beneficiary') },
           { label: translate.fields['canceledAccounts'].category.external, field: 'category', disabled: this.checkPermissions('canceledAccounts', 'category') },
+          { label: translate.fields['canceledAccounts'].department.external, field: 'department', disabled: this.checkPermissions('canceledAccounts', 'department') },
           { label: translate.fields['canceledAccounts'].registerDate.external, field: 'registerDate', disabled: this.checkPermissions('canceledAccounts', 'registerDate') },
           { label: translate.fields['canceledAccounts'].installmentsState.external, field: 'installmentsState', disabled: this.checkPermissions('canceledAccounts', 'installmentsState') },
           { label: translate.fields['canceledAccounts'].accountValue.external, field: 'accountValue', disabled: this.checkPermissions('canceledAccounts', 'accountValue') }
@@ -314,6 +326,9 @@ export class FinancialReportsComponent implements OnInit {
     // Após montar o formulário, carrega as categorias necessárias
     this.onGetBillsToPayCategories();
     this.onGetBillsToReceiveCategories();
+    if (this.settings.model.id == 'billsToPay' && this.useDepartments) {
+      this.onGetDepartments();
+    }
     if (this.settings.model.id == 'commissions') {
       this.onGetCollaborators();
     }
@@ -379,6 +394,11 @@ export class FinancialReportsComponent implements OnInit {
 
       if (filter.billCategory) {
         where.push(filter.billCategory);
+      }
+
+      if (filter.departmentFilter) {
+        where.push(filter.departmentFilter);
+        delete filter.departmentFilter;
       }
 
       this.financialReportsService.getBillsToPay({
@@ -521,7 +541,8 @@ export class FinancialReportsComponent implements OnInit {
       endDate: [`${DateTime.getCurrentYear()}-${DateTime.getCurrentMonth()}-${DateTime.getCurrentDay()}`],
       fields: this.formBuilder.array([]),
       billCategory: ["##all##"],
-      filterDateType: ["registerDate"]
+      filterDateType: ["registerDate"],
+      department: ["##all##"]
     });
 
     // 🎯 Campo de colaborador para relatório de comissões
@@ -553,6 +574,24 @@ export class FinancialReportsComponent implements OnInit {
           this.billsToPayCategoriesService.removeListeners("records", 'FinancialReportsComponent');
           this.billsToPayCategories = res;
           this.formFilters.get("billCategory").setValue("##all##");
+        });
+      }
+    });
+  }
+
+  public onGetDepartments() {
+    const timer = setInterval(() => {
+      if (this.formFilters) {
+
+        clearInterval(timer);
+
+        this.productDepartmentsService.getDepartments(this.departmentListenerId, (res) => {
+          this.productDepartmentsService.removeListeners('records', this.departmentListenerId);
+          this.departments = (res || []).map((item) => ({
+            ...item,
+            displayCode: this.formatDepartmentCode(item.code)
+          }));
+          this.formFilters.get('department')?.setValue('##all##');
         });
       }
     });
@@ -713,6 +752,15 @@ export class FinancialReportsComponent implements OnInit {
       delete filter.billCategory;
     }
 
+    if (this.useDepartments && filter.department && filter.department != "##all##") {
+      const normalizedDepartment = this.normalizeDepartmentFilterValue(filter.department);
+      if (normalizedDepartment) {
+        filter.departmentFilter = { field: 'department.code', operator: '=', value: normalizedDepartment.query };
+        filter.departmentLabel = normalizedDepartment.display;
+      }
+    }
+    delete filter.department;
+
     if (this.typeActived == 'pendingAccounts' || this.typeActived == 'overdueAccounts') {
       if (filter.filterDateType == "registerDate") {
         filter.filterDateType = "registerDate";
@@ -733,6 +781,40 @@ export class FinancialReportsComponent implements OnInit {
     return filter;
   }
 
+  private formatDepartmentCode(code: number | string): string {
+    const stringCode = String(code ?? '').trim();
+
+    if (!stringCode) {
+      return '';
+    }
+
+    if (stringCode.startsWith('@')) {
+      return stringCode;
+    }
+
+    const numeric = parseInt(stringCode, 10);
+    return isNaN(numeric) ? stringCode : Utilities.prefixCode(numeric);
+  }
+
+  private normalizeDepartmentFilterValue(value: string) {
+    const stringValue = String(value ?? '').trim();
+
+    if (!stringValue || stringValue === '##all##') {
+      return null;
+    }
+
+    if (stringValue.startsWith('@')) {
+      return { query: stringValue, display: stringValue };
+    }
+
+    const numeric = parseInt(stringValue, 10);
+    if (isNaN(numeric)) {
+      return { query: stringValue, display: stringValue };
+    }
+
+    return { query: numeric, display: Utilities.prefixCode(numeric) };
+  }
+
   private toggleFields() {
 
     (this.formControls.fields as FormArray).clear();
@@ -751,6 +833,10 @@ export class FinancialReportsComponent implements OnInit {
 
       this.settings.fields[this.typeActived] = fields;
     }
+  }
+
+  public ngOnDestroy(): void {
+    this.productDepartmentsService.removeListeners('records', this.departmentListenerId);
   }
 
 }

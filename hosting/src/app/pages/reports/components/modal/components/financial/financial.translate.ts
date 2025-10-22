@@ -40,6 +40,12 @@ export class ReportsFinancesTranslate {
               all: 'Todas as Categorias'
             }
           },
+          department: {
+            title: 'Departamento',
+            list: {
+              all: 'Todos os Departamentos'
+            }
+          },
           button: {
             generate: 'Gerar Relatório'
           },
@@ -123,6 +129,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Código de Referência', internal: 'Código de Referência' },
             beneficiary: { external: 'Beneficiário', internal: 'Beneficiário' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             registerDate: { external: 'Data de Registro', internal: 'Data de Registro' },
             dischargeDate: { external: 'Data de Quitação', internal: 'Data de Quitação' },
             paymentDate: { external: 'Data de Quitação', internal: 'Data de Quitação' },
@@ -139,6 +146,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Código de Referência', internal: 'Código de Referência' },
             beneficiary: { external: 'Beneficiário', internal: 'Beneficiário' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             registerDate: { external: 'Data de Registro', internal: 'Data de Registro' },
             dueDate: { external: 'Data de Vencimento', internal: 'Data de Vencimento' },
             installmentsState: { external: 'Parcelamento', internal: 'Parcelamento' },
@@ -152,6 +160,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Código de Referência', internal: 'Código de Referência' },
             beneficiary: { external: 'Beneficiário', internal: 'Beneficiário' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             registerDate: { external: 'Data de Registro', internal: 'Data de Registro' },
             dueDate: { external: 'Data de Vencimento', internal: 'Data de Vencimento' },
             daysOverdue: { external: 'Dias em Atraso', internal: 'Dias em Atraso' },
@@ -166,6 +175,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Código de Referência', internal: 'Código de Referência' },
             beneficiary: { external: 'Beneficiário', internal: 'Beneficiário' },
             category: { external: 'Categoria', internal: 'Categoria' },
+            department: { external: 'Departamento', internal: 'Departamento' },
             registerDate: { external: 'Data de Registro', internal: 'Data de Registro' },
             dueDate: { external: 'Data de Vencimento', internal: 'Data de Vencimento' },
             installmentsState: { external: 'Parcelamento', internal: 'Parcelamento' },
@@ -397,6 +407,12 @@ export class ReportsFinancesTranslate {
               all: "All Categories"
             }
           },
+          department: {
+            title: 'Department',
+            list: {
+              all: 'All Departments'
+            }
+          },
           collaborator: {
             title: "Collaborator",
             list: {
@@ -471,6 +487,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Reference Code', internal: 'Reference Code' },
             beneficiary: { external: 'Beneficiary', internal: 'Beneficiary' },
             category: { external: 'Category', internal: 'Category' },
+            department: { external: 'Department', internal: 'Department' },
             registerDate: { external: 'Register Date', internal: 'Register Date' },
             dischargeDate: { external: 'Discharge Date', internal: 'Discharge Date' },
             paymentDate: { external: 'Discharge Date', internal: 'Discharge Date' },
@@ -487,6 +504,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Reference Code', internal: 'Reference Code' },
             beneficiary: { external: 'Beneficiary', internal: 'Beneficiary' },
             category: { external: 'Category', internal: 'Category' },
+            department: { external: 'Department', internal: 'Department' },
             registerDate: { external: 'Register Date', internal: 'Register Date' },
             dueDate: { external: 'Due Date', internal: 'Due Date' },
             installmentsState: { external: 'Installments', internal: 'Installments' },
@@ -500,6 +518,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Reference Code', internal: 'Reference Code' },
             beneficiary: { external: 'Beneficiary', internal: 'Beneficiary' },
             category: { external: 'Category', internal: 'Category' },
+            department: { external: 'Department', internal: 'Department' },
             registerDate: { external: 'Register Date', internal: 'Register Date' },
             dueDate: { external: 'Due Date', internal: 'Due Date' },
             daysOverdue: { external: 'Days Overdue', internal: 'Days Overdue' },
@@ -514,6 +533,7 @@ export class ReportsFinancesTranslate {
             referenceCode: { external: 'Reference Code', internal: 'Reference Code' },
             beneficiary: { external: 'Beneficiary', internal: 'Beneficiary' },
             category: { external: 'Category', internal: 'Category' },
+            department: { external: 'Department', internal: 'Department' },
             registerDate: { external: 'Register Date', internal: 'Register Date' },
             dueDate: { external: 'Due Date', internal: 'Due Date' },
             installmentsState: { external: 'Installments', internal: 'Installments' },

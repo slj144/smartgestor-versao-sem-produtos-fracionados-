@@ -71,6 +71,20 @@
                 </div>
               </section>
 
+              <section class="department" *ngIf="useDepartments && settings.data.department">
+                <h5>{{ translate.action.read.section.department.title }}</h5>
+
+                <div class="content">
+                  <p>
+                    <span class="label">{{ translate.action.read.section.department.label.code + ':' }}</span> <span class="value">{{ formatDepartmentCode(settings.data.department?.code) }}</span>
+                  </p>
+
+                  <p>
+                    <span class="label">{{ translate.action.read.section.department.label.name + ':' }}</span> <span class="value">{{ settings.data.department?.name }}</span>
+                  </p>
+                </div>
+              </section>
+
               <section class="description" *ngIf="settings.data.description">
                 <h5>{{ translate.action.read.section.description.title }}</h5>
                 <div class="content">{{ settings.data.description }}</div>            

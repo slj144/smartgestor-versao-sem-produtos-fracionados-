@@ -18,8 +18,9 @@
           <div class="row">
             <div class="col-1 text-center">{{ translate.table.label.code }}</div>
             <div class="col-1">{{ translate.table.label.dueDate }}</div>
-            <div class="col-3">{{ translate.table.label.beneficiary }}</div>
-            <div class="col-2 text-center">{{ translate.table.label.category }}</div>
+            <div [ngClass]="useDepartments ? 'col-2' : 'col-3'">{{ translate.table.label.beneficiary }}</div>
+            <div [ngClass]="useDepartments ? 'col-1 text-center' : 'col-2 text-center'">{{ translate.table.label.category }}</div>
+            <div class="col-2 text-center" *ngIf="useDepartments">{{ translate.table.label.department }}</div>
             <div class="col-1 text-center">{{ translate.table.label.installments }}</div>
             <div class="col-2 text-center">{{ translate.table.label.value }}</div>
             <div class="col-1 text-center">{{ translate.table.label.status }}</div>
@@ -42,15 +43,20 @@
 
             <div class="col-12 d-block d-md-none m-0 p-0"></div>
             
-            <div class="col-12 col-md-3 flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
+            <div [ngClass]="useDepartments ? 'col-12 col-md-2' : 'col-12 col-md-3'" class="flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
               <span class="label d-block d-md-none">{{ translate.table.label.beneficiary }}:</span>
               <span class="value">{{ item.beneficiary?.name }}</span>
             </div>
 
-            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom">
+            <div [ngClass]="useDepartments ? 'col-12 col-md-1 text-center' : 'col-12 col-md-2 text-center'" class="flex-row flex-md-column justify-content-start justify-content-md-center hr-down-md-bottom">
               <span class="label d-block d-md-none">{{ translate.table.label.category }}:</span>
               <span class="value">{{ item.category?.name }}</span>
             </div>  
+
+            <div class="col-12 col-md-2 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom" *ngIf="useDepartments">
+              <span class="label d-block d-md-none">{{ translate.table.label.department }}:</span>
+              <span class="value">{{ item.department?.name }}</span>
+            </div>
             
             <div class="col-5 col-md-1 flex-row flex-md-column justify-content-start justify-content-md-center text-center hr-down-md-bottom vr-down-md-right">
               <span class="label d-block d-md-none">{{ translate.table.label.installments }}:</span>

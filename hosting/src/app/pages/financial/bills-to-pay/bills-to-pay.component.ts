@@ -59,32 +59,61 @@ export class BillsToPayComponent implements OnInit, OnDestroy {
   public onFilter(event: any) {
 
     const translate = this.translate.modal.filters.field;
-
-    this.modalComponent.onOpen({
-      activeComponent: 'BillsToPay/Filters',
-      fields: [
-        { label: translate.accountCode.label, property: 'code', combination: 'full', type: 'text', checked: false },
-        { label: translate.referenceCode.label, property: 'referenceCode', combination: 'full', type: 'text', checked: false },
-
-        { label: translate.beneficiary.label, property: 'beneficiary', options: [
+    const fields: any[] = [
+      { label: translate.accountCode.label, property: 'code', combination: 'full', type: 'text', checked: false },
+      { label: translate.referenceCode.label, property: 'referenceCode', combination: 'full', type: 'text', checked: false },
+      {
+        label: translate.beneficiary.label,
+        property: 'beneficiary',
+        options: [
           { label: translate.beneficiary.option.code.label, property: 'beneficiary.code', combination: 'full', path: translate.beneficiary.option.code.path, type: 'text', nested: true, checked: false },
           { label: translate.beneficiary.option.name.label, property: 'beneficiary.name', combination: 'partial', path: translate.beneficiary.option.name.path, type: 'text', nested: true, checked: false }
-        ], checked: false, collapsed: false },
-
-        { label: translate.category.label, property: 'category', options: [
+        ],
+        checked: false,
+        collapsed: false
+      },
+      {
+        label: translate.category.label,
+        property: 'category',
+        options: [
           { label: translate.category.option.code.label, property: 'category.code', combination: 'full', path: translate.category.option.code.path, type: 'text', nested: true, checked: false },
           { label: translate.category.option.name.label, property: 'category.name', combination: 'partial', path: translate.category.option.name.path, type: 'text', nested: true, checked: false }
-        ], checked: false, collapsed: false },
-
-        { label: translate.billStatus.label, property: 'status', combination: 'full', type: 'select', list: [
+        ],
+        checked: false,
+        collapsed: false
+      },
+      {
+        label: translate.billStatus.label,
+        property: 'status',
+        combination: 'full',
+        type: 'select',
+        list: [
           { label: translate.billStatus.list.pendent.label, value: 'PENDENT' },
           { label: translate.billStatus.list.concluded.label, value: 'CONCLUDED' },
           { label: translate.billStatus.list.canceled.label, value: 'CANCELED' }
-        ], checked: false },
+        ],
+        checked: false
+      },
+      { label: translate.dueDate.label, property: 'dueDate', combination: 'partial', type: 'date', checked: false },
+      { label: translate.billAmount.label, property: 'billAmount', combination: 'full', type: 'number/float', checked: false }
+    ];
 
-        { label: translate.dueDate.label, property: 'dueDate', combination: 'partial', type: 'date', checked: false },
-        { label: translate.billAmount.label, property: 'billAmount', combination: 'full', type: 'number/float', checked: false }
-      ],
+    if (this.useDepartments) {
+      fields.splice(4, 0, {
+        label: translate.department.label,
+        property: 'department',
+        options: [
+          { label: translate.department.option.code.label, property: 'department.code', combination: 'full', path: translate.department.option.code.path, type: 'text', nested: true, checked: false },
+          { label: translate.department.option.name.label, property: 'department.name', combination: 'partial', path: translate.department.option.name.path, type: 'text', nested: true, checked: false }
+        ],
+        checked: false,
+        collapsed: false
+      });
+    }
+
+    this.modalComponent.onOpen({
+      activeComponent: 'BillsToPay/Filters',
+      fields: fields,
       callback: (filters: any[]) => {
         
         this.filtersBadge = (filters.length || 0);
@@ -98,6 +127,10 @@ export class BillsToPayComponent implements OnInit, OnDestroy {
         }
       }
     });
+  }
+
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
   }
 
   public onSearch(event: any) {

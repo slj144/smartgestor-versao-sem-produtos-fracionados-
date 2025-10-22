@@ -28,6 +28,14 @@
               <label>{{ translate.form.label.executionPrice }}</label>
               <input type="text" formControlName="executionPrice" class="form-control" (input)="onApplyPriceMask($event, formControl.executionPrice)" />            
             </div>
+
+            <div class="col-12 col-md-6 form-group" *ngIf="useDepartments">
+              <label>{{ translate.form.label.department }}</label>
+              <select class="form-control" formControlName="department">
+                <option value=""></option>
+                <option *ngFor="let item of departmentsData" [value]="item.code">{{ item.code + ' - ' + item.name }}</option>
+              </select>
+            </div>
             
             <div class="col-12 form-group">
               <label>{{ translate.form.label.description }}</label>

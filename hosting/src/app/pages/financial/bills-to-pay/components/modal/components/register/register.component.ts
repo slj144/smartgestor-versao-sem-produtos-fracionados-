@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 // Components
@@ -6,6 +6,7 @@ import { PaymentMethodsSelectorComponent } from '@pages/registers/paymentMethods
 
 // Services
 import { BillsToPayService } from '@pages/financial/bills-to-pay/bills-to-pay.service';
+import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
 
 // Translate
 import { BillsToPayTranslate } from '@pages/financial/bills-to-pay/bills-to-pay.translate';
@@ -30,7 +31,7 @@ import { DateTime } from '@shared/utilities/dateTime';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class BillsToPayRegisterComponent implements OnInit {
+export class BillsToPayRegisterComponent implements OnInit, OnDestroy {
 
   @Output() public callback: EventEmitter<any> = new EventEmitter();
 
@@ -44,17 +45,25 @@ export class BillsToPayRegisterComponent implements OnInit {
   public checkBootstrap: boolean = false;
 
   public formBills: FormGroup;
+  public departmentsData: any[] = [];
 
   private layerComponent: any;
   private toastComponent: any;
+  private readonly departmentsListenerId = 'BillsToPayRegisterDepartments';
 
   constructor(
     private formBuilder: FormBuilder,
-    private billsToPayService: BillsToPayService
+    private billsToPayService: BillsToPayService,
+    private productDepartmentsService: ProductDepartmentsService
   ) {}
 
   public ngOnInit() {
     this.callback.emit({ instance: this });
+  }
+
+  public ngOnDestroy(): void {
+    // Refresh listener to avoid duplications when the modal is reopened
+    this.productDepartmentsService.removeListeners('records', this.departmentsListenerId);
   }
 
   // Initialize Methods
@@ -91,6 +100,7 @@ export class BillsToPayRegisterComponent implements OnInit {
     }
 
     this.formSettings(this.settings.data);
+    this.loadDepartments();
     this.checkBootstrap = true;
   }
 
@@ -98,6 +108,10 @@ export class BillsToPayRegisterComponent implements OnInit {
 
   public get formControls() {
     return this.formBills.controls;
+  }
+
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
   }
 
   public get paidInstallments() {
@@ -408,6 +422,14 @@ export class BillsToPayRegisterComponent implements OnInit {
       data.referenceCode = source.referenceCode;
     }
 
+    const departmentPayload = this.buildDepartmentPayload(formData.department, source.department);
+
+    if (departmentPayload === '$unset') {
+      (data as any).department = (<any>'$unset()');
+    } else if (departmentPayload) {
+      data.department = departmentPayload;
+    }
+
     if (!this.embed) {
 
       this.billsToPayService.registerBill(data).then(() => {
@@ -423,7 +445,10 @@ export class BillsToPayRegisterComponent implements OnInit {
   public onOpenLayer(type: string) {
 
     this.layerComponent.onOpen({
-      activeComponent: type, selectItem: { code: this.formControls.category.value }
+      activeComponent: type,
+      selectItem: {
+        code: (type === 'departments' ? this.formControls.department.value : this.formControls.category.value)
+      }
     });
   }
 
@@ -441,6 +466,10 @@ export class BillsToPayRegisterComponent implements OnInit {
 
     if (event.category) {
       this.formControls.category.setValue(event.category);
+    }
+
+    if (event.department) {
+      this.formControls.department.setValue(this.normalizeDepartmentPayload(event.department));
     }
 
     if (event.paymentMethods) {
@@ -520,17 +549,118 @@ export class BillsToPayRegisterComponent implements OnInit {
     }
   }
 
+  private buildDepartmentPayload(selected: any, source: any) {
+
+    if (!this.useDepartments) {
+      return undefined;
+    }
+
+    if (selected) {
+      const rawCode = selected.code;
+      const stringCode = String(rawCode ?? '').trim();
+      const numeric = parseInt(stringCode, 10);
+
+      return {
+        _id: selected._id,
+        code: (!stringCode.startsWith('@') && !isNaN(numeric)) ? numeric : stringCode,
+        name: selected.name
+      };
+    }
+
+    // When the user clears the field we explicitly remove the stored department
+    if (source) {
+      return '$unset';
+    }
+
+    return null;
+  }
+
   // Setting Methods
 
   private formSettings(data: any = {}) {
+
+    const currentDepartment = data.department ? this.normalizeDepartmentPayload(data.department) : null;
 
     this.formBills = this.formBuilder.group({
       beneficiary: [(data.beneficiary || ''), Validators.required],
       category: [(data.category || ''), Validators.required],
       installments: [(data.installments || [])],
       description: [(data.description || '')],
-      amount: [(data.amount || 0)]
+      amount: [(data.amount || 0)],
+      department: [currentDepartment]
     });
+  }
+
+  private loadDepartments(): void {
+
+    if (!this.useDepartments) {
+      this.departmentsData = [];
+      this.formBills?.get('department')?.setValue(null);
+      return;
+    }
+
+    this.productDepartmentsService.removeListeners('records', this.departmentsListenerId);
+    this.productDepartmentsService.getDepartments(this.departmentsListenerId, (records) => {
+
+      const formatted = (records || []).map((item) => ({
+        ...item,
+        displayCode: this.formatDepartmentCode(item.code)
+      }));
+
+      this.departmentsData = formatted;
+
+      const control = this.formBills?.get('department');
+      if (!control) {
+        return;
+      }
+
+      const current = control.value;
+      if (!current) {
+        return;
+      }
+
+      const matched = this.departmentsData.find((item) => (
+        (current?._id && item._id === current._id) ||
+        (item.code === current?.code) ||
+        (this.formatDepartmentCode(item.code) === this.formatDepartmentCode(current?.code))
+      ));
+
+      if (matched) {
+        control.setValue(matched, { emitEvent: false });
+      } else {
+        control.setValue(null, { emitEvent: false });
+      }
+    });
+  }
+
+  private formatDepartmentCode(code: number | string): string {
+    const stringCode = String(code ?? '').trim();
+    if (stringCode.startsWith('@')) {
+      return stringCode;
+    }
+
+    const numeric = parseInt(stringCode, 10);
+    return isNaN(numeric) ? stringCode : Utilities.prefixCode(numeric);
+  }
+
+  private normalizeDepartmentPayload(department: any) {
+    if (!department) {
+      return null;
+    }
+
+    const matched = this.departmentsData.find((item) => (
+      (department._id && item._id === department._id) ||
+      (this.formatDepartmentCode(item.code) === this.formatDepartmentCode(department.code))
+    ));
+
+    if (matched) {
+      return matched;
+    }
+
+    return {
+      ...department,
+      displayCode: this.formatDepartmentCode(department.code)
+    };
   }
 
 }

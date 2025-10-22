@@ -931,7 +931,7 @@ export class ServiceOrdersRegisterComponent implements OnInit, OnDestroy {
         // Técnico responsável do serviço (apenas executor específico)
         const serviceExecutor = item.executor || null;
 
-        const serviceData = {
+        const serviceData: any = {
           _id: item._id,
           code: item.code,
           name: item.name,
@@ -951,6 +951,14 @@ export class ServiceOrdersRegisterComponent implements OnInit, OnDestroy {
           codigoTributacao: item.codigoTributacao || "",
           tributes: item.tributes
         };
+
+        if (item.department) {
+          serviceData.department = {
+            _id: item.department._id,
+            code: typeof item.department.code === 'string' ? parseInt(item.department.code, 10) : item.department.code,
+            name: item.department.name
+          };
+        }
 
 
         response.services.push(serviceData);
@@ -985,6 +993,14 @@ export class ServiceOrdersRegisterComponent implements OnInit, OnDestroy {
         if (item.category) {
           obj.category = {
             _id: item.category._id, code: item.category.code, name: item.category.name
+          };
+        }
+
+        if (item.department) {
+          obj.department = {
+            _id: item.department._id,
+            code: typeof item.department.code === 'string' ? parseInt(item.department.code, 10) : item.department.code,
+            name: item.department.name
           };
         }
 

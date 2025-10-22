@@ -21,6 +21,7 @@
                   <p><span class="label">{{ translate.action.read.section.informations.label.name + ':'}}</span> <span class="value">{{ settings.data.name }}</span></p>
                   <p><span class="label">{{ translate.action.read.section.informations.label.costPrice + ':'}}</span> <span class="value negative">{{ settings.data.costPrice | currency:'' }}</span></p>
                   <p><span class="label">{{ translate.action.read.section.informations.label.executionPrice + ':'}}</span> <span class="value positive">{{ settings.data.executionPrice | currency:'' }}</span></p>
+                  <p *ngIf="useDepartments && settings.data.department"><span class="label">{{ translate.action.read.section.informations.label.department + ':'}}</span> <span class="value">{{ settings.data.department.code }} - {{ settings.data.department.name }}</span></p>
                 </div>               
               </section>
 

@@ -185,6 +185,8 @@
                         translate.billsToPay.fields['paidAccounts'].beneficiary.internal }}</th>
                       <th *ngIf="onCheckField('category')">{{
                         translate.billsToPay.fields['paidAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('department')">{{
+                        translate.billsToPay.fields['paidAccounts'].department.internal }}</th>
                       <th *ngIf="onCheckField('registerDate')">{{
                         translate.billsToPay.fields['paidAccounts'].registerDate.internal }}</th>
                       <th *ngIf="onCheckField('dischargeDate')">{{
@@ -207,6 +209,7 @@
                       <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
                       <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
                       <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('department')">{{ item.department }}</td>
                       <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('dischargeDate')">{{ item.dischargeDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('installments')">{{ item.installments }}</td>
@@ -227,6 +230,7 @@
                       <th *ngIf="onCheckField('referenceCode')"></th>
                       <th *ngIf="onCheckField('beneficiary')"></th>
                       <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('department')"></th>
                       <th *ngIf="onCheckField('registerDate')"></th>
                       <th *ngIf="onCheckField('dischargeDate')"></th>
                       <th *ngIf="onCheckField('installments')"></th>
@@ -281,6 +285,8 @@
                         translate.billsToPay.fields['pendingAccounts'].beneficiary.internal }}</th>
                       <th *ngIf="onCheckField('category')">{{
                         translate.billsToPay.fields['pendingAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('department')">{{
+                        translate.billsToPay.fields['pendingAccounts'].department.internal }}</th>
                       <th *ngIf="onCheckField('registerDate')">{{
                         translate.billsToPay.fields['pendingAccounts'].registerDate.internal }}</th>
                       <th *ngIf="onCheckField('dueDate')">{{
@@ -303,6 +309,7 @@
                       <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
                       <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
                       <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('department')">{{ item.department }}</td>
                       <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
@@ -323,6 +330,7 @@
                       <th *ngIf="onCheckField('referenceCode')"></th>
                       <th *ngIf="onCheckField('beneficiary')"></th>
                       <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('department')"></th>
                       <th *ngIf="onCheckField('registerDate')"></th>
                       <th *ngIf="onCheckField('dueDate')"></th>
                       <th *ngIf="onCheckField('installmentsState')"></th>
@@ -378,6 +386,8 @@
                         translate.billsToPay.fields['overdueAccounts'].beneficiary.internal }}</th>
                       <th *ngIf="onCheckField('category')">{{
                         translate.billsToPay.fields['overdueAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('department')">{{
+                        translate.billsToPay.fields['overdueAccounts'].department.internal }}</th>
                       <th *ngIf="onCheckField('registerDate')">{{
                         translate.billsToPay.fields['overdueAccounts'].registerDate.internal }}</th>
                       <th *ngIf="onCheckField('dueDate')">{{
@@ -400,6 +410,7 @@
                       <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
                       <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
                       <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('department')">{{ item.department }}</td>
                       <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
@@ -420,6 +431,7 @@
                       <th *ngIf="onCheckField('referenceCode')"></th>
                       <th *ngIf="onCheckField('beneficiary')"></th>
                       <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('department')"></th>
                       <th *ngIf="onCheckField('registerDate')"></th>
                       <th *ngIf="onCheckField('dueDate')"></th>
                       <th *ngIf="onCheckField('installmentsState')"></th>
@@ -475,6 +487,8 @@
                         translate.billsToPay.fields['canceledAccounts'].beneficiary.internal }}</th>
                       <th *ngIf="onCheckField('category')">{{
                         translate.billsToPay.fields['canceledAccounts'].category.internal }}</th>
+                      <th *ngIf="onCheckField('department')">{{
+                        translate.billsToPay.fields['canceledAccounts'].department.internal }}</th>
                       <th *ngIf="onCheckField('registerDate')">{{
                         translate.billsToPay.fields['canceledAccounts'].registerDate.internal }}</th>
                       <th *ngIf="onCheckField('dueDate')">{{
@@ -497,6 +511,7 @@
                       <td *ngIf="onCheckField('referenceCode')">{{ (item.referenceCode || '----') }}</td>
                       <td *ngIf="onCheckField('beneficiary')">{{ item.beneficiary.name }}</td>
                       <td *ngIf="onCheckField('category')">{{ item.category.name }}</td>
+                      <td *ngIf="onCheckField('department')">{{ item.department }}</td>
                       <td *ngIf="onCheckField('registerDate')">{{ item.registerDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('dueDate')">{{ item.dueDate | date:'dd/MM/yyyy' }}</td>
                       <td *ngIf="onCheckField('installmentsState')">{{ item.installmentsState }}</td>
@@ -517,6 +532,7 @@
                       <th *ngIf="onCheckField('referenceCode')"></th>
                       <th *ngIf="onCheckField('beneficiary')"></th>
                       <th *ngIf="onCheckField('category')"></th>
+                      <th *ngIf="onCheckField('department')"></th>
                       <th *ngIf="onCheckField('registerDate')"></th>
                       <th *ngIf="onCheckField('dueDate')"></th>
                       <th *ngIf="onCheckField('installmentsState')"></th>

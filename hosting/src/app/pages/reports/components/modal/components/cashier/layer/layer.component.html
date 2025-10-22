@@ -423,116 +423,91 @@
                       <td *ngIf="onCheckField('serviceCode')">{{ item.service?.code }}</td>
                       <td *ngIf="onCheckField('customer')" class="text-left">{{ item.customer.name }}</td>
                       <td *ngIf="onCheckField('collaborator')" class="text-left">{{ item.operator.name }}</td>
-                      <td [attr.colspan]="onCheckColspan('services')" class="resetPadding"
-                        *ngIf="onCheckField('services')">
-                        <table>
-                          <tr *ngFor="let item of item.service?.types">
-                            <td class="col-small" *ngIf="onCheckField('services/code')">{{ item.code }}</td>
-                            <td class="col-large text-left" *ngIf="onCheckField('services/description')">{{ item.name }}
-                            </td>
-                            <td class="col-small negative" *ngIf="onCheckField('services/cost')">{{
-                              (item.customCostPrice || 0) | currency:'' }}</td>
-                            <!-- <td class="col-small negative" *ngIf="onCheckField('services/cost')">{{ (item.costPrice || 0) | currency:'' }}</td> -->
-                            <td class="col-small positive" *ngIf="onCheckField('services/value')">{{
-                              (item.executionPrice || 0) | currency:'' }}</td>
-                            <td class="col-small negative" *ngIf="onCheckField('services/discount')">{{ (item.discount
-                              || 0) | currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('services/fee')">{{ (item.additional ||
-                              0) | currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('services/paid')">{{ (item.paymentAmount
-                              || 0) | currency:'' }}</td>
-                          </tr>
-                          <tr *ngIf="!item.services || (item.service?.types.length == 0)">
-                            <td class="col-small" *ngIf="onCheckField('services/code')"></td>
-                            <td class="col-large" *ngIf="onCheckField('services/description')"></td>
-                            <td class="col-small" *ngIf="onCheckField('services/cost')"></td>
-                            <td class="col-small" *ngIf="onCheckField('services/value')"></td>
-                            <td class="col-small" *ngIf="onCheckField('services/discount')"></td>
-                            <td class="col-small" *ngIf="onCheckField('services/fee')"></td>
-                            <td class="col-small" *ngIf="onCheckField('services/paid')"></td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td [attr.colspan]="onCheckColspan('products')" class="resetPadding"
-                        *ngIf="onCheckField('products')">
-                        <table>
-                          <tr *ngFor="let item of item.products">
-                            <td class="col-small" *ngIf="onCheckField('products/code')">{{ item.code }}</td>
-                            <td class="col-large text-left" *ngIf="onCheckField('products/description')">{{ item.name }}
-                            </td>
-                            <td class="col-small" *ngIf="onCheckField('products/quantity')">{{ item.quantity }}</td>
-                            <td class="col-small negative" *ngIf="onCheckField('products/cost')">{{ item.costPrice |
-                              currency:'' }}</td>
-                            <td class="col-small negative" *ngIf="onCheckField('products/totalCost')">{{ (item.costPrice
-                              * item.quantity) | currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('products/price')">{{ item.salePrice |
-                              currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('products/totalPrice')">{{
-                              (item.salePrice * item.quantity) | currency:'' }}</td>
-                            <td class="col-small negative" *ngIf="onCheckField('products/discount')">{{ item.discount |
-                              currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('products/fee')">{{ item.additional |
-                              currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('products/paid')">{{ item.paymentAmount |
-                              currency:'' }}</td>
-                          </tr>
-                          <tr *ngIf="!item.products || (item.products?.length == 0)">
-                            <td class="col-small" *ngIf="onCheckField('products/code')"></td>
-                            <td class="col-large" *ngIf="onCheckField('products/description')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/quantity')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/cost')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/totalCost')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/price')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/totalPrice')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/discount')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/fee')"></td>
-                            <td class="col-small" *ngIf="onCheckField('products/paid')"></td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td [attr.colspan]="onCheckColspan('paymentMethods')" class="resetPadding"
-                        *ngIf="onCheckField('paymentMethods')">
-                        <table>
-                          <tr *ngFor="let item of item.paymentMethods">
-                            <td class="col-small" *ngIf="onCheckField('paymentMethods/code')">{{ item.code }}</td>
-                            <td class="col-large text-left" *ngIf="onCheckField('paymentMethods/description')">
-                              <span *ngIf="item.code < 3000 || item.code >= 5000">{{ item.name }}</span>
-                              <span *ngIf="item.code > 3000 && item.code < 4000">{{ 'C. Débito - ' + item.name }}</span>
-                              <span *ngIf="item.code > 4000 && item.code < 5000">{{ 'C. Crédito (' + (item.parcel == 1 ?
-                                'À Vista' : 'Parcelado') + ') - ' + item.name + (item.parcel == 1 ? '' : ' (' +
-                                item.parcel + 'X)') }}</span>
-                            </td>
-                            <td class="col-large" *ngIf="onCheckField('paymentMethods/note')">{{ item.note }}</td>
-                            <td class="col-small negative" *ngIf="onCheckField('paymentMethods/cost')">{{ item.cost |
-                              currency:'' }}</td>
-                            <td class="col-small positive" *ngIf="onCheckField('paymentMethods/value')">{{ item.value |
-                              currency:'' }}</td>
-                          </tr>
-                          <tr *ngIf="!item.paymentMethods || (item.paymentMethods?.length == 0)">
-                            <td class="col-small" *ngIf="onCheckField('paymentMethods/code')"></td>
-                            <td class="col-large" *ngIf="onCheckField('paymentMethods/description')"></td>
-                            <td class="col-large" *ngIf="onCheckField('paymentMethods/note')"></td>
-                            <td class="col-small" *ngIf="onCheckField('paymentMethods/cost')"></td>
-                            <td class="col-small" *ngIf="onCheckField('paymentMethods/value')"></td>
-                          </tr>
-                        </table>
-                      </td>
-                      <td [attr.colspan]="onCheckColspan('taxes')" class="resetPadding" *ngIf="onCheckField('taxes')">
-                        <table>
-                          <tr>
-                            <td class="col-small" *ngIf="onCheckField('taxes/icms')">{{ (item.nf?.taxes?.icms || 0) |
-                              currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/pis')">{{ (item.nf?.taxes?.pis || 0) |
-                              currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/cofins')">{{ (item.nf?.taxes?.cofins || 0)
-                              | currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/iss')">{{ (item.nf?.taxes?.iss || 0) |
-                              currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/total')">{{ (item.nf?.taxes?.total || 0) |
-                              currency:'' }}</td>
-                          </tr>
-                        </table>
-                      </td>
+                      <ng-container *ngIf="onCheckField('services')">
+                        <td class="col-small align-top" *ngIf="onCheckField('services/code')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc?.code || '' }}</div>
+                        </td>
+                        <td class="col-large text-left align-top" *ngIf="onCheckField('services/description')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc?.name || '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('services/cost')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc ? ((svc.customCostPrice || 0) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('services/value')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc ? ((svc.executionPrice || 0) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('services/discount')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc ? ((svc.discount || 0) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('services/fee')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc ? ((svc.additional || 0) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('services/paid')">
+                          <div *ngFor="let svc of (item.service?.types?.length ? item.service.types : (item.services || []))">{{ svc ? ((svc.paymentAmount || 0) | currency:'') : '' }}</div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('products')">
+                        <td class="col-small align-top" *ngIf="onCheckField('products/code')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod?.code || '' }}</div>
+                        </td>
+                        <td class="col-large text-left align-top" *ngIf="onCheckField('products/description')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod?.name || '' }}</div>
+                        </td>
+                        <td class="col-small align-top" *ngIf="onCheckField('products/quantity')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod?.quantity != null ? prod.quantity : '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('products/cost')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? (prod.costPrice | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('products/totalCost')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? ((prod.costPrice * prod.quantity) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('products/price')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? (prod.salePrice | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('products/totalPrice')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? ((prod.salePrice * prod.quantity) | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('products/discount')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? (prod.discount | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('products/fee')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? (prod.additional | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('products/paid')">
+                          <div *ngFor="let prod of (item.products?.length ? item.products : [null])">{{ prod ? (prod.paymentAmount | currency:'') : '' }}</div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('paymentMethods')">
+                        <td class="col-small align-top" *ngIf="onCheckField('paymentMethods/code')">
+                          <div *ngFor="let method of (item.paymentMethods?.length ? item.paymentMethods : [null])">{{ method?.code || '' }}</div>
+                        </td>
+                        <td class="col-large text-left align-top" *ngIf="onCheckField('paymentMethods/description')">
+                          <div *ngFor="let method of (item.paymentMethods?.length ? item.paymentMethods : [null])">
+                            <ng-container *ngIf="method">
+                              <span *ngIf="method.code < 3000 || method.code >= 5000">{{ method.name }}</span>
+                              <span *ngIf="method.code > 3000 && method.code < 4000">{{ 'C. Débito - ' + method.name }}</span>
+                              <span *ngIf="method.code > 4000 && method.code < 5000">{{ 'C. Crédito (' + (method.parcel == 1 ? 'À Vista' : 'Parcelado') + ') - ' + method.name + (method.parcel == 1 ? '' : ' (' + method.parcel + 'X)') }}</span>
+                            </ng-container>
+                          </div>
+                        </td>
+                        <td class="col-large align-top" *ngIf="onCheckField('paymentMethods/note')">
+                          <div *ngFor="let method of (item.paymentMethods?.length ? item.paymentMethods : [null])">{{ method?.note || '' }}</div>
+                        </td>
+                        <td class="col-small negative align-top" *ngIf="onCheckField('paymentMethods/cost')">
+                          <div *ngFor="let method of (item.paymentMethods?.length ? item.paymentMethods : [null])">{{ method ? (method.cost | currency:'') : '' }}</div>
+                        </td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('paymentMethods/value')">
+                          <div *ngFor="let method of (item.paymentMethods?.length ? item.paymentMethods : [null])">{{ method ? (method.value | currency:'') : '' }}</div>
+                        </td>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('taxes')">
+                        <td class="col-small positive align-top" *ngIf="onCheckField('taxes/icms')">{{ (item.nf?.taxes?.icms || 0) | currency:'' }}</td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('taxes/pis')">{{ (item.nf?.taxes?.pis || 0) | currency:'' }}</td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('taxes/cofins')">{{ (item.nf?.taxes?.cofins || 0) | currency:'' }}</td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('taxes/iss')">{{ (item.nf?.taxes?.iss || 0) | currency:'' }}</td>
+                        <td class="col-small positive align-top" *ngIf="onCheckField('taxes/total')">{{ (item.nf?.taxes?.total || 0) | currency:'' }}</td>
+                      </ng-container>
                       <td class="negative" *ngIf="onCheckField('discount')">{{ (item.balance?.subtotal?.discount || 0) |
                         currency:'' }}</td>
                       <td class="positive" *ngIf="onCheckField('additional')">{{ (item.balance?.additional || 0) |
@@ -572,25 +547,41 @@
                       <th *ngIf="onCheckField('serviceCode')"></th>
                       <th *ngIf="onCheckField('customer')"></th>
                       <th *ngIf="onCheckField('collaborator')"></th>
-                      <th [attr.colspan]="onCheckColspan('services')" *ngIf="onCheckField('services')"></th>
-                      <th [attr.colspan]="onCheckColspan('products')" *ngIf="onCheckField('products')"></th>
-                      <th [attr.colspan]="onCheckColspan('paymentMethods')" *ngIf="onCheckField('paymentMethods')"></th>
-                      <th [attr.colspan]="onCheckColspan('taxes')" class="resetPadding" *ngIf="onCheckField('taxes')">
-                        <table>
-                          <tr>
-                            <td class="col-small" *ngIf="onCheckField('taxes/icms')">{{
-                              (settings.data?.balance?.taxes?.icms || 0) | currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/pis')">{{
-                              (settings.data?.balance?.taxes?.pis || 0) | currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/cofins')">{{
-                              (settings.data?.balance?.taxes?.cofins || 0) | currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/iss')">{{
-                              (settings.data?.balance?.taxes?.iss || 0) | currency:'' }}</td>
-                            <td class="col-small" *ngIf="onCheckField('taxes/total')">{{
-                              (settings.data?.balance?.taxes?.total || 0) | currency:'' }}</td>
-                          </tr>
-                        </table>
-                      </th>
+                      <ng-container *ngIf="onCheckField('services')">
+                        <th *ngIf="onCheckField('services/code')"></th>
+                        <th *ngIf="onCheckField('services/description')"></th>
+                        <th *ngIf="onCheckField('services/cost')"></th>
+                        <th *ngIf="onCheckField('services/value')"></th>
+                        <th *ngIf="onCheckField('services/discount')"></th>
+                        <th *ngIf="onCheckField('services/fee')"></th>
+                        <th *ngIf="onCheckField('services/paid')"></th>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('products')">
+                        <th *ngIf="onCheckField('products/code')"></th>
+                        <th *ngIf="onCheckField('products/description')"></th>
+                        <th *ngIf="onCheckField('products/quantity')"></th>
+                        <th *ngIf="onCheckField('products/cost')"></th>
+                        <th *ngIf="onCheckField('products/totalCost')"></th>
+                        <th *ngIf="onCheckField('products/price')"></th>
+                        <th *ngIf="onCheckField('products/totalPrice')"></th>
+                        <th *ngIf="onCheckField('products/discount')"></th>
+                        <th *ngIf="onCheckField('products/fee')"></th>
+                        <th *ngIf="onCheckField('products/paid')"></th>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('paymentMethods')">
+                        <th *ngIf="onCheckField('paymentMethods/code')"></th>
+                        <th *ngIf="onCheckField('paymentMethods/description')"></th>
+                        <th *ngIf="onCheckField('paymentMethods/note')"></th>
+                        <th *ngIf="onCheckField('paymentMethods/cost')"></th>
+                        <th *ngIf="onCheckField('paymentMethods/value')"></th>
+                      </ng-container>
+                      <ng-container *ngIf="onCheckField('taxes')">
+                        <th *ngIf="onCheckField('taxes/icms')">{{ (settings.data?.balance?.taxes?.icms || 0) | currency:'' }}</th>
+                        <th *ngIf="onCheckField('taxes/pis')">{{ (settings.data?.balance?.taxes?.pis || 0) | currency:'' }}</th>
+                        <th *ngIf="onCheckField('taxes/cofins')">{{ (settings.data?.balance?.taxes?.cofins || 0) | currency:'' }}</th>
+                        <th *ngIf="onCheckField('taxes/iss')">{{ (settings.data?.balance?.taxes?.iss || 0) | currency:'' }}</th>
+                        <th *ngIf="onCheckField('taxes/total')">{{ (settings.data?.balance?.taxes?.total || 0) | currency:'' }}</th>
+                      </ng-container>
                       <th class="negative" *ngIf="onCheckField('discount')">{{ (settings.data.balance.discount || 0) |
                         currency:'' }}</th>
                       <th class="positive" *ngIf="onCheckField('additional')">{{ (settings.data.balance.additional || 0)

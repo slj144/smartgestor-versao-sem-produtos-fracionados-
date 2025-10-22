@@ -1104,6 +1104,14 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
             codigoTributacao: item.codigoTributacao || ""
           };
 
+          if (item.department) {
+            obj.department = {
+              _id: item.department._id,
+              code: typeof item.department.code === 'string' ? parseInt(item.department.code, 10) : item.department.code,
+              name: item.department.name
+            };
+          }
+
           if (item.tributes) {
             obj.tributes = item.tributes || {}
           }
@@ -1172,6 +1180,14 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
             _id: item.category._id,
             code: item.category.code,
             name: item.category.name
+          };
+        }
+
+        if (item.department) {
+          obj.department = {
+            _id: item.department._id,
+            code: typeof item.department.code === 'string' ? parseInt(item.department.code, 10) : item.department.code,
+            name: item.department.name
           };
         }
 

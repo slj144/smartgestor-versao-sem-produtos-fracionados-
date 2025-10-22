@@ -249,13 +249,17 @@ export class CashierReportsService {
                 totalCosts: 0, totalTaxes: 0,
                 totalUnbilled: 0, partialRevenue: 0,
                 finalRevenue: 0,
-                commission: 0
+                commission: 0,
+                productCommission: 0,
+                serviceCommission: 0
               }
             };
           }
 
           let totalAmountBilled = item.balance.total;
           let totalCommission = 0;
+          let productCommissionTotal = 0;
+          let serviceCommissionTotal = 0;
 
           item.balance.additional = 0;
           item.balance.fee = 0;
@@ -286,12 +290,12 @@ export class CashierReportsService {
 
                 // Service commission (attribute value only; attribution by collaborator happens in FinancialReportsService)
                 if (type.commission && type.commission.enabled) {
-                  if (type.commission.type === 'percentage') {
-                    const serviceTotal = Number(type.customPrice || type.executionPrice || 0);
-                    totalCommission += (serviceTotal * Number(type.commission.value || 0)) / 100;
-                  } else {
-                    totalCommission += Number(type.commission.value || 0);
-                  }
+                  const serviceTotal = Number(type.customPrice || type.executionPrice || 0);
+                  const commissionValue = type.commission.type === 'percentage'
+                    ? (serviceTotal * Number(type.commission.value || 0)) / 100
+                    : Number(type.commission.value || 0);
+                  totalCommission += commissionValue;
+                  serviceCommissionTotal += commissionValue;
                 }
               }
 
@@ -315,6 +319,9 @@ export class CashierReportsService {
               }
 
               product.paymentAmount = (product.unitaryPrice * product.quantity);
+              // paymentAmount já representa o valor líquido cobrado ao cliente,
+              // pois unitaryPrice é ajustado após descontos. O relatório usa
+              // este campo para exibir "Pago", evitando diferenças quando há desconto.
 
               item.balance.additional += product.additional;
               item.balance.productsCosts += (product.costPrice * product.quantity);
@@ -328,17 +335,20 @@ export class CashierReportsService {
                   ? Number(product.paymentAmount)
                   : Number(product.salePrice || product.unitaryPrice || 0) * quantity;
 
-                if (product.commission.type === 'percentage') {
-                  totalCommission += (lineTotal * Number(product.commission.value || 0)) / 100;
-                } else {
-                  // Fixed value interpreted per unit
-                  totalCommission += Number(product.commission.value || 0) * quantity;
-                }
+                const commissionValue = product.commission.type === 'percentage'
+                  ? (lineTotal * Number(product.commission.value || 0)) / 100
+                  : Number(product.commission.value || 0) * quantity;
+                totalCommission += commissionValue;
+                productCommissionTotal += commissionValue;
               }
             }
             objData[date].balance.productsCosts += parseFloat(item.balance.productsCosts || 0);
+            item.balance.productCommission = productCommissionTotal;
+            item.balance.serviceCommission = serviceCommissionTotal;
             item.balance.commission = totalCommission;
             objData[date].balance.commission += totalCommission;
+            objData[date].balance.productCommission = (objData[date].balance.productCommission || 0) + productCommissionTotal;
+            objData[date].balance.serviceCommission = (objData[date].balance.serviceCommission || 0) + serviceCommissionTotal;
           }
 
           if (item.paymentMethods) {
@@ -388,7 +398,6 @@ export class CashierReportsService {
             item.balance.servicesCosts +
             item.balance.productsCosts +
             item.balance.paymentsCosts
-            // Comissão já incluída em servicesCosts (linha 283)
           );
           item.balance.totalTaxes = (() => {
             let value = 0;
@@ -399,14 +408,16 @@ export class CashierReportsService {
           })();
           item.balance.unbilledValue = (item.balance.total - totalAmountBilled);
           item.balance.partialRevenue = totalAmountBilled;
+          // Apenas as comissões de produtos são abatidas aqui; as de serviço já foram somadas em servicesCosts
+          const commissionValue = Number(item.balance.productCommission || 0);
           item.balance.finalRevenue = (
-            item.balance.partialRevenue -
+            Number(item.balance.partialRevenue || 0) -
             (
-              item.balance.servicesCosts +
-              item.balance.productsCosts +
-              item.balance.paymentsCosts +
-              // Não somar commission pois já está em servicesCosts
-              item.balance.totalTaxes
+              Number(item.balance.servicesCosts || 0) +
+              Number(item.balance.productsCosts || 0) +
+              Number(item.balance.paymentsCosts || 0) +
+              Number(item.balance.totalTaxes || 0) +
+              commissionValue
             )
           );
 
@@ -1257,9 +1268,10 @@ export class CashierReportsService {
             data.paymentMethods = item.paymentMethods;
             data.totalProductsQuantity = 0;
             data.partialRevenue = item.balance?.partialRevenue || 0;
+            const commissionValue = Number(item.balance?.productCommission || 0);
             const totalCostsWithTaxes = (item.balance?.totalCosts || 0) + (item.balance?.totalTaxes || 0);
             data.totalCosts = totalCostsWithTaxes;
-            data.finalRevenue = data.partialRevenue - totalCostsWithTaxes;
+            data.finalRevenue = data.partialRevenue - totalCostsWithTaxes - commissionValue;
             data.unbilledValue = item.balance?.unbilledValue || 0;
             // console.log(settings.productReport, filterProducts)
 
@@ -1332,7 +1344,8 @@ export class CashierReportsService {
               // data.finalRevenue = filteredProductsValue - filteredProductsCosts;
               // data.unbilledValue = item.balance.unbilledValue || 0;
               data.totalCosts = filteredProductsCosts + additionalCosts;
-              data.finalRevenue = data.partialRevenue - data.totalCosts;
+              const commissionShare = Number(item.balance?.productCommission || 0) * proportion;
+              data.finalRevenue = data.partialRevenue - data.totalCosts - commissionShare;
               data.unbilledValue = (item.balance?.unbilledValue || 0) * proportion;
               data.contributionMargin = data.finalRevenue > 0 ? parseFloat(((data.finalRevenue / data.partialRevenue) * 100).toFixed(4)) : 0;
 

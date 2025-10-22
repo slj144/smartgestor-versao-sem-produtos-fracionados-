@@ -90,6 +90,15 @@
                   </select>
                 </div>
 
+                <div class="col-12 form-group" *ngIf="useDepartments">
+                  <label>{{ translate._general.form.department.title }}</label>
+
+                  <select class="form-control" formControlName="department">
+                    <option value="##all##">{{ translate._general.form.department.list.all }}</option>
+                    <option *ngFor="let item of departments" [value]="item.code">{{ item.displayCode + ' - ' + item.name }}</option>
+                  </select>
+                </div>
+
                 <div class="col-12 form-group"
                   *ngIf="typeActived == 'pendingAccounts' || typeActived == 'overdueAccounts'">
                   <label>{{ translate._general.form.filterDateType.title }}</label>

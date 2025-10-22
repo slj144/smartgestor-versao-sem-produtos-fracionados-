@@ -435,6 +435,7 @@ export class FinancialReportsService {
         obj.referenceCode = item.referenceCode;
         obj.beneficiary = item.beneficiary;
         obj.category = item.category;
+        obj.department = this.composeDepartmentLabel(item.department);
         obj.registerDate = item.registerDate;
         obj.dischargeDate = isZero ? item.modifiedDate : item.installments[item.currentInstallment].dueDate;
         obj.installments = isZero ? "0 / 0" : (item.paidInstallments + ' / ' + item.totalInstallments);
@@ -466,6 +467,7 @@ export class FinancialReportsService {
         obj.referenceCode = item.referenceCode;
         obj.beneficiary = item.beneficiary;
         obj.category = item.category;
+        obj.department = this.composeDepartmentLabel(item.department);
         obj.registerDate = item.registerDate;
         obj.dueDate = item.installments[item.currentInstallment].dueDate;
         obj.installmentsState = (item.paidInstallments + ' / ' + item.totalInstallments);
@@ -502,6 +504,7 @@ export class FinancialReportsService {
           obj.referenceCode = item.referenceCode;
           obj.beneficiary = item.beneficiary;
           obj.category = item.category;
+          obj.department = this.composeDepartmentLabel(item.department);
           obj.registerDate = item.registerDate;
           obj.dueDate = item.installments[item.currentInstallment]?.dueDate;
           obj.installmentsState = isZero ? "0 / 0" : (item.paidInstallments + ' / ' + item.totalInstallments);
@@ -538,6 +541,7 @@ export class FinancialReportsService {
         obj.referenceCode = item.referenceCode;
         obj.beneficiary = item.beneficiary;
         obj.category = item.category;
+        obj.department = this.composeDepartmentLabel(item.department);
         obj.registerDate = item.registerDate;
         obj.dueDate = item.installments[item.currentInstallment]?.dueDate;
         obj.installmentsState = isZero ? "0 / 0" : (item.paidInstallments + ' / ' + item.totalInstallments);
@@ -705,6 +709,26 @@ export class FinancialReportsService {
     }
 
     return result;
+  }
+
+  private composeDepartmentLabel(department?: IFinancialBillToPay['department']): string {
+    if (!department) {
+      return '';
+    }
+
+    const stringCode = String(department.code ?? '').trim();
+
+    if (!stringCode) {
+      return department.name || '';
+    }
+
+    if (stringCode.startsWith('@')) {
+      return `${stringCode} - ${department.name}`;
+    }
+
+    const numeric = parseInt(stringCode, 10);
+    const formatted = isNaN(numeric) ? stringCode : Utilities.prefixCode(numeric);
+    return `${formatted} - ${department.name}`;
   }
 
   private treatBankTransactions(data: any[], setting: any) {

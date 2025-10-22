@@ -8,6 +8,7 @@ import { ServicesTranslate } from '../../services.translate';
 
 // Utilities
 import { Dispatch } from '@shared/utilities/dispatch';
+import { Utilities } from '@shared/utilities/utilities';
 
 @Component({
   selector: 'services-modal',
@@ -21,6 +22,10 @@ export class ServicesModalComponent implements OnInit {
   public translate = ServicesTranslate.get()['modal'];
 
   public settings: any = {};
+
+  public get useDepartments(): boolean {
+    return Utilities.stockDepartmentsEnabled;
+  }
 
   private modalComponent: any;
   private filtersComponent: any;
