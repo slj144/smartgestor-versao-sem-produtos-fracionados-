@@ -253,6 +253,85 @@ export class ServicesService {
     }));
   }
 
+  public async applyIssAliquotaToAllServices(aliquotaPercent: number): Promise<void> {
+
+    const sanitizedPercentage = this.normalizeAliquotaTarget(aliquotaPercent);
+
+    try {
+      await this.iToolsService.ready();
+      Utilities.loading();
+
+      const services = await this.fetchAllServices();
+
+      if (services.length === 0) {
+        this.notificationService.create({
+          title: this.translate.pageTitle,
+          description: this.translate.notification.massIssSuccess,
+          status: ENotificationStatus.success
+        }, false);
+
+        return;
+      }
+
+      const collection = this.iToolsService.database().collection('RegistersServices');
+      const chunkSize = 400;
+      const isMatrix = Utilities.isMatrix;
+      const storeId = Utilities.storeID;
+
+      for (let index = 0; index < services.length; index += chunkSize) {
+        const batch = this.iToolsService.database().batch();
+        let writes = 0;
+
+        const slice = services.slice(index, index + chunkSize);
+
+        slice.forEach((service) => {
+
+          if (!service || !service._id) {
+            return;
+          }
+
+          const docRef = collection.doc(service._id);
+          const timestamp = iTools.FieldValue.date(Utilities.timezone);
+          const payload: any = {
+            'tributes.iss.aliquota': sanitizedPercentage,
+            modifiedDate: timestamp
+          };
+
+          if (!isMatrix) {
+            payload[`branches.${storeId}.tributes.iss.aliquota`] = sanitizedPercentage;
+            payload[`branches.${storeId}.modifiedDate`] = timestamp;
+          }
+
+          batch.update(docRef, payload, { merge: true });
+          writes++;
+        });
+
+        if (writes > 0) {
+          await batch.commit();
+        }
+      }
+
+      this.notificationService.create({
+        title: this.translate.pageTitle,
+        description: this.translate.notification.massIssSuccess,
+        status: ENotificationStatus.success
+      }, false);
+
+    } catch (error) {
+      console.error('Error applying ISS aliquota to all services:', error);
+
+      this.notificationService.create({
+        title: this.translate.pageTitle,
+        description: this.translate.notification.massIssError,
+        status: ENotificationStatus.danger
+      }, false);
+
+      throw error;
+    } finally {
+      Utilities.loading(false);
+    }
+  }
+
   // Count Methods
 
   public getServicesCount(listenerId: string, listener: ((_: any)=>void)) {
@@ -264,6 +343,21 @@ export class ServicesService {
     if (this._checkRequest) {
       this._dataMonitors.emit(emitterId, this.treatData(emitterId));
     }
+  }
+
+  public getIssAliquotaSuggestion(): number | null {
+
+    const records = Object.values(this.data || {});
+
+    for (const record of records) {
+      const aliquota = this.extractIssAliquota(record as IRegistersService);
+
+      if (aliquota !== null) {
+        return aliquota;
+      }
+    }
+
+    return null;
   }
 
   // Auxiliary Methods - Logs
@@ -370,7 +464,7 @@ export class ServicesService {
     }
 
     this.notificationService.create(settings, storage);
-  } 
+  }
 
   // Data Processing
 
@@ -560,6 +654,87 @@ export class ServicesService {
 
       return records;
     }
+  }
+
+  private async fetchAllServices(chunkSize: number = 500): Promise<IRegistersService[]> {
+
+    const services: IRegistersService[] = [];
+    let offset = 0;
+
+    while (true) {
+
+      const settings: query = { start: offset, limit: chunkSize };
+      const snapshot = await this.collRef(settings).get();
+      const docs = snapshot?.docs || [];
+
+      if (!docs.length) {
+        break;
+      }
+
+      docs.forEach((doc) => {
+        const data = doc.data();
+
+        if (data) {
+          services.push(data as IRegistersService);
+        }
+      });
+
+      if (docs.length < chunkSize) {
+        break;
+      }
+
+      offset += chunkSize;
+    }
+
+    return services;
+  }
+
+  private extractIssAliquota(service: IRegistersService): number | null {
+
+    if (!service) {
+      return null;
+    }
+
+    const mainAliquota = this.normalizeAliquotaOptional(service.tributes?.iss?.aliquota);
+
+    if (mainAliquota !== null) {
+      return mainAliquota;
+    }
+
+    if (service.branches) {
+      const branch = service.branches[Utilities.storeID];
+      const branchAliquota = this.normalizeAliquotaOptional(branch?.tributes?.iss?.aliquota);
+
+      if (branchAliquota !== null) {
+        return branchAliquota;
+      }
+    }
+
+    return null;
+  }
+
+  private normalizeAliquotaTarget(value: any): number {
+
+    const parsed = typeof value === 'string'
+      ? Utilities.parsePercentualToNumber(value)
+      : Number(value || 0);
+
+    if (!isFinite(parsed) || parsed < 0) {
+      return 0;
+    }
+
+    return parseFloat(parsed.toFixed(2));
+  }
+
+  private normalizeAliquotaOptional(value: any): number | null {
+
+    if (value === undefined || value === null || value === '') {
+      return null;
+    }
+
+    const normalized = this.normalizeAliquotaTarget(value);
+
+    return isNaN(normalized) ? null : normalized;
   }
 
 }

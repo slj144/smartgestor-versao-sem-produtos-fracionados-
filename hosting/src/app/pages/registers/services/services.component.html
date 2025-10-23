@@ -15,6 +15,7 @@
         </button>
 
         <ul class="dropdown-menu dropdown-menu-right">          
+          <li *ngIf="canConfigureIss" (click)="onIssConfig()"><span class="dropdown-item"><icon name="settings-2-outline" pack="eva"></icon> {{ translate.modal.action.others.issConfig.menu }}</span></li>
           <li *ngIf="isAdmin" (click)="onDataExport()"><span class="dropdown-item"><icon name="code-outline" pack="eva"></icon> {{ translate.modal.action.others.dataExport.title }}</span></li>
         </ul>
       </div>

@@ -90,6 +90,16 @@ export class ServicesTranslate{
                 },
                 button: 'Iniciar Exportação'
               }
+            },
+            issConfig: {
+              title: 'Configurar alíquota padrão de ISS',
+              menu: 'Configurar alíquota padrão de ISS',
+              description: 'Defina a alíquota informada pelo contador para replicar em todos os serviços cadastrados.',
+              sliderLabel: 'Alíquota selecionada',
+              inputLabel: 'Alíquota (%)',
+              helper: 'Informe um valor entre 0% e 15%. Apenas o campo de ISS será atualizado.',
+              button: 'Aplicar alíquota em todos os serviços',
+              buttonLoading: 'Aplicando alíquota...'
             }
           }
         }
@@ -98,7 +108,9 @@ export class ServicesTranslate{
         register: 'O serviço foi registrado com sucesso.',
         update: 'O serviço foi atualizado com sucesso.',
         delete: 'O serviço foi excluído com sucesso.',
-        error: 'Houve um erro inesperado. Por favor, tente novamente.'
+        error: 'Houve um erro inesperado. Por favor, tente novamente.',
+        massIssSuccess: 'Alíquota do ISS aplicada para todos os serviços.',
+        massIssError: 'Não foi possível atualizar a alíquota do ISS. Tente novamente.'
       },
       systemLog: {
         register: 'Registro de serviço.',
@@ -192,6 +204,16 @@ export class ServicesTranslate{
                 },
                 button: 'Start Export'
               }
+            },
+            issConfig: {
+              title: 'Set default ISS rate',
+              menu: 'Set default ISS rate',
+              description: 'Keep every service aligned with the ISS rate provided by your accountant.',
+              sliderLabel: 'Selected rate',
+              inputLabel: 'Rate (%)',
+              helper: 'Choose a value between 0% and 15%. Only the ISS field is updated.',
+              button: 'Apply rate to all services',
+              buttonLoading: 'Applying rate...'
             }
           }
         }
@@ -200,7 +222,9 @@ export class ServicesTranslate{
         register: 'The service was registered successfully.',
         update: 'The service was updated successfully.',
         delete: 'The service was deleted successfully.',
-        error: 'There was an unexpected error. Please try again.'
+        error: 'There was an unexpected error. Please try again.',
+        massIssSuccess: 'ISS rate applied to every service.',
+        massIssError: 'Unable to update the ISS rate. Please try again.'
       },
       systemLog: {
         register: 'Service registration.',

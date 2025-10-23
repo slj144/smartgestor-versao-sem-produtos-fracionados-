@@ -38,6 +38,7 @@ import { PartnersDataExportComponent } from './partners/components/modal/compone
 import { ServicesComponent } from './services/services.component';
 import { ServicesModalComponent } from './services/components/modal/modal.component';
 import { ServicesDataExportComponent } from './services/components/modal/components/others/dataExport/dataExport.component';
+import { ServicesIssConfigComponent } from './services/components/modal/components/others/issConfig/iss-config.component';
 
 import { VehiclesComponent } from './vehicles/vehicles.component';
 import { VehiclesModalComponent } from './vehicles/components/modal/modal.component';
@@ -97,6 +98,7 @@ import { PaymentMethodsDataExportComponent } from './paymentMethods/components/m
     ServicesComponent,
     ServicesModalComponent,
     ServicesDataExportComponent,
+    ServicesIssConfigComponent,
 
     VehiclesComponent,
     VehiclesModalComponent,

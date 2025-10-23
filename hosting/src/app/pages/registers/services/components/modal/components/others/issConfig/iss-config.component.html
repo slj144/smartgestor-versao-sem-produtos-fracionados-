@@ -1,0 +1,54 @@
+<div class="iss-config" *ngIf="initialized && form; else loading">
+  <form [formGroup]="form" (submit)="onApply()" autocomplete="off">
+
+    <header class="iss-config__header">
+      <h5>{{ translate.title }}</h5>
+      <p>{{ translate.description }}</p>
+    </header>
+
+    <section class="iss-config__body">
+      <label class="iss-config__slider-label">
+        {{ translate.sliderLabel }}
+        <strong>{{ displayLabel }}</strong>
+      </label>
+
+      <input
+        type="range"
+        class="iss-config__slider"
+        min="0"
+        [max]="maxPercent * 100"
+        step="1"
+        [value]="sliderValue"
+        (input)="onSliderInput($event)"
+        [attr.disabled]="isApplying ? true : null"
+      />
+
+      <div class="iss-config__input-group">
+        <label for="issAliquotaInput">{{ translate.inputLabel }}</label>
+        <div class="iss-config__input-wrapper">
+          <input
+            id="issAliquotaInput"
+            type="number"
+            class="form-control"
+            formControlName="aliquota"
+            min="0"
+            [max]="maxPercent"
+            step="0.01"
+          />
+          <span>%</span>
+        </div>
+        <small>{{ translate.helper }}</small>
+      </div>
+    </section>
+
+    <footer class="iss-config__footer">
+      <button type="submit" class="btn btnBlue iss-config__button" [disabled]="form.invalid || isApplying">
+        {{ isApplying ? translate.buttonLoading : translate.button }}
+      </button>
+    </footer>
+  </form>
+</div>
+
+<ng-template #loading>
+  <div class="iss-config__loading" [nbSpinner]="true" nbSpinnerStatus="primary" nbSpinnerSize="large"></div>
+</ng-template>

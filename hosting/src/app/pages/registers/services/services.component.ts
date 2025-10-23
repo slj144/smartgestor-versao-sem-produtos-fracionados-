@@ -34,6 +34,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
   private modalComponent: any;
 
   public isAdmin = Utilities.isAdmin;
+  public isFiscal = Utilities.isFiscal;
+  public canConfigureIss = (Utilities.isAdmin || Utilities.isFiscal);
 
   constructor(
     private servicesService: ServicesService
@@ -134,6 +136,13 @@ export class ServicesComponent implements OnInit, OnDestroy {
     });
   }
 
+  public onIssConfig(): void {
+
+    this.modalComponent.onOpen({
+      activeComponent: 'Services/IssConfig'
+    });
+  }
+
   // Event Listeners 
 
   public onModalResponse(event: any) {
@@ -166,6 +175,8 @@ export class ServicesComponent implements OnInit, OnDestroy {
           }
         }
       }     
+
+      this.canConfigureIss = (Utilities.isAdmin || Utilities.isFiscal);
     };
 
     Dispatch.onRefreshCurrentUserPermissions('ServicesComponent', () => {
@@ -212,4 +223,3 @@ export class ServicesComponent implements OnInit, OnDestroy {
   }
 
 }
-

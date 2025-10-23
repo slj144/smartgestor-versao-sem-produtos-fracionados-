@@ -31,6 +31,7 @@ export class ServicesModalComponent implements OnInit {
   private filtersComponent: any;
   private registerComponent: any; 
   private dataExportComponent: any; 
+  private issConfigComponent: any;
   
   constructor(
     private servicesService: ServicesService
@@ -74,7 +75,8 @@ export class ServicesModalComponent implements OnInit {
         (this.settings.activeComponent === 'Services/Read') ||
         (this.settings.activeComponent === 'Services/Filters' && this.filtersComponent) ||
         ((this.settings.activeComponent === 'Services/Create') || (this.settings.activeComponent === 'Services/Update') && this.registerComponent) ||
-        ((this.settings.activeComponent === 'Services/DataExport') && this.dataExportComponent)
+        ((this.settings.activeComponent === 'Services/DataExport') && this.dataExportComponent) ||
+        ((this.settings.activeComponent === 'Services/IssConfig') && this.issConfigComponent)
       ) { clearInterval(timer) }
       
       if (this.settings.activeComponent === 'Services/Filters' && this.filtersComponent) {
@@ -87,6 +89,10 @@ export class ServicesModalComponent implements OnInit {
 
       if (this.settings.activeComponent === 'Services/DataExport' && this.dataExportComponent) {
         this.dataExportComponent.bootstrap();
+      }
+
+      if (this.settings.activeComponent === 'Services/IssConfig' && this.issConfigComponent) {
+        this.issConfigComponent.bootstrap();
       }
     }, 0);
 
@@ -148,6 +154,17 @@ export class ServicesModalComponent implements OnInit {
     }
   }
 
+  public onIssConfigResponse(event: any) {
+
+    if (event.instance) {
+      this.issConfigComponent = event.instance;
+    }
+
+    if (event.close) {
+      this.onClose();
+    }
+  }
+
   // Auxiliary Methods
 
   private checkTranslationChange() {
@@ -179,6 +196,10 @@ export class ServicesModalComponent implements OnInit {
         if (this.settings.activeComponent == 'Services/DataExport') {
           this.modalComponent.title = this.translate.action.others.dataExport.title;
         }
+
+        if (this.settings.activeComponent == 'Services/IssConfig') {
+          this.modalComponent.title = this.translate.action.others.issConfig.title;
+        }
       }
     };   
         
@@ -199,6 +220,7 @@ export class ServicesModalComponent implements OnInit {
     this.filtersComponent = null;
     this.registerComponent = null;
     this.dataExportComponent = null;
+    this.issConfigComponent = null;
 
     Dispatch.removeListeners('languageChange', 'ServicessModalComponent');
   }

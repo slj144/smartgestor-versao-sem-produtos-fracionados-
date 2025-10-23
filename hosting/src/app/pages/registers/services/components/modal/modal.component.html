@@ -73,5 +73,15 @@
       </div>
     </div>
 
+    <div id="container-iss-config" *ngIf="settings.activeComponent === 'Services/IssConfig'">
+      <div class="container-external">
+        <div class="container-internal">
+          <div class="wrapper">
+            <services-iss-config (callback)="onIssConfigResponse($event)"></services-iss-config>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </modal>
