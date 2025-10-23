@@ -487,7 +487,7 @@ export class PermissionsService {
         actions: ["add", "edit", "delete", "filterDataPerOperator"], fields: []
       },
       serviceOrders: {
-        actions: ["add", "edit", "delete", "cancel", "editPrice", "editServiceCostPrice", "filterDataPerOperator"], fields: []
+        actions: ["add", "edit", "delete", "cancel", "editPrice", "editServiceCostPrice", "assignTechnician", "filterDataPerOperator"], fields: []
       },
       socialDemands: {
         actions: ["add", "edit", "delete", "filterDataPerOperator"], fields: []

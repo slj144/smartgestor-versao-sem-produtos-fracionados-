@@ -1226,6 +1226,17 @@ export class ServiceOrdersRegisterComponent implements OnInit, OnDestroy {
             editServiceCostPrice: permissions.actions.indexOf("editServiceCostPrice") !== -1,
             assignTechnician: permissions.actions.indexOf("assignTechnician") !== -1
           };
+        } else {
+          this.permissions = {
+            filterDataPerOperator: false,
+            add: false,
+            edit: false,
+            delete: false,
+            cancel: false,
+            editPrice: false,
+            editServiceCostPrice: false,
+            assignTechnician: false
+          };
         }
       }
     };
