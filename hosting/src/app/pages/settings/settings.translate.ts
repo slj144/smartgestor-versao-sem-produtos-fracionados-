@@ -28,6 +28,10 @@ export class SettingsTranslate {
             warrantyTerm: {
               label: 'Termo de Garantia',
               description: 'Configure o termo de garantia a ser exibido nos comprovantes a serem emitidos no caixa.',
+            },
+            discountLock: {
+              label: 'Bloquear descontos no PDV',
+              description: 'Quando ativado, somente administradores podem autorizar descontos no PDV.'
             }
           }
         },
@@ -124,6 +128,10 @@ export class SettingsTranslate {
                 individual: 'Indivídual'
               }
             },
+            discountLock: {
+              description: 'Deseja exigir a senha de um administrador para aplicar descontos no PDV?',
+              subDescription: 'Ao ativar esta opção, usuários comuns deverão solicitar aprovação sempre que tentarem aplicar desconto.'
+            },
             button: {
               submit: 'Confirmar'
             }
@@ -217,6 +225,10 @@ export class SettingsTranslate {
           title: 'Configurações do Caixa',
           description: 'O termo de garantia foi atualizado com sucesso.'
         },
+        'Cashier/DiscountLock': {
+          title: 'Configurações do Caixa',
+          description: 'A trava de desconto foi atualizada com sucesso.'
+        },
         'ServiceOrder/Checklist': {
           title: 'Configurações das Ordens de Serviço',
           description: 'A checklist foi atualizados com sucesso.'
@@ -262,6 +274,10 @@ export class SettingsTranslate {
             warrantyTerm: {
               label: 'Warranty Term',
               description: 'Configure the warranty term to be displayed on the receipts to be issued in the cashier.',
+            },
+            discountLock: {
+              label: 'Lock discounts at POS',
+              description: 'When enabled, only administrators can authorize discounts inside the POS.'
             }
           }
         },
@@ -357,6 +373,10 @@ export class SettingsTranslate {
                 individual: 'Individual'
               }
             },
+            discountLock: {
+              description: 'Require an administrator password to apply discounts at the POS?',
+              subDescription: 'When enabled, standard users must request approval whenever trying to apply discounts.'
+            },
             button: {
               submit: 'Confirm'
             }
@@ -449,6 +469,10 @@ export class SettingsTranslate {
         'Cashier/WarrantyTerm': {
           title: 'Cashier Settings',
           description: 'The warranty term has been updated successfully.'
+        },
+        'Cashier/DiscountLock': {
+          title: 'Cashier Settings',
+          description: 'Discount lock preference updated successfully.'
         },
         'ServiceOrder/Checklist': {
           title: 'Service Orders Settings',

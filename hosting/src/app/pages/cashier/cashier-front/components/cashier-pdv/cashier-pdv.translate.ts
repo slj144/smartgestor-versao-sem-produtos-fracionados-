@@ -116,12 +116,26 @@ export class CashierFrontPDVTranslate {
         register: 'A venda foi registrada com sucesso.',
         update: 'A venda foi atualizada com sucesso.',
         delete: 'A venda foi excluída com sucesso.',
-        error: 'Houve um erro inesperado. Por favor, tente novamente.'
+        error: 'Houve um erro inesperado. Por favor, tente novamente.',
+        discountLock: {
+          title: 'Desconto bloqueado',
+          description: 'Um administrador precisa aprovar este desconto antes de concluir a venda.'
+        }
       },
       systemLog: {
         register: 'Registro de venda.',
         update: 'Atualização de venda.',
         delete: 'Exclusão de venda.'
+      },
+      discountLockModal: {
+        title: 'Aprovação necessária',
+        description: 'Informe usuário e senha de um administrador para liberar o desconto ou salve como pendente para aprovação posterior.',
+        username: 'Usuário administrador',
+        password: 'Senha',
+        confirm: 'Autorizar desconto',
+        savePending: 'Salvar como pendente',
+        cancel: 'Cancelar',
+        invalid: 'Credenciais inválidas ou usuário não autorizado.'
       }
     },
     'en_US': {
@@ -232,12 +246,26 @@ export class CashierFrontPDVTranslate {
         register: 'The sale was successfully registered.',
         update: 'The sale was successfully updated.',
         delete: 'The sale was successfully deleted.',
-        error: 'There was an unexpected error. Please try again.'
+        error: 'There was an unexpected error. Please try again.',
+        discountLock: {
+          title: 'Discount blocked',
+          description: 'An administrator must approve this discount before completing the sale.'
+        }
       },
       systemLog: {
         register: 'Sale registration.',
         update: 'Sale update.',
         delete: 'Sale exclusion.'
+      },
+      discountLockModal: {
+        title: 'Approval required',
+        description: 'Provide an administrator username and password to authorize the discount, or save the sale as pending for later approval.',
+        username: 'Administrator username',
+        password: 'Password',
+        confirm: 'Authorize discount',
+        savePending: 'Save as pending',
+        cancel: 'Cancel',
+        invalid: 'Invalid credentials or user not allowed.'
       }
     }
   }

@@ -76,6 +76,16 @@
                         </td>
                         <td><icon name="arrow-ios-forward-outline"></icon></td>
                       </tr>
+
+                      <tr (click)="onOpenModal('Cashier', 'DiscountLock')">
+                        <td>
+                          <span>
+                            <span class="label">{{ translate.section.cashier.option.discountLock.label }}</span>
+                            <span class="description">{{ translate.section.cashier.option.discountLock.description }}</span>
+                          </span>
+                        </td>
+                        <td><icon name="arrow-ios-forward-outline"></icon></td>
+                      </tr>
                     </table>              
                   </td>            
                 </tr>

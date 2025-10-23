@@ -226,6 +226,7 @@ export class CashierReportsService {
         for (const doc of docs) {
 
           const item = (Utilities.isArray(response) ? doc : doc.data());
+          this.normalizeCommissionBases(item);
           const date = DateTime.formatDate((<any>settings).groupBy == "paymentDate" ? item.paymentDate : item.registerDate).date;
           const paymentDate = DateTime.formatDate(item.paymentDate).date;
 
@@ -291,8 +292,11 @@ export class CashierReportsService {
                 // Service commission (attribute value only; attribution by collaborator happens in FinancialReportsService)
                 if (type.commission && type.commission.enabled) {
                   const serviceTotal = Number(type.customPrice || type.executionPrice || 0);
+                  const commissionBase = type.__commissionBase != null && type.__commissionBase !== undefined
+                    ? Number(type.__commissionBase)
+                    : serviceTotal;
                   const commissionValue = type.commission.type === 'percentage'
-                    ? (serviceTotal * Number(type.commission.value || 0)) / 100
+                    ? (commissionBase * Number(type.commission.value || 0)) / 100
                     : Number(type.commission.value || 0);
                   totalCommission += commissionValue;
                   serviceCommissionTotal += commissionValue;
@@ -331,9 +335,11 @@ export class CashierReportsService {
                 const quantity = product.quantity || 1;
                 // paymentAmount (if present) already reflects quantity.
                 // Otherwise, build line total from unit price.
-                const lineTotal = (product.paymentAmount != null && product.paymentAmount !== undefined)
-                  ? Number(product.paymentAmount)
-                  : Number(product.salePrice || product.unitaryPrice || 0) * quantity;
+                const lineTotal = (product.__commissionBase != null && product.__commissionBase !== undefined)
+                  ? Number(product.__commissionBase)
+                  : (product.paymentAmount != null && product.paymentAmount !== undefined)
+                    ? Number(product.paymentAmount)
+                    : Number(product.salePrice || product.unitaryPrice || 0) * quantity;
 
                 const commissionValue = product.commission.type === 'percentage'
                   ? (lineTotal * Number(product.commission.value || 0)) / 100
@@ -1782,6 +1788,74 @@ export class CashierReportsService {
       // console.log(obj.synthetic);
     } else {
       return obj;
+    }
+  }
+
+  private normalizeCommissionBases(item: any): void {
+    try {
+      if (!item || !item.balance) {
+        return;
+      }
+
+      const products: any[] = Array.isArray(item.products) ? item.products : [];
+      const services: any[] = (item.services && Array.isArray(item.services))
+        ? item.services
+        : (item.service && Array.isArray(item.service.types) ? item.service.types : []);
+
+      const safeNumber = (value: any): number => {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : 0;
+      };
+
+      const totalDiscount = safeNumber(item.balance?.subtotal?.discount ?? item.balance?.discount ?? 0);
+
+      const productGross = products.reduce((sum, prod) => {
+        const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
+        const basePrice = safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0);
+        return sum + Math.max(0, basePrice * quantity);
+      }, 0);
+
+      const serviceGross = services.reduce((sum, svc) => {
+        const basePrice = safeNumber(svc?.executionPrice ?? svc?.customPrice ?? 0);
+        return sum + Math.max(0, basePrice);
+      }, 0);
+
+      const productDirectDiscount = products.reduce((sum, prod) => sum + Math.max(0, safeNumber(prod?.discount)), 0);
+      const serviceDirectDiscount = services.reduce((sum, svc) => sum + Math.max(0, safeNumber(svc?.discount)), 0);
+
+      const directDiscountTotal = productDirectDiscount + serviceDirectDiscount;
+      const globalDiscount = Math.max(0, totalDiscount - directDiscountTotal);
+
+      const totalGross = productGross + serviceGross;
+      const productGlobalShareTotal = totalGross > 0 ? globalDiscount * (productGross / totalGross) : 0;
+      const serviceGlobalShareTotal = totalGross > 0 ? globalDiscount * (serviceGross / totalGross) : 0;
+
+      products.forEach((prod) => {
+        const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
+        const gross = Math.max(0, safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0) * quantity);
+        const directDiscount = Math.max(0, safeNumber(prod?.discount));
+        const baseAfterDirect = Math.max(0, gross - directDiscount);
+        const globalShare = productGross > 0 ? productGlobalShareTotal * (gross / productGross) : 0;
+        const cappedShare = Math.min(baseAfterDirect, globalShare);
+        const net = Math.max(0, baseAfterDirect - cappedShare);
+        prod.__commissionBase = net;
+        prod.__commissionGross = gross;
+        prod.__commissionGlobalDiscount = cappedShare;
+      });
+
+      services.forEach((svc) => {
+        const gross = Math.max(0, safeNumber(svc?.executionPrice ?? svc?.customPrice ?? 0));
+        const directDiscount = Math.max(0, safeNumber(svc?.discount));
+        const baseAfterDirect = Math.max(0, gross - directDiscount);
+        const globalShare = serviceGross > 0 ? serviceGlobalShareTotal * (gross / serviceGross) : 0;
+        const cappedShare = Math.min(baseAfterDirect, globalShare);
+        const net = Math.max(0, baseAfterDirect - cappedShare);
+        svc.__commissionBase = net;
+        svc.__commissionGross = gross;
+        svc.__commissionGlobalDiscount = cappedShare;
+      });
+    } catch (error) {
+      console.warn('[CashierReportsService] normalizeCommissionBases error:', error);
     }
   }
 

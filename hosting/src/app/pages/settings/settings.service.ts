@@ -237,6 +237,44 @@ export class SettingsService {
     }));
   }
 
+  public async updateCashierDiscountLock(value: boolean) {
+
+    return (new Promise<void>((resolve, reject) => {
+
+      try {
+
+        Utilities.loading();
+
+        const updateObject: any = { cashier: {} };
+        updateObject.cashier.lockDiscounts = !!value;
+
+        this.collRef().doc(Utilities.storeID).update(updateObject, { merge: true }).then(() => {
+
+          Utilities.localStorage('CashierLockDiscounts', !!value);
+
+          Utilities.loading(false);
+          resolve();
+
+          this.notifications('Cashier/DiscountLock', 'success');
+        }).catch((error) => {
+
+          Utilities.loading(false);
+          reject(error);
+
+          this.notifications('Cashier/DiscountLock', 'error');
+          console.error(`Error: ${error.message}`);
+        });
+      } catch(error) {
+
+        Utilities.loading(false);
+        reject(error);
+
+        this.notifications('Cashier/DiscountLock', 'error');
+        console.error(`Error: ${error.message}`);
+      }
+    }));
+  }
+
   // Service Orders Settings Methods
 
   public async updateServiceOrdersChecklist(value: any) {
@@ -798,6 +836,16 @@ export class SettingsService {
       if(data?.cashier?.warrantyTerm?.trim()?.length ==  0){
         data.cashier = data.cashier || {};
         data.cashier.warrantyTerm = this.matrixData.cashier?.warrantyTerm || "";
+      }
+
+      if (!data.cashier) {
+        data.cashier = {};
+      }
+      if (data.cashier && data.cashier.lockDiscounts === undefined) {
+        data.cashier.lockDiscounts = !!this.matrixData.cashier?.lockDiscounts;
+      }
+      if (data.cashier && (data.cashier.lockDiscounts !== undefined)) {
+        Utilities.localStorage('CashierLockDiscounts', !!data.cashier.lockDiscounts);
       }
 
       if (!data.general || data.general && Object.values(data.general).length > 0) {

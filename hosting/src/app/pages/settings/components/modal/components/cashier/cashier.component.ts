@@ -17,10 +17,12 @@ export class SettingsCashierComponent implements OnInit {
   @Output() callback: EventEmitter<any> = new EventEmitter();
 
   public formOperationalMode: FormGroup;
+  public formDiscountLock: FormGroup;
 
   public settings: any = {};
   public operationalModes: any[] = [];
   public warrantyTerm: string = "";
+  public lockDiscounts = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -95,7 +97,13 @@ export class SettingsCashierComponent implements OnInit {
         if (data.cashier.warrantyTerm) {
           this.warrantyTerm = data.cashier.warrantyTerm;
         }
-      }      
+
+        this.lockDiscounts = !!data.cashier.lockDiscounts;
+
+        if (this.settings.activeComponent == 'Cashier/DiscountLock' && this.formDiscountLock) {
+          this.formDiscountLock.patchValue({ lock: this.lockDiscounts });
+        }
+      }
     });
 
     this.formSettings(settings);    
@@ -121,6 +129,15 @@ export class SettingsCashierComponent implements OnInit {
     });
   }
 
+  public onSubmitDiscountLock() {
+
+    const value = !!this.formDiscountLock?.value?.lock;
+
+    this.settingsService.updateCashierDiscountLock(value).then(() => {
+      this.callback.emit({ close: true });
+    });
+  }
+
   // Setting Methods
 
   private formSettings(data: any = {}) {
@@ -130,13 +147,20 @@ export class SettingsCashierComponent implements OnInit {
       this.formOperationalMode = this.formBuilder.group({
         mode: [(window.localStorage.getItem('cashierMode') || 'shared'), Validators.required]
       });
-    }   
+    }
+
+    if (this.settings.activeComponent == 'Cashier/DiscountLock') {
+      this.formDiscountLock = this.formBuilder.group({
+        lock: [this.lockDiscounts]
+      });
+    }
   }
     
   // Auxiliary Methods
 
   public reset() {
     this.warrantyTerm = '';    
+    this.lockDiscounts = false;
     this.settingsService.removeListeners('SettingsCashierComponent/bootstrap');
   }  
 

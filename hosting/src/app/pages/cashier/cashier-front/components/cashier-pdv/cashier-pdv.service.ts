@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { iTools } from "@itools/index";
+import * as cryptojs from "crypto-js";
 
 // Services
 import { IToolsService } from '@shared/services/iTools.service';
@@ -111,6 +112,65 @@ export class CashierFrontPDVService {
         }
 
         data.modifiedDate = iTools.FieldValue.date(Utilities.timezone);
+
+        const discountLockEnabled = Utilities.cashierLockDiscounts;
+        const operatorIsAdmin = Utilities.isAdmin;
+        if (discountLockEnabled && !operatorIsAdmin) {
+          // Normaliza valores para detectar descontos implícitos (ajuste manual de preço)
+          const toNumber = (value: any) => {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? parsed : 0;
+          };
+
+          let discountValue = 0;
+          const balanceDiscount = data.balance?.discount;
+
+          if (typeof balanceDiscount === 'number') {
+            discountValue = balanceDiscount;
+          } else if (balanceDiscount && typeof balanceDiscount === 'object' && 'value' in balanceDiscount) {
+            discountValue = Number(balanceDiscount.value || 0);
+          }
+
+          const hasGlobalDiscount = discountValue > 0;
+          const hasProductDiscount = (data.products || []).some((prod: any) => {
+            const explicitDiscount = Number(prod.discount || 0) > 0;
+            const salePrice = toNumber(prod.salePrice);
+            const unitaryPrice = toNumber(prod.unitaryPrice);
+            const priceCut = salePrice > 0 && unitaryPrice >= 0 && unitaryPrice < salePrice;
+            return explicitDiscount || priceCut;
+          });
+
+          const hasServiceDiscount = ((data.service?.types || []) as any[]).some((svc: any) => {
+            const explicitDiscount = Number(svc.discount || 0) > 0;
+            const executionPrice = toNumber(svc.executionPrice);
+            const customPrice = toNumber(svc.customPrice);
+            const priceCut = executionPrice > 0 && customPrice >= 0 && customPrice < executionPrice;
+            return explicitDiscount || priceCut;
+          });
+
+          const hasAdditionalDiscount = toNumber(data.service?.additional) < 0;
+
+          const hasAnyDiscount = hasGlobalDiscount || hasProductDiscount || hasServiceDiscount || hasAdditionalDiscount;
+
+          if (hasAnyDiscount) {
+            const approval = (data as any).discountApproval || {};
+            const approvedBy = approval?.approvedBy;
+            const approvalStatus = approval?.status;
+            const pendingAllowed = (approvalStatus === 'pending' && data.status === ECashierSaleStatus.PENDENT);
+
+            if (!approvedBy && !pendingAllowed) {
+              if (!batch) { Utilities.loading(false); }
+              const lockMessages = this.translate.notification?.discountLock || {};
+              this.notificationService.create({
+                title: lockMessages.title || 'Desconto bloqueado',
+                description: lockMessages.description || 'Um administrador precisa autorizar este desconto.',
+                status: ENotificationStatus.warning
+              });
+              reject({ code: 'discount-approval-required', status: false });
+              return;
+            }
+          }
+        }
 
         const batchRef = batch.update(docRef, data, { merge: true });
 
@@ -847,6 +907,59 @@ export class CashierFrontPDVService {
     const netValue = parseFloat((baseValue - feeAmount).toFixed(2));
 
     return netValue >= 0 ? netValue : 0;
+  }
+
+  public async validateAdminCredentials(username: string, password: string): Promise<{ status: boolean; user?: any; message?: string }> {
+    const cleanUsername = (username || '').trim().toLowerCase();
+    const cleanPassword = (password || '').trim();
+
+    if (!cleanUsername || !cleanPassword) {
+      return { status: false, message: 'missing-credentials' };
+    }
+
+    try {
+      const collaborators = await this.iToolsService.database().collection('RegistersCollaborators').where([
+        { field: 'username', operator: '=', value: cleanUsername },
+        { field: 'owner', operator: '=', value: Utilities.storeID }
+      ]).limit(1).get();
+
+      if (!collaborators.docs.length) {
+        return { status: false, message: 'user-not-found' };
+      }
+
+      const adminUser = collaborators.docs[0].data();
+
+      if (adminUser.usertype !== 'admin' || adminUser.allowAccess === false) {
+        return { status: false, message: 'user-not-admin' };
+      }
+
+      const authRecord = await this.iToolsService.database().collection('#SYSTEM_AUTHENTICATE#').where([
+        { field: 'email', operator: '=', value: (adminUser.email || '').toLowerCase() }
+      ]).limit(1).get();
+
+      if (!authRecord.docs.length) {
+        return { status: false, message: 'credential-not-found' };
+      }
+
+      const storedHash = authRecord.docs[0].data()?.password;
+      const inputHash = cryptojs.SHA256(cleanPassword).toString();
+
+      if (storedHash !== inputHash) {
+        return { status: false, message: 'invalid-password' };
+      }
+
+      return {
+        status: true,
+        user: {
+          username: adminUser.username,
+          name: adminUser.name,
+          code: adminUser.code
+        }
+      };
+    } catch (error) {
+      console.error('[CashierFrontPDVService] validateAdminCredentials error:', error);
+      return { status: false, message: 'unexpected-error' };
+    }
   }
 
   public async getDefaultCustomer() {

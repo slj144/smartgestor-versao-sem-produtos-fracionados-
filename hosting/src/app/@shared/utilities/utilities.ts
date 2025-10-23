@@ -62,6 +62,20 @@ export class Utilities {
     return !!ProjectSettings.companySettings().profile?.stock?.components?.departments?.active;
   }
 
+  public static get cashierLockDiscounts(): boolean {
+    const storedValue = Utilities.localStorage('CashierLockDiscounts');
+
+    if (storedValue !== undefined && storedValue !== null) {
+      if (typeof storedValue === 'string') {
+        return storedValue === 'true';
+      }
+      return !!storedValue;
+    }
+
+    const profileValue = ProjectSettings.companySettings()?.cashier?.lockDiscounts;
+    return !!profileValue;
+  }
+
   public static get isFiscal() {
     return ProjectSettings.companySettings().profile && ProjectSettings.companySettings().profile.fiscal ? ProjectSettings.companySettings().profile.fiscal.active : false;
   }

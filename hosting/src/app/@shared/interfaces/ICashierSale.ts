@@ -139,6 +139,23 @@ export interface ICashierSale {
       fee?: number;
     };
     total: number;
+    /**
+     * Optional information about the applied global discount.
+     * In some flows we only persist the numeric total, while in others
+     * we keep the operator choice (percent or absolute) to regenerate
+     * the calculation. Support both shapes to cover historical data.
+     */
+    discount?: number | {
+      type: '$' | '%';
+      value: number;
+    };
+  };
+  discountApproval?: {
+    status?: 'approved' | 'pending';
+    approvedBy?: { username: string; name: string; code: any };
+    approvedAt?: string;
+    requestedBy?: { username: string; name: string; code: any };
+    requestedAt?: string;
   };
   billToReceive?: {
     config: IFinancialBillToReceive;

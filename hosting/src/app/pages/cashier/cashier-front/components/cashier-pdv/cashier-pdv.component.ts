@@ -59,9 +59,28 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
   public sending: boolean = false;
   public saleCompleted: boolean = false;
 
+  // ⚙️ Modal de autorização de desconto (ativado via configuração de trava)
+  public discountApprovalModal = {
+    open: false,
+    loading: false,
+    username: '',
+    password: '',
+    error: ''
+  };
+
   public isAdmin: boolean = Utilities.isAdmin;
 
   private layerComponent: any;
+  private discountApprovalInfo: {
+    status?: 'approved' | 'pending';
+    approvedBy?: { username: string; name: string; code: any };
+    approvedAt?: string;
+    requestedBy?: { username: string; name: string; code: any };
+    requestedAt?: string;
+  } | null = null;
+  private discountApprovalDeferred: { resolve: (status: 'approved' | 'pending') => void; reject: (reason?: any) => void } | null = null;
+  private forcePendingSale: boolean = false;
+  private persistedGlobalDiscount: { type: '$' | '%'; value: number } | null = null;
 
   /*
     🆕 ATALHOS DO TECLADO (F1/F2) E MODAL DE QUANTIDADE
@@ -220,6 +239,7 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
       inputField.value = value;
     }
 
+    this.discountApprovalInfo = null;
     this.generateBalance();
   }
 
@@ -231,6 +251,21 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
     this.data = Utilities.deepClone(data);
     this.source = Utilities.deepClone(data);
+    this.discountApprovalInfo = data && (data as any).discountApproval
+      ? Utilities.deepClone((data as any).discountApproval)
+      : null;
+    if (this.discountApprovalInfo?.status === 'approved' && !this.discountApprovalInfo.approvedBy && this.isAdmin) {
+      this.discountApprovalInfo.approvedBy = this.getOperatorSnapshot();
+    }
+
+    const persistedDiscount = this.extractStoredGlobalDiscount(this.source);
+    this.persistedGlobalDiscount = persistedDiscount ? { ...persistedDiscount } : null;
+    if (this.persistedGlobalDiscount) {
+      this.source.balance = this.source.balance || {} as any;
+      (this.source.balance as any).discount = { ...this.persistedGlobalDiscount };
+      this.data.balance = this.data.balance || {} as any;
+      (this.data.balance as any).discount = { ...this.persistedGlobalDiscount };
+    }
 
     if (this.data?.products?.length > 0) {
       ProductsSelectorComponent.shared.selectProducts(data.products);
@@ -253,7 +288,12 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
       delete this.data.balance;
     }
 
+    if (this.persistedGlobalDiscount) {
+      this.data.balance = { discount: { ...this.persistedGlobalDiscount } } as any;
+    }
+
     this.generateBalance();
+    this.syncDiscountInputs(this.persistedGlobalDiscount);
   }
 
   // User Interface Actions - Products
@@ -535,20 +575,345 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
   }
 
   public onApplyDiscount(selectField: any, inputField: any) {
+    this.discountApprovalInfo = null;
+    this.applyDiscountInternal(selectField, inputField);
+  }
 
-    let value: string;
+  private shouldRequestDiscountApproval(): boolean {
+    return Utilities.cashierLockDiscounts && !this.isAdmin;
+  }
+
+  // Conversão segura para número, evitando `NaN` quebrar comparações de desconto
+  private toNumber(value: any): number {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+  }
+
+  private getOperatorSnapshot() {
+    return {
+      username: Utilities.operator?.username,
+      name: Utilities.operator?.name,
+      code: Utilities.operator?.code
+    };
+  }
+
+  private extractStoredGlobalDiscount(origin: any): { type: '$' | '%'; value: number } | null {
+    if (!origin) {
+      return null;
+    }
+
+    const balance = origin.balance ?? origin;
+    const rawDiscount = balance?.discount ?? origin.discount;
+
+    const resolve = (discount: any): { type: '$' | '%'; value: number } | null => {
+      if (!discount) return null;
+      if (typeof discount === 'number') {
+        const numeric = this.toNumber(discount);
+        return numeric > 0 ? { type: '$', value: numeric } : null;
+      }
+      if (typeof discount === 'object' && 'value' in discount) {
+        const value = this.toNumber(discount.value);
+        if (value > 0) {
+          const type = discount.type === '%' ? '%' : '$';
+          return { type, value } as const;
+        }
+      }
+      return null;
+    };
+
+    const firstAttempt = resolve(rawDiscount);
+    if (firstAttempt) {
+      return firstAttempt;
+    }
+
+    if (typeof balance?.subtotal?.discount === 'number' && balance.subtotal.discount > 0) {
+      // Em versões antigas a informação do desconto global não era persistida separadamente.
+      // Para evitar duplicar descontos de itens, somente convertemos quando NÃO há sinal de desconto nos produtos/serviços.
+      const hasProductDiscount = Array.isArray(origin.products) && origin.products.some((prod: any) => this.toNumber(prod?.discount) > 0);
+      const hasServiceDiscount = Array.isArray(origin.service?.types) && origin.service.types.some((svc: any) => this.toNumber(svc?.discount) > 0);
+      const hasCustomPriceCut = Array.isArray(origin.products) && origin.products.some((prod: any) => this.toNumber(prod?.unitaryPrice) < this.toNumber(prod?.salePrice));
+      const hasServicePriceCut = Array.isArray(origin.service?.types) && origin.service.types.some((svc: any) => this.toNumber(svc?.customPrice) < this.toNumber(svc?.executionPrice));
+
+      if (!hasProductDiscount && !hasServiceDiscount && !hasCustomPriceCut && !hasServicePriceCut) {
+        const value = this.toNumber(balance.subtotal.discount);
+        return value > 0 ? { type: '$', value } : null;
+      }
+    }
+
+    return null;
+  }
+
+  private syncDiscountInputs(discount: { type: '$' | '%'; value: number } | null): void {
+    if (!discount) {
+      return;
+    }
+
+    setTimeout(() => {
+      const selectField = $$('.select-discount');
+      if (selectField && selectField.length) {
+        selectField.val(discount.type);
+      }
+
+      const inputField = $$('.input-discount');
+      if (inputField && inputField.length) {
+        let formatted = '';
+        if (discount.type === '%') {
+          formatted = FieldMask.percentageFieldMask(discount.value.toFixed(2).replace('.', ','));
+        } else {
+          formatted = FieldMask.priceFieldMask(discount.value.toFixed(2).replace('.', ','));
+        }
+        inputField.val(formatted);
+      }
+    }, 0);
+  }
+
+  // Detecta qualquer desconto ativo (global, produto ou serviço) que exija aprovação extra
+  private saleHasRestrictedDiscount(): boolean {
+    const balanceDiscount = this.data?.balance?.discount;
+    let globalDiscountValue = 0;
+
+    if (typeof balanceDiscount === 'number') {
+      globalDiscountValue = balanceDiscount;
+    } else if (balanceDiscount && typeof balanceDiscount === 'object' && 'value' in balanceDiscount) {
+      globalDiscountValue = this.toNumber((balanceDiscount as any).value);
+    }
+
+    const hasGlobalDiscount = globalDiscountValue > 0;
+
+    const products: any[] = Array.isArray(this.data?.products) ? this.data.products : [];
+    const hasProductDiscount = products.some((prod) => {
+      const explicitDiscount = this.toNumber(prod?.discount) > 0;
+      const salePrice = this.toNumber(prod?.salePrice);
+      const unitaryPrice = this.toNumber(prod?.unitaryPrice);
+      const priceCut = salePrice > 0 && unitaryPrice >= 0 && unitaryPrice < salePrice;
+      return explicitDiscount || priceCut;
+    });
+
+    const serviceTypes: any[] = Array.isArray(this.data?.service?.types) ? this.data.service.types : [];
+    const hasServiceDiscount = serviceTypes.some((svc) => {
+      const explicitDiscount = this.toNumber(svc?.discount) > 0;
+      const executionPrice = this.toNumber(svc?.executionPrice);
+      const customPrice = this.toNumber(svc?.customPrice);
+      const priceCut = executionPrice > 0 && customPrice >= 0 && customPrice < executionPrice;
+      return explicitDiscount || priceCut;
+    });
+
+    const serviceAdditional = this.toNumber(this.data?.service?.additional);
+    const hasAdditionalDiscount = serviceAdditional < 0;
+
+    return hasGlobalDiscount || hasProductDiscount || hasServiceDiscount || hasAdditionalDiscount;
+  }
+
+  private prepareDiscountApprovalMetadata(forcePending: boolean): void {
+    if (!this.saleHasRestrictedDiscount()) {
+      this.discountApprovalInfo = null;
+      return;
+    }
+
+    if (forcePending) {
+      const existing = this.discountApprovalInfo || {};
+      this.discountApprovalInfo = {
+        ...existing,
+        status: 'pending',
+        requestedBy: existing.requestedBy || this.getOperatorSnapshot(),
+        requestedAt: existing.requestedAt || new Date().toISOString()
+      };
+      if (this.discountApprovalInfo) {
+        this.discountApprovalInfo.approvedBy = undefined;
+        this.discountApprovalInfo.approvedAt = undefined;
+      }
+      return;
+    }
+
+    // From here on we are finalizing with authorization
+    const operatorSnapshot = this.getOperatorSnapshot();
+
+    if (this.isAdmin) {
+      const existing = this.discountApprovalInfo || {};
+      this.discountApprovalInfo = {
+        ...existing,
+        status: 'approved',
+        approvedBy: operatorSnapshot,
+        approvedAt: new Date().toISOString(),
+        requestedBy: existing.requestedBy,
+        requestedAt: existing.requestedAt
+      };
+      return;
+    }
+
+    if (this.discountApprovalInfo?.approvedBy) {
+      this.discountApprovalInfo = {
+        ...this.discountApprovalInfo,
+        status: 'approved'
+      };
+      return;
+    }
+
+    // If we reach this point without approval, keep metadata null to avoid accidental persistence.
+    this.discountApprovalInfo = null;
+  }
+  // Garante que descontos bloqueados só avancem após aprovação administrativa
+  private ensureDiscountAuthorization(): Promise<'approved' | 'pending' | 'skip'> {
+    if (!this.shouldRequestDiscountApproval()) {
+      return Promise.resolve('skip');
+    }
+
+    if (!this.saleHasRestrictedDiscount()) {
+      return Promise.resolve('skip');
+    }
+
+    if (this.discountApprovalInfo?.status === 'approved') {
+      return Promise.resolve('approved');
+    }
+
+    return new Promise((resolve, reject) => {
+      this.discountApprovalDeferred = {
+        resolve: (status) => resolve(status),
+        reject: (reason?: any) => reject(reason)
+      };
+      this.openDiscountApprovalModal();
+    });
+  }
+
+  private applyDiscountInternal(selectField: any, inputField: any): void {
+
+    let value: string = '';
 
     if (selectField.value == '$') {
       value = FieldMask.priceFieldMask(inputField.value);
-      this.data.balance.discount = { type: '$', value: parseFloat((value || 0).toString().replace(/\./g, '').replace(',', '.')) }
+      this.data.balance.discount = {
+        type: '$',
+        value: parseFloat((value || 0).toString().replace(/\./g, '').replace(',', '.'))
+      };
     } else if (selectField.value == '%') {
       value = FieldMask.percentageFieldMask(inputField.value);
-      this.data.balance.discount = { type: '%', value: parseFloat((value || 0).toString().replace(/\./g, '').replace(',', '.')) };
+      this.data.balance.discount = {
+        type: '%',
+        value: parseFloat((value || 0).toString().replace(/\./g, '').replace(',', '.'))
+      };
+    }
+
+    const discountObj = this.data.balance.discount as any;
+    if (discountObj && typeof discountObj === 'object') {
+      const numericValue = this.toNumber(discountObj.value);
+      if (numericValue > 0) {
+        const discountType: '$' | '%' = discountObj.type === '%' ? '%' : '$';
+        this.persistedGlobalDiscount = { type: discountType, value: numericValue };
+        this.data.balance.discount = { type: discountType, value: numericValue } as any;
+      } else {
+        delete this.data.balance.discount;
+        this.persistedGlobalDiscount = null;
+      }
+    } else {
+      this.persistedGlobalDiscount = null;
     }
 
     inputField.value = value;
 
     this.generateBalance();
+    if (this.persistedGlobalDiscount) {
+      this.syncDiscountInputs(this.persistedGlobalDiscount);
+    }
+  }
+
+  private resetDiscountApprovalModalState(): void {
+    this.discountApprovalModal.open = false;
+    this.discountApprovalModal.loading = false;
+    this.discountApprovalModal.error = '';
+    this.discountApprovalModal.username = '';
+    this.discountApprovalModal.password = '';
+  }
+
+  private openDiscountApprovalModal(): void {
+    this.resetDiscountApprovalModalState();
+    this.discountApprovalModal.open = true;
+  }
+
+  public onCancelDiscountApproval(): void {
+    const deferred = this.discountApprovalDeferred;
+    this.discountApprovalDeferred = null;
+    this.resetDiscountApprovalModalState();
+
+    if (deferred) {
+      deferred.reject(new Error('discount-approval-cancelled'));
+    }
+  }
+
+  public onSubmitDiscountApproval(): void {
+    if (!this.discountApprovalModal.open || this.discountApprovalModal.loading) {
+      return;
+    }
+
+    const username = this.discountApprovalModal.username.trim();
+    const password = this.discountApprovalModal.password;
+
+    if (!username || !password) {
+      this.discountApprovalModal.error = this.translate.discountLockModal.invalid;
+      return;
+    }
+
+    if (!this.discountApprovalDeferred) {
+      this.onCancelDiscountApproval();
+      return;
+    }
+
+    this.discountApprovalModal.loading = true;
+    this.discountApprovalModal.error = '';
+
+    this.cashierFrontPDVService.validateAdminCredentials(username, password)
+      .then((result) => {
+        this.discountApprovalModal.loading = false;
+
+        if (!result.status || !result.user) {
+          this.discountApprovalModal.error = this.translate.discountLockModal.invalid;
+          return;
+        }
+
+        const existing = this.discountApprovalInfo || {};
+        this.discountApprovalInfo = {
+          ...existing,
+          status: 'approved',
+          approvedBy: result.user,
+          approvedAt: new Date().toISOString(),
+          requestedBy: existing.requestedBy || this.getOperatorSnapshot(),
+          requestedAt: existing.requestedAt || new Date().toISOString()
+        };
+        const deferred = this.discountApprovalDeferred;
+        this.discountApprovalDeferred = null;
+        this.resetDiscountApprovalModalState();
+
+        if (deferred) {
+          deferred.resolve('approved');
+        }
+      })
+      .catch((error) => {
+        console.error('[CashierFrontPDVComponent] Discount approval error:', error);
+        this.discountApprovalModal.loading = false;
+        this.discountApprovalModal.error = this.translate.discountLockModal.invalid;
+      });
+  }
+
+  public onSaveDiscountApprovalForLater(): void {
+    if (!this.discountApprovalDeferred || this.discountApprovalModal.loading) {
+      return;
+    }
+
+    const existing = this.discountApprovalInfo || {};
+    this.discountApprovalInfo = {
+      ...existing,
+      status: 'pending',
+      requestedBy: existing.requestedBy || this.getOperatorSnapshot(),
+      requestedAt: existing.requestedAt || new Date().toISOString()
+    };
+    if (this.discountApprovalInfo) {
+      this.discountApprovalInfo.approvedBy = undefined;
+      this.discountApprovalInfo.approvedAt = undefined;
+    }
+
+    const deferred = this.discountApprovalDeferred;
+    this.discountApprovalDeferred = null;
+    this.resetDiscountApprovalModalState();
+    deferred.resolve('pending');
   }
 
   public onApplyFee(selectField: any, inputField: any) {
@@ -598,9 +963,28 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
   // User Interface Actions - General  
 
-  public onRegister() {
+  public onRegister(): void {
+    if (this.sending) {
+      return;
+    }
+
+    this.ensureDiscountAuthorization()
+      .then((decision) => {
+        const forcePending = decision === 'pending';
+        this.executeRegister(forcePending);
+      })
+      .catch(() => {
+        // Cancelado ou credenciais inválidas: permanece na tela para nova tentativa.
+      });
+  }
+
+  // Consolida a rotina de gravação da venda após passar pelas validações
+  private executeRegister(forcePending: boolean = false): void {
 
     this.sending = true;
+    this.forcePendingSale = forcePending;
+
+    this.prepareDiscountApprovalMetadata(forcePending);
 
     const data = this.composeData();
     const source = this.composeSource();
@@ -622,41 +1006,53 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
     // console.log(data);
     // return;
 
-    this.cashierFrontPDVService.registerSale(data, source, true).then((response: any) => {
-      // 🆕 Aviso de venda pendente
-      // Captura valores ANTES do reset para exibir no modal de alerta
-      const wasPendent = (data.status === ECashierSaleStatus.PENDENT);
-      const pendingValue = Number(this.settings?.paymentMethods?.pendent || 0);
-      const saleTotal = Number((data as any)?.balance?.total || 0);
+    this.cashierFrontPDVService.registerSale(data, source, true)
+      .then((response: any) => {
+        this.forcePendingSale = false;
+        // 🆕 Aviso de venda pendente
+        // Captura valores ANTES do reset para exibir no modal de alerta
+        const wasPendent = (data.status === ECashierSaleStatus.PENDENT);
+        const pendingValue = Number(this.settings?.paymentMethods?.pendent || 0);
+        const saleTotal = Number((data as any)?.balance?.total || 0);
 
-      if (source) {
-        data.code = Utilities.prefixCode(data.code);
-        data.operator = source.operator;
-        data.registerDate = source.registerDate;
-      }
-
-      // Abre comprovantes somente se a venda estiver concluída
-      if (!wasPendent) {
-        CashierFrontReceiptsComponent.shared.onOpen({ data });
-      }
-
-      this.onResetPanel();
-      this.saleCompleted = true;
-
-      // Abre o modal de alerta somente se a venda foi salva como pendente
-      if (wasPendent && this.isPendingAlertEnabled()) {
-        // Garante que temos o código salvo da venda para reabrir
-        // Tenta extrair o numérico do code formatado ou do response (quando disponível)
-        let savedCodeNumeric = 0;
-        try { savedCodeNumeric = parseInt(String(data?.code).replace(/\D/g, '')) || 0; } catch {}
-        if (!savedCodeNumeric && source?.code) {
-          try { savedCodeNumeric = parseInt(String(source.code).replace(/\D/g, '')) || 0; } catch {}
+        if (source) {
+          data.code = Utilities.prefixCode(data.code);
+          data.operator = source.operator;
+          data.registerDate = source.registerDate;
         }
-        // Abre modal com code (numérico ou formatado)
-        const saleCode = savedCodeNumeric || data?.code;
-        this.openPendingSaleModal({ pendingValue, saleTotal, saleCode });
-      }
-    });
+
+        // Abre comprovantes somente se a venda estiver concluída
+        if (!wasPendent) {
+          CashierFrontReceiptsComponent.shared.onOpen({ data });
+        }
+
+        this.onResetPanel();
+        this.saleCompleted = true;
+
+        // Abre o modal de alerta somente se a venda foi salva como pendente
+        if (wasPendent && this.isPendingAlertEnabled()) {
+          // Garante que temos o código salvo da venda para reabrir
+          // Tenta extrair o numérico do code formatado ou do response (quando disponível)
+          let savedCodeNumeric = 0;
+          try { savedCodeNumeric = parseInt(String(data?.code).replace(/\D/g, '')) || 0; } catch {}
+          if (!savedCodeNumeric && source?.code) {
+            try { savedCodeNumeric = parseInt(String(source.code).replace(/\D/g, '')) || 0; } catch {}
+          }
+          // Abre modal com code (numérico ou formatado)
+          const saleCode = savedCodeNumeric || data?.code;
+          this.openPendingSaleModal({ pendingValue, saleTotal, saleCode });
+        }
+      })
+      .catch((error) => {
+        console.error('[CashierFrontPDVComponent] Erro ao registrar venda:', error);
+        this.forcePendingSale = false;
+        this.sending = false;
+        this.notificationService.create({
+          title: this.translate.notification?.error || 'Falha ao registrar',
+          description: (error?.message || 'Não foi possível salvar a venda. Tente novamente.'),
+          status: ENotificationStatus.danger
+        });
+      });
   }
 
   public onResetPanel(keepCustomer: boolean = false) {  // 🆕 ADICIONADO PARÂMETRO
@@ -674,6 +1070,11 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
     this.source = {};
     this.settings = {};
+    this.discountApprovalDeferred = null;
+    this.discountApprovalInfo = null;
+    this.forcePendingSale = false;
+    this.persistedGlobalDiscount = null;
+    this.resetDiscountApprovalModalState();
 
     // Reseta os componentes seletores
     if (ProductsSelectorComponent.shared) {
@@ -691,6 +1092,7 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
     if (this.data.balance && this.data.balance.discount) {
       delete this.data.balance.discount;
+      this.persistedGlobalDiscount = null;
     }
     $$('.container-products .quick-search input').val('');
     $$('.input-warranty').val('');
@@ -797,8 +1199,16 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
       delete this.data.balance;
     }
 
+    if (this.persistedGlobalDiscount) {
+      this.data.balance = { discount: { ...this.persistedGlobalDiscount } } as any;
+    }
+
     // Perform the Calculations
     this.generateBalance();
+
+    if (this.persistedGlobalDiscount) {
+      this.syncDiscountInputs(this.persistedGlobalDiscount);
+    }
   }
 
   private checkLoadingProducts(event: any) {
@@ -832,6 +1242,10 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
 
     this.data.balance = (this.data.balance || {});
+
+    if (this.persistedGlobalDiscount && !this.data.balance.discount) {
+      this.data.balance.discount = { ...this.persistedGlobalDiscount } as any;
+    }
 
     this.data.balance.totalProducts = 0;
     this.data.balance.totalServices = 0;
@@ -1265,7 +1679,7 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
 
       value = parseFloat(value.toFixed(2));
 
-      if (value == this.data.balance.totalSale) {
+      if (value == this.data.balance.totalSale && !this.forcePendingSale) {
         response.status = ECashierSaleStatus.CONCLUDED;
       }
     }
@@ -1327,6 +1741,32 @@ export class CashierFrontPDVComponent implements OnInit, OnDestroy {
       }
 
       response.balance.total = this.data.balance.totalSale;
+
+      if (this.data.balance.discount && typeof this.data.balance.discount === 'object' && 'value' in this.data.balance.discount) {
+        const discountObj = this.data.balance.discount as { type: '$' | '%'; value: number };
+        response.balance.discount = {
+          type: discountObj.type,
+          value: parseFloat(this.toNumber(discountObj.value).toFixed(2))
+        } as any;
+      } else if (this.forcePendingSale && (this.source?.balance as any)?.discount) {
+        const sourceDiscount = (this.source?.balance as any).discount;
+        if (sourceDiscount && typeof sourceDiscount === 'object' && 'value' in sourceDiscount) {
+          response.balance.discount = {
+            type: sourceDiscount.type === '%' ? '%' : '$',
+            value: parseFloat(this.toNumber(sourceDiscount.value).toFixed(2))
+          } as any;
+        }
+      }
+    }
+
+    if (this.discountApprovalInfo) {
+      response.discountApproval = {
+        status: this.discountApprovalInfo.status,
+        approvedBy: this.discountApprovalInfo.approvedBy,
+        approvedAt: this.discountApprovalInfo.approvedAt,
+        requestedBy: this.discountApprovalInfo.requestedBy,
+        requestedAt: this.discountApprovalInfo.requestedAt
+      };
     }
 
 

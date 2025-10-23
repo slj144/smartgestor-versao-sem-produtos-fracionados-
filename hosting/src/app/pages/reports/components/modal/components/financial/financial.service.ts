@@ -766,6 +766,7 @@ export class FinancialReportsService {
     data = data.filter(item => !item.canceled && item.status === 'CONCLUDED');
 
     data.forEach((item: any) => {
+      this.normalizeCommissionBases(item);
       const operatorId = item.operator?.code || item.operator?.username || 'unknown';
       const operatorName = item.operator?.name || item.operator?.username || operatorId;
 
@@ -796,16 +797,20 @@ export class FinancialReportsService {
       (item.products || []).forEach((p: any) => {
         if (p.commission && p.commission.enabled) {
           const q = Number(p.quantity || 1);
-          const lineTotal = (p.paymentAmount != null && p.paymentAmount !== undefined)
-            ? Number(p.paymentAmount)
-            : Number(p.salePrice || p.unitaryPrice || 0) * q;
+          const lineTotal = (p.__commissionBase != null && p.__commissionBase !== undefined)
+            ? Number(p.__commissionBase)
+            : (p.paymentAmount != null && p.paymentAmount !== undefined)
+              ? Number(p.paymentAmount)
+              : Number(p.salePrice || p.unitaryPrice || 0) * q;
           const value = p.commission.type === 'percentage'
             ? (lineTotal * Number(p.commission.value || 0)) / 100
             : Number(p.commission.value || 0) * q;
           perSaleCommissionById[operatorId] = (perSaleCommissionById[operatorId] || 0) + value;
-          const base = (p.paymentAmount != null && p.paymentAmount !== undefined)
-            ? Number(p.paymentAmount)
-            : Number(p.salePrice || p.unitaryPrice || 0) * q;
+          const base = (p.__commissionBase != null && p.__commissionBase !== undefined)
+            ? Number(p.__commissionBase)
+            : (p.paymentAmount != null && p.paymentAmount !== undefined)
+              ? Number(p.paymentAmount)
+              : Number(p.salePrice || p.unitaryPrice || 0) * q;
           perSaleSalesBaseById[operatorId] = (perSaleSalesBaseById[operatorId] || 0) + base;
           perSaleProductsBaseById[operatorId] = (perSaleProductsBaseById[operatorId] || 0) + base;
           perSaleProductsCommissionById[operatorId] = (perSaleProductsCommissionById[operatorId] || 0) + value;
@@ -819,7 +824,9 @@ export class FinancialReportsService {
 
       services.forEach((s: any) => {
         if (s.commission && s.commission.enabled) {
-          const serviceTotal = Number(s.customPrice || s.executionPrice || 0);
+          const serviceTotal = (s.__commissionBase != null && s.__commissionBase !== undefined)
+            ? Number(s.__commissionBase)
+            : Number(s.customPrice || s.executionPrice || 0);
           const value = s.commission.type === 'percentage'
             ? (serviceTotal * Number(s.commission.value || 0)) / 100
             : Number(s.commission.value || 0);
@@ -893,6 +900,7 @@ export class FinancialReportsService {
     data = data.filter(item => !item.canceled && item.status === 'CONCLUDED');
 
     data.forEach((item: any) => {
+      this.normalizeCommissionBases(item);
       const operatorId = item.operator?.code || item.operator?.username || 'unknown';
       const operatorName = item.operator?.username || item.operator?.name || operatorId;
       const saleValue = item.balance?.total || 0;
@@ -904,9 +912,11 @@ export class FinancialReportsService {
       (item.products || []).forEach((p: any) => {
         if (p.commission && p.commission.enabled) {
           const q = Number(p.quantity || 1);
-          const lineTotal = (p.paymentAmount != null && p.paymentAmount !== undefined)
-            ? Number(p.paymentAmount)
-            : Number(p.salePrice || p.unitaryPrice || 0) * q;
+          const lineTotal = (p.__commissionBase != null && p.__commissionBase !== undefined)
+            ? Number(p.__commissionBase)
+            : (p.paymentAmount != null && p.paymentAmount !== undefined)
+              ? Number(p.paymentAmount)
+              : Number(p.salePrice || p.unitaryPrice || 0) * q;
           const value = p.commission.type === 'percentage'
             ? (lineTotal * Number(p.commission.value || 0)) / 100
             : Number(p.commission.value || 0) * q;
@@ -943,7 +953,9 @@ export class FinancialReportsService {
       const commissionByExecutor: Record<string, { name: string, value: number, base: number }> = {};
       services.forEach((s: any) => {
         if (s.commission && s.commission.enabled) {
-          const serviceTotal = Number(s.customPrice || s.executionPrice || 0);
+          const serviceTotal = (s.__commissionBase != null && s.__commissionBase !== undefined)
+            ? Number(s.__commissionBase)
+            : Number(s.customPrice || s.executionPrice || 0);
           const value = s.commission.type === 'percentage'
             ? (serviceTotal * Number(s.commission.value || 0)) / 100
             : Number(s.commission.value || 0);
@@ -1001,5 +1013,73 @@ export class FinancialReportsService {
         totalSalesValue: totalSalesValue
       }
     };
+  }
+
+  private normalizeCommissionBases(item: any): void {
+    try {
+      if (!item || !item.balance) {
+        return;
+      }
+
+      const products: any[] = Array.isArray(item.products) ? item.products : [];
+      const services: any[] = (item.services && Array.isArray(item.services))
+        ? item.services
+        : (item.service && Array.isArray(item.service.types) ? item.service.types : []);
+
+      const safeNumber = (value: any): number => {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : 0;
+      };
+
+      const totalDiscount = safeNumber(item.balance?.subtotal?.discount ?? item.balance?.discount ?? 0);
+
+      const productGross = products.reduce((sum, prod) => {
+        const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
+        const basePrice = safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0);
+        return sum + Math.max(0, basePrice * quantity);
+      }, 0);
+
+      const serviceGross = services.reduce((sum, svc) => {
+        const basePrice = safeNumber(svc?.executionPrice ?? svc?.customPrice ?? 0);
+        return sum + Math.max(0, basePrice);
+      }, 0);
+
+      const productDirectDiscount = products.reduce((sum, prod) => sum + Math.max(0, safeNumber(prod?.discount)), 0);
+      const serviceDirectDiscount = services.reduce((sum, svc) => sum + Math.max(0, safeNumber(svc?.discount)), 0);
+
+      const directDiscountTotal = productDirectDiscount + serviceDirectDiscount;
+      const globalDiscount = Math.max(0, totalDiscount - directDiscountTotal);
+
+      const totalGross = productGross + serviceGross;
+      const productGlobalShareTotal = totalGross > 0 ? globalDiscount * (productGross / totalGross) : 0;
+      const serviceGlobalShareTotal = totalGross > 0 ? globalDiscount * (serviceGross / totalGross) : 0;
+
+      products.forEach((prod) => {
+        const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
+        const gross = Math.max(0, safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0) * quantity);
+        const directDiscount = Math.max(0, safeNumber(prod?.discount));
+        const baseAfterDirect = Math.max(0, gross - directDiscount);
+        const globalShare = productGross > 0 ? productGlobalShareTotal * (gross / productGross) : 0;
+        const cappedShare = Math.min(baseAfterDirect, globalShare);
+        const net = Math.max(0, baseAfterDirect - cappedShare);
+        prod.__commissionBase = net;
+        prod.__commissionGross = gross;
+        prod.__commissionGlobalDiscount = cappedShare;
+      });
+
+      services.forEach((svc) => {
+        const gross = Math.max(0, safeNumber(svc?.executionPrice ?? svc?.customPrice ?? 0));
+        const directDiscount = Math.max(0, safeNumber(svc?.discount));
+        const baseAfterDirect = Math.max(0, gross - directDiscount);
+        const globalShare = serviceGross > 0 ? serviceGlobalShareTotal * (gross / serviceGross) : 0;
+        const cappedShare = Math.min(baseAfterDirect, globalShare);
+        const net = Math.max(0, baseAfterDirect - cappedShare);
+        svc.__commissionBase = net;
+        svc.__commissionGross = gross;
+        svc.__commissionGlobalDiscount = cappedShare;
+      });
+    } catch (error) {
+      console.warn('[FinancialReportsService] normalizeCommissionBases error:', error);
+    }
   }
 }

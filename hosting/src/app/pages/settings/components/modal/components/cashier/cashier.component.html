@@ -42,6 +42,33 @@
             <button class="btn btnConfirmation btnBlue" (click)="onSubmitWarrantyTerm()" [disabled]="false">{{ settings.translate.modal.section.cashier.button.submit }}</button>
           </div>
 
+          <div class="container-discount-lock" *ngIf="settings.activeComponent == 'Cashier/DiscountLock'">
+            <header>
+              <h6>{{ settings.translate.section.cashier.option.discountLock.label }}</h6>
+              <small>{{ settings.translate.section.cashier.option.discountLock.description }}</small>
+            </header>
+
+            <form class="form" [formGroup]="formDiscountLock" (submit)="onSubmitDiscountLock()">
+              <div class="form-group">
+                <div class="table-responsive container-checkboxes">
+                  <table class="table">
+                    <tr>
+                      <td><input id="checkbox-discount-lock" type="checkbox" formControlName="lock" /></td>
+                      <td>
+                        <label for="checkbox-discount-lock">
+                          <span class="description">{{ settings.translate.modal.section.cashier.discountLock.description }}</span>
+                          <small class="subDescription">{{ settings.translate.modal.section.cashier.discountLock.subDescription }}</small>
+                        </label>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+
+              <button class="btn btnConfirmation btnBlue">{{ settings.translate.modal.section.cashier.button.submit }}</button>
+            </form>
+          </div>
+
         </div>
       </div>
     </div>
