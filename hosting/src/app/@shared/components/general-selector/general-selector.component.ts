@@ -138,22 +138,20 @@ export class GeneralSelectorComponent implements OnInit, OnDestroy {
 
   public onSearch() {
 
-    const value = $$(this.searchBar.nativeElement).find('input').val().toLowerCase();
-    const searchResult = [];    
+    const value = String($$(this.searchBar.nativeElement).find('input').val() || '').toLowerCase();
+    const searchResult = [];
 
-    if (value != '') {
+    if (value !== '') {
+      for (const item of this.recordsData) {
+        const codeMatches = String(item.code ?? '').toLowerCase().includes(value);
+        const nameMatches = String(item.name ?? '').toLowerCase().includes(value);
 
-      for (let item of this.recordsData) {
-        
-        if (
-          String(item.code).toLowerCase().search(value) !== -1 || 
-          String(item.name).toLowerCase().search(value) !== -1
-        ) {
+        if (codeMatches || nameMatches) {
           searchResult.push(item);
         }
       }
     }
-    
+
     this.searchData = searchResult;  
   }
 

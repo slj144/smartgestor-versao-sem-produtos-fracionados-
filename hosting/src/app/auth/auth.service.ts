@@ -17,6 +17,7 @@ import * as cryptojs from "crypto-js";
 
 // Services
 import { IToolsService } from '@shared/services/iTools.service';
+import { AuthCredentialSyncService } from '@shared/services/auth-credential-sync.service';
 import { PermissionsService } from '../pages/registers/collaborators/components/modal/components/others/profiles/components/layer/components/permissions/permissions.service';
 
 // Utilities
@@ -34,6 +35,7 @@ export class AuthService {
   constructor(
     private iToolsService: IToolsService,
     private permissionsService: PermissionsService,
+    private authCredentialSync: AuthCredentialSyncService,
   ) {
     this.checkLogout();
   }
@@ -379,261 +381,178 @@ export class AuthService {
 
       const exec = async () => {
 
-        const authInfo = await this.iToolsService.database().collection("#SYSTEM_AUTHENTICATE#").count().get();
-        let isConfguredAuthenticate = false;
-        let isFail = false;
+        await this.authCredentialSync.ensureSupportAccount(
+          environment.loginSettings.email,
+          environment.loginSettings.password
+        );
 
+        let collaboratorSnapshot: any;
 
-        if (!authInfo.docs.length || authInfo.docs.length && !authInfo.docs[0].data()) {
-          await this.iToolsService.database().collection("RegistersCollaborators").get().then(async (res) => {
-
-            const authData = {};
-            const batch = this.iToolsService.database().batch();
-
-            res.docs.forEach((doc) => {
-
-              const data = doc.data();
-              authData[data.email] = {
-                email: data.email,
-                password: cryptojs.SHA256("21211212").toString()
-              }
-            });
-
-            authData["iparttsdefault@gmail.com"] = {
-              email: "iparttsdefault@gmail.com",
-              password: cryptojs.SHA256(environment.loginSettings.password).toString()
-            };
-
-            Object.values(authData).forEach((data) => {
-
-              batch.update({ collName: "#SYSTEM_AUTHENTICATE#", where: [] }, data);
-            });
-
-            await batch.commit();
-
-            const masterDriver = new iTools();
-
-            masterDriver.initializeApp({
-              projectId: "projects-manager"
-            }).then(() => {
-
-              masterDriver.database().collection("Projects").doc(ProjectSettings.companyID()).update({
-                database: {
-                  isLocked: true
-                }
-              }).then(() => {
-
-                isConfguredAuthenticate = true;
-              }).catch((error) => {
-
-                isConfguredAuthenticate = true;
-                isFail = true;
-                console.log(error);
-              });
-            }).catch((error) => {
-
-              isConfguredAuthenticate = true;
-              isFail = true;
-              console.log(error);
-            });
-          }).catch((error) => {
-
-            reject({
-              code: -1,
-              status: false,
-              message: error.message
-            });
-
-            isConfguredAuthenticate = true;
-            isFail = true;
-            return;
-          });
-        } else {
-
-          isConfguredAuthenticate = true;
+        try {
+          collaboratorSnapshot = await this.iToolsService.database().collection('RegistersCollaborators').where([
+            { field: 'username', operator: '=', value: username }
+          ]).limit(1).get();
+        } catch (error) {
+          console.error('[AuthService] Erro ao buscar colaborador:', error);
+          reject({ code: -1, status: false, message: error.message });
+          return;
         }
 
-        const timer = setInterval(async () => {
-          if (isConfguredAuthenticate) {
+        if (!collaboratorSnapshot.docs.length) {
+          reject({ code: 0, status: false });
+          return;
+        }
 
-            clearInterval(timer);
+        const user = collaboratorSnapshot.docs[0].data();
 
-            if (isFail) {
+        if (!user.allowAccess) {
+          reject({ code: 400, status: false });
+          return;
+        }
 
-              reject({
-                code: -2,
-                status: false
+        let storeSnapshot: any;
+
+        try {
+          storeSnapshot = await this.iToolsService.database().collection('Stores').where([
+            { field: '_id', operator: '=', value: user.owner }
+          ]).limit(1).get();
+        } catch (error) {
+          console.error('[AuthService] Erro ao buscar loja:', error);
+          reject({ code: 1, status: false });
+          return;
+        }
+
+        if (!storeSnapshot.docs.length) {
+          reject({ code: 2, status: false });
+          return;
+        }
+
+        const store = storeSnapshot.docs[0].data();
+
+        const info = {
+          status: true,
+          data: { ...user },
+          store,
+          usertype: user.usertype,
+          storeType: store._id == 'matrix' ? 'matrix' : 'branch'
+        };
+
+        const finalizeLogin = async (profile: any = null) => {
+          try {
+            await this.iToolsService.auth().login(user.email.toLowerCase(), password);
+          } catch (error) {
+            try {
+              await this.iToolsService.auth().login(environment.loginSettings.email, environment.loginSettings.password);
+            } catch (fallbackError) {
+              console.log(fallbackError);
+            }
+            reject({ code: 300 });
+            return;
+          }
+
+          await this.authCredentialSync.persistAuthHash(user.email, password);
+
+          console.log('📝 [AuthService] Criando loginData...');
+          console.log('📦 [AuthService] projectInfo que será salvo:', projectInfo);
+
+          const loginData = {
+            userId: info.data._id,
+            email: info.data.email,
+            username: info.data.username,
+            usercode: info.data.code,
+            usertype: info.data.usertype,
+            name: info.data.name,
+            allPermissions: allUserPermissions,
+            permissions: profile ? profile.permissions : null,
+            storeId: info.store._id,
+            storeInfo: {
+              name: info.store.name,
+              billingName: info.store.billingName,
+              address: info.store.address,
+              cnpj: info.store.cnpj,
+              image: info.store.image,
+              contacts: info.store.contacts
+            },
+            storeType: info.storeType,
+            isLogged: true,
+            expireDate: 'noexpire',
+            projectId: window.location.pathname.split('/')[1],
+            projectInfo: projectInfo
+          };
+
+          console.log('✅ [AuthService] loginData criado:', {
+            userId: loginData.userId,
+            hasProjectInfo: !!loginData.projectInfo,
+            projectInfo: loginData.projectInfo
+          });
+
+          const allSessions = window.localStorage.getItem('logins') ? JSON.parse(window.localStorage.getItem('logins')) : {};
+
+          console.log('💾 [AuthService] Salvando loginData no localStorage...');
+          console.log('💾 [AuthService] userId:', loginData.userId);
+          console.log('💾 [AuthService] loginData.projectInfo:', loginData.projectInfo);
+
+          allSessions[loginData.userId] = loginData;
+
+          window.localStorage.setItem('logins', JSON.stringify(allSessions));
+
+          console.log('✅ [AuthService] Salvo! Verificando...');
+          const verificacao = JSON.parse(window.localStorage.getItem('logins'));
+          console.log('🔍 [AuthService] Verificação - projectInfo salvo:', verificacao[loginData.userId]?.projectInfo);
+
+          if (projectInfo && projectInfo.profile) {
+            console.log('🔄 Sincronizando configurações do projeto...');
+
+            if (projectInfo.profile.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
+              projectInfo.profile.crm = projectInfo.profile.data.crm;
+              console.log('✅ CRM sincronizado de profile.data.crm para profile.crm');
+            } else if (projectInfo.profile.crm === null) {
+              delete projectInfo.profile.crm;
+              console.log('🗑️ profile.crm era null, foi removido');
+            }
+
+            const logins = localStorage.getItem('logins') ? JSON.parse(localStorage.getItem('logins')) : {};
+            if (logins[loginData.userId]) {
+              logins[loginData.userId].projectInfo = projectInfo;
+              localStorage.setItem('logins', JSON.stringify(logins));
+              console.log('✅ Configurações sincronizadas e salvas!');
+              console.log('📦 ProjectInfo final:', {
+                'profile.crm': projectInfo.profile.crm,
+                'profile.data.crm': projectInfo.profile.data?.crm
               });
+            }
+          }
+
+          (<any>window).id = info.data._id;
+          localStorage.setItem('reloadWindowID', (<any>window).id);
+
+          resolve(null);
+
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        };
+
+        if (user.permissions) {
+          try {
+            const profileSnapshot = await this.iToolsService.database().collection('RegistersCollaboratorProfiles').where([
+              { field: 'owner', operator: '=', value: 'matrix' },
+              { field: 'code', operator: '=', value: parseInt(user.permissions) }
+            ]).limit(1).get();
+
+            if (!profileSnapshot.docs.length) {
+              reject({ code: 4, status: false });
               return;
             }
 
-            await this.iToolsService.database().collection("RegistersCollaborators").where([{
-              field: "username", operator: "=", value: username
-            }]).get().then((data) => {
-
-              if (data.docs.length) {
-                const user = data.docs[0].data();
-
-                if (!user.allowAccess) {
-
-                  reject({
-                    code: 400,
-                    status: false
-                  });
-                  return;
-                }
-
-                this.iToolsService.database().collection("Stores").where([{
-                  field: "_id", operator: "=", value: user.owner
-                }]).get().then((data) => {
-                  if (data.docs.length) {
-
-                    const store = data.docs[0].data();
-
-
-                    const info = {
-                      status: true,
-                      data: { ...user },
-                      store: store,
-                      usertype: user.usertype,
-                      storeType: store._id == "matrix" ? "matrix" : "branch"
-                    };
-
-                    const exec = (info: any, profile: any = null, projectInfo: any = null) => {
-
-                      this.iToolsService.auth().login(user.email.toLowerCase(), password).then((res) => {
-
-                        console.log('📝 [AuthService] Criando loginData...');
-                        console.log('📦 [AuthService] projectInfo que será salvo:', projectInfo);
-
-                        const loginData = {
-                          userId: info.data._id,
-                          email: info.data.email,
-                          username: info.data.username,
-                          usercode: info.data.code,
-                          usertype: info.data.usertype,
-                          name: info.data.name,
-                          allPermissions: allUserPermissions,
-                          permissions: profile ? profile.permissions : null,
-                          storeId: info.store._id,
-                          storeInfo: { name: info.store.name, billingName: info.store.billingName, address: info.store.address, cnpj: info.store.cnpj, image: info.store.image, contacts: info.store.contacts },
-                          storeType: info.storeType,
-                          isLogged: true,
-                          expireDate: "noexpire",
-                          projectId: window.location.pathname.split("/")[1],
-                          projectInfo: projectInfo
-                        };
-
-                        console.log('✅ [AuthService] loginData criado:', {
-                          userId: loginData.userId,
-                          hasProjectInfo: !!loginData.projectInfo,
-                          projectInfo: loginData.projectInfo
-                        });
-
-                        const allSessions = window.localStorage.getItem("logins") ? JSON.parse(window.localStorage.getItem("logins")) : {};
-
-                        console.log('💾 [AuthService] Salvando loginData no localStorage...');
-                        console.log('💾 [AuthService] userId:', loginData.userId);
-                        console.log('💾 [AuthService] loginData.projectInfo:', loginData.projectInfo);
-
-                        allSessions[loginData.userId] = loginData;
-
-                        window.localStorage.setItem("logins", JSON.stringify(allSessions));
-
-                        console.log('✅ [AuthService] Salvo! Verificando...');
-                        const verificacao = JSON.parse(window.localStorage.getItem("logins"));
-                        console.log('🔍 [AuthService] Verificação - projectInfo salvo:', verificacao[loginData.userId]?.projectInfo);
-
-                        // Sincronizar configurações do projeto com o banco
-                        if (projectInfo && projectInfo.profile) {
-                          console.log('🔄 Sincronizando configurações do projeto...');
-
-                          // 🔥 PRIORIDADE: profile.data.crm (fonte da verdade)
-                          if (projectInfo.profile.data?.crm !== undefined && projectInfo.profile.data.crm !== null) {
-                            // Copiar de profile.data.crm para profile.crm (compatibilidade)
-                            projectInfo.profile.crm = projectInfo.profile.data.crm;
-                            console.log('✅ CRM sincronizado de profile.data.crm para profile.crm');
-                          } else if (projectInfo.profile.crm === null) {
-                            // Se profile.crm for null, remover
-                            delete projectInfo.profile.crm;
-                            console.log('🗑️ profile.crm era null, foi removido');
-                          }
-
-                          // Salvar novamente com dados sincronizados
-                          const logins = localStorage.getItem("logins") ? JSON.parse(localStorage.getItem("logins")) : {};
-                          if (logins[loginData.userId]) {
-                            logins[loginData.userId].projectInfo = projectInfo;
-                            localStorage.setItem("logins", JSON.stringify(logins));
-                            console.log('✅ Configurações sincronizadas e salvas!');
-                            console.log('📦 ProjectInfo final:', {
-                              'profile.crm': projectInfo.profile.crm,
-                              'profile.data.crm': projectInfo.profile.data?.crm
-                            });
-                          }
-                        }
-
-                        (<any>window).id = info.data._id;
-
-                        localStorage.setItem("reloadWindowID", (<any>window).id);
-
-                        resolve(null);
-
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 500);
-                      }).catch(async (error) => {
-
-                        this.iToolsService.auth().login(environment.loginSettings.email, environment.loginSettings.password).then(() => {
-
-                          reject({ code: 300 });
-                        }).catch((error) => {
-
-                          console.log(error);
-                          reject({ code: 300 });
-                        });
-                      });
-                    };
-
-
-                    if (user.permissions) {
-
-                      this.iToolsService.database().collection("RegistersCollaboratorProfiles").where([
-                        { field: "owner", operator: "=", value: "matrix" },
-                        { field: "code", operator: "=", value: parseInt(user.permissions) }
-                      ]).get().then((data) => {
-
-                        if (data.docs.length) {
-
-                          exec(info, data.docs[0].data(), projectInfo);
-                        } else {
-
-                          reject({ code: 4, status: false });
-                        }
-                      }).catch(() => {
-
-                        reject({ code: 3, status: false });
-                      });
-                    } else {
-
-                      exec(info, null, projectInfo);
-                    }
-
-                  } else {
-
-                    reject({ code: 2, status: false });
-                  }
-                }).catch(() => {
-
-                  reject({ code: 1, status: false });
-                });
-              } else {
-
-                reject({ code: 0, status: false });
-              }
-            });
+            await finalizeLogin(profileSnapshot.docs[0].data());
+          } catch (error) {
+            console.error('[AuthService] Erro ao buscar perfil do colaborador:', error);
+            reject({ code: 3, status: false });
           }
-        }, 100);
-
+        } else {
+          await finalizeLogin();
+        }
       };
 
       await this.permissionsService.getAllUserPermissions(true, projectInfo).then((data) => {
@@ -641,14 +560,14 @@ export class AuthService {
         if (data) {
 
           allUserPermissions = data;
-          exec();
+          return exec();
         } else {
 
           allUserPermissions = PermissionsService.getDefaultAllUserPermission(true, projectInfo);
 
-          this.iToolsService.database().collection("Settings").doc("permissions").update({ data: allUserPermissions }).then(() => {
+          return this.iToolsService.database().collection('Settings').doc('permissions').update({ data: allUserPermissions }).then(() => {
 
-            exec();
+            return exec();
           }).catch(() => {
 
             reject({

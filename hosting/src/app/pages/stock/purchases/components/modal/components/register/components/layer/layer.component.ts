@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 
 // Translate
 import { PurchasesTranslate } from '../../../../../../purchases.translate';
@@ -38,6 +38,10 @@ export class PurchasesRegisterLayerComponent implements OnInit {
 
     this.settings = settings;
     this.settings.data = (settings.data || {});
+
+    if (['categories', 'departments', 'commercialUnits'].includes(this.settings.activeComponent)) {
+      this.generalSelectorComponent = null;
+    }
 
     this.layerComponent.onOpen({ title: settings.title });
 
@@ -94,6 +98,7 @@ export class PurchasesRegisterLayerComponent implements OnInit {
 
   public onClose() {
     this.layerComponent.onClose();
+    this.generalSelectorComponent = null;
   }
 
   // Event Listeners
@@ -160,15 +165,15 @@ export class PurchasesRegisterLayerComponent implements OnInit {
     if (event.data) {
 
       if (this.settings.activeComponent == 'commercialUnits') {
-        this.callback.emit({ commercialUnit: event.data });
+        this.callback.emit({ commercialUnit: event.data, additional: this.settings.additional });
       }
 
       if (this.settings.activeComponent == 'categories') {
-        this.callback.emit({ category: event.data });
+        this.callback.emit({ category: event.data, additional: this.settings.additional });
       }
 
       if (this.settings.activeComponent == 'departments') {
-        this.callback.emit({ department: event.data });
+        this.callback.emit({ department: event.data, additional: this.settings.additional });
       }
     }
 
@@ -204,6 +209,7 @@ export class PurchasesRegisterLayerComponent implements OnInit {
     this.providersComponent = null;
     this.productsComponent = null;
     this.billsToPayComponent = null;
+    this.generalSelectorComponent = null;
 
     Dispatch.removeListeners('languageChange', 'PurchasesRegisterLayerComponent');
   }

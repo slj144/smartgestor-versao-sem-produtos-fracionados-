@@ -35,6 +35,11 @@ export class BillsToPayRegisterLayerComponent implements OnInit, OnDestroy {
     this.settings = settings;
     this.settings.data = (settings.data || {});
 
+    // Reset cached component reference so the active selector gets the bootstrap call
+    if (this.settings.activeComponent === 'categories' || this.settings.activeComponent === 'departments') {
+      this.generalSelectorComponent = null;
+    }
+
     this.layerComponent.onOpen();
     
     // Checks the component's response and initializes them
@@ -71,6 +76,10 @@ export class BillsToPayRegisterLayerComponent implements OnInit, OnDestroy {
     }
 
     Dispatch.removeListeners('languageChange', 'BillsToPayRegisterLayerComponent');
+
+    this.generalSelectorComponent = null;
+    this.providersComponent = null;
+    this.paymentMethodsComponent = null;
   }
 
   // Event Listeners

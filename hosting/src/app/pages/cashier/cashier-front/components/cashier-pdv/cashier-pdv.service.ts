@@ -4,6 +4,7 @@ import * as cryptojs from "crypto-js";
 
 // Services
 import { IToolsService } from '@shared/services/iTools.service';
+import { AuthCredentialSyncService } from '@shared/services/auth-credential-sync.service';
 import { ProductsService } from "@pages/stock/products/products.service";
 import { BillsToReceiveService } from "@pages/financial/bills-to-receive/bills-to-receive.service";
 import { BankAccountsService } from "@pages/financial/bank-accounts/bank-accounts.service";
@@ -41,7 +42,8 @@ export class CashierFrontPDVService {
     private billsToReceiveService: BillsToReceiveService,
     private bankAccountsService: BankAccountsService,
     private notificationService: NotificationService,
-    private systemLogsService: SystemLogsService
+    private systemLogsService: SystemLogsService,
+    private authCredentialSync: AuthCredentialSyncService
   ) { }
 
   // Getter and Setter Methods
@@ -933,19 +935,29 @@ export class CashierFrontPDVService {
         return { status: false, message: 'user-not-admin' };
       }
 
+      const normalizedEmail = (adminUser.email || '').toLowerCase();
       const authRecord = await this.iToolsService.database().collection('#SYSTEM_AUTHENTICATE#').where([
-        { field: 'email', operator: '=', value: (adminUser.email || '').toLowerCase() }
+        { field: 'email', operator: '=', value: normalizedEmail }
       ]).limit(1).get();
 
-      if (!authRecord.docs.length) {
-        return { status: false, message: 'credential-not-found' };
-      }
-
-      const storedHash = authRecord.docs[0].data()?.password;
       const inputHash = cryptojs.SHA256(cleanPassword).toString();
 
-      if (storedHash !== inputHash) {
-        return { status: false, message: 'invalid-password' };
+      if (!authRecord.docs.length) {
+        const recovered = await this.tryRecoverAdminHash(normalizedEmail, cleanPassword);
+        if (!recovered) {
+          return { status: false, message: 'credential-not-found' };
+        }
+      } else {
+        const storedHash = authRecord.docs[0].data()?.password;
+
+        if (storedHash === inputHash) {
+          await this.authCredentialSync.persistAuthHash(normalizedEmail, cleanPassword);
+        } else {
+          const recovered = await this.tryRecoverAdminHash(normalizedEmail, cleanPassword);
+          if (!recovered) {
+            return { status: false, message: 'invalid-password' };
+          }
+        }
       }
 
       return {
@@ -959,6 +971,39 @@ export class CashierFrontPDVService {
     } catch (error) {
       console.error('[CashierFrontPDVService] validateAdminCredentials error:', error);
       return { status: false, message: 'unexpected-error' };
+    }
+  }
+
+  private async tryRecoverAdminHash(email: string, password: string): Promise<boolean> {
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    const normalizedPassword = (password ?? '').toString().trim();
+
+    if (!normalizedEmail || !normalizedPassword) {
+      return false;
+    }
+
+    const recoveryInstance = new iTools();
+
+    try {
+      await recoveryInstance.initializeApp({
+        projectId: Utilities.projectId,
+        email: normalizedEmail,
+        password: normalizedPassword,
+        encrypted: false
+      });
+
+      await this.authCredentialSync.persistAuthHash(normalizedEmail, normalizedPassword);
+
+      return true;
+    } catch (error) {
+      console.warn('[CashierFrontPDVService] tryRecoverAdminHash falhou:', error);
+      return false;
+    } finally {
+      try {
+        recoveryInstance.close();
+      } catch (closeError) {
+        // ignore
+      }
     }
   }
 

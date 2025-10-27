@@ -65,3 +65,10 @@ Adicionar a noção de **Departamento** ao módulo de estoque para atender lojas
 - Cadastro/edição de serviços respeita a flag e persiste o departamento.
 - Vendas/OS geradas com produtos ou serviços atribuem o departamento corretamente e o filtro em relatórios de caixa retorna os valores esperados.
 - Cadastro/listagem de contas a pagar exibem o campo quando habilitado, incluindo filtro e leitura detalhada.
+
+## Correções 2024-05-XX
+- Ajustamos o `providers-selector` para escapar termos de busca com caracteres especiais (ex.: `gabriel vi/gi`), evitando que a pesquisa por nome quebre quando departamentos estão ligados.
+- O `general-selector` deixou de usar `String.search()` (regex implícito) e passou a comparar com `includes`, impedindo que a listagem de categorias/departamentos trave com termos contendo barras ou colchetes.
+- O layer de cadastro de contas a pagar agora monta apenas o seletor correspondente à aba atual e reinicializa o componente sempre que abrimos "Categorias" ou "Departamentos", garantindo que a lista apareça mesmo ao alternar entre os dois fluxos.
+- Corrigimos o cadastro/edição de compras vindas do XML: os selects de Categoria/Departamento/Unidade agora protegem o acesso ao `FormArray`, eliminando o `Cannot read properties of undefined (reading 'controls')` e permitindo alternar entre categorias e departamentos sem travar o modal.
+- Ajustamos a seleção em lote do modal de produtos para casar códigos com e sem zeros à esquerda, evitando o `Cannot read properties of undefined (reading 'costPrice')` ao reaproveitar itens importados do XML.

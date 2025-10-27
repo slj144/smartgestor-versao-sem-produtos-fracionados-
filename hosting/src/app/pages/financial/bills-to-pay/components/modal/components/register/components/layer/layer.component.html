@@ -6,11 +6,11 @@
       <providers-selector (callback)="onProvidersResponse($event)"></providers-selector>
     </div>
 
-    <div class="container-categories" [style.display]="(settings.activeComponent == 'categories' ? 'block' : 'none')">
+    <div class="container-categories" *ngIf="settings.activeComponent == 'categories'">
       <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
     </div>
 
-    <div class="container-departments" [style.display]="(settings.activeComponent == 'departments' ? 'block' : 'none')">
+    <div class="container-departments" *ngIf="settings.activeComponent == 'departments'">
       <general-selector (callback)="onGeneralSelectorResponse($event)"></general-selector>
     </div>
 

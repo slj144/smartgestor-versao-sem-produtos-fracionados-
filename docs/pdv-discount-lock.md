@@ -11,6 +11,7 @@
 3. Ao clicar em **Registrar** (ou atalho F4), se houver desconto e o usuário não for admin, o modal de autorização aparece.
 4. O operador pode: (a) informar usuário/senha de um administrador; ou (b) usar **Salvar como pendente** para que a venda fique aguardando aprovação.
 5. As credenciais são validadas contra a coleção `#SYSTEM_AUTHENTICATE#` sem trocar a sessão ativa.
+   - Se o hash estiver ausente ou desatualizado, o PDV tenta autenticar o administrador através do iTools com a senha digitada; em caso de sucesso, o registro é normalizado antes da liberação.
 6. A decisão (aprovada ou pendente) é registrada em `discountApproval` junto com a venda.
 7. Sem autorização e sem marcar como pendente, `CashierFrontPDVService.registerSale` bloqueia o salvamento da venda.
 
@@ -24,6 +25,7 @@
 - Se o operador salvar como pendente, o status da venda permanece `PENDENT`, `discountApproval.status = 'pending'` recebe o usuário que solicitou e o backend permite a gravação apenas nesse cenário.
 - As comissões dos relatórios já levam em conta o desconto líquido (inclusive global), evitando pagar comissão cheia sobre valores abatidos.
 - Ao reabrir a venda, os campos de desconto e o total já aparecem sincronizados com o abatimento anterior (não é necessário redigitar o valor).
+- O usuário de suporte `iparttsdefault@gmail.com` continua ativo para auditoria, mas não interfere nas credenciais personalizadas dos administradores da loja.
 
 ## Testes sugeridos
 1. **Flag desativada**: aplicar descontos e concluir venda normalmente (nenhum prompt deve aparecer).

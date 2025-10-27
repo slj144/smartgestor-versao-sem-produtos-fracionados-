@@ -72,7 +72,21 @@ export class ProvidersSelectorComponent implements OnInit {
       const settings: query = { where: [] };
       
       if (this.searchBy == 'NAME') {
-        settings.where.push({ field: 'name', operator: 'like', value: new RegExp(value, 'gi') });
+        let likeValue: RegExp;
+
+        try {
+          likeValue = new RegExp(value, 'gi');
+        } catch (error) {
+          const specialChars = ['\\', '.', '*', '+', '?', '^', '$', '{', '}', '(', ')', '|', '[', ']', '/'];
+          const escapedValue = value
+            .split('')
+            .map((char) => (specialChars.includes(char) ? `\\${char}` : char))
+            .join('');
+
+          likeValue = new RegExp(escapedValue, 'gi');
+        }
+
+        settings.where.push({ field: 'name', operator: 'like', value: likeValue });
       }
 
       if (this.searchBy == 'CODE') {

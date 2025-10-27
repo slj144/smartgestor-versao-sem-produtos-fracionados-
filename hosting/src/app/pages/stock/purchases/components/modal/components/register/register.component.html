@@ -127,20 +127,21 @@
                         <div *ngIf="!item.isRegister">
                           <span>{{ item?.category?.code + ' - ' + item?.category?.name }}</span>
                         </div>
-                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
-                          <div class="manager-category clearfix"
-                            [formGroup]="productsFormArray.controls[i].controls.category">
-                            <select class="form-control" formControlName="code"
-                              (change)="onChangeCategory($event, item)">
-                              <option value=""></option>
-                              <option *ngFor="let item of categoriesData || []" value="{{ item.code }}">{{ item.code + '
-                                - ' + item.name }}</option>
-                            </select>
-                            <button type="button" (click)="onOpenLayer('categories',  i)">
-                              <icon name="list-outline" pack="eva"></icon>
-                            </button>
-                          </div>
-                        </fieldset>
+                        <ng-container *ngIf="item.isRegister && getProductNestedGroup(i, 'category') as categoryGroup">
+                          <fieldset [disabled]="!isMatrix">
+                            <div class="manager-category clearfix" [formGroup]="categoryGroup">
+                              <select class="form-control" formControlName="code"
+                                (change)="onChangeCategory($event, item)">
+                                <option value=""></option>
+                                <option *ngFor="let item of categoriesData || []" value="{{ item.code }}">{{ item.code +
+                                  ' - ' + item.name }}</option>
+                              </select>
+                              <button type="button" (click)="onOpenLayer('categories',  i)">
+                                <icon name="list-outline" pack="eva"></icon>
+                              </button>
+                            </div>
+                          </fieldset>
+                        </ng-container>
                       </div>
                     </td>
 
@@ -149,20 +150,21 @@
                         <div *ngIf="!item.isRegister">
                           <span>{{ item?.department?.code + ' - ' + item?.department?.name }}</span>
                         </div>
-                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
-                          <div class="manager-category clearfix"
-                            [formGroup]="productsFormArray.controls[i].controls.department">
-                            <select class="form-control" formControlName="code"
-                              (change)="onChangeDepartment($event, item)">
-                              <option value=""></option>
-                              <option *ngFor="let item of departmentsData || []" value="{{ item.code }}">{{ item.code +
-                                ' - ' + item.name }}</option>
-                            </select>
-                            <button type="button" (click)="onOpenLayer('departments', i)">
-                              <icon name="list-outline" pack="eva"></icon>
-                            </button>
-                          </div>
-                        </fieldset>
+                        <ng-container *ngIf="item.isRegister && getProductNestedGroup(i, 'department') as departmentGroup">
+                          <fieldset [disabled]="!isMatrix">
+                            <div class="manager-category clearfix" [formGroup]="departmentGroup">
+                              <select class="form-control" formControlName="code"
+                                (change)="onChangeDepartment($event, item)">
+                                <option value=""></option>
+                                <option *ngFor="let item of departmentsData || []" value="{{ item.code }}">{{ item.code +
+                                  ' - ' + item.name }}</option>
+                              </select>
+                              <button type="button" (click)="onOpenLayer('departments', i)">
+                                <icon name="list-outline" pack="eva"></icon>
+                              </button>
+                            </div>
+                          </fieldset>
+                        </ng-container>
                       </div>
                     </td>
 
@@ -171,20 +173,21 @@
                         <div *ngIf="!item.isRegister">
                           <span>{{ item?.commercialUnit?.code + ' - ' + item?.commercialUnit?.name }}</span>
                         </div>
-                        <fieldset [disabled]="!isMatrix" *ngIf="item.isRegister && productsFormArray">
-                          <div class="manager-commecial-unit clearfix"
-                            [formGroup]="productsFormArray.controls[i].controls.commercialUnit">
-                            <select class="form-control" formControlName="code"
-                              (change)="onChangeCommercialunit($event, item)">
-                              <option value=""></option>
-                              <option *ngFor="let item of commercialUnitsData || []" value="{{ item.code }}">{{
-                                item.code + ' - ' + item.name }}</option>
-                            </select>
-                            <button type="button" (click)="onOpenLayer('commercialUnits', i)">
-                              <icon name="list-outline" pack="eva"></icon>
-                            </button>
-                          </div>
-                        </fieldset>
+                        <ng-container *ngIf="item.isRegister && getProductNestedGroup(i, 'commercialUnit') as commercialUnitGroup">
+                          <fieldset [disabled]="!isMatrix">
+                            <div class="manager-commecial-unit clearfix" [formGroup]="commercialUnitGroup">
+                              <select class="form-control" formControlName="code"
+                                (change)="onChangeCommercialunit($event, item)">
+                                <option value=""></option>
+                                <option *ngFor="let item of commercialUnitsData || []" value="{{ item.code }}">{{
+                                  item.code + ' - ' + item.name }}</option>
+                              </select>
+                              <button type="button" (click)="onOpenLayer('commercialUnits', i)">
+                                <icon name="list-outline" pack="eva"></icon>
+                              </button>
+                            </div>
+                          </fieldset>
+                        </ng-container>
                       </div>
                     </td>
 

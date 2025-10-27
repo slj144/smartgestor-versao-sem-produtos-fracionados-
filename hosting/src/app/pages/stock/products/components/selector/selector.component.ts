@@ -342,25 +342,70 @@ export class ProductsSelectorComponent implements OnInit {
 
       const products = (() => {
 
-        let obj = {};
+        const map: Record<string, any> = {};
 
         $$(data).map((_, item) => {
-          item.code = Utilities.prefixCode(item.code);
-          obj[item.code] = item;
+
+          const rawCode = String(item.code ?? '');
+          const normalizedCode = Utilities.prefixCode(rawCode);
+          const numericCode = parseInt(rawCode, 10);
+
+          // Preserve original data so we can use it after selecting
+          const payload = { ...item, code: normalizedCode };
+
+          if (normalizedCode) {
+            map[normalizedCode] = payload;
+          }
+
+          if (rawCode) {
+            map[rawCode] = payload;
+          }
+
+          if (!isNaN(numericCode)) {
+            map[String(numericCode)] = payload;
+          }
         });
 
-        return obj;
+        return map;
       })();
 
       $$(result).map((_, item) => {
 
-        const product = products[item.code];
+        const candidateCodes: string[] = [];
 
-        item.code = Utilities.prefixCode(item.code);
-        item.costPrice = product.costPrice;
-        item.selectedItems = product.quantity;
-        item.unitaryPrice = product.unitaryPrice;
-        item.salePrice = product.salePrice;
+        const normalized = Utilities.prefixCode(item.code);
+        const raw = String(item.code ?? '');
+        const numeric = parseInt(raw, 10);
+
+        if (normalized) {
+          candidateCodes.push(normalized);
+        }
+
+        if (raw) {
+          candidateCodes.push(raw);
+        }
+
+        if (!isNaN(numeric)) {
+          candidateCodes.push(String(numeric));
+        }
+
+        let product: any = null;
+
+        for (const codeKey of candidateCodes) {
+          if (products[codeKey]) {
+            product = products[codeKey];
+            break;
+          }
+        }
+
+        // If we didn't find a matching product, fall back to the original search item
+        const source = product || {};
+
+        item.code = normalized || raw;
+        item.costPrice = source.costPrice ?? item.costPrice ?? 0;
+        item.selectedItems = source.quantity ?? source.selectedItems ?? item.selectedItems ?? 0;
+        item.unitaryPrice = source.unitaryPrice ?? item.unitaryPrice;
+        item.salePrice = source.salePrice ?? item.salePrice;
 
         this.onSelectProduct(item, true);
       });
@@ -368,7 +413,7 @@ export class ProductsSelectorComponent implements OnInit {
   }
 
   // MÉTODO NOVO - Limpa completamente a seleção de produtos
-  public clearSelection() {
+  public clearSelection(emit: boolean = true) {
     // Limpa os arrays de produtos selecionados
     this.productsSelected = [];
     this.productsPreSelected = [];
@@ -417,13 +462,15 @@ export class ProductsSelectorComponent implements OnInit {
     }, 100);
 
     // Emite evento informando que a seleção foi completamente limpa
-    this.callback.emit({ data: [] });
+    if (emit) {
+      this.callback.emit({ data: [] });
+    }
   }
 
   // Utility Methods - MÉTODO ATUALIZADO
-  public reset() {
+  public reset(emit: boolean = true) {
     // Chama o método clearSelection para limpar tudo
-    this.clearSelection();
+    this.clearSelection(emit);
 
     // Limpa também os dados de busca se necessário
     this.recordsData = [];

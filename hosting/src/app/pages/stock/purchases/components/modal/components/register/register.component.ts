@@ -28,7 +28,7 @@ import { cst as cstCOFINS } from '@shared/settingers/cofins';
 import { ProductCommercialUnitsService } from '@pages/registers/_aggregates/stock/product-commercial-units/product-commercial-units.service';
 import { ProductCategoriesService } from '@pages/registers/_aggregates/stock/product-categories/product-categories.service';
 import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'purchases-register',
@@ -54,7 +54,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
   public checkCommercialUnits: boolean = false;
   public checkDepartments: boolean = false;
 
-  public productsFormArray;
+  public productsFormArray: FormArray;
 
   public installments: number[];
   public expirationDays: number[];
@@ -217,6 +217,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
       data.configFromXml = !!data.configuredFromXml;
 
       this.data = data;
+
+      (this.data.products || []).forEach((product) => {
+        product.selectedItems = this.resolveQuantity(product);
+      });
     });
 
     // setInterval(()=>{
@@ -256,7 +260,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
         }
 
         if (ProductsSelectorComponent.shared && this.data.configFromXml) {
-          ProductsSelectorComponent.shared.reset(); 
+          ProductsSelectorComponent.shared.reset(false); 
         }
 
         $$('.container-products .quick-search input').val('');
@@ -265,7 +269,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     }else{
       delete this.data.products[index].code;
       if (ProductsSelectorComponent.shared && this.data.configFromXml) {
-        ProductsSelectorComponent.shared.reset(); 
+        ProductsSelectorComponent.shared.reset(false); 
       }
     }
   }
@@ -481,6 +485,23 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     return this.productsFormArray;
   }
 
+  public getProductFormGroup(index: number): FormGroup | null {
+
+    if (!this.productsFormArray || !this.productsFormArray.controls?.[index]) {
+      return null;
+    }
+
+    return this.productsFormArray.controls[index] as FormGroup;
+  }
+
+  public getProductNestedGroup(index: number, field: 'category' | 'department' | 'commercialUnit'): FormGroup | null {
+
+    const parentGroup = this.getProductFormGroup(index);
+    const control = parentGroup?.get(field);
+
+    return control instanceof FormGroup ? control : null;
+  }
+
   public filterRegisterProducts(data: any[], isRegister: boolean = false){
     if(isRegister){
       return data.filter((prod)=> { 
@@ -514,8 +535,8 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
       delete item.isRegister
     }
 
-    this.productsFormArray.controls[index].controls.category.patchValue(objValue);
-    this.productsFormArray.controls[index].controls.commercialUnit.patchValue(objValue);
+    this.getProductNestedGroup(index, 'category')?.patchValue(objValue, { emitEvent: false });
+    this.getProductNestedGroup(index, 'commercialUnit')?.patchValue(objValue, { emitEvent: false });
   }
 
   public onChangeCategory(event, item){
@@ -561,7 +582,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     this.productCategoriesService.removeListeners("PurchasesRegisterComponent");
 
     if (ProductsSelectorComponent.shared) {
-      ProductsSelectorComponent.shared.reset(); 
+      ProductsSelectorComponent.shared.reset(false); 
     }
 
     this.sending = false;
@@ -595,7 +616,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     }
 
     if (ProductsSelectorComponent.shared && this.data.configFromXml) {
-      ProductsSelectorComponent.shared.reset(); 
+      ProductsSelectorComponent.shared.reset(false); 
     }
 
     if (this.data.configFromXml) {
@@ -627,55 +648,46 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
         if (event.additional?.index != undefined) {
 
-          event.products[0].tributes = this.data.products[event.additional.index].tributes;
-          event.products[0].cest = this.data.products[event.additional.index].cest;
-          event.products[0].ncm = this.data.products[event.additional.index].ncm;
-          event.products[0].quantity = this.data.products[event.additional.index].quantity;
-          event.products[0].costPrice = this.data.products[event.additional.index].costPrice;
-          event.products[0].selectedItems = this.data.products[event.additional.index].quantity;
+          event.products[0] = { ...event.products[0], ...{
+            tributes: this.data.products[event.additional.index].tributes,
+            cest: this.data.products[event.additional.index].cest,
+            ncm: this.data.products[event.additional.index].ncm,
+            quantity: this.resolveQuantity(this.data.products[event.additional.index]),
+            costPrice: this.data.products[event.additional.index].costPrice,
+            selectedItems: this.resolveQuantity(this.data.products[event.additional.index]),
+            category: this.data.products[event.additional.index].category,
+            department: this.data.products[event.additional.index].department,
+            commercialUnit: this.data.products[event.additional.index].commercialUnit
+          }};
 
           this.data.products[event.additional.index] = event.products[0];
-        }else{
-
-          // this.data.products.fp
-
-          // console.log(event);
+        } else {
 
           event.products.forEach((prod)=>{
             this.data.products.forEach((originProd, index)=>{
               if(prod.code == originProd.code){
-                this.data.products[index] = prod;
+                this.data.products[index] = {
+                  ...prod,
+                  selectedItems: this.resolveQuantity(this.data.products[index]),
+                  category: this.data.products[index].category,
+                  department: this.data.products[index].department,
+                  commercialUnit: this.data.products[index].commercialUnit
+                };
               }
             });  
           });
 
-          // console.log(Utilities.deepClone(this.data.products));
-
           this.data.products = this.adjustProducts(this.data.products);
-
-          // this.filterRegisterProducts(event)
-
-          // configuredFromXml
         }
-          
+
         if (ProductsSelectorComponent.shared) {
-          ProductsSelectorComponent.shared.reset(); 
+          ProductsSelectorComponent.shared.reset(false); 
         }
 
 
       }else{
 
-        // event.products.forEach((prod)=>{
-        //   this.data.products.forEach((originProd, index)=>{
-        //     if(prod.code == originProd.code){
-        //       this.data.products[index] = prod;
-        //     }
-        //   });  
-        // });
-
         this.data.products = event.products;
-
-        // this.data.products = [...event.products, ...this.filterRegisterProducts(this.data.products, true)];
       }
 
       this.moutProductsFormArray(this.data.products);
@@ -686,10 +698,73 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
       this.data.billToPay = event.billToPay;
     }
 
+    if (event.category) {
+      const index = event.additional?.index;
+
+      if (index != null && this.data.products?.[index] && this.productsFormArray?.controls?.[index]) {
+
+        const matched = this.categoriesData.find((cat) => cat.code == event.category.code) || event.category;
+
+        this.data.products[index].category = matched;
+        this.productsFormArray.controls[index].get('category')?.patchValue({
+          code: matched?.code ?? '',
+          name: matched?.name ?? ''
+        }, { emitEvent: false });
+      }
+    }
+
+    if (event.department) {
+      const index = event.additional?.index;
+
+      if (index != null && this.data.products?.[index] && this.productsFormArray?.controls?.[index]) {
+
+        const matched = this.departmentsData.find((dep) => dep.code == event.department.code) || event.department;
+
+        this.data.products[index].department = matched;
+        this.productsFormArray.controls[index].get('department')?.patchValue({
+          code: matched?.code ?? '',
+          name: matched?.name ?? ''
+        }, { emitEvent: false });
+      }
+    }
+
+    if (event.commercialUnit) {
+      const index = event.additional?.index;
+
+      if (index != null && this.data.products?.[index] && this.productsFormArray?.controls?.[index]) {
+
+        const matched = this.commercialUnitsData.find((unit) => unit.code == event.commercialUnit.code) || event.commercialUnit;
+
+        this.data.products[index].commercialUnit = matched;
+        this.productsFormArray.controls[index].get('commercialUnit')?.patchValue({
+          code: matched?.code ?? '',
+          name: matched?.name ?? ''
+        }, { emitEvent: false });
+      }
+    }
+
     this.generateBalance();   
   }
 
   // Auxiliary Methods - Private
+
+  private resolveQuantity(item: any): number {
+
+    const rawValue = item?.selectedItems ?? item?.quantity ?? 0;
+
+    if (typeof rawValue === 'number' && !isNaN(rawValue)) {
+      return rawValue;
+    }
+
+    if (typeof rawValue === 'string') {
+      const digitsOnly = rawValue.replace(/[^0-9]/g, '');
+      const parsed = digitsOnly ? parseInt(digitsOnly, 10) : NaN;
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    const numeric = Number(rawValue);
+    return isNaN(numeric) ? 0 : numeric;
+  }
 
   private generateBalance() {
 
@@ -707,7 +782,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
       for (const item of this.data.products) {
 
-        const quantityToBuy = parseInt(item.selectedItems || 0);
+        const quantityToBuy = this.resolveQuantity(item);
         const quantityStock = item.quantity;
 
         const totalPurchaseCost = (item.costPrice * quantityToBuy);
@@ -781,7 +856,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
           averageCost: item.averageCost,          
           salePrice: item.salePrice,
           isRegister: !!item.isRegister,
-          quantity: parseInt(item.selectedItems)
+          quantity: this.resolveQuantity(item)
         };
 
         if (item.serialNumber) {
