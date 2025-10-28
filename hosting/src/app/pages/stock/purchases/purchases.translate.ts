@@ -163,9 +163,10 @@ export class PurchasesTranslate {
                     title: 'Subtotal',
                     integrant: {
                       items: 'Itens',
-                      cost: 'Custo'
+                      cost: 'Custo dos produtos (sem frete)'
                     }
                   },
+                  freight: 'Frete',
                   total: 'Total'
                 }
               },
@@ -467,9 +468,10 @@ export class PurchasesTranslate {
                     title: 'Subtotal',
                     integrant: {
                       items: 'Items',
-                      cost: 'Cost'
+                      cost: 'Product cost (without freight)'
                     }
                   },
+                  freight: 'Freight',
                   total: 'Total'
                 }
               },

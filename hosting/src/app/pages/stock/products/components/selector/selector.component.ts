@@ -401,9 +401,20 @@ export class ProductsSelectorComponent implements OnInit {
         // If we didn't find a matching product, fall back to the original search item
         const source = product || {};
 
+        const sourceQuantity = source.quantity ?? source.selectedItems ?? item.selectedItems ?? 0;
+        const shareUnit = typeof source.freightShareUnit === 'number'
+          ? source.freightShareUnit
+          : ((typeof source.freightShare === 'number' && sourceQuantity) ? (source.freightShare / sourceQuantity) : 0);
+        const baseCost = typeof source.baseCostPrice === 'number'
+          ? source.baseCostPrice
+          : Math.max((source.costPrice ?? item.costPrice ?? 0) - shareUnit, 0);
+
         item.code = normalized || raw;
-        item.costPrice = source.costPrice ?? item.costPrice ?? 0;
-        item.selectedItems = source.quantity ?? source.selectedItems ?? item.selectedItems ?? 0;
+        item.costPrice = baseCost + shareUnit;
+        item.baseCostPrice = baseCost;
+        item.freightShare = typeof source.freightShare === 'number' ? source.freightShare : (shareUnit * sourceQuantity);
+        item.freightShareUnit = shareUnit;
+        item.selectedItems = sourceQuantity;
         item.unitaryPrice = source.unitaryPrice ?? item.unitaryPrice;
         item.salePrice = source.salePrice ?? item.salePrice;
 

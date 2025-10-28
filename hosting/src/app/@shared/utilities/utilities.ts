@@ -1158,7 +1158,13 @@ export class Utilities {
     const nfeDocument = new DOMParser().parseFromString(fileReader.result.toString(), "text/xml");
     const detContainer = nfeDocument.querySelectorAll("NFe infNFe det") || [];
 
-    const data = {
+    const data: {
+      products: any[];
+      serie: number;
+      numero: number;
+      chave: string;
+      freight?: number;
+    } = {
       products: [],
       serie: parseInt(nfeDocument.querySelectorAll("NFe infNFe ide serie")[0]?.textContent),
       numero: parseInt(nfeDocument.querySelectorAll("NFe infNFe ide nNF")[0]?.textContent),
@@ -1279,6 +1285,14 @@ export class Utilities {
       data.products.push(product);
 
     });
+
+    const freightNode = nfeDocument.querySelector("NFe infNFe total ICMSTot vFrete");
+    if (freightNode && freightNode.textContent) {
+      const freightValue = parseFloat(freightNode.textContent);
+      if (!isNaN(freightValue)) {
+        (<any>data).freight = freightValue;
+      }
+    }
 
     return data;
   }

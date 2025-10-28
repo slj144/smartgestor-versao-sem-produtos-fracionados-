@@ -22,6 +22,9 @@ export interface IStockPurchase {
     averageCost: number;
     salePrice: number;
     quantity: number;
+    freightShare?: number;
+    freightShareUnit?: number;
+    baseCostPrice?: number;
     department?: {
       _id?: string;
       code: string;
@@ -31,7 +34,12 @@ export interface IStockPurchase {
   balance: {
     quantity: number;
     total: number;
+    totalItems?: number;
+    totalCost?: number;
+    totalPurchase?: number;
+    freight?: number;
   };
+  freight?: number;
   attachment?: {
     name: string;
     url: (string | { newFile: File, oldFile: string });

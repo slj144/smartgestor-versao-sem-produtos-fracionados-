@@ -357,6 +357,12 @@
 
       <div class="container-balance">
 
+        <div class="form-group">
+          <label>{{ translate.balance.label.freight }}</label>
+          <input type="text" class="form-control" [value]="(data.freightValue || 0) | currency:''"
+            (input)="onApplyFreight($event)" />
+        </div>
+
         <div class="data">
           <div class="container-subtotal">
             <div class="table-responsive">
@@ -388,6 +394,11 @@
             <div class="table-responsive">
               <table class="table table-borderless">
                 <tbody>
+                  <tr>
+                    <td><span class="label">{{ translate.balance.label.freight }}</span> <span
+                        class="line"></span></td>
+                    <td><span class="value">{{ (data.balance?.freight || 0) | currency }}</span></td>
+                  </tr>
                   <tr>
                     <th>{{ translate.balance.label.total }}</th>
                     <td>{{ (data.balance?.totalPurchase || 0) | currency }}</td>

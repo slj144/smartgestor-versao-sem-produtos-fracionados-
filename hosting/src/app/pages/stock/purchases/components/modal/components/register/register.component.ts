@@ -218,6 +218,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
       this.data = data;
 
+      this.data.freightValue = Number(this.data.freight ?? this.data.freightValue ?? 0);
+      this.data.freight = this.data.freightValue;
+      this.normalizeProductsForFreight();
+
       (this.data.products || []).forEach((product) => {
         product.selectedItems = this.resolveQuantity(product);
       });
@@ -283,13 +287,17 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
   public onApplyPrice(data: any, inputField: any, type: string) {
 
     const value = FieldMask.priceFieldMask(inputField.value);
+    const numericValue = (parseFloat(String(value).replace(/\./g,'').replace(',','.')) || 0);
 
     if (type == 'costPrice') {
-      data.costPrice = (parseFloat(value.replace(/\./g,'').replace(',','.')) || 0);
+      const shareUnit = typeof data.freightShareUnit === 'number' ? data.freightShareUnit : 0;
+      const baseValue = Math.max(numericValue - shareUnit, 0);
+      data.baseCostPrice = baseValue;
+      data.costPrice = baseValue + shareUnit;
     }
 
     if (type == 'salePrice') {
-      data.salePrice = (parseFloat(value.replace(/\./g,'').replace(',','.')) || 0);
+      data.salePrice = numericValue;
     }
 
     inputField.value = value;
@@ -423,6 +431,9 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
         const data = Utilities.parseXMLNfe(fileReader, this.fiscalSettings.simplesNacional);
 
+        this.data.freightValue = Number(data.freight || 0);
+        this.data.freight = this.data.freightValue;
+
         this.data.nf = {
           serie: data.serie,
           numero: data.numero,
@@ -440,6 +451,10 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
             code: "",
             name: ""
           };
+
+          item.baseCostPrice = (typeof item.costPrice === 'number') ? item.costPrice : (parseFloat(item.costPrice) || 0);
+          item.freightShare = 0;
+          item.freightShareUnit = 0;
 
         });
 
@@ -463,6 +478,8 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     }
 
     products?.forEach((product)=>{
+
+      this.prepareProductForFreight(product);
 
       const obj = this.formBuilder.group({
         category: this.formBuilder.group({
@@ -517,6 +534,11 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     return data.map((prod)=> { 
       prod.selectedItems = prod.selectedItems ?? prod.quantity;
       prod.unitaryCost = prod.unitaryCost ?? prod.costPrice; 
+      if (typeof prod.baseCostPrice !== 'number') {
+        const shareUnit = typeof prod.freightShareUnit === 'number' ? prod.freightShareUnit : 0;
+        const costNumber = typeof prod.costPrice === 'number' ? prod.costPrice : parseFloat(prod.costPrice) || 0;
+        prod.baseCostPrice = Math.max(costNumber - shareUnit, 0);
+      }
       return prod;
     });
   }
@@ -527,6 +549,9 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     item.category = objValue
     item.commercialUnit = objValue;
     item.department = objValue;
+    item.freightShare = 0;
+    item.freightShareUnit = 0;
+    item.baseCostPrice = typeof item.costPrice === 'number' ? item.costPrice : parseFloat(item.costPrice) || 0;
 
     if(isRegister){
       item.isRegister = true;
@@ -576,6 +601,7 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
   public onResetPanel() {
     
     this.data = {};
+    this.data.freightValue = 0;
 
     this.fiscalService.removeListeners("store-settings", "PurchasesRegisterComponent");
     this.productCommercialUnitsService.removeListeners("PurchasesRegisterComponent");
@@ -592,6 +618,17 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
 
   public onApplyNumberMask(event: Event) {
     $$(event.currentTarget).val(FieldMask.numberFieldMask($$(event.currentTarget).val(), null, null, true));
+  }
+
+  public onApplyFreight(event: Event) {
+
+    const value = FieldMask.priceFieldMask($$(event.target)[0].value);
+    $$(event.target).val(value);
+
+    const numericValue = parseFloat(String(value).replace(/\./g,'').replace(',','.')) || 0;
+
+    this.data.freightValue = numericValue;
+    this.generateBalance();
   }
 
   // Layer Actions
@@ -766,17 +803,121 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     return isNaN(numeric) ? 0 : numeric;
   }
 
+  private normalizeProductsForFreight(): void {
+    (this.data.products || []).forEach((item) => this.prepareProductForFreight(item));
+  }
+
+  private prepareProductForFreight(item: any): void {
+
+    if (!item) {
+      return;
+    }
+
+    const quantity = this.resolveQuantity(item);
+
+    if (item.freightShare != null && item.freightShareUnit == null && quantity > 0) {
+      item.freightShareUnit = item.freightShare / quantity;
+    }
+
+    if (typeof item.baseCostPrice !== 'number') {
+      const shareUnit = typeof item.freightShareUnit === 'number' ? item.freightShareUnit : 0;
+      const costNumber = typeof item.costPrice === 'number' ? item.costPrice : parseFloat(item.costPrice) || 0;
+      item.baseCostPrice = Math.max(costNumber - shareUnit, 0);
+    }
+
+    if (typeof item.freightShare !== 'number') {
+      item.freightShare = typeof item.freightShareUnit === 'number' && quantity > 0 ? (item.freightShareUnit * quantity) : 0;
+    }
+
+    if (typeof item.freightShareUnit !== 'number') {
+      item.freightShareUnit = 0;
+    }
+  }
+
+  private getFreightValue(): number {
+    return typeof this.data.freightValue === 'number' && !isNaN(this.data.freightValue) ? this.data.freightValue : 0;
+  }
+
+  private applyFreightDistribution(): void {
+
+    const products = this.data.products || [];
+
+    if (!products.length) {
+      return;
+    }
+
+    const freight = this.getFreightValue();
+
+    let totalBaseCost = 0;
+    let totalQuantity = 0;
+
+    products.forEach((item) => {
+      this.prepareProductForFreight(item);
+
+      const quantity = this.resolveQuantity(item);
+      const baseCost = typeof item.baseCostPrice === 'number' ? item.baseCostPrice : (item.costPrice || 0);
+
+      totalQuantity += quantity;
+      totalBaseCost += (baseCost * quantity);
+    });
+
+    if (freight <= 0 || totalQuantity <= 0) {
+      products.forEach((item) => {
+        item.freightShare = 0;
+        item.freightShareUnit = 0;
+        if (typeof item.baseCostPrice === 'number') {
+          item.costPrice = item.baseCostPrice;
+        }
+      });
+      return;
+    }
+
+    const distributeByQuantity = (totalBaseCost <= 0);
+
+    let accumulatedShare = 0;
+
+    products.forEach((item, index) => {
+
+      const quantity = this.resolveQuantity(item);
+      const baseCost = typeof item.baseCostPrice === 'number' ? item.baseCostPrice : (item.costPrice || 0);
+
+      if (quantity <= 0) {
+        item.freightShare = 0;
+        item.freightShareUnit = 0;
+        item.costPrice = baseCost;
+        return;
+      }
+
+      const proportion = distributeByQuantity ? (quantity / totalQuantity) : ((baseCost * quantity) / totalBaseCost);
+
+      let shareTotal = freight * proportion;
+      let shareUnit = shareTotal / quantity;
+
+      if (index === products.length - 1) {
+        const remaining = freight - accumulatedShare;
+        if (Math.abs(remaining - shareTotal) > 0.01) {
+          shareTotal = remaining;
+          shareUnit = shareTotal / quantity;
+        }
+      }
+
+      item.freightShare = shareTotal;
+      item.freightShareUnit = shareUnit;
+      item.costPrice = Math.max(baseCost + shareUnit, 0);
+      accumulatedShare += shareTotal;
+    });
+  }
+
   private generateBalance() {
 
     this.data.balance = (this.data.balance || {});
-    
+    this.applyFreightDistribution();
+
     this.data.balance.totalItems = 0;
     this.data.balance.totalCost = 0;
     this.data.balance.totalPurchase = 0;
 
-    // Perform calculations for products
-
-    // console.log(this.data.products);
+    let totalWithFreight = 0;
 
     if (this.data.products && this.data.products.length > 0) {
 
@@ -785,19 +926,28 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
         const quantityToBuy = this.resolveQuantity(item);
         const quantityStock = item.quantity;
 
-        const totalPurchaseCost = (item.costPrice * quantityToBuy);
+        const baseCost = typeof item.baseCostPrice === 'number' ? item.baseCostPrice : (item.costPrice || 0);
+        const costWithFreight = item.costPrice || baseCost;
+
+        const baseTotal = baseCost * quantityToBuy;
+        const purchaseTotal = costWithFreight * quantityToBuy;
         const totalStockCost = (item.unitaryCost * quantityStock);
 
-        item.averageCost = ((totalPurchaseCost + totalStockCost) / (quantityToBuy + quantityStock) || 0);
-
-        // console.log(item.code, item.unitaryCost , quantityStock, " - ",item, totalPurchaseCost, totalStockCost, quantityToBuy, quantityStock, ' -- ', item.averageCost)
+        item.averageCost = ((purchaseTotal + totalStockCost) / (quantityToBuy + quantityStock) || 0);
 
         this.data.balance.totalItems += quantityToBuy;
-        this.data.balance.totalCost += totalPurchaseCost;
+        this.data.balance.totalCost += baseTotal;
+        totalWithFreight += purchaseTotal;
       }
-      
-      this.data.balance.totalPurchase += this.data.balance.totalCost;
     }
+
+    const freightValue = parseFloat(this.getFreightValue().toFixed(2));
+    const computedFreight = parseFloat((totalWithFreight - this.data.balance.totalCost).toFixed(2));
+    const freightDisplay = freightValue > 0 ? freightValue : Math.max(computedFreight, 0);
+
+    this.data.balance.freight = freightDisplay;
+    this.data.freightValue = freightDisplay;
+    this.data.balance.totalPurchase = this.data.balance.totalCost + freightDisplay;
 
     // Perform calculations for financial
 
@@ -859,6 +1009,14 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
           quantity: this.resolveQuantity(item)
         };
 
+        if (typeof item.freightShare === 'number') {
+          obj.freightShare = item.freightShare;
+        }
+
+        if (typeof item.freightShareUnit === 'number') {
+          obj.freightShareUnit = item.freightShareUnit;
+        }
+
         if (item.serialNumber) {
           obj.serialNumber = item.serialNumber;
         }
@@ -902,6 +1060,8 @@ export class PurchasesRegisterComponent implements OnInit, OnDestroy {
     if (this.data.balance) {
       response.balance.total = this.data.balance.totalPurchase;
     }
+
+    response.freight = this.data.freightValue || 0;
 
     if (this.data.attachment) {
       response.attachment = this.data.attachment;
