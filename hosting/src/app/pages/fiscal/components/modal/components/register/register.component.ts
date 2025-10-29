@@ -1087,15 +1087,17 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
 
         response.emitente = { cpfCnpj: Utilities.cnpjFiscal };
 
-        if (settingsData.destinyType != "0") {
-          response.codigoIdentificacaoDestino = settingsData.destinyType;
-        }
+      if (settingsData.destinyType != "0") {
+        response.codigoIdentificacaoDestino = settingsData.destinyType;
+      }
+
+      response.intermediador = parseInt(settingsData.intermediador) || 0;
 
 
-        if (settingsData.modalidadeFrete && settingsData.modalidadeFrete != "9") {
-          response.transporte = {
-            modalidadeFrete: settingsData.modalidadeFrete || "9"
-          };
+      if (settingsData.modalidadeFrete && settingsData.modalidadeFrete != "9") {
+        response.transporte = {
+          modalidadeFrete: settingsData.modalidadeFrete || "9"
+        };
           const carrier = settingsData.carrier || {};
 
           if (carrier.cpfCnpj && carrier.razaoSocial) {
@@ -1120,8 +1122,6 @@ export class RegisterNfComponent implements OnInit, OnDestroy, OnChanges {
               response.transporte.transportadora.uf = carrier.uf.trim();
             }
           }
-
-          response.intermediador = parseInt(settingsData.intermediador) || 0;
         }
 
         if (settingsData.volumes.quantidade > 0 && settingsData.volumes.pesoLiquido > 0 && settingsData.volumes.pesoBruto > 0) {
