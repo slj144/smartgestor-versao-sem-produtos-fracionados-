@@ -802,6 +802,10 @@ export class ServiceOrdersService {
       collection.where(settings.where);
     }
 
+    if (settings.or) {
+      collection.or(settings.or);
+    }
+
     if ((settings.start != undefined) && (settings.start >= 0)) {
       collection.startAfter(settings.start);
     }

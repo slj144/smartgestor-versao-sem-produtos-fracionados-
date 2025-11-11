@@ -62,32 +62,50 @@ export class VehiclesSelectorComponent implements OnInit, OnDestroy {
 
     return (new Promise<IRegistersVehicles[]>((resolve, reject) => {
 
-      const value = $$(this.searchBar.nativeElement).find('input').val().toLowerCase(); 
+      const rawValue = $$(this.searchBar.nativeElement).find('input').val();
+      const value = (rawValue || '').toString().trim();
 
       if (value != '') {
+
+        this.onCheckSearchBar(value);
 
         if (!settings) {
           settings = { where: [] };
         }
+
+        if (!settings.where) {
+          settings.where = [];
+        }
         
+        const likeValue = new RegExp(value, 'gi');
+        const isWorkshopInstance = Utilities.isWorkshopInstance;
+        let useFlexSearch = false;
+
         if (this.searchBy == 'PLATE') {
-          settings.where.push({ field: 'plate', operator: 'like', value: new RegExp(value, 'gi') });
+          if (isWorkshopInstance) {
+            settings.where.push({ field: 'plate', operator: 'like', value: likeValue });
+            settings.where.push({ field: 'model', operator: 'like', value: likeValue });
+            settings.where.push({ field: 'proprietary.name', operator: 'like', value: likeValue });
+            useFlexSearch = true;
+          } else {
+            settings.where.push({ field: 'plate', operator: 'like', value: likeValue });
+          }
         }
 
         if (this.searchBy == 'CODE') {
-          settings.where.push({ field: 'code', operator: '=', value: parseInt(value) });
+          const numericValue = parseInt(value.replace(/\.|\/|\-/g,''));
+          settings.where.push({ field: 'code', operator: '=', value: numericValue });
         }
 
         this.loading = true;
-
-        this.vehiclesService.query(settings.where, false, false, false, false).then((data) => {
+        this.vehiclesService.query(settings.where, false, useFlexSearch, false, false).then((data) => {
 
           $$(data).map((key, item) => {
             if (item._isDisabled) { data.splice(key, 1) }
           });
 
           this.recordsData = data;
-          this.searchText = value;
+          this.searchText = value.toLowerCase();
     
           this.loading = false;
           resolve(data);

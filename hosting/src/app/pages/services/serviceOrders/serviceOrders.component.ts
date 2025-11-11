@@ -151,20 +151,35 @@ export class ServiceOrdersComponent implements OnInit, OnDestroy{
   public onSearch(event) {
 
     const value = event.value;    
+    const operatorFilter = { filterDataPerOperator: this.permissions?.filterDataPerOperator };
+    const isWorkshopInstance = Utilities.isWorkshopInstance;
 
     if (value != '') {
 
-      const where = [];
+      this.queryClauses = [];
 
       if (!isNaN(parseInt(value))) {
-        where.push({ field: 'code', operator: '=', value: parseInt(value) });
-      } else {
-        where.push({ field: 'customer.name', operator: 'like', value: new RegExp(value, 'gi') });
+        this.queryClauses.push({ field: 'code', operator: '=', value: parseInt(value) });
+        this.serviceOrdersService.query(this.queryClauses, true, false, false, true, 0, operatorFilter);
+        return;
       }
 
-      this.serviceOrdersService.query(where, true, false, false, true, 0);
+      const likeValue = new RegExp(value, 'gi');
+
+      if (isWorkshopInstance) {
+        this.queryClauses.push({ field: 'customer.name', operator: 'like', value: likeValue });
+        this.queryClauses.push({ field: 'vehicle.plate', operator: 'like', value: likeValue });
+        this.queryClauses.push({ field: 'vehicle.model', operator: 'like', value: likeValue });
+        this.queryClauses.push({ field: 'vehicle.proprietary.name', operator: 'like', value: likeValue });
+        this.serviceOrdersService.query(this.queryClauses, true, true, false, true, 0, operatorFilter);
+      } else {
+        this.queryClauses.push({ field: 'customer.name', operator: 'like', value: likeValue });
+        this.serviceOrdersService.query(this.queryClauses, true, false, false, true, 0, operatorFilter);
+      }
+
     } else {
-      this.serviceOrdersService.query([]);
+      this.queryClauses = [];
+      this.serviceOrdersService.query(this.queryClauses, true, false, false, true, 0, operatorFilter);
     }
   }
 

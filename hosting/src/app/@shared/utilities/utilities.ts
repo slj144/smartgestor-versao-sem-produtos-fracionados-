@@ -80,6 +80,16 @@ export class Utilities {
     return ProjectSettings.companySettings().profile && ProjectSettings.companySettings().profile.fiscal ? ProjectSettings.companySettings().profile.fiscal.active : false;
   }
 
+  public static get isWorkshopInstance(): boolean {
+    const profile: any = Utilities.companyProfile || {};
+    const profileName = (profile?.name || profile?.profileName || '').toLowerCase();
+    const hasVehicles = profile?.registers?.components?.vehicles?.active;
+    const hasServices = profile?.registers?.components?.services?.active;
+    const hasServiceOrders = profile?.serviceOrders?.active;
+    const heuristicMatch = !!(hasVehicles && (hasServices || hasServiceOrders));
+    return profileName.includes('mechanics') || profileName.includes('mechanic') || profileName.includes('oficina') || heuristicMatch;
+  }
+
   public static get operator() {
 
     const data = {

@@ -69,6 +69,7 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   public onSearch(event: any) {
 
     const value = event.value;
+    const isWorkshopInstance = Utilities.isWorkshopInstance;
     
     if (value != '') {
 
@@ -76,11 +77,20 @@ export class VehiclesComponent implements OnInit, OnDestroy {
       
       if (!isNaN(parseInt(value))) {
         this.queryClauses.push({ field: 'code', operator: '=', value: parseInt(value) });
-      } else {
-        this.queryClauses.push({ field: 'plate', operator: 'like', value: new RegExp(value, 'gi') });
+        this.vehiclesService.query(this.queryClauses, true, false);
+        return;
       }
 
-      this.vehiclesService.query(this.queryClauses, true, false);
+      if (isWorkshopInstance) {
+        this.queryClauses.push({ field: 'plate', operator: 'like', value: new RegExp(value, 'gi') });
+        this.queryClauses.push({ field: 'model', operator: 'like', value: new RegExp(value, 'gi') });
+        this.queryClauses.push({ field: 'proprietary.name', operator: 'like', value: new RegExp(value, 'gi') });
+        this.vehiclesService.query(this.queryClauses, true, true);
+      } else {
+        this.queryClauses.push({ field: 'plate', operator: 'like', value: new RegExp(value, 'gi') });
+        this.vehiclesService.query(this.queryClauses, true, false);
+      }
+
     } else {
       this.queryClauses = [];
       this.vehiclesService.query(null, true, false, true, true,  { orderBy: this.order });
@@ -212,4 +222,3 @@ export class VehiclesComponent implements OnInit, OnDestroy {
   }
 
 }
-
