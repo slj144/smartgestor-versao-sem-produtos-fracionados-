@@ -23,8 +23,22 @@
                 <div class="col-12 form-group">
                   <label>{{ translate._general.form.store.title }}</label>
 
-                  <select class="form-control" formControlName="store">
+                  <select class="form-control" formControlName="store" (change)="onStoreChange()">
                     <option *ngFor="let item of settings.stores" value="{{ item._id }}">{{ item.name }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Filtro de conta bancária (exibido apenas no relatório de transações bancárias) -->
+              <div class="row" *ngIf="settings.model.id == 'bankTransactions'">
+                <div class="col-12 form-group">
+                  <label>{{ translate._general.form.bankAccount.title }}</label>
+
+                  <select class="form-control" formControlName="bankAccount">
+                    <option value="##all##">{{ translate._general.form.bankAccount.list.all }}</option>
+                    <option *ngFor="let account of bankAccounts" [value]="account.code">
+                      {{ account.code }} - {{ account.name }}
+                    </option>
                   </select>
                 </div>
               </div>

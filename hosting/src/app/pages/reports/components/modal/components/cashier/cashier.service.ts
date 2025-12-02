@@ -1811,8 +1811,15 @@ export class CashierReportsService {
 
       const productGross = products.reduce((sum, prod) => {
         const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
-        const basePrice = safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0);
-        return sum + Math.max(0, basePrice * quantity);
+        const salePrice = safeNumber(prod?.salePrice ?? 0);
+        const unitaryPrice = safeNumber(prod?.unitaryPrice ?? 0);
+        const effectiveBasePrice = (() => {
+          if (salePrice > 0 && unitaryPrice > 0) {
+            return Math.max(salePrice, unitaryPrice);
+          }
+          return unitaryPrice > 0 ? unitaryPrice : salePrice;
+        })();
+        return sum + Math.max(0, effectiveBasePrice * quantity);
       }, 0);
 
       const serviceGross = services.reduce((sum, svc) => {
@@ -1832,7 +1839,15 @@ export class CashierReportsService {
 
       products.forEach((prod) => {
         const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
-        const gross = Math.max(0, safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0) * quantity);
+        const salePrice = safeNumber(prod?.salePrice ?? 0);
+        const unitaryPrice = safeNumber(prod?.unitaryPrice ?? 0);
+        const effectiveBasePrice = (() => {
+          if (salePrice > 0 && unitaryPrice > 0) {
+            return Math.max(salePrice, unitaryPrice);
+          }
+          return unitaryPrice > 0 ? unitaryPrice : salePrice;
+        })();
+        const gross = Math.max(0, effectiveBasePrice * quantity);
         const directDiscount = Math.max(0, safeNumber(prod?.discount));
         const baseAfterDirect = Math.max(0, gross - directDiscount);
         const globalShare = productGross > 0 ? productGlobalShareTotal * (gross / productGross) : 0;

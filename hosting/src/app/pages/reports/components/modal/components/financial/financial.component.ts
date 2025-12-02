@@ -15,6 +15,7 @@ import { BillsToPayCategoriesService } from '@pages/registers/_aggregates/financ
 import { BillsToReceiveCategoriesService } from '@pages/registers/_aggregates/financial/bills-to-receive-categories/bills-to-receive-categories.service';
 import { CollaboratorsService } from '@pages/registers/collaborators/collaborators.service';
 import { ProductDepartmentsService } from '@pages/registers/_aggregates/stock/product-departments/product-departments.service';
+import { IFinancialBankAccount } from '@shared/interfaces/IFinancialBankAccount';
 
 @Component({
   selector: 'financial-report',
@@ -38,6 +39,7 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
   public billsToReceiveCategories: any[] = [];
   public collaborators: any[] = []; // 🎯 ADICIONADO: Array para armazenar colaboradores
   public departments: any[] = [];
+  public bankAccounts: IFinancialBankAccount[] = [];
   public isMatrix = Utilities.isMatrix;
 
   private layerComponent: any;
@@ -332,6 +334,9 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
     if (this.settings.model.id == 'commissions') {
       this.onGetCollaborators();
     }
+    if (this.settings.model.id == 'bankTransactions') {
+      this.onGetBankAccounts();
+    }
 
     setTimeout(() => { this.loading = false }, 1000);
   }
@@ -444,12 +449,18 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
 
     if (model.id == 'bankTransactions') {
 
+      const where: any[] = [
+        { field: 'registerDate', operator: '>=', value: filter.period.start },
+        { field: 'registerDate', operator: '<=', value: filter.period.end },
+        { field: 'owner', operator: '=', value: filter.store._id }
+      ];
+
+      if (filter.bankAccount) {
+        where.push({ field: 'bankAccount.code', operator: '=', value: filter.bankAccount });
+      }
+
       this.financialReportsService.getBankTransactions({
-        where: [
-          { field: 'registerDate', operator: '>=', value: filter.period.start },
-          { field: 'registerDate', operator: '<=', value: filter.period.end },
-          { field: 'owner', operator: '=', value: filter.store._id }
-        ],
+        where,
         orderBy: { code: 1 },
         data: { type: this.typeActived }
       }).then((data) => {
@@ -555,6 +566,10 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
       this.formFilters.addControl('types', new FormControl(this.settings.types[0].id, Validators.required));
     }
 
+    if (this.settings.model.id == 'bankTransactions') {
+      this.formFilters.addControl('bankAccount', new FormControl("##all##"));
+    }
+
     if (this.typeActived == '' && this.settings.fields['default']) {
       this.typeActived = 'default';
     }
@@ -610,6 +625,51 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
         });
       }
     });
+  }
+
+  public onGetBankAccounts(store: string = null) {
+    if (this.settings.model.id !== 'bankTransactions' || !this.formFilters) {
+      return;
+    }
+
+    const selectedStore = store ?? this.formFilters.get('store')?.value;
+    const control = this.formFilters.get('bankAccount');
+
+    if (!selectedStore) {
+      this.bankAccounts = [];
+      control?.setValue('##all##');
+      return;
+    }
+
+    this.financialReportsService.listBankAccounts(selectedStore).then((accounts) => {
+      this.bankAccounts = accounts || [];
+      const currentValue = control?.value;
+      if (currentValue && currentValue !== '##all##') {
+        const exists = this.bankAccounts.some(acc => String(acc.code) === String(currentValue));
+        if (!exists) {
+          control?.setValue('##all##');
+        }
+      }
+    }).catch((error) => {
+      console.error('Erro ao buscar contas bancárias para relatório:', error);
+      this.bankAccounts = [];
+      control?.setValue('##all##');
+    });
+  }
+
+  public onStoreChange() {
+    const storeId = this.formFilters?.get('store')?.value;
+    if (!storeId) {
+      return;
+    }
+
+    if (this.settings.model.id == 'commissions') {
+      this.onGetCollaborators(storeId);
+    }
+
+    if (this.settings.model.id == 'bankTransactions') {
+      this.onGetBankAccounts(storeId);
+    }
   }
 
   // Utility Methods
@@ -776,6 +836,10 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
     // 🎯 IMPORTANTE: Não processar collaborator se for "##all##"
     if (filter.collaborator === "##all##") {
       delete filter.collaborator;
+    }
+
+    if (filter.bankAccount === "##all##") {
+      delete filter.bankAccount;
     }
 
     return filter;

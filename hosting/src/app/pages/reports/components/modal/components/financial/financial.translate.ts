@@ -14,6 +14,12 @@ export class ReportsFinancesTranslate {
           store: {
             title: 'Loja'
           },
+          bankAccount: {
+            title: 'Conta Bancária',
+            list: {
+              all: 'Todas as Contas'
+            }
+          },
           period: {
             title: 'Período',
             label: {
@@ -371,6 +377,12 @@ export class ReportsFinancesTranslate {
         form: {
           store: {
             title: 'Store'
+          },
+          bankAccount: {
+            title: 'Bank Account',
+            list: {
+              all: 'All Accounts'
+            }
           },
           period: {
             title: 'Period',

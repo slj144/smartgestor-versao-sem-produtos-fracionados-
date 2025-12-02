@@ -7,6 +7,7 @@ import { CashierReportsService } from "../cashier/cashier.service";
 // Interfaces
 import { IFinancialBillToPay, EFinancialBillToPayStatus } from '@shared/interfaces/IFinancialBillToPay';
 import { IFinancialBillToReceive, EFinancialBillToReceiveStatus } from '@shared/interfaces/IFinancialBillToReceive';
+import { IFinancialBankAccount } from '@shared/interfaces/IFinancialBankAccount';
 import { ICollection } from "@itools/interfaces/ICollection";
 
 // Types
@@ -125,6 +126,40 @@ export class FinancialReportsService {
       });
 
       return this.treatBankTransactions(data, null);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * Busca as contas bancárias da filial selecionada para alimentar o filtro do relatório.
+   * Mantém a mesma ordenação usada na tela de contas (códigos especiais primeiro).
+   */
+  public async listBankAccounts(ownerId: string): Promise<IFinancialBankAccount[]> {
+    try {
+      const collection = this.iToolsService.database().collection('FinancialBankAccounts');
+      collection.where([
+        { field: 'owner', operator: '=', value: ownerId }
+      ]);
+      collection.orderBy({ code: 1 });
+
+      const response = await collection.get();
+      const accounts: IFinancialBankAccount[] = [];
+
+      response.docs.forEach((doc) => {
+        const raw = doc.data();
+        accounts.push({
+          ...raw,
+          code: Utilities.prefixCode(raw.code)
+        });
+      });
+
+      const defaults = accounts.filter(acc => String(acc.code ?? '').startsWith('@'))
+        .sort((a, b) => String(a.code).localeCompare(String(b.code)));
+      const customs = accounts.filter(acc => !String(acc.code ?? '').startsWith('@'))
+        .sort((a, b) => String(a.code).localeCompare(String(b.code)));
+
+      return [...defaults, ...customs];
     } catch (error) {
       return Promise.reject(error);
     }
@@ -1035,8 +1070,15 @@ export class FinancialReportsService {
 
       const productGross = products.reduce((sum, prod) => {
         const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
-        const basePrice = safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0);
-        return sum + Math.max(0, basePrice * quantity);
+        const salePrice = safeNumber(prod?.salePrice ?? 0);
+        const unitaryPrice = safeNumber(prod?.unitaryPrice ?? 0);
+        const effectiveBasePrice = (() => {
+          if (salePrice > 0 && unitaryPrice > 0) {
+            return Math.max(salePrice, unitaryPrice);
+          }
+          return unitaryPrice > 0 ? unitaryPrice : salePrice;
+        })();
+        return sum + Math.max(0, effectiveBasePrice * quantity);
       }, 0);
 
       const serviceGross = services.reduce((sum, svc) => {
@@ -1056,7 +1098,15 @@ export class FinancialReportsService {
 
       products.forEach((prod) => {
         const quantity = safeNumber(prod?.quantity || prod?.selectedItems || 1);
-        const gross = Math.max(0, safeNumber(prod?.salePrice ?? prod?.unitaryPrice ?? 0) * quantity);
+        const salePrice = safeNumber(prod?.salePrice ?? 0);
+        const unitaryPrice = safeNumber(prod?.unitaryPrice ?? 0);
+        const effectiveBasePrice = (() => {
+          if (salePrice > 0 && unitaryPrice > 0) {
+            return Math.max(salePrice, unitaryPrice);
+          }
+          return unitaryPrice > 0 ? unitaryPrice : salePrice;
+        })();
+        const gross = Math.max(0, effectiveBasePrice * quantity);
         const directDiscount = Math.max(0, safeNumber(prod?.discount));
         const baseAfterDirect = Math.max(0, gross - directDiscount);
         const globalShare = productGross > 0 ? productGlobalShareTotal * (gross / productGross) : 0;
