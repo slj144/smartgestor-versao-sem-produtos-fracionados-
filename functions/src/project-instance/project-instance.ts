@@ -123,6 +123,12 @@ export class ProjectInstance {
           language: language,
           timezone: timezone,
           country: country,
+          workshop: (() => {
+            if (!body.workshop || typeof body.workshop !== "object") {
+              return {};
+            }
+            return body.workshop;
+          })(),
           createdAt: iTools.FieldValue.date("America/Sao_Paulo") // DATA DE CRIAÇÃO
         };
 
@@ -587,6 +593,74 @@ export class ProjectInstance {
         error: "Internal error: " + error.message
       });
     }
+  }
+
+  public static updateInstanceSettings(request: any, response: any) {
+
+    Functions.parseRequestBody(request);
+
+    const body = request.body || {};
+    const secretKey = body.secretKey;
+
+    if (secretKey != "1da392a6-89d2-3304-a8b7-959572c7e44e") {
+      response.send({
+        status: false,
+        error: "SecretKey is Invalid"
+      });
+      return;
+    }
+
+    const projectId = body.projectId;
+    if (!projectId) {
+      response.send({
+        status: false,
+        error: "Missing required field: projectId"
+      });
+      return;
+    }
+
+    const updates: any = {};
+
+    const allowedFields = ["currency", "language", "timezone", "country"];
+    allowedFields.forEach((field) => {
+      if (body[field] !== undefined) {
+        updates[field] = body[field];
+      }
+    });
+
+    if (body.workshop && typeof body.workshop === "object") {
+      updates.workshop = body.workshop;
+    }
+
+    if (Object.keys(updates).length === 0) {
+      response.send({
+        status: false,
+        error: "No fields provided to update"
+      });
+      return;
+    }
+
+    const managerInstance = new iTools();
+    managerInstance.initializeApp({
+      projectId: "projects-manager"
+    });
+
+    managerInstance.database().collection("Projects").doc(projectId).update(updates, { merge: true }).then(() => {
+      managerInstance.close();
+      response.send({
+        status: true,
+        data: {
+          projectId,
+          updates
+        }
+      });
+    }).catch((error) => {
+      managerInstance.close();
+      response.send({
+        status: false,
+        error: error.message
+      });
+    });
   }
 
   public static getProjectSettings(request: any, response: any, projectId: string) {
