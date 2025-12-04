@@ -150,6 +150,9 @@ export const setupMenu = (): IMenuOptions[] => {
 
   const companySettings = ProjectSettings.companySettings();
   const companyProfile = companySettings.profile;
+  const isMotoRentalEnabled = companySettings?.workshop?.motoRentalEnabled === true;
+  const instanceCountry = (companySettings?.country || companySettings?.profile?.country || '').toString().toUpperCase();
+  const allowMotoRental = isMotoRentalEnabled && instanceCountry === 'UK';
   const loginData = Utilities.currentLoginData; // Esta declaração permanece aqui
   const isDistributor = companyProfile?.name?.toLowerCase()?.includes('distributor');
 
@@ -207,6 +210,10 @@ export const setupMenu = (): IMenuOptions[] => {
         const subMenu = [];
 
         subMenu.push({ id: 'serviceOrders', title: t.services.subItems.serviceOrders.title, icon: 'layers-outline', route: `/${loginData.projectId}/servicos/ordens-de-servico` });
+
+        if (allowMotoRental) {
+          subMenu.push({ id: 'motoRental', title: t.services.subItems.motoRental.title, icon: 'car-outline', route: `/${loginData.projectId}/servicos/aluguel-de-motos` });
+        }
 
         return subMenu;
       })()

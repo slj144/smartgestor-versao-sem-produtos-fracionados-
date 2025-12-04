@@ -1,0 +1,157 @@
+<section class="moto-rental-fleet">
+  <header class="moto-rental-fleet__header">
+    <div>
+      <h2>{{ translate.fleet.title }}</h2>
+      <p>{{ translate.subtitle }}</p>
+    </div>
+    <div class="actions">
+      <button type="button" (click)="refresh()">{{ translate.fleet.actions.refresh }}</button>
+      <button type="button" class="primary" (click)="openCreate()">{{ translate.fleet.actions.addVehicle }}</button>
+    </div>
+  </header>
+
+  <form [formGroup]="filtersForm" class="moto-rental-fleet__filters">
+    <input type="search" placeholder="{{ translate.fleet.filters.search.placeholder }}" formControlName="search" />
+
+    <label>
+      {{ translate.fleet.filters.status.label }}
+      <select formControlName="status">
+        <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+    </label>
+
+    <label>
+      {{ translate.fleet.filters.vehicleType.label }}
+      <select formControlName="vehicleType">
+        <option *ngFor="let option of vehicleTypeOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+    </label>
+  </form>
+
+  <div class="moto-rental-fleet__table">
+    <div class="table__header">
+      <span>{{ translate.fleet.table.plate }}</span>
+      <span>{{ translate.fleet.table.model }}</span>
+      <span>{{ translate.fleet.table.status }}</span>
+      <span>{{ translate.fleet.table.mileage }}</span>
+      <span>{{ translate.fleet.table.insurance }}</span>
+      <span>{{ translate.fleet.table.actions }}</span>
+    </div>
+
+    <div class="table__body" *ngIf="(vehicles$ | async) as vehicles">
+      <div class="table__row" *ngFor="let vehicle of vehicles; trackBy: trackVehicle">
+        <span class="plate">{{ vehicle.plate }}</span>
+        <span>{{ vehicle.model || '—' }}</span>
+        <span><span class="badge" [ngClass]="vehicle.status">{{ translate.fleet.badge[vehicle.status] || vehicle.status }}</span></span>
+        <span>{{ vehicle.mileage || 0 }} km</span>
+        <span>{{ insuranceStatus(vehicle) }}</span>
+        <span class="row-actions">
+          <button type="button" (click)="openEdit(vehicle)">Editar</button>
+        </span>
+      </div>
+
+      <div class="table__empty" *ngIf="vehicles.length === 0">
+        {{ translate.fleet.empty }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="moto-rental-fleet__modal" *ngIf="editorVisible">
+  <div class="modal-card">
+    <header>
+      <h3>{{ editingVehicle ? 'Editar veículo' : 'Novo veículo' }}</h3>
+      <button type="button" (click)="closeEditor()">×</button>
+    </header>
+
+    <form [formGroup]="vehicleForm" (ngSubmit)="submitVehicle()">
+      <div class="form-grid">
+        <label>
+          Placa *
+          <input formControlName="plate" placeholder="AB24 CDE" maxlength="8" />
+          <small *ngIf="plateInvalid">Use o formato UK: LLNN LLL.</small>
+        </label>
+
+        <label>
+          Tipo
+          <select formControlName="vehicleType">
+            <option value="motorcycle">{{ translate.fleet.filters.vehicleType.motorcycle }}</option>
+            <option value="van">{{ translate.fleet.filters.vehicleType.van }}</option>
+          </select>
+        </label>
+
+        <label>
+          Status
+          <select formControlName="status">
+            <option value="available">{{ translate.fleet.badge.available }}</option>
+            <option value="reserved">{{ translate.fleet.badge.reserved }}</option>
+            <option value="rented">{{ translate.fleet.badge.rented }}</option>
+            <option value="maintenance">{{ translate.fleet.badge.maintenance }}</option>
+          </select>
+        </label>
+
+        <label>
+          Modelo
+          <input formControlName="model" />
+        </label>
+
+        <label>
+          Marca
+          <input formControlName="make" />
+        </label>
+
+        <label>
+          Ano
+          <input type="number" formControlName="year" min="1970" max="2099" />
+        </label>
+
+        <label>
+          KM
+          <input type="number" formControlName="mileage" min="0" />
+        </label>
+
+        <label>
+          VIN
+          <input formControlName="vin" />
+        </label>
+
+        <label>
+          Seguro vence em
+          <input type="date" formControlName="insuranceExpiry" />
+        </label>
+
+        <label>
+          Road tax vence em
+          <input type="date" formControlName="roadTaxExpiry" />
+        </label>
+
+        <label>
+          Diária (£)
+          <input type="number" formControlName="dailyRate" min="0" step="1" />
+        </label>
+
+        <label>
+          Semanal (£)
+          <input type="number" formControlName="weeklyRate" min="0" step="1" />
+        </label>
+
+        <label>
+          Depósito (£)
+          <input type="number" formControlName="deposit" min="0" step="1" />
+        </label>
+
+        <label class="notes">
+          Observações
+          <textarea formControlName="notes" rows="3"></textarea>
+        </label>
+      </div>
+
+      <footer class="form-actions">
+        <button type="button" class="ghost" (click)="closeEditor()">Cancelar</button>
+        <button type="submit" [disabled]="vehicleForm.invalid || savingVehicle">
+          {{ savingVehicle ? 'Salvando...' : (editingVehicle ? 'Atualizar' : 'Cadastrar') }}
+        </button>
+      </footer>
+    </form>
+  </div>
+</section>

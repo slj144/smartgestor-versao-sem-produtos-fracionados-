@@ -15,6 +15,10 @@ import { SharedModule } from '@shared/shared.module';
         path: 'ordens-de-servico',
         loadChildren: () => import('./serviceOrders/serviceOrders.module').then(m => m.ServiceOrdersModule)
       },
+      {
+        path: 'aluguel-de-motos',
+        loadChildren: () => import('./moto-rental/moto-rental.module').then(m => m.MotoRentalModule)
+      },
       { path: '', redirectTo: 'ordens-de-servico', pathMatch: 'full' },
       { path: '**', redirectTo: 'ordens-de-servico', pathMatch: 'full' }
     ])

@@ -34,6 +34,10 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
         language: "pt_BR",
         currency: "BRL",
         timezone: "America/Sao_Paulo",
+        country: "BR",
+        workshop: {
+            motoRentalEnabled: false
+        },
         profile: {
             name: "Commerce",
             data: {}
@@ -178,6 +182,7 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
         console.log('Super Admin carregado!');
         this.buscarInstancias();
         this.carregarUpdates();
+        this.onCountryChange();
 
         // Iniciar monitor se estiver na aba
         if (this.abaAtiva === 'monitor') {
@@ -283,7 +288,8 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
                             currency: data.currency,
                             language: data.language,
                             timezone: data.timezone,
-                            country: data.country,
+                            country: data.country || "BR",
+                            workshop: data.workshop || {},
                             isPaid: data.isPaid !== undefined ? data.isPaid : true,
                             createdAt: data.createdAt || null,
                             hasCRM: false // Inicializar como false
@@ -488,6 +494,14 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             profileData.fiscal = { active: true };
         }
 
+        this.novaInstancia.country = (this.novaInstancia.country || "BR").toUpperCase();
+        if (!this.novaInstancia.workshop) {
+            this.novaInstancia.workshop = { motoRentalEnabled: false };
+        }
+        if (this.novaInstancia.country !== 'UK') {
+            this.novaInstancia.workshop.motoRentalEnabled = false;
+        }
+
         this.novaInstancia.profile.name = profileName;
         this.novaInstancia.profile.data = profileData;
 
@@ -540,67 +554,99 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
 
     // Atualiza instância existente
     async atualizarInstancia() {
+        const instance = new iTools();
+        let managerInstance: iTools | null = null;
         try {
             this.carregando = true;
             this.mensagem = "";
 
             const projectId = this.novaInstancia.projectId;
-            const instance = new iTools();
+            const countryCode = (this.novaInstancia.country || "BR").toUpperCase();
 
-            // ⭐ ADICIONE CREDENCIAIS DE ADMIN
-            await instance.initializeApp({
-                projectId,
-                email: "iparttsdefault@gmail.com",
-                password: "21211212"
+            this.novaInstancia.country = countryCode;
+            if (!this.novaInstancia.workshop) {
+                this.novaInstancia.workshop = { motoRentalEnabled: false };
+            }
+            if (countryCode !== 'UK') {
+                this.novaInstancia.workshop.motoRentalEnabled = false;
+            }
+
+            try {
+                await instance.initializeApp({
+                    projectId,
+                    email: "iparttsdefault@gmail.com",
+                    password: "21211212"
+                });
+
+                const storeDoc = await instance.database()
+                    .collection("Stores")
+                    .doc("matrix")
+                    .get();
+
+                const dadosAtuais = storeDoc.data() || {};
+
+                const dadosAtualizados = {
+                    ...dadosAtuais,
+                    name: this.novaInstancia.stores[0].name || dadosAtuais.name || this.novaInstancia.companyName.toLowerCase(),
+                    billingName: this.novaInstancia.stores[0].billingName || dadosAtuais.billingName || this.novaInstancia.companyName.toUpperCase(),
+                    limitUsers: this.novaInstancia.stores[0].limitUsers || dadosAtuais.limitUsers || 10,
+                    limitDevices: this.novaInstancia.stores[0].limitDevices || dadosAtuais.limitDevices || 1,
+                    isPaid: true,
+                    contacts: {
+                        email: this.novaInstancia.stores[0].contacts?.email || dadosAtuais.contacts?.email || "",
+                        whatsapp: this.novaInstancia.stores[0].contacts?.whatsapp || dadosAtuais.contacts?.whatsapp || "",
+                        phone: this.novaInstancia.stores[0].contacts?.phone || dadosAtuais.contacts?.phone || ""
+                    },
+                    address: {
+                        postalCode: this.novaInstancia.stores[0].address?.postalCode || dadosAtuais.address?.postalCode || "",
+                        city: this.novaInstancia.stores[0].address?.city || dadosAtuais.address?.city || "",
+                        state: this.novaInstancia.stores[0].address?.state || dadosAtuais.address?.state || "",
+                        country: this.getCountryLabel(this.novaInstancia.country || dadosAtuais.address?.country || "BR"),
+                        addressLine: this.novaInstancia.stores[0].address?.addressLine || dadosAtuais.address?.addressLine || ""
+                    }
+                };
+
+                console.log('📝 Atualizando store com:', dadosAtualizados);
+
+                await instance.database()
+                    .collection("Stores")
+                    .doc("matrix")
+                    .update(dadosAtualizados);
+
+            } catch (storeError) {
+                console.warn('⚠️ Não foi possível atualizar dados da Store, seguindo com atualização global.', storeError);
+            } finally {
+                try { await instance.close(); } catch { }
+            }
+
+            managerInstance = new iTools();
+            await managerInstance.initializeApp({
+                projectId: "projects-manager",
+                email: environment.loginSettings.email,
+                password: environment.loginSettings.password,
+                encrypted: false
             });
 
-            // Busca dados atuais da store
-            const storeDoc = await instance.database()
-                .collection("Stores")
-                .doc("matrix")
-                .get();
+            await managerInstance.database()
+                .collection("Projects")
+                .doc(projectId)
+                .update({
+                    companyName: this.novaInstancia.companyName,
+                    currency: this.novaInstancia.currency,
+                    language: this.novaInstancia.language,
+                    timezone: this.novaInstancia.timezone,
+                    country: this.novaInstancia.country,
+                    workshop: this.novaInstancia.workshop
+                }, { merge: true });
 
-            const dadosAtuais = storeDoc.data() || {};
-
-            // ⭐ MESCLA dados novos com os existentes (evita perder dados)
-            const dadosAtualizados = {
-                ...dadosAtuais, // Mantém dados existentes
-                name: this.novaInstancia.stores[0].name || dadosAtuais.name || this.novaInstancia.companyName.toLowerCase(),
-                billingName: this.novaInstancia.stores[0].billingName || dadosAtuais.billingName || this.novaInstancia.companyName.toUpperCase(),
-                limitUsers: this.novaInstancia.stores[0].limitUsers || dadosAtuais.limitUsers || 10,
-                limitDevices: this.novaInstancia.stores[0].limitDevices || dadosAtuais.limitDevices || 1,
-                isPaid: true,
-                contacts: {
-                    email: this.novaInstancia.stores[0].contacts?.email || dadosAtuais.contacts?.email || "",
-                    whatsapp: this.novaInstancia.stores[0].contacts?.whatsapp || dadosAtuais.contacts?.whatsapp || "",
-                    phone: this.novaInstancia.stores[0].contacts?.phone || dadosAtuais.contacts?.phone || ""
-                },
-                address: {
-                    postalCode: this.novaInstancia.stores[0].address?.postalCode || dadosAtuais.address?.postalCode || "",
-                    city: this.novaInstancia.stores[0].address?.city || dadosAtuais.address?.city || "",
-                    state: this.novaInstancia.stores[0].address?.state || dadosAtuais.address?.state || "",
-                    country: "Brasil",
-                    addressLine: this.novaInstancia.stores[0].address?.addressLine || dadosAtuais.address?.addressLine || ""
-                }
-            };
-
-            console.log('📝 Atualizando store com:', dadosAtualizados);
-
-            // Atualiza a store
-            await instance.database()
-                .collection("Stores")
-                .doc("matrix")
-                .update(dadosAtualizados);
-
-            // ⭐ FECHAR A CONEXÃO É IMPORTANTE!
-            await instance.close();
+            await managerInstance.close();
+            managerInstance = null;
 
             this.mensagem = "✅ Instância atualizada com sucesso!";
             this.tipoMensagem = "sucesso";
             this.mostrarFormulario = false;
             this.carregando = false;
 
-            // Recarrega lista
             this.buscarInstancias();
 
         } catch (erro: any) {
@@ -609,11 +655,10 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             this.tipoMensagem = "erro";
             this.carregando = false;
 
-            // Tenta fechar a conexão mesmo com erro
-            try {
-                const instance = new iTools();
-                await instance.close();
-            } catch { }
+            try { await instance.close(); } catch { }
+            if (managerInstance) {
+                try { await managerInstance.close(); } catch { }
+            }
         }
     }
 
@@ -1155,6 +1200,10 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             language: "pt_BR",
             currency: "BRL",
             timezone: "America/Sao_Paulo",
+            country: "BR",
+            workshop: {
+                motoRentalEnabled: false
+            },
             profile: {
                 name: "Commerce",
                 data: {}
@@ -1183,6 +1232,8 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             }]
         };
 
+        this.onCountryChange();
+
         this.dadosAcesso.mostrar = false;
         this.mensagem = "";
         this.tipoModulo = 'commerce';
@@ -1190,6 +1241,34 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
         this.incluiCRM = false;
         this.editandoInstancia = false;
         this.instanciaEditando = null;
+    }
+
+    onCountryChange() {
+        if (!this.novaInstancia) {
+            return;
+        }
+
+        const code = (this.novaInstancia.country || "BR").toUpperCase();
+
+        if (!this.novaInstancia.workshop) {
+            this.novaInstancia.workshop = { motoRentalEnabled: false };
+        }
+
+        if (code !== 'UK' && this.novaInstancia.workshop.motoRentalEnabled) {
+            this.novaInstancia.workshop.motoRentalEnabled = false;
+        }
+
+        if (!this.novaInstancia.stores[0].address) {
+            this.novaInstancia.stores[0].address = {
+                postalCode: "",
+                city: "",
+                country: "",
+                state: "",
+                addressLine: ""
+            };
+        }
+
+        this.novaInstancia.stores[0].address.country = this.getCountryLabel(code);
     }
 
     // Volta para a lista de instâncias
@@ -1616,6 +1695,8 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             language: instancia.language || "pt_BR",
             currency: instancia.currency || "BRL",
             timezone: instancia.timezone || "America/Sao_Paulo",
+            country: (instancia.country || "BR"),
+            workshop: instancia.workshop ? { ...instancia.workshop } : { motoRentalEnabled: false },
             profile: {
                 name: instancia.profileName || "",
                 data: instancia.profile || {}
@@ -1638,11 +1719,13 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
                     postalCode: "",  // ⬅️ Deixa vazio mesmo
                     city: "",  // ⬅️ Deixa vazio mesmo
                     state: "",  // ⬅️ Deixa vazio mesmo
-                    country: "Brasil",
+                    country: this.getCountryLabel(instancia.country || "BR"),
                     addressLine: ""  // ⬅️ Deixa vazio mesmo
                 }
             }]
         };
+
+        this.onCountryChange();
 
         // Define o tipo de módulo baseado no profileName
         switch (instancia.profileName) {
@@ -1709,6 +1792,15 @@ export class SuperAdminComponent implements OnInit, OnDestroy {
             'GBP': '£'
         };
         return simbolos[currency] || 'R$';
+    }
+
+    getCountryLabel(code: string): string {
+        switch ((code || "BR").toUpperCase()) {
+            case 'UK': return 'United Kingdom';
+            case 'US': return 'United States';
+            case 'PT': return 'Portugal';
+            default: return 'Brasil';
+        }
     }
 
     getMoedaLabel(currency: string): string {

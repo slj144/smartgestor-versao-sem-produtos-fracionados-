@@ -45,6 +45,7 @@ export const menuTranslation = (language?: string): { [key: string]: { id: strin
         title: 'Serviços',
         subItems: {
           serviceOrders: { title: 'Ordens de serviço', route: '/servicos/ordens-de-servico' },
+          motoRental: { title: 'Aluguel de Motos', route: '/servicos/aluguel-de-motos' },
         }
       },
       stock: {
@@ -117,7 +118,8 @@ export const menuTranslation = (language?: string): { [key: string]: { id: strin
       services: {
         title: 'Services',
         subItems: {
-          serviceOrders: { title: 'Service Orders', route: '/services/service-orders' },
+          serviceOrders: { title: 'Service Orders', route: '/servicos/ordens-de-servico' },
+          motoRental: { title: 'Moto Rental', route: '/servicos/aluguel-de-motos' },
         }
       },
       stock: {

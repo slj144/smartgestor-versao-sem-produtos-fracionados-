@@ -75,7 +75,7 @@ const routes: Routes = [
       },
       {
         path: translation.service, canActivate: [PagesGuard], canActivateChild: [PagesGuard],
-        loadChildren: () => import('./pages/services/serviceOrders/serviceOrders.module').then(m => m.ServiceOrdersModule)
+        loadChildren: () => import('./pages/services/services.module').then(m => m.ServicesModule)
       },
       {
         path: translation.stock, canActivate: [PagesGuard], canActivateChild: [PagesGuard],

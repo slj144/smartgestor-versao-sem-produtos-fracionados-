@@ -1,0 +1,37 @@
+<section class="moto-rental-settings">
+  <header>
+    <h2>{{ translate.settings.title }}</h2>
+    <p>{{ translate.settings.description }}</p>
+  </header>
+
+  <div class="settings-grid">
+    <article>
+      <h3>{{ translate.settings.rates.title }}</h3>
+
+      <ul>
+        <li>
+          <span>{{ translate.settings.rates.daily }}</span>
+          <strong *ngIf="defaultRates.daily != null; else dashDaily">{{ defaultRates.daily | currency }}</strong>
+        </li>
+        <li>
+          <span>{{ translate.settings.rates.weekly }}</span>
+          <strong *ngIf="defaultRates.weekly != null; else dashWeekly">{{ defaultRates.weekly | currency }}</strong>
+        </li>
+        <li>
+          <span>{{ translate.settings.rates.deposit }}</span>
+          <strong *ngIf="defaultRates.deposit != null; else dashDeposit">{{ defaultRates.deposit | currency }}</strong>
+        </li>
+      </ul>
+
+      <ng-template #dashDaily>—</ng-template>
+      <ng-template #dashWeekly>—</ng-template>
+      <ng-template #dashDeposit>—</ng-template>
+    </article>
+
+    <article>
+      <h3>Region</h3>
+      <p>Feature enabled only for: <strong>{{ country }}</strong></p>
+      <p class="note">{{ translate.settings.vanNote }}</p>
+    </article>
+  </div>
+</section>

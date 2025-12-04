@@ -79,6 +79,10 @@ export class ProjectSettings {
         }
       });
     }
+    info.workshop = info.workshop || {};
+    if (info.workshop.motoRentalEnabled !== true) {
+      info.workshop.motoRentalEnabled = false;
+    }
     // Garante que instâncias com ordens de serviço possuam o registro de serviços
     // ativo nos cadastros. O único perfil que não utiliza este recurso é o
     // distribuidor.
@@ -118,6 +122,9 @@ export class ProjectSettings {
       currency: 'BRL',
       language: "pt_BR",
       timezone: "America/Sao_Paulo",
+      workshop: {
+        motoRentalEnabled: false
+      },
       profile: {
         dashboard: { active: true },
         crm: {

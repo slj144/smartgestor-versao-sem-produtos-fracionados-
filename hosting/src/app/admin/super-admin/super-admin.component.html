@@ -621,6 +621,28 @@
                                 <option value="en_US">🇺🇸 Inglês (EUA)</option>
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label>País / Região: *</label>
+                            <select [(ngModel)]="novaInstancia.country" name="country" (change)="onCountryChange()" required>
+                                <option value="BR">🇧🇷 Brasil</option>
+                                <option value="UK">🇬🇧 Reino Unido</option>
+                                <option value="US">🇺🇸 Estados Unidos</option>
+                                <option value="PT">🇵🇹 Portugal</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group workshop-toggle">
+                            <label class="fiscal-checkbox">
+                                <input type="checkbox" [(ngModel)]="novaInstancia.workshop.motoRentalEnabled"
+                                    name="motoRentalEnabled" [disabled]="novaInstancia.country !== 'UK'">
+                                <span>Habilitar módulo Aluguel de Motos (beta UK)</span>
+                            </label>
+                            <small>
+                                Disponível apenas para oficinas britânicas (país = Reino Unido). Mantido desligado para
+                                clientes brasileiros por padrão.
+                            </small>
+                        </div>
                     </div>
 
                     <!-- Contatos da Empresa -->

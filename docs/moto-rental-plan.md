@@ -17,6 +17,12 @@ Criar um módulo de **Aluguel de Motos** voltado para oficinas e lojas britânic
 4. **Regras financeiras**: tarifas diárias/semanais, cálculo automático de depósito/danos, integração opcional com módulo Financeiro.
 5. **Relatórios**: ocupação da frota, receita por período, alertas de manutenção/road tax/insurance.
 
+## Extensão para Vans
+- **Mesma base de código**: o módulo opera com o campo `vehicleType` (`motorcycle` ou `van`), permitindo compartilhar UI, contratos e integrações sem duplicar regras.
+- **Requisitos adicionais**: vans podem ter documentos específicos (ex.: `linkedVanOrderId`, seguro comercial) e tarifas distintas. Essas diferenças devem vir da tabela de tarifas (`MotoRentalRates`) ou de overrides por contrato.
+- **Restrições regionais**: mesmo com suporte a vans, o módulo continua liberado apenas quando `workshop.motoRentalEnabled` está ativo para instâncias do Reino Unido, evitando qualquer impacto em clientes do Brasil.
+- **Foco diferencial UK**: a oferta para oficinas britânicas inclui combos “Moto + Van courtesy” e alertas de logística levando em conta veículos acima de 3,5 toneladas quando `vehicleType === 'van'`.
+
 ## Requisitos não funcionais
 - Disponível apenas quando `settings.workshop.motoRentalEnabled === true` e `settings.profile.country === 'UK'` (ou outro critério regional).
 - Deve respeitar padrões de autenticação/autorização existentes (roles Mechanics/Manager).
@@ -80,3 +86,13 @@ Adicionar em `Settings/workshop`:
 3. **Testes e2e**: fluxo completo (cadastro veículo → reserva → fechamento com cobrança).
 4. **Piloto**: ativar para 1–2 oficinas no Reino Unido antes do rollout geral.
 5. **Docs/treinamento**: atualizar guia de oficinas e release notes destacando exclusividade por região.
+
+## Log de Implementação
+- **02/12/2025 – Backend scaffolded**: criado o módulo `functions/src/moto-rentals/` com handlers para veículos, contratos, reservas e disponibilidade. O acesso está protegido por `settings.workshop.motoRentalEnabled` + `profile.country === 'UK'`, garantindo zero impacto nos clientes brasileiros.
+- **Estrutura de dados**: veículos e contratos agora carregam `vehicleType` (para motos ou vans), histórico de status, vínculo com ordens de serviço/vans e cálculo básico de tarifas (diária/semanal + depósito).
+- **Próximos passos**: expor as novas functions no frontend (`MotoRentalModule`), criar componentes reutilizáveis para cadastro de vans e iniciar scripts de migração/seed para `MotoRentalVehicles`, `MotoRentalContracts` e `MotoRentalRates`.
+- **02/12/2025 – Frontend scaffolding**: criado o módulo Angular `pages/services/moto-rental/` com guard regional, serviço (`moto-rental.service.ts`) e componentes para Painel, Frota, Contratos e Configurações. A navegação só aparece para instâncias UK com `workshop.motoRentalEnabled`, mantendo clientes brasileiros intactos. O serviço consome as novas cloud functions e cacheia os registros de veículos/contratos para dashboards e futuros formulários (inclusive vans via `vehicleType`).
+- **04/12/2025 – CRUD de Frota**: habilitado formulário/modal de veículos no componente de Frota com validação da placa UK, suporte a motos/vans e integração direta com `motoRentalSaveVehicle`. A lista agora permite cadastrar/editar rapidamente status, tarifas (diária/semanal/depósito) e documentos (seguro/road tax), mantendo todo o fluxo protegido pelo guard regional.
+- **04/12/2025 – Configuração no Super Admin**: o painel `super-admin` passou a permitir selecionar o país da instância e ativar o flag `workshop.motoRentalEnabled` (exclusivo para Reino Unido) já na criação/edição. Assim conseguimos provisionar oficinas britânicas sem tocar manualmente nos documentos do `Projects`.
+- **04/12/2025 – Correção de navegação**: o menu “Aluguel de Motos” agora usa o mesmo caminho (`/servicos/aluguel-de-motos`) independentemente do idioma da instância, evitando redirecionar o usuário para “Ordens de Serviço” quando a UI estiver em inglês.
+- **04/12/2025 – Roteamento consolidado**: o path `/:tenant/servicos` passou a carregar `ServicesModule`, permitindo que Service Orders e Moto Rental convivam sob o mesmo menu sem conflitos. O `MotoRentalGuard` também ganhou logs e volta a redirecionar para OS quando o recurso não estiver habilitado.

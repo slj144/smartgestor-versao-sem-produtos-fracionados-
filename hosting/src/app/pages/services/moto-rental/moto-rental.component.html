@@ -1,0 +1,25 @@
+<section class="moto-rental">
+  <header class="moto-rental__header">
+    <div>
+      <p class="moto-rental__eyebrow">UK Exclusive</p>
+      <h1>{{ translate.title }}</h1>
+      <p class="moto-rental__subtitle">{{ translate.subtitle }}</p>
+    </div>
+  </header>
+
+  <nav class="moto-rental__tabs">
+    <a
+      *ngFor="let tab of tabs"
+      [routerLink]="[tab.route]"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: tab.route === 'painel' }"
+      class="moto-rental__tab"
+    >
+      {{ tab.label }}
+    </a>
+  </nav>
+
+  <section class="moto-rental__content">
+    <router-outlet></router-outlet>
+  </section>
+</section>

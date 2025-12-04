@@ -1,0 +1,42 @@
+<section class="moto-rental-contracts">
+  <header>
+    <h2>{{ translate.contracts.title }}</h2>
+    <div class="actions">
+      <button type="button" (click)="refresh()">{{ translate.contracts.actions.refresh }}</button>
+      <button type="button" class="primary">{{ translate.contracts.actions.newContract }}</button>
+    </div>
+  </header>
+
+  <form [formGroup]="filtersForm" class="filters">
+    <label>
+      {{ translate.contracts.table.status }}
+      <select formControlName="status">
+        <option *ngFor="let option of statusOptions" [value]="option.value">{{ option.label }}</option>
+      </select>
+    </label>
+  </form>
+
+  <div class="contracts-table">
+    <div class="contracts-table__header">
+      <span>{{ translate.contracts.table.vehicle }}</span>
+      <span>{{ translate.contracts.table.customer }}</span>
+      <span>{{ translate.contracts.table.period }}</span>
+      <span>{{ translate.contracts.table.status }}</span>
+      <span>{{ translate.contracts.table.deposit }}</span>
+    </div>
+
+    <div class="contracts-table__body" *ngIf="(contracts$ | async) as contracts">
+      <div class="contracts-table__row" *ngFor="let contract of contracts; trackBy: trackContract">
+        <span>{{ contract.vehicleId }}</span>
+        <span>{{ contract.customerId }}</span>
+        <span>{{ contract.startDate | date: 'shortDate' }} → {{ contract.endDate | date: 'shortDate' }}</span>
+        <span class="status" [ngClass]="contract.status">{{ translate.contracts.statusLabel[contract.status] }}</span>
+        <span>{{ contract.deposit || 0 | currency }}</span>
+      </div>
+
+      <div class="contracts-table__empty" *ngIf="contracts.length === 0">
+        {{ translate.contracts.empty }}
+      </div>
+    </div>
+  </div>
+</section>

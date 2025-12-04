@@ -1,0 +1,48 @@
+<section class="moto-rental-dashboard" *ngIf="(stats$ | async) as stats">
+  <div class="moto-rental-dashboard__cards">
+    <article class="moto-rental-dashboard__card">
+      <p class="label">{{ translate.dashboard.cards.totalVehicles.label }}</p>
+      <strong>{{ stats.totalVehicles }}</strong>
+    </article>
+
+    <article class="moto-rental-dashboard__card">
+      <p class="label">{{ translate.dashboard.cards.availableVehicles.label }}</p>
+      <strong>{{ stats.availableVehicles }}</strong>
+    </article>
+
+    <article class="moto-rental-dashboard__card">
+      <p class="label">{{ translate.dashboard.cards.reservedVehicles.label }}</p>
+      <strong>{{ stats.reservedVehicles }}</strong>
+    </article>
+
+    <article class="moto-rental-dashboard__card">
+      <p class="label">{{ translate.dashboard.cards.maintenanceVehicles.label }}</p>
+      <strong>{{ stats.maintenanceVehicles }}</strong>
+    </article>
+
+    <article class="moto-rental-dashboard__card">
+      <p class="label">{{ translate.dashboard.cards.vans.label }}</p>
+      <strong>{{ stats.vans }}</strong>
+    </article>
+  </div>
+
+  <div class="moto-rental-dashboard__schedule">
+    <header>
+      <h2>{{ translate.dashboard.scheduleTitle }}</h2>
+      <span>{{ stats.activeContracts }} active</span>
+    </header>
+
+    <ul *ngIf="(activeReservations$ | async) as reservations" class="schedule">
+      <li *ngFor="let reservation of reservations">
+        <div>
+          <p class="title">{{ reservation.vehicleId }}</p>
+          <p class="subtitle">{{ reservation.startDate | date: 'shortDate' }} → {{ reservation.endDate | date: 'shortDate' }}</p>
+        </div>
+        <span class="badge" [ngClass]="reservation.status">{{ reservation.status | titlecase }}</span>
+      </li>
+      <li *ngIf="reservations.length === 0" class="placeholder">
+        {{ translate.dashboard.emptySchedule }}
+      </li>
+    </ul>
+  </div>
+</section>

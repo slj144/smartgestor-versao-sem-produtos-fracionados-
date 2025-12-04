@@ -168,7 +168,8 @@ export class AuthService {
             currency: projectData.currency || 'BRL',
             language: projectData.language || "pt_BR",
             timezone: projectData.timezone || "America/Sao_Paulo",
-            profile: projectData.profile
+            profile: projectData.profile,
+            workshop: projectData.workshop || {}
           };
 
           // 🔥 Sincronizar CRM de profile.data.crm para profile.crm
@@ -214,7 +215,8 @@ export class AuthService {
             currency: res.data.data.currency || 'BRL',
             language: res.data.data.language || "pt_BR",
             timezone: res.data.data.timezone || "America/Sao_Paulo",
-            profile: res.data.data.profile
+            profile: res.data.data.profile,
+            workshop: res.data.data.workshop || {}
           };
 
           console.log('✅ [AuthService] ProjectInfo carregado via função:', projectInfo);
@@ -290,7 +292,8 @@ export class AuthService {
               currency: projectData.currency || 'BRL',
               language: projectData.language || "pt_BR",
               timezone: projectData.timezone || "America/Sao_Paulo",
-              profile: projectData.profile
+              profile: projectData.profile,
+              workshop: projectData.workshop || {}
             };
 
             // 🔥 Sincronizar CRM se necessário
@@ -357,7 +360,8 @@ export class AuthService {
               currency: projectData.currency || 'BRL',
               language: projectData.language || "pt_BR",
               timezone: projectData.timezone || "America/Sao_Paulo",
-              profile: projectData.profile
+              profile: projectData.profile,
+              workshop: projectData.workshop || {}
             };
 
             // 🔥 Sincronizar CRM se necessário
@@ -609,7 +613,8 @@ export class AuthService {
             currency: res.data.data.currency || 'BRL',
             language: res.data.data.language || "pt_BR",
             timezone: res.data.data.timezone || "America/Sao_Paulo",
-            profile: res.data.data.profile
+            profile: res.data.data.profile,
+            workshop: res.data.data.workshop || {}
           };
 
           console.log('📦 [AuthService] ProjectInfo atualizado:', projectInfo);
