@@ -1,0 +1,136 @@
+<section class="contract-wizard">
+  <div class="contract-wizard__card">
+    <header>
+      <div>
+        <p class="eyebrow">{{ translate.contracts.title }}</p>
+        <h3>{{ translate.contracts.actions.newContract }}</h3>
+      </div>
+      <button type="button" (click)="cancel()">×</button>
+    </header>
+
+    <nav class="steps">
+      <button
+        type="button"
+        *ngFor="let step of steps; let idx = index"
+        [class.active]="idx === stepIndex"
+        (click)="idx < stepIndex ? stepIndex = idx : null">
+        <span>{{ idx + 1 }}</span>
+        <small>{{ translate.contracts.wizard.steps[step] }}</small>
+      </button>
+    </nav>
+
+    <form [formGroup]="wizardForm" class="form-body">
+      <div [ngSwitch]="steps[stepIndex]">
+
+        <div *ngSwitchCase="'customer'" class="form-grid">
+          <label>
+            {{ translate.contracts.wizard.customer.id }}
+            <input formControlName="customerId" placeholder="Cliente / ID" />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.customer.name }}
+            <input formControlName="customerName" placeholder="Nome completo" />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.customer.docs }}
+            <textarea formControlName="customerDocs" rows="3" placeholder="Notas sobre documentos / proof of address"></textarea>
+          </label>
+          <label>
+            {{ translate.contracts.wizard.customer.phone }}
+            <input formControlName="customerPhone" placeholder="+44 ..." />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.customer.linkedOrder }}
+            <input formControlName="linkedServiceOrderId" placeholder="ID OS (opcional)" />
+          </label>
+        </div>
+
+        <div *ngSwitchCase="'vehicle'" class="form-grid">
+          <label>
+            {{ translate.contracts.wizard.vehicle.vehicle }}
+            <select formControlName="vehicleId">
+              <option value="">{{ translate.contracts.wizard.vehicle.select }}</option>
+              <option *ngFor="let vehicle of (vehicles$ | async)" [value]="vehicle.id">
+                {{ vehicle.plate }} • {{ vehicle.model || translate.fleet.title }} ({{ vehicle.status }})
+              </option>
+            </select>
+          </label>
+          <label>
+            {{ translate.contracts.wizard.vehicle.start }}
+            <input type="date" formControlName="startDate" />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.vehicle.end }}
+            <input type="date" formControlName="endDate" />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.vehicle.deposit }}
+            <input type="number" formControlName="deposit" min="0" step="1" />
+          </label>
+          <label>
+            {{ translate.contracts.wizard.vehicle.notes }}
+            <textarea formControlName="notes" rows="3"></textarea>
+          </label>
+
+          <section class="availability">
+            <header>
+              <h4>{{ translate.contracts.wizard.vehicle.availability.title }}</h4>
+              <button type="button" (click)="loadAvailability()">
+                {{ availabilityLoading ? translate.contracts.wizard.vehicle.availability.loading : translate.contracts.wizard.vehicle.availability.refresh }}
+              </button>
+            </header>
+            <ul>
+              <li *ngIf="availability.length === 0">{{ translate.contracts.wizard.vehicle.availability.empty }}</li>
+              <li *ngFor="let slot of availability; trackBy: trackAvailability">
+                <strong>{{ slot.startDate | date: 'shortDate' }} → {{ slot.endDate | date: 'shortDate' }}</strong>
+                <span>{{ translate.contracts.statusLabel[slot.status] }}</span>
+              </li>
+            </ul>
+          </section>
+        </div>
+
+        <div *ngSwitchCase="'review'" class="review">
+          <h4>{{ translate.contracts.wizard.review.title }}</h4>
+          <ul>
+            <li>
+              <span>{{ translate.contracts.table.customer }}</span>
+              <strong>{{ wizardForm.value.customerName || wizardForm.value.customerId }}</strong>
+            </li>
+            <li>
+              <span>{{ translate.contracts.table.vehicle }}</span>
+              <strong>{{ wizardForm.value.vehicleId }}</strong>
+            </li>
+            <li>
+              <span>{{ translate.contracts.table.period }}</span>
+              <strong>{{ wizardForm.value.startDate }} → {{ wizardForm.value.endDate }}</strong>
+            </li>
+            <li>
+              <span>{{ translate.contracts.table.deposit }}</span>
+              <strong>{{ wizardForm.value.deposit || translate.contracts.wizard.review.noDeposit }}</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </form>
+
+    <footer class="actions">
+      <button type="button" class="ghost" (click)="cancel()">{{ translate.contracts.wizard.actions.cancel }}</button>
+      <button type="button" (click)="previousStep()" [disabled]="stepIndex === 0">{{ translate.contracts.wizard.actions.previous }}</button>
+      <button
+        type="button"
+        class="primary"
+        *ngIf="stepIndex < steps.length - 1"
+        (click)="nextStep()">
+        {{ translate.contracts.wizard.actions.next }}
+      </button>
+      <button
+        type="button"
+        class="primary"
+        *ngIf="stepIndex === steps.length - 1"
+        [disabled]="saving"
+        (click)="submit()">
+        {{ saving ? translate.contracts.wizard.actions.saving : translate.contracts.wizard.actions.finish }}
+      </button>
+    </footer>
+  </div>
+</section>

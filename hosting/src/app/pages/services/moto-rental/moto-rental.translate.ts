@@ -61,7 +61,8 @@ export class MotoRentalTranslate {
         empty: 'Nenhum veículo encontrado',
         actions: {
           refresh: 'Atualizar',
-          addVehicle: 'Novo veículo'
+          addVehicle: 'Novo veículo',
+          addVehicleSuccess: 'Veículo salvo com sucesso.'
         },
         badge: {
           available: 'Disponível',
@@ -95,6 +96,45 @@ export class MotoRentalTranslate {
           active: 'Ativo',
           closed: 'Finalizado',
           cancelled: 'Cancelado'
+        },
+        wizard: {
+          steps: {
+            customer: 'Cliente',
+            vehicle: 'Veículo',
+            review: 'Revisão'
+          },
+          customer: {
+            id: 'Cliente / ID',
+            name: 'Nome',
+            docs: 'Documentos / notas',
+            phone: 'Telefone',
+            linkedOrder: 'OS vinculada'
+          },
+          vehicle: {
+            vehicle: 'Selecione o veículo',
+            select: 'Escolha uma moto/van',
+            start: 'Início',
+            end: 'Devolução',
+            deposit: 'Depósito (£)',
+            notes: 'Observações',
+            availability: {
+              title: 'Disponibilidade',
+              refresh: 'Atualizar',
+              loading: 'Carregando...',
+              empty: 'Sem conflitos registrados'
+            }
+          },
+          review: {
+            title: 'Resumo',
+            noDeposit: 'Sem depósito'
+          },
+          actions: {
+            cancel: 'Cancelar',
+            previous: 'Voltar',
+            next: 'Avançar',
+            finish: 'Confirmar contrato',
+            saving: 'Salvando...'
+          }
         }
       },
       settings: {
@@ -160,7 +200,8 @@ export class MotoRentalTranslate {
         empty: 'No vehicles found',
         actions: {
           refresh: 'Refresh',
-          addVehicle: 'New vehicle'
+          addVehicle: 'New vehicle',
+          addVehicleSuccess: 'Vehicle saved successfully.'
         },
         badge: {
           available: 'Available',
@@ -194,6 +235,45 @@ export class MotoRentalTranslate {
           active: 'Active',
           closed: 'Closed',
           cancelled: 'Cancelled'
+        },
+        wizard: {
+          steps: {
+            customer: 'Customer',
+            vehicle: 'Vehicle',
+            review: 'Review'
+          },
+          customer: {
+            id: 'Customer / ID',
+            name: 'Name',
+            docs: 'Documents / notes',
+            phone: 'Phone',
+            linkedOrder: 'Linked Service Order'
+          },
+          vehicle: {
+            vehicle: 'Select vehicle',
+            select: 'Choose a moto/van',
+            start: 'Start date',
+            end: 'Return date',
+            deposit: 'Deposit (£)',
+            notes: 'Notes',
+            availability: {
+              title: 'Availability',
+              refresh: 'Refresh',
+              loading: 'Loading...',
+              empty: 'No conflicts found'
+            }
+          },
+          review: {
+            title: 'Summary',
+            noDeposit: 'No deposit'
+          },
+          actions: {
+            cancel: 'Cancel',
+            previous: 'Back',
+            next: 'Next',
+            finish: 'Confirm contract',
+            saving: 'Saving...'
+          }
         }
       },
       settings: {

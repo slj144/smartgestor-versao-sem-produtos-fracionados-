@@ -3,7 +3,7 @@
     <h2>{{ translate.contracts.title }}</h2>
     <div class="actions">
       <button type="button" (click)="refresh()">{{ translate.contracts.actions.refresh }}</button>
-      <button type="button" class="primary">{{ translate.contracts.actions.newContract }}</button>
+      <button type="button" class="primary" (click)="openWizard()">{{ translate.contracts.actions.newContract }}</button>
     </div>
   </header>
 
@@ -40,3 +40,9 @@
     </div>
   </div>
 </section>
+
+<app-moto-rental-contract-wizard
+  *ngIf="wizardVisible"
+  (close)="wizardVisible = false"
+  (completed)="handleWizardCompleted()">
+</app-moto-rental-contract-wizard>

@@ -6,6 +6,7 @@ import { MotoRentalComponent } from './moto-rental.component';
 import { MotoRentalDashboardComponent } from './components/dashboard/moto-rental-dashboard.component';
 import { MotoRentalFleetComponent } from './components/fleet/moto-rental-fleet.component';
 import { MotoRentalContractsComponent } from './components/contracts/moto-rental-contracts.component';
+import { MotoRentalContractWizardComponent } from './components/contracts/moto-rental-contract-wizard.component';
 import { MotoRentalSettingsComponent } from './components/settings/moto-rental-settings.component';
 import { MotoRentalGuard } from './moto-rental.guard';
 
@@ -36,6 +37,7 @@ const routes: Routes = [
     MotoRentalDashboardComponent,
     MotoRentalFleetComponent,
     MotoRentalContractsComponent,
+    MotoRentalContractWizardComponent,
     MotoRentalSettingsComponent
   ],
   providers: [

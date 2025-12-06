@@ -80,14 +80,16 @@ const COLLECTIONS = {
 };
 
 class MotoRentalHandlers {
-  private static readonly UK_PLATE_REGEX = /^[A-Z]{2}[0-9]{2}\s?[A-Z]{3}$/;
+  private static readonly UK_PLATE_REGEX = /^[A-Z]{2}[0-9]{2}[A-Z]{3}$/;
+  private static readonly UK_PLATE_PREFIX_REGEX = /^[A-Z][0-9]{1,3}[A-Z]{3}$/; // 1983-2001 prefix
+  private static readonly UK_PLATE_SUFFIX_REGEX = /^[A-Z]{3}[0-9]{1,3}[A-Z]$/; // 1963-1980 suffix
   private static readonly VEHICLE_STATUSES: VehicleStatus[] = ["available", "maintenance", "rented", "reserved"];
   private static readonly CONTRACT_STATUSES: ContractStatus[] = ["draft", "reserved", "active", "closed", "cancelled"];
   private static readonly VEHICLE_TYPES: VehicleType[] = ["motorcycle", "van"];
   private static readonly DEFAULT_TIMEZONE = "Europe/London";
 
   public static async listVehicles(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -125,6 +127,10 @@ class MotoRentalHandlers {
           return plate.indexOf(searchTerm) !== -1 || model.indexOf(searchTerm) !== -1;
         });
 
+      console.log('[MotoRental] listVehicles result', {
+        instanceId: ctx.instanceId,
+        count: vehicles.length
+      });
       response.send({ status: true, data: vehicles });
     } catch (error) {
       this.handleError(response, error, "LIST_VEHICLES");
@@ -132,7 +138,7 @@ class MotoRentalHandlers {
   }
 
   public static async saveVehicle(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -141,9 +147,20 @@ class MotoRentalHandlers {
         response.send({ status: false, error: "VEHICLE_DATA_REQUIRED" });
         return;
       }
+      console.log('[MotoRental] saveVehicle payload', {
+        instanceId: ctx.instanceId,
+        hasData: !!payload,
+        plate: payload?.plate,
+        keys: Object.keys(payload || {})
+      });
 
       const sanitizedPlate = this.normalizePlate(payload.plate);
-      if (!sanitizedPlate || !this.UK_PLATE_REGEX.test(sanitizedPlate)) {
+      if (!sanitizedPlate || !this.isValidPlate(sanitizedPlate)) {
+        console.warn('[MotoRental] Invalid plate format', {
+          original: payload.plate,
+          sanitized: sanitizedPlate,
+          instanceId: ctx.instanceId
+        });
         response.send({ status: false, error: "INVALID_PLATE_FORMAT" });
         return;
       }
@@ -197,7 +214,7 @@ class MotoRentalHandlers {
         currentContractId: existing?.currentContractId
       };
 
-      await docRef.update(vehicle);
+      await docRef.update(vehicle, { upsert: true });
       response.send({ status: true, data: vehicle });
     } catch (error) {
       this.handleError(response, error, "SAVE_VEHICLE");
@@ -205,7 +222,7 @@ class MotoRentalHandlers {
   }
 
   public static async changeVehicleStatus(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -257,7 +274,7 @@ class MotoRentalHandlers {
   }
 
   public static async listContracts(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -288,7 +305,7 @@ class MotoRentalHandlers {
   }
 
   public static async reserveVehicle(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -340,7 +357,7 @@ class MotoRentalHandlers {
         createdBy: ctx.userId
       };
 
-      await ctx.itools.database().collection(COLLECTIONS.contracts).doc(contractId).update(contract);
+      await ctx.itools.database().collection(COLLECTIONS.contracts).doc(contractId).update(contract, { upsert: true });
       await vehicleDoc.update({
         status: "reserved",
         currentContractId: contractId,
@@ -358,7 +375,7 @@ class MotoRentalHandlers {
   }
 
   public static async closeContract(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -425,7 +442,7 @@ class MotoRentalHandlers {
   }
 
   public static async getAvailability(request: any, response: any) {
-    const ctx = this.buildContext(request, response);
+    const ctx = await this.buildContext(request, response);
     if (!ctx) { return; }
 
     try {
@@ -450,20 +467,47 @@ class MotoRentalHandlers {
     }
   }
 
-  private static buildContext(request: any, response: any): HandlerContext | null {
+  private static async buildContext(request: any, response: any): Promise<HandlerContext | null> {
     Functions.parseRequestBody(request);
 
     const body = typeof request.body === "object" ? request.body : {};
-    const instanceId = body.instanceId;
-    const settings = body.settings || {};
+    console.log('[MotoRental] Raw request body', body);
+    const envelope = body && typeof body.data === "object" ? body.data : {};
+    const payloadData = envelope && typeof envelope.data === "object" ? envelope.data : envelope;
+
+    const rawInstanceId =
+      body.instanceId ||
+      envelope.instanceId ||
+      payloadData.instanceId ||
+      body.projectId;
+    const instanceId = typeof rawInstanceId === "string"
+      ? rawInstanceId.trim()
+      : (rawInstanceId ? rawInstanceId.toString() : "");
+    let settingsSource = body.settings || envelope.settings || payloadData.settings || {};
+    let settings = settingsSource && typeof settingsSource === "object" ? { ...settingsSource } : {};
 
     if (!instanceId) {
       response.send({ status: false, error: "INSTANCE_ID_REQUIRED" });
       return null;
     }
 
+    if (this.settingsNeedHydration(settings)) {
+      const persistedSettings = await this.fetchInstanceSettings(instanceId);
+      settings = this.mergeSettings(persistedSettings, settings);
+    } else {
+      settings = this.normalizeSettings(settings);
+    }
+
     const gate = this.featureGate(settings);
     if (!gate.allowed) {
+      console.warn('[MotoRental] Feature gate blocked', {
+        reason: gate.reason,
+        settings: {
+          country: settings?.country,
+          motoRentalEnabled: settings?.workshop?.motoRentalEnabled
+        },
+        instanceId
+      });
       response.send({ status: false, error: gate.reason || "FEATURE_DISABLED" });
       return null;
     }
@@ -471,18 +515,35 @@ class MotoRentalHandlers {
     const itoolsInstance = Functions.initITools(instanceId);
     return {
       body,
-      data: body.data || {},
+      data: payloadData || {},
       instanceId,
       settings,
       timezone: settings?.timezone || settings?.profile?.timezone || this.DEFAULT_TIMEZONE,
       itools: itoolsInstance,
-      userId: body.user?.id || body.userId
+      userId: envelope?.user?.id || body.user?.id || payloadData?.user?.id || body.userId
     };
   }
 
+  private static async fetchInstanceSettings(instanceId: string) {
+    const managerInstance = new iTools();
+    try {
+      await managerInstance.initializeApp({
+        projectId: "projects-manager"
+      });
+      const doc = await managerInstance.database().collection("Projects").doc(instanceId).get();
+      return this.normalizeSettings(doc?.data() || {});
+    } catch (error) {
+      console.error('[MotoRental] Failed to fetch instance settings', error);
+      return {};
+    } finally {
+      try { managerInstance.close(); } catch { }
+    }
+  }
+
   private static featureGate(settings: any): { allowed: boolean; reason?: string } {
-    const enabled = settings?.workshop?.motoRentalEnabled === true;
-    const country = (settings?.profile?.country || settings?.company?.country || "").toUpperCase();
+    const normalized = this.normalizeSettings(settings);
+    const enabled = normalized?.workshop?.motoRentalEnabled === true;
+    const country = normalized?.country || "";
     const regionAllowed = country === "UK";
     return {
       allowed: enabled && regionAllowed,
@@ -492,7 +553,31 @@ class MotoRentalHandlers {
 
   private static normalizePlate(plate: any): string {
     if (!plate) { return ""; }
-    return plate.toString().trim().toUpperCase().replace(/\s+/g, "");
+    return plate
+      .toString()
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "");
+  }
+
+  private static isValidPlate(plate: string): boolean {
+    if (!plate) { return false; }
+    const patterns = [
+      this.UK_PLATE_REGEX,
+      this.UK_PLATE_PREFIX_REGEX,
+      this.UK_PLATE_SUFFIX_REGEX
+    ];
+    if (patterns.some((regex) => regex.test(plate))) {
+      return true;
+    }
+
+    const fallback = /^[A-Z0-9]{5,8}$/;
+    if (fallback.test(plate)) {
+      console.warn('[MotoRental] Plate accepted via fallback validator', { plate });
+      return true;
+    }
+
+    return false;
   }
 
   private static normalizeVehicleType(value: any): VehicleType {
@@ -590,6 +675,96 @@ class MotoRentalHandlers {
       baseAmount: total,
       totalAmount: total + deposit
     };
+  }
+
+  private static settingsNeedHydration(settings: any): boolean {
+    if (!settings || typeof settings !== "object") {
+      return true;
+    }
+
+    const hasCountry = !!this.resolveCountry(settings);
+    const hasExplicitFlag = typeof settings?.workshop?.motoRentalEnabled === "boolean";
+
+    return !(hasCountry && hasExplicitFlag);
+  }
+
+  private static mergeSettings(base: any, override: any) {
+    const merged: any = {
+      ...(base || {}),
+      ...(override || {})
+    };
+
+    merged.profile = {
+      ...(base?.profile || {}),
+      ...(override?.profile || {})
+    };
+
+    merged.company = {
+      ...(base?.company || {}),
+      ...(override?.company || {})
+    };
+
+    merged.workshop = {
+      ...(base?.workshop || {}),
+      ...(override?.workshop || {})
+    };
+
+    return this.normalizeSettings(merged);
+  }
+
+  private static normalizeSettings(settings: any) {
+    if (!settings || typeof settings !== "object") {
+      return {};
+    }
+
+    const normalized: any = {
+      ...settings,
+      profile: { ...(settings.profile || {}) },
+      company: { ...(settings.company || {}) },
+      workshop: { ...(settings.workshop || {}) }
+    };
+
+    const resolvedCountry = this.resolveCountry(normalized);
+    if (resolvedCountry) {
+      normalized.country = resolvedCountry;
+    }
+
+    if (typeof normalized.workshop.motoRentalEnabled !== "boolean") {
+      normalized.workshop.motoRentalEnabled = this.resolveWorkshopFlag(normalized);
+    }
+
+    return normalized;
+  }
+
+  private static resolveCountry(settings: any): string {
+    const candidates = [
+      settings?.country,
+      settings?.profile?.country,
+      settings?.profile?.data?.country,
+      settings?.company?.country,
+      settings?.company?.settings?.country,
+      settings?.adminKey?.country,
+      settings?.workshop?.country
+    ];
+
+    for (const value of candidates) {
+      if (typeof value === "string" && value.trim().length > 0) {
+        return value.trim().toUpperCase();
+      }
+    }
+
+    return "";
+  }
+
+  private static resolveWorkshopFlag(settings: any): boolean {
+    const candidates = [
+      settings?.workshop?.motoRentalEnabled,
+      settings?.profile?.workshop?.motoRentalEnabled,
+      settings?.profile?.data?.workshop?.motoRentalEnabled,
+      settings?.company?.workshop?.motoRentalEnabled
+    ];
+
+    return candidates.some((value) => value === true);
   }
 }
 

@@ -29,6 +29,7 @@ export class MotoRentalContractsComponent implements OnInit, OnDestroy {
   ];
 
   public filtersForm: FormGroup;
+  public wizardVisible = false;
 
   private readonly destroy$ = new Subject<void>();
 
@@ -64,5 +65,13 @@ export class MotoRentalContractsComponent implements OnInit, OnDestroy {
 
   public trackContract(_: number, contract: MotoRentalContract) {
     return contract.id;
+  }
+
+  public openWizard(): void {
+    this.wizardVisible = true;
+  }
+
+  public handleWizardCompleted(): void {
+    this.refresh();
   }
 }

@@ -1,0 +1,212 @@
+.contract-wizard {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 9, 24, 0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 30;
+
+  &__card {
+    width: min(900px, 100%);
+    max-height: 95vh;
+    overflow: auto;
+    border-radius: 20px;
+    background: #fff;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 30px 60px rgba(6, 9, 24, 0.3);
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.3rem;
+      font-size: 0.75rem;
+      margin: 0;
+      color: #8891a5;
+    }
+
+    h3 {
+      margin: 0.2rem 0 0;
+    }
+
+    button {
+      border: none;
+      background: transparent;
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+  }
+
+  .steps {
+    display: flex;
+    gap: 0.75rem;
+
+    button {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid #e0e3ef;
+      background: #f6f7fb;
+      padding: 0.75rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      span {
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: 1px solid #c5cbe0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        font-weight: 600;
+      }
+
+      small {
+        font-size: 0.8rem;
+        color: #55607c;
+      }
+
+      &.active {
+        border-color: #111b54;
+        background: #111b54;
+        span {
+          border-color: #fff;
+        }
+        small {
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .form-body {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+      color: #6c708d;
+      gap: 0.25rem;
+
+      input,
+      select,
+      textarea {
+        border-radius: 12px;
+        border: 1px solid #e2e5f1;
+        padding: 0.65rem 0.9rem;
+        font-size: 0.95rem;
+      }
+    }
+
+    .availability {
+      grid-column: 1 / -1;
+      border: 1px solid #e2e5f1;
+      border-radius: 16px;
+      padding: 1rem;
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        h4 {
+          margin: 0;
+        }
+        button {
+          border-radius: 999px;
+          border: 1px solid #dfe1ec;
+          padding: 0.4rem 1rem;
+          background: transparent;
+          cursor: pointer;
+        }
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0.75rem 0 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        li {
+          display: flex;
+          justify-content: space-between;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+
+  .review {
+    h4 {
+      margin: 0 0 0.5rem;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    li {
+      display: flex;
+      justify-content: space-between;
+      span {
+        color: #6c708d;
+      }
+      strong {
+        color: #111b54;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+
+    button {
+      border-radius: 999px;
+      padding: 0.55rem 1.4rem;
+      border: 1px solid #dfe1ec;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ghost {
+      color: #6c708d;
+    }
+
+    .primary {
+      background: #111b54;
+      border-color: #111b54;
+      color: #fff;
+    }
+  }
+}

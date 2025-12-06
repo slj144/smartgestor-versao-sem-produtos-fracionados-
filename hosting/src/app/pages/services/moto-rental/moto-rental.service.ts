@@ -79,13 +79,20 @@ export class MotoRentalService {
     try {
       const payload = this.buildPayload({ filters });
       await this.iToolsService.ready();
+      console.log('[MotoRental] listVehicles payload', payload.instanceId);
       const response = await this.iToolsService.functions().call('motoRentalListVehicles', payload);
+      console.log('[MotoRental] listVehicles response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to list vehicles');
       }
 
-      const vehicles: MotoRentalVehicle[] = response.data || [];
+      if (this.hasErrorPayload(response.data)) {
+        throw new Error(response.data.error || 'VEHICLE_LIST_FAILED');
+      }
+
+      const rawData = Array.isArray(response.data) ? response.data : response.data?.data;
+      const vehicles: MotoRentalVehicle[] = this.ensureArray(rawData);
       this.vehiclesSubject.next(vehicles);
       return vehicles;
     } catch (error) {
@@ -105,12 +112,24 @@ export class MotoRentalService {
       const payload = this.buildPayload({ vehicle });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalSaveVehicle', payload);
+      console.log('[MotoRental] saveVehicle response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to save vehicle');
       }
 
+      if (this.hasErrorPayload(response.data)) {
+        throw new Error(response.data.error || 'VEHICLE_SAVE_FAILED');
+      }
+
       await this.listVehicles(this.cachedVehicleFilters);
+      this.notificationService.create({
+        title: this.moduleTitle,
+        description: MotoRentalTranslate.get().fleet?.actions?.addVehicleSuccess ?? 'Vehicle saved successfully.',
+        status: ENotificationStatus.success,
+        icon: 'checkmark-circle-2-outline',
+        duration: 6000
+      });
       return response.data;
     } catch (error) {
       this.handleError('saveVehicle', error);
@@ -127,6 +146,7 @@ export class MotoRentalService {
       const payload = this.buildPayload({ vehicleId, status, note });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalChangeVehicleStatus', payload);
+      console.log('[MotoRental] changeVehicleStatus response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to change vehicle status');
@@ -152,12 +172,18 @@ export class MotoRentalService {
       const payload = this.buildPayload({ filters });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalListContracts', payload);
+      console.log('[MotoRental] listContracts response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to list contracts');
       }
 
-      const contracts: MotoRentalContract[] = response.data || [];
+      if (this.hasErrorPayload(response.data)) {
+        throw new Error(response.data.error || 'CONTRACT_LIST_FAILED');
+      }
+
+      const rawData = Array.isArray(response.data) ? response.data : response.data?.data;
+      const contracts: MotoRentalContract[] = this.ensureArray(rawData);
       this.contractsSubject.next(contracts);
       return contracts;
     } catch (error) {
@@ -177,6 +203,7 @@ export class MotoRentalService {
       const payload = this.buildPayload({ reservation });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalReserveVehicle', payload);
+      console.log('[MotoRental] reserveVehicle response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to reserve vehicle');
@@ -203,6 +230,7 @@ export class MotoRentalService {
       const payload = this.buildPayload({ contractId, ...options });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalCloseContract', payload);
+      console.log('[MotoRental] closeContract response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to close contract');
@@ -229,6 +257,7 @@ export class MotoRentalService {
       const payload = this.buildPayload({ vehicleId, startDate, endDate });
       await this.iToolsService.ready();
       const response = await this.iToolsService.functions().call('motoRentalGetAvailability', payload);
+      console.log('[MotoRental] availability response', response);
 
       if (!response?.status) {
         throw new Error(response?.error || 'Failed to load availability');
@@ -242,8 +271,12 @@ export class MotoRentalService {
   }
 
   private buildPayload(data: Record<string, any>) {
+    const login = Utilities.currentLoginData || {};
+    const pathTenant = Utilities.projectId;
+    const instanceId = login.projectId || pathTenant || ProjectSettings.companyID();
+
     return {
-      instanceId: ProjectSettings.companyID(),
+      instanceId,
       settings: ProjectSettings.companySettings(),
       user: {
         id: Utilities.currentLoginData?.userId || Utilities.currentLoginData?._id,
@@ -251,6 +284,22 @@ export class MotoRentalService {
       },
       data
     };
+  }
+
+  private ensureArray<T>(value: any): T[] {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    if (value && typeof value === 'object') {
+      return Object.values(value);
+    }
+
+    return [];
+  }
+
+  private hasErrorPayload(value: any): boolean {
+    return value && typeof value === 'object' && value.status === false;
   }
 
   private handleError(context: string, error: any) {
