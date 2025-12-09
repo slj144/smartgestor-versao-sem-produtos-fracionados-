@@ -41,6 +41,12 @@ const json = {
 
 export class ProjectInstance {
 
+  private static readonly DEFAULT_MOTO_RENTAL_RATES = {
+    daily: 55,
+    weekly: 300,
+    deposit: 250
+  };
+
   public static createProjectInstance(request: any, response: any) {
 
     Functions.parseRequestBody(request);
@@ -66,7 +72,7 @@ export class ProjectInstance {
     const language = body.language ?? "pt_BR";
     const currency = body.currency ?? "BRL";
     const timezone = body.timezone ?? "America/Sao_Paulo";
-    const country = body.country ?? "BR";
+    const country = this.normalizeCountryCode(body.country) || "BR";
 
     const stores = body.stores || [];
 
@@ -123,12 +129,7 @@ export class ProjectInstance {
           language: language,
           timezone: timezone,
           country: country,
-          workshop: (() => {
-            if (!body.workshop || typeof body.workshop !== "object") {
-              return {};
-            }
-            return body.workshop;
-          })(),
+          workshop: this.normalizeWorkshopSettings(body.workshop, country),
           createdAt: iTools.FieldValue.date("America/Sao_Paulo") // DATA DE CRIAÇÃO
         };
 
@@ -595,7 +596,7 @@ export class ProjectInstance {
     }
   }
 
-  public static updateInstanceSettings(request: any, response: any) {
+  public static async updateInstanceSettings(request: any, response: any) {
 
     Functions.parseRequestBody(request);
 
@@ -619,34 +620,50 @@ export class ProjectInstance {
       return;
     }
 
-    const updates: any = {};
-
-    const allowedFields = ["currency", "language", "timezone", "country"];
-    allowedFields.forEach((field) => {
-      if (body[field] !== undefined) {
-        updates[field] = body[field];
-      }
-    });
-
-    if (body.workshop && typeof body.workshop === "object") {
-      updates.workshop = body.workshop;
-    }
-
-    if (Object.keys(updates).length === 0) {
-      response.send({
-        status: false,
-        error: "No fields provided to update"
-      });
-      return;
-    }
-
     const managerInstance = new iTools();
     managerInstance.initializeApp({
       projectId: "projects-manager"
     });
 
-    managerInstance.database().collection("Projects").doc(projectId).update(updates, { merge: true }).then(() => {
-      managerInstance.close();
+    try {
+      const updates: any = {};
+
+      const allowedFields = ["currency", "language", "timezone"];
+      allowedFields.forEach((field) => {
+        if (body[field] !== undefined) {
+          updates[field] = body[field];
+        }
+      });
+
+      const normalizedCountry = this.normalizeCountryCode(body.country);
+      if (body.country !== undefined && normalizedCountry) {
+        updates.country = normalizedCountry;
+      } else if (body.country !== undefined) {
+        updates.country = body.country;
+      }
+
+      const docRef = managerInstance.database().collection("Projects").doc(projectId);
+
+      let resolvedCountry = normalizedCountry;
+
+      if (body.workshop && typeof body.workshop === "object") {
+        if (!resolvedCountry) {
+          const snapshot = await docRef.get();
+          resolvedCountry = this.resolveProjectCountry(snapshot?.data());
+        }
+        updates.workshop = this.normalizeWorkshopSettings(body.workshop, resolvedCountry);
+      }
+
+      if (Object.keys(updates).length === 0) {
+        response.send({
+          status: false,
+          error: "No fields provided to update"
+        });
+        return;
+      }
+
+      await docRef.update(updates, { merge: true });
+
       response.send({
         status: true,
         data: {
@@ -654,13 +671,15 @@ export class ProjectInstance {
           updates
         }
       });
-    }).catch((error) => {
-      managerInstance.close();
+    } catch (error) {
+      console.error('Error updating instance settings:', error);
       response.send({
         status: false,
-        error: error.message
+        error: error?.message || "Failed to update instance settings"
       });
-    });
+    } finally {
+      managerInstance.close();
+    }
   }
 
   public static getProjectSettings(request: any, response: any, projectId: string) {
@@ -679,4 +698,68 @@ export class ProjectInstance {
     });
 
   };
+
+  private static normalizeWorkshopSettings(workshop: any, country?: string) {
+    const normalizedCountry = this.normalizeCountryCode(country);
+    const source = (workshop && typeof workshop === "object") ? { ...workshop } : {};
+    const allowMotoRental = normalizedCountry === "UK" && source.motoRentalEnabled === true;
+
+    return {
+      ...source,
+      motoRentalEnabled: allowMotoRental,
+      defaultRates: this.normalizeDefaultRates(source.defaultRates)
+    };
+  }
+
+  private static normalizeDefaultRates(rates: any) {
+    const fallback = ProjectInstance.DEFAULT_MOTO_RENTAL_RATES;
+    const source = (rates && typeof rates === "object") ? { ...rates } : {};
+
+    const parseAmount = (value: any) => {
+      if (value === undefined || value === null || value === "") {
+        return undefined;
+      }
+      const amount = Number(value);
+      if (!isFinite(amount) || amount < 0) {
+        return undefined;
+      }
+      return Math.round(amount * 100) / 100;
+    };
+
+    return {
+      daily: parseAmount(source.daily) ?? fallback.daily,
+      weekly: parseAmount(source.weekly) ?? fallback.weekly,
+      deposit: parseAmount(source.deposit) ?? fallback.deposit
+    };
+  }
+
+  private static normalizeCountryCode(country?: string) {
+    if (!country) {
+      return "";
+    }
+    return country.toString().trim().toUpperCase();
+  }
+
+  private static resolveProjectCountry(project: any): string {
+    if (!project || typeof project !== "object") {
+      return "";
+    }
+
+    const candidates = [
+      project.country,
+      project?.profile?.country,
+      project?.profile?.data?.country,
+      project?.company?.country,
+      project?.company?.settings?.country
+    ];
+
+    for (const candidate of candidates) {
+      const normalized = this.normalizeCountryCode(candidate);
+      if (normalized) {
+        return normalized;
+      }
+    }
+
+    return "";
+  }
 }
