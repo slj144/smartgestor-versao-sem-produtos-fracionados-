@@ -39,6 +39,38 @@ main {
       }
     }
 
+    .instance-hint {
+      text-align: center;
+      margin-bottom: 25px;
+      border: 1px solid rgba(255, 140, 0, 0.35);
+      border-radius: 15px;
+      padding: 15px 20px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(255, 232, 210, 0.9));
+      color: #d76a1d;
+      box-shadow: 0 12px 35px rgba(255, 138, 46, 0.18);
+
+      .instance-label {
+        font-size: 0.85rem;
+        margin-bottom: 0.25rem;
+        opacity: 0.9;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+      }
+
+      .instance-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0;
+        color: #ff7a1a;
+      }
+
+      .instance-slug {
+        font-size: 0.85rem;
+        margin: 0.35rem 0 0;
+        color: #c45b0c;
+      }
+    }
+
     form {
       width: 100%;
 

@@ -3,7 +3,15 @@
 
     <div class="container-logo">
       <img src="assets/images/Auth/logo.png" />
-    </div>    
+    </div>
+
+    <div class="instance-hint" *ngIf="storeLabel || projectDisplayId">
+      <p class="instance-label">{{ translate.login.form.instanceLabel }}</p>
+      <p class="instance-name">{{ storeLabel || projectDisplayId }}</p>
+      <p class="instance-slug" *ngIf="storeLabel && projectDisplayId && storeLabel !== projectDisplayId">
+        {{ translate.login.form.projectLabel }}: <strong>{{ projectDisplayId }}</strong>
+      </p>
+    </div>
     
     <div *ngIf="errors?.length && !submitted" outline="danger" role="alert" class="alert alert-danger">
 

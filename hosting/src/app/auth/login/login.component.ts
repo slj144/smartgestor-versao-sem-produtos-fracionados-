@@ -10,6 +10,7 @@ import { AuthService } from '../auth.service';
 // Utilities
 import { $$ } from '@shared/utilities/essential';
 import { Utilities } from '@shared/utilities/utilities';
+import { ProjectSettings } from '@assets/settings/company-settings';
 
 @Component({
   selector: 'login',
@@ -20,6 +21,8 @@ export class LoginComponent {
 
   public translate = AuthTranslate.get();
   public projectId = Utilities.projectId;
+  public projectDisplayId: string = '';
+  public storeLabel: string = '';
 
   public redirectDelay: number = 0;
 
@@ -36,6 +39,9 @@ export class LoginComponent {
   ) { }
 
   public ngOnInit() {
+
+    this.projectDisplayId = this.formatProjectId(this.projectId);
+    this.storeLabel = this.resolveStoreLabel();
 
     this.form = this.formBuilder.group({
       username: ['', [Validators.required, Validators.minLength(3)]],
@@ -86,6 +92,27 @@ export class LoginComponent {
         document.getElementById("mainLoadingTaskAuth").classList.remove("loadingTaskActive");
       }
     });
+  }
+
+  /**
+   * Determina o nome visível da instância para o login.
+   * Prioriza o companyName persistido após um acesso recente
+   * e recorre ao projectId (slug na URL) como fallback.
+   */
+  private resolveStoreLabel(): string {
+    const companyName = ProjectSettings.companySettings()?.companyName;
+    if (companyName && companyName.trim().length > 0) {
+      return companyName.trim();
+    }
+    return this.projectDisplayId;
+  }
+
+  /**
+   * Remove prefixos técnicos comuns (ex.: bm-) do slug para exibição.
+   */
+  private formatProjectId(slug: string): string {
+    if (!slug) { return ''; }
+    return slug.replace(/^(bm[-_]?)/i, '').trim();
   }
 
 }

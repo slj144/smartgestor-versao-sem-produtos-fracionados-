@@ -20,6 +20,8 @@ export class AuthTranslate {
 					username: "Nome de usuário",
 					password: "Senha",
 					forgotPassword: "Esqueceu a senha?",
+					instanceLabel: "Instância atual",
+					projectLabel: "ID do projeto",
 					button: {
 						submit: "Acessar"
 					}
@@ -61,6 +63,8 @@ export class AuthTranslate {
 					username: "Username",
 					password: "Password",
 					forgotPassword: "Forgot the Password?",
+					instanceLabel: "Current instance",
+					projectLabel: "Project ID",
 					button: {
 						submit: "Access",
 					}
