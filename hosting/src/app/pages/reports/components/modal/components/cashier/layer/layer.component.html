@@ -829,6 +829,8 @@
                       <th rowspan="2" class="col-small">{{
                         translate.sales.fields.salesPerUserSynthetic.partialRevenue.internal }}</th>
                       <th rowspan="2" class="col-small">{{
+                        translate.sales.fields.salesPerUserSynthetic.netRevenue.internal }}</th>
+                      <th rowspan="2" class="col-small">{{
                         translate.sales.fields.salesPerUserSynthetic.finalRevenue.internal }}</th>
                       <th rowspan="2" class="col-small" *ngIf="isProductReport()">{{
                         translate.sales.fields.salesPerUserSynthetic.contributionMargin.internal }}</th>
@@ -902,6 +904,7 @@
                       <td class="positive" *ngIf="isProductReport()">{{ item.totalProductsQuantity }}</td>
                       <td class="positive" *ngIf="isProductReport()">{{ item.totalCosts | currency:'' }}</td>
                       <td class="positive">{{ item.partialRevenue | currency:'' }}</td>
+                      <td class="positive">{{ item.netRevenue | currency:'' }}</td>
                       <td class="positive">{{ item.finalRevenue | currency:'' }}</td>
                       <td class="positive" *ngIf="isProductReport()">{{ item.contributionMargin + '%' }}</td>
                     </tr>
@@ -922,6 +925,7 @@
                         currency:'' }}</th>
                       <th class="positive">{{ (settings.data.balance.partialRevenue || 0) |
                         currency:'' }}</th>
+                      <th class="positive">{{ (settings.data.balance.netRevenue || 0) | currency:'' }}</th>
                       <th class="positive">{{ (settings.data.balance.finalRevenue || 0) | currency:'' }}</th>
                       <th class="positive" *ngIf="isProductReport()">{{ (settings.data.balance.contributionMargin || 0)
                         + "%" }}</th>
@@ -975,6 +979,8 @@
                         translate.sales.fields.salesPerUserAnalytical.costs.internal }}</th>
                       <th rowspan="2" class="col-small">{{
                         translate.sales.fields.salesPerUserAnalytical.partialRevenue.internal }}</th>
+                      <th rowspan="2" class="col-small">{{
+                        translate.sales.fields.salesPerUserAnalytical.netRevenue.internal }}</th>
                       <th rowspan="2" class="col-small">{{
                         translate.sales.fields.salesPerUserAnalytical.finalRevenue.internal }}</th>
                       <th rowspan="2" class="col-small" *ngIf="isProductReport()">{{
@@ -1050,6 +1056,7 @@
                       <td class="positive" *ngIf="isProductReport()">{{ item.totalProductsQuantity }}</td>
                       <td class="positive" *ngIf="isProductReport()">{{ item.totalCosts | currency:'' }}</td>
                       <td class="positive">{{ item.partialRevenue | currency:'' }}</td>
+                      <td class="positive">{{ item.netRevenue | currency:'' }}</td>
                       <td class="positive">{{ item.finalRevenue | currency:'' }}</td>
                       <td class="positive" *ngIf="isProductReport()">{{ item.contributionMargin + '%' }}</td>
                     </tr>
@@ -1071,6 +1078,7 @@
                         currency:'' }}</th>
                       <th class="positive">{{ (settings.data.balance.partialRevenue || 0) |
                         currency:'' }}</th>
+                      <th class="positive">{{ (settings.data.balance.netRevenue || 0) | currency:'' }}</th>
                       <th class="positive">{{ (settings.data.balance.finalRevenue || 0) | currency:'' }}</th>
                       <th class="positive" *ngIf="isProductReport()">{{ (settings.data.balance.contributionMargin || 0)
                         + "%"}}</th>

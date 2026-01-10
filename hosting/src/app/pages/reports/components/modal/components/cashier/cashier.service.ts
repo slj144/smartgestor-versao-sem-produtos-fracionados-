@@ -1235,12 +1235,41 @@ export class CashierReportsService {
         let obj = {
           synthetic: {
             records: [],
-            balance: { contributionMargin: 0, number: 0, productsQuantity: 0, partialRevenue: 0, finalRevenue: 0, totalDiscount: 0, totalTax: 0, totalPaid: 0, salePrice: 0, totalSalePrice: 0, unitaryCosts: 0, totalCosts: 0 },
+            balance: {
+              contributionMargin: 0,
+              number: 0,
+              productsQuantity: 0,
+              partialRevenue: 0,
+              netRevenue: 0,
+              finalRevenue: 0,
+              totalDiscount: 0,
+              totalTax: 0,
+              totalPaid: 0,
+              salePrice: 0,
+              totalSalePrice: 0,
+              unitaryCosts: 0,
+              totalCosts: 0,
+              paymentCosts: 0
+            },
             products: []
           },
           analytical: {
             records: [],
-            balance: { contributionMargin: 0, productsQuantity: 0, partialRevenue: 0, finalRevenue: 0, totalDiscount: 0, totalTax: 0, totalPaid: 0, salePrice: 0, totalSalePrice: 0, unitaryCosts: 0, totalCosts: 0 }
+            balance: {
+              contributionMargin: 0,
+              productsQuantity: 0,
+              partialRevenue: 0,
+              netRevenue: 0,
+              finalRevenue: 0,
+              totalDiscount: 0,
+              totalTax: 0,
+              totalPaid: 0,
+              salePrice: 0,
+              totalSalePrice: 0,
+              unitaryCosts: 0,
+              totalCosts: 0,
+              paymentCosts: 0
+            }
           }
         };
 
@@ -1279,6 +1308,7 @@ export class CashierReportsService {
             data.totalCosts = totalCostsWithTaxes;
             data.finalRevenue = data.partialRevenue - totalCostsWithTaxes - commissionValue;
             data.unbilledValue = item.balance?.unbilledValue || 0;
+            const totalPaymentCosts = Number(item.balance?.paymentsCosts || 0); // Soma de taxas de meios de pagamento
             // console.log(settings.productReport, filterProducts)
 
             if (filterProducts) {
@@ -1345,6 +1375,7 @@ export class CashierReportsService {
             if (filterProducts) {
               const proportion = item.balance?.partialRevenue ? filteredProductsValue / item.balance.partialRevenue : 0;
               const additionalCosts = (((item.balance?.totalCosts || 0) - (item.balance?.productsCosts || 0)) + (item.balance?.totalTaxes || 0)) * proportion;
+              const paymentCostsShare = totalPaymentCosts * proportion; // Rateio proporcional da taxa do cartão
               data.partialRevenue = filteredProductsValue;
               // data.totalCosts = filteredProductsCosts;
               // data.finalRevenue = filteredProductsValue - filteredProductsCosts;
@@ -1354,6 +1385,8 @@ export class CashierReportsService {
               data.finalRevenue = data.partialRevenue - data.totalCosts - commissionShare;
               data.unbilledValue = (item.balance?.unbilledValue || 0) * proportion;
               data.contributionMargin = data.finalRevenue > 0 ? parseFloat(((data.finalRevenue / data.partialRevenue) * 100).toFixed(4)) : 0;
+              data.paymentCosts = paymentCostsShare;
+              data.netRevenue = data.partialRevenue - paymentCostsShare;
 
               // console.log(data);
             } else {
@@ -1365,6 +1398,8 @@ export class CashierReportsService {
               filteredProductsUnitaryCosts = item.balance?.unitaryCosts || 0;
               data.totalProductsQuantity = (item.products || []).reduce((sum, prod) => sum + (prod.quantity || 0), 0);
               data.contributionMargin = data.finalRevenue > 0 ? parseFloat(((data.finalRevenue / data.partialRevenue) * 100).toFixed(4)) : 0;
+              data.paymentCosts = totalPaymentCosts;
+              data.netRevenue = data.partialRevenue - totalPaymentCosts;
             }
 
             const setupBalance = () => {
@@ -1378,6 +1413,8 @@ export class CashierReportsService {
 
               obj.analytical.balance.productsQuantity += data.totalProductsQuantity;
               obj.analytical.balance.partialRevenue += data.partialRevenue;
+              obj.analytical.balance.paymentCosts += (data.paymentCosts || 0);
+              obj.analytical.balance.netRevenue += (data.netRevenue || (data.partialRevenue - (data.paymentCosts || 0)));
               obj.analytical.balance.finalRevenue += data.finalRevenue;
 
 
@@ -1405,7 +1442,23 @@ export class CashierReportsService {
 
         $$(auxData).map((user, data) => {
 
-          const auxMethod: any = { unbilledValue: 0, contributionMargin: 0, totalProductsQuantity: 0, number: 0, finalRevenue: 0, partialRevenue: 0, totalDiscount: 0, totalTax: 0, totalPaid: 0, salePrice: 0, totalSalePrice: 0, unitaryCosts: 0, totalCosts: 0 };
+          const auxMethod: any = {
+            unbilledValue: 0,
+            contributionMargin: 0,
+            totalProductsQuantity: 0,
+            number: 0,
+            finalRevenue: 0,
+            partialRevenue: 0,
+            netRevenue: 0,
+            paymentCosts: 0,
+            totalDiscount: 0,
+            totalTax: 0,
+            totalPaid: 0,
+            salePrice: 0,
+            totalSalePrice: 0,
+            unitaryCosts: 0,
+            totalCosts: 0
+          };
 
           const products = {};
 
@@ -1414,6 +1467,8 @@ export class CashierReportsService {
             auxMethod.name = item.name;
             auxMethod.number += 1;
             auxMethod.partialRevenue += item.partialRevenue;
+            auxMethod.paymentCosts += (item.paymentCosts || 0);
+            auxMethod.netRevenue += (item.netRevenue || (item.partialRevenue - (item.paymentCosts || 0)));
             auxMethod.finalRevenue += item.finalRevenue;
             auxMethod.totalDiscount += item.totalDiscount || 0;
             auxMethod.totalTax += item.totalTax || 0;
@@ -1445,6 +1500,8 @@ export class CashierReportsService {
           auxMethod.products = Object.values(products);
           obj.synthetic.balance.number += auxMethod.number;
           obj.synthetic.balance.partialRevenue += auxMethod.partialRevenue;
+          obj.synthetic.balance.paymentCosts += auxMethod.paymentCosts;
+          obj.synthetic.balance.netRevenue += auxMethod.netRevenue;
           obj.synthetic.balance.finalRevenue += auxMethod.finalRevenue;
           obj.synthetic.balance.totalCosts += auxMethod.totalCosts;
           obj.synthetic.balance.productsQuantity += auxMethod.totalProductsQuantity;

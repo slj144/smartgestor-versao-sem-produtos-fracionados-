@@ -37,7 +37,7 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
 
   public billsToPayCategories: any[] = [];
   public billsToReceiveCategories: any[] = [];
-  public collaborators: any[] = []; // 🎯 ADICIONADO: Array para armazenar colaboradores
+  public collaborators: any[] = [];
   public departments: any[] = [];
   public bankAccounts: IFinancialBankAccount[] = [];
   public isMatrix = Utilities.isMatrix;
@@ -66,7 +66,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
     return Utilities.stockDepartmentsEnabled;
   }
 
-  // 🎯 NOVO MÉTODO: Busca colaboradores para o filtro
   public onGetCollaborators(store: string = null) {
     if (!this.formFilters) {
       return;
@@ -350,7 +349,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
       monthly: Utilities.isAdmin ? true : !!this.checkPermissions(id, null, "filterMonth"),
       lastMonth: Utilities.isAdmin ? true : !!this.checkPermissions(id, null, "filterLastMonth"),
       custom: Utilities.isAdmin ? true : !!this.checkPermissions(id, null, "filterPersonalized"),
-      // 🎯 MANTÉM O FILTRO DE COLABORADOR AO MUDAR DE TIPO
       perCollaborator: Utilities.isAdmin ? true : !!this.checkPermissions(id, null, "filterPerCollaborator")
     };
 
@@ -416,9 +414,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
     }
 
     if (model.id == 'billsToReceive') {
-      // LOG PARA VER O TIPO
-      console.log('🎯 Tipo ativo:', this.typeActived);
-
       if (filter.filterDateType == "installments.dueDate") {
         filter.period.start = filter.period.start.split(" ")[0];
         filter.period.end = filter.period.end.split(" ")[0];
@@ -502,7 +497,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
         console.log('Dados originais:', JSON.parse(JSON.stringify(data)));
         console.log('Colaboradores disponíveis:', this.collaborators.map(c => ({ code: c.code, name: c.name, username: c.username })));
 
-        // 🎯 CORREÇÃO: Substitui usernames pelos nomes completos
         if (data && data.records && this.collaborators.length > 0) {
           data.records.forEach(record => {
             // Procura o colaborador pelo username no registro
@@ -531,8 +525,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
   // Event Listeners
 
   public onLayerResponse(event: any) {
-    console.log('🎯 onLayerResponse chamado:', event);
-
     if (event && event.instance) {
       this.layerComponent = event.instance;
       console.log('✅ layerComponent definido:', this.layerComponent);
@@ -556,7 +548,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
       department: ["##all##"]
     });
 
-    // 🎯 Campo de colaborador para relatório de comissões
     if (this.settings.model.id == 'commissions') {
       this.formFilters.addControl('collaborator', new FormControl("##all##"));
     }
@@ -732,7 +723,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
           return item._id == filter.store;
         })[0] : this.settings.stores[0]);
 
-      // 🎯 CORREÇÃO: Retorna o objeto store completo ao invés de apenas _id e name
       return store || {
         _id: filter.store || Utilities.storeID,
         name: 'Loja',
@@ -833,7 +823,6 @@ export class FinancialReportsComponent implements OnInit, OnDestroy {
       delete filter.filterDateType;
     }
 
-    // 🎯 IMPORTANTE: Não processar collaborator se for "##all##"
     if (filter.collaborator === "##all##") {
       delete filter.collaborator;
     }

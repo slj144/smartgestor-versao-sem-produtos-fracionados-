@@ -230,6 +230,7 @@ export class ReportsCashierTranslate {
             totalQuantity: { external: 'Quantidade', internal: 'Quantidade' }, // ✅ CORRIGIDO: era "extenal"
             revenue: { external: 'Total de Vendas', internal: `Total de Vendas (${Utilities.currencySymbol})` }, // ✅ CORRIGIDO: era "extenal"
             partialRevenue: { external: 'Receita Parcial', internal: `Receita Parcial (${Utilities.currencySymbol})` }, // ✅ CORRIGIDO: era "extenal"
+            netRevenue: { external: 'Receita Líquida (s/ Taxas)', internal: `Receita Líquida (${Utilities.currencySymbol})` },
             finalRevenue: { external: 'Receita Final', internal: `Receita Final (${Utilities.currencySymbol})` }, // ✅ CORRIGIDO: era "extenal"
             costs: { external: 'Custos', internal: `Custos (${Utilities.currencySymbol})` }, // ✅ CORRIGIDO: era "extenal"
             contributionMargin: { external: 'Margem de Lucro', internal: `Margem de Lucro %` }, // ✅ CORRIGIDO: era "extenal"
@@ -265,6 +266,7 @@ export class ReportsCashierTranslate {
             totalQuantity: { external: 'Quantidade', internal: 'Quantidade' },
             costs: { external: 'Custos', internal: `Custos (${Utilities.currencySymbol})` },
             contributionMargin: { external: 'Margem de Contribuição', internal: 'Margem de Contribuição %' },
+            netRevenue: { external: 'Receita Líquida (s/ Taxas)', internal: `Receita Líquida (${Utilities.currencySymbol})` },
             // ✅ CORREÇÃO: CAMPOS QUE ESTAVAM FALTANDO - FIM
             products: {
               external: 'Produtos', internal: {
@@ -657,6 +659,7 @@ export class ReportsCashierTranslate {
             totalCost: { external: 'Costs', internal: 'Costs' },
             totalQuantity: { external: 'Quantity', internal: 'Quantity' },
             partialRevenue: { external: 'Revenue', internal: `Partial Revenue (${Utilities.currencySymbol})` },
+            netRevenue: { external: 'Net Revenue (no fees)', internal: `Net Revenue (${Utilities.currencySymbol})` },
             finalRevenue: { external: 'Revenue', internal: `Final Revenue (${Utilities.currencySymbol})` },
             costs: { external: 'Costs', internal: `Costs (${Utilities.currencySymbol})` },
             contributionMargin: { external: 'Profit Margin', internal: `Profit Margin %` },
@@ -692,6 +695,7 @@ export class ReportsCashierTranslate {
             totalQuantity: { external: 'Quantity', internal: 'Quantity' },
             costs: { external: 'Costs', internal: `Costs (${Utilities.currencySymbol})` },
             contributionMargin: { external: 'Contribution Margin', internal: 'Contribution Margin %' },
+            netRevenue: { external: 'Net Revenue (no fees)', internal: `Net Revenue (${Utilities.currencySymbol})` },
             // ✅ CORREÇÃO: CAMPOS QUE ESTAVAM FALTANDO - FIM
             products: {
               external: 'Products', internal: {

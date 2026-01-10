@@ -75,9 +75,6 @@ export class FinancialReportsService {
 
   public async getBillsToReceive(settings: { where: query['where'], orderBy: query['orderBy'], data: { type: string } }) {
     return (new Promise<any>((resolve) => {
-      // LOG PARA VER O TIPO RECEBIDO
-      console.log('🎯 getBillsToReceive - tipo recebido:', settings.data?.type);
-
       this.addStatusClausesForAccountsReceivable({ where: settings.where, data: settings.data });
 
       const collection = this.iToolsService.database().collection('FinancialBillsToReceive');
@@ -96,14 +93,8 @@ export class FinancialReportsService {
           });
         }
 
-        console.log(`✅ Total de contas a receber encontradas: ${allData.length}`);
-
-        // GARANTIR QUE O TIPO SEJA PASSADO
         const type = settings.data?.type || 'pendingAccounts'; // Default para pendingAccounts
-        console.log('🎯 Tipo usado para processar:', type);
-
         const result = this.treatBillsToReceive(allData, { type: type });
-        console.log('📈 Resultado processado:', result);
 
         resolve(result);
       }).catch((error) => {

@@ -37,8 +37,6 @@ export class FinancialReportsLayerComponent implements OnInit {
   // Layer Actions
 
   public onOpen(settings: any) {
-    console.log('🎯 Layer onOpen chamado com settings:', settings);
-
     // Fazer o cast correto para HTMLElement
     const sideLayer = document.getElementById('sideLayer') as HTMLElement;
     const body = document.querySelector('#container-modal-body') as HTMLElement;
